@@ -37,7 +37,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'pnpm-lock.yaml'
+          cache-dependency-path: 'client2/pnpm-lock.yaml'
 
       - name: 📦 Install client dependencies
         run: pnpm install --frozen-lockfile
@@ -69,12 +69,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'pnpm-lock.yaml'
+          cache-dependency-path: 'client2/pnpm-lock.yaml'
 
       - name: 📦 Install dependencies
+        working-directory: ./client2
         run: pnpm install --frozen-lockfile
 
       - name: 🏗️ Build client
+        working-directory: ./client2
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5000' }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
@@ -111,7 +113,8 @@ jobs:
       - name: 🏗️ Build and push client image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./client2
+          file: ./client2/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/literati-client:latest
