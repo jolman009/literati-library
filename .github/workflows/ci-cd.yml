@@ -37,10 +37,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install client dependencies
-        working-directory: ./client2
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Install server dependencies  
@@ -61,18 +60,16 @@ jobs:
           pip install -r requirements.txt
 
       - name: 🧪 Run client tests
-        working-directory: ./client2
         run: pnpm run test:unit --run --coverage
 
       - name: 📊 Upload test coverage
         uses: codecov/codecov-action@v3
         with:
-          directory: ./client2/coverage
+          directory: ./coverage
           flags: frontend
           fail_ci_if_error: false
 
       - name: 🔍 Lint client code
-        working-directory: ./client2
         run: pnpm run lint
 
   build-client:
@@ -94,14 +91,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install dependencies
-        working-directory: ./client2
         run: pnpm install --frozen-lockfile
 
       - name: 🏗️ Build client
-        working-directory: ./client2
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5000' }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
@@ -138,7 +133,7 @@ jobs:
       - name: 🏗️ Build and push client image
         uses: docker/build-push-action@v5
         with:
-          context: ./client2
+          context: .
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/literati-client:latest
