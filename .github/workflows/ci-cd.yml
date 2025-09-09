@@ -40,13 +40,16 @@ jobs:
           cache-dependency-path: 'client2/pnpm-lock.yaml'
 
       - name: 📦 Install client dependencies
+        working-directory: ./client2
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Run client tests
+        working-directory: ./client2
         run: pnpm run test:unit --run || echo "Some tests failed but continuing pipeline"
         continue-on-error: true
 
       - name: 🔍 Lint client code
+        working-directory: ./client2
         run: pnpm run lint || echo "Linting failed but continuing pipeline"
         continue-on-error: true
 
