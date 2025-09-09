@@ -1,0 +1,430 @@
+/* src/App.css */
+
+/* ===============================================
+   MATERIAL DESIGN 3 APPLICATION STYLES
+   Main Application Layout & Global Styles
+   =============================================== */
+
+/* Import Material Design 3 Base Styles */
+@import './styles/material3.css';
+
+/* Import Material Design 3 Component Animations */
+@import './components/Material3/animations.css';
+
+@import './styles/reading-timer.css';
+@import './styles/premium-timer-widget.css';
+
+/* ===============================================
+   ROOT APPLICATION STYLES
+   =============================================== */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  /* Material Design 3 Base Colors */
+  background-color: rgb(var(--md-sys-color-background, 255 251 255));
+  color: rgb(var(--md-sys-color-on-background, 28 27 31));
+  
+  /* Typography */
+  font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  line-height: var(--md-sys-typescale-body-large-line-height, 1.5);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
+  
+  /* Smooth theme transitions */
+  transition: 
+    background-color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* ===============================================
+   APPLICATION LAYOUT
+   =============================================== */
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant, 202 196 208));
+  
+  /* Elevation */
+  box-shadow: var(--md-sys-elevation-level1, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15)
+  );
+  
+  /* Smooth transitions */
+  transition: 
+    background-color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    box-shadow var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--md-sys-spacing-4, 16px);
+  
+  /* Content spacing */
+  gap: var(--md-sys-spacing-6, 24px);
+  
+  /* Max width for readability */
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.app-footer {
+  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  padding: var(--md-sys-spacing-6, 24px);
+  text-align: center;
+  border-top: 1px solid rgb(var(--md-sys-color-outline-variant, 202 196 208));
+  
+  /* Typography */
+  font-size: var(--md-sys-typescale-body-small-size, 0.75rem);
+  
+  /* Smooth transitions */
+  transition: 
+    background-color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* ===============================================
+   BOOK LIBRARY SPECIFIC LAYOUTS
+   =============================================== */
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--md-sys-spacing-6, 24px);
+  padding: var(--md-sys-spacing-4, 16px) 0;
+}
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-4, 16px);
+  padding: var(--md-sys-spacing-4, 16px) 0;
+}
+
+.book-card {
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  padding: var(--md-sys-spacing-4, 16px);
+  
+  /* Elevation */
+  box-shadow: var(--md-sys-elevation-level1, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15)
+  );
+  
+  /* Interactions */
+  transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  cursor: pointer;
+}
+
+.book-card:hover {
+  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  box-shadow: var(--md-sys-elevation-level2, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.book-card:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline-offset: 2px;
+}
+
+/* ===============================================
+   NAVIGATION STYLES
+   =============================================== */
+
+.navigation-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--md-sys-spacing-4, 16px) var(--md-sys-spacing-6, 24px);
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+}
+
+.navigation-rail {
+  width: 80px;
+  min-height: 100vh;
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--md-sys-spacing-4, 16px) 0;
+  gap: var(--md-sys-spacing-4, 16px);
+}
+
+.navigation-drawer {
+  width: 280px;
+  min-height: 100vh;
+  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  display: flex;
+  flex-direction: column;
+  padding: var(--md-sys-spacing-6, 24px);
+  gap: var(--md-sys-spacing-2, 8px);
+}
+
+/* ===============================================
+   CONTENT AREAS
+   =============================================== */
+
+.content-section {
+  background-color: rgb(var(--md-sys-color-surface, 255 251 255));
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  padding: var(--md-sys-spacing-6, 24px);
+  margin-bottom: var(--md-sys-spacing-6, 24px);
+  
+  /* Subtle elevation */
+  box-shadow: var(--md-sys-elevation-level1, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.hero-section {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--md-sys-color-primary-container, 234 221 255)),
+    rgb(var(--md-sys-color-tertiary-container, 255 216 228))
+  );
+  color: rgb(var(--md-sys-color-on-primary-container, 33 0 93));
+  border-radius: var(--md-sys-shape-corner-extra-large, 24px);
+  padding: var(--md-sys-spacing-8, 32px);
+  text-align: center;
+  margin-bottom: var(--md-sys-spacing-8, 32px);
+}
+
+/* ===============================================
+   TYPOGRAPHY UTILITIES
+   =============================================== */
+
+.headline-large {
+  font-family: var(--md-sys-typescale-headline-large-font-family, "Google Sans", "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-headline-large-size, 2rem);
+  font-weight: var(--md-sys-typescale-headline-large-weight, 400);
+  line-height: var(--md-sys-typescale-headline-large-line-height, 2.5rem);
+  letter-spacing: var(--md-sys-typescale-headline-large-tracking, 0);
+}
+
+.headline-medium {
+  font-family: var(--md-sys-typescale-headline-medium-font-family, "Google Sans", "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-headline-medium-size, 1.75rem);
+  font-weight: var(--md-sys-typescale-headline-medium-weight, 400);
+  line-height: var(--md-sys-typescale-headline-medium-line-height, 2.25rem);
+  letter-spacing: var(--md-sys-typescale-headline-medium-tracking, 0);
+}
+
+.title-large {
+  font-family: var(--md-sys-typescale-title-large-font-family, "Google Sans", "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-title-large-size, 1.375rem);
+  font-weight: var(--md-sys-typescale-title-large-weight, 400);
+  line-height: var(--md-sys-typescale-title-large-line-height, 1.75rem);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking, 0);
+}
+
+.body-large {
+  font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  font-weight: var(--md-sys-typescale-body-large-weight, 400);
+  line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
+}
+
+.body-medium {
+  font-family: var(--md-sys-typescale-body-medium-font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-body-medium-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-body-medium-weight, 400);
+  line-height: var(--md-sys-typescale-body-medium-line-height, 1.25rem);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking, 0.25px);
+}
+
+.label-large {
+  font-family: var(--md-sys-typescale-label-large-font-family, "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-large-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-weight, 500);
+  line-height: var(--md-sys-typescale-label-large-line-height, 1.25rem);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.1px);
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+
+/* Mobile (< 600px) */
+@media (max-width: 599px) {
+  .app-main {
+    padding: var(--md-sys-spacing-3, 12px);
+    gap: var(--md-sys-spacing-4, 16px);
+  }
+  
+  .library-grid {
+    grid-template-columns: 1fr;
+    gap: var(--md-sys-spacing-4, 16px);
+  }
+  
+  .content-section {
+    padding: var(--md-sys-spacing-4, 16px);
+    margin-bottom: var(--md-sys-spacing-4, 16px);
+  }
+  
+  .hero-section {
+    padding: var(--md-sys-spacing-6, 24px);
+    margin-bottom: var(--md-sys-spacing-6, 24px);
+  }
+  
+  .navigation-bar {
+    padding: var(--md-sys-spacing-3, 12px) var(--md-sys-spacing-4, 16px);
+  }
+}
+
+/* Tablet (600px - 1024px) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .library-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  
+  .app-main {
+    padding: var(--md-sys-spacing-5, 20px);
+  }
+}
+
+/* Desktop (> 1024px) */
+@media (min-width: 1025px) {
+  .app-main {
+    padding: var(--md-sys-spacing-6, 24px);
+  }
+  
+  .library-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+/* ===============================================
+   ACCESSIBILITY
+   =============================================== */
+
+/* Focus styles */
+.focusable:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .app-header,
+  .app-footer,
+  .book-card,
+  .content-section {
+    border: 1px solid rgb(var(--md-sys-color-outline, 121 116 126));
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #root,
+  .app-header,
+  .app-footer,
+  .book-card,
+  .content-section,
+  .hero-section {
+    transition: none;
+  }
+}
+
+/* ===============================================
+   DARK THEME ADJUSTMENTS
+   =============================================== */
+
+@media (prefers-color-scheme: dark) {
+  #root {
+    background-color: rgb(var(--md-sys-color-background, 16 14 19));
+    color: rgb(var(--md-sys-color-on-background, 230 225 229));
+  }
+  
+  .app-header {
+    background-color: rgb(var(--md-sys-color-surface-container, 37 35 42));
+    color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+  }
+  
+  .app-footer {
+    background-color: rgb(var(--md-sys-color-surface-container-low, 28 27 31));
+    color: rgb(var(--md-sys-color-on-surface-variant, 202 196 208));
+  }
+  
+  .book-card {
+    background-color: rgb(var(--md-sys-color-surface-container, 37 35 42));
+  }
+  
+  .book-card:hover {
+    background-color: rgb(var(--md-sys-color-surface-container-high, 54 52 59));
+  }
+}
+
+/* ===============================================
+   PRINT STYLES
+   =============================================== */
+
+@media print {
+  .app-header,
+  .app-footer,
+  .navigation-bar,
+  .navigation-rail,
+  .navigation-drawer {
+    display: none;
+  }
+  
+  .app-main {
+    padding: 0;
+    max-width: none;
+  }
+  
+  .book-card,
+  .content-section {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+}
+
+    /* FloatingWidget.css or similar */
+    .notepad-widget {
+      position: fixed;
+      bottom: 20px; /* Example starting position */
+      right: 20px; /* Example starting position */
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000; /* Ensures it's above other elements */
+      width: 300px; /* Example width */
+      height: 200px; /* Example height */
+      resize: both; /* Optional: allow resizing */
+      overflow: auto; /* Optional: add scrollbars if content overflows */
+    }
+
+    .notepad-widget textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      resize: none; /* Prevent textarea from being resized independently */
+    }

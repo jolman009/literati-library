@@ -1,0 +1,72 @@
+.md3-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* Size variants */
+.md3-status-badge--small {
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 8px;
+}
+
+.md3-status-badge--medium {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.md3-status-badge--large {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 16px;
+}
+
+/* Status variants */
+.md3-status-badge--reading {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.md3-status-badge--completed {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.md3-status-badge--paused {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.md3-status-badge--default {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+/* Outlined variant */
+.md3-status-badge--outlined {
+  background-color: transparent;
+  border: 1px solid currentColor;
+}
+
+.md3-status-badge--outlined.md3-status-badge--reading {
+  border-color: #1976d2;
+}
+
+.md3-status-badge--outlined.md3-status-badge--completed {
+  border-color: #2e7d32;
+}
+
+.md3-status-badge--outlined.md3-status-badge--paused {
+  border-color: #f57c00;
+}
+
+.md3-status-badge--outlined.md3-status-badge--default {
+  border-color: #616161;
+}

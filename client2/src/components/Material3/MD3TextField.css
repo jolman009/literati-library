@@ -1,0 +1,407 @@
+/* src/components/Material3/TextField.css */
+
+/* ===============================================
+   MD3 TEXT FIELD COMPONENT STYLES
+   Material Design 3 Text Input Specifications
+   =============================================== */
+
+.md3-text-field {
+  /* Base structure */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  
+  /* Typography */
+  font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, sans-serif);
+  
+  /* Animation */
+  transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* ===============================================
+   TEXT FIELD CONTAINER
+   =============================================== */
+
+.md3-text-field__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  
+  /* Colors */
+  background-color: rgb(var(--md-sys-color-surface-container-highest, 230 224 233));
+  
+  /* Animation */
+  transition: 
+    background-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    border-color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* ===============================================
+   TEXT FIELD VARIANTS
+   =============================================== */
+
+/* Filled Variant (Default) */
+.md3-text-field--filled .md3-text-field__container {
+  border-radius: var(--md-sys-shape-corner-small, 8px) var(--md-sys-shape-corner-small, 8px) 0 0;
+  border-bottom: 1px solid rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  padding: 0 16px;
+}
+
+.md3-text-field--filled:hover:not(.md3-text-field--disabled) .md3-text-field__container {
+  background-color: color-mix(in srgb, rgb(var(--md-sys-color-surface-container-highest)) 92%, rgb(var(--md-sys-color-on-surface)) 8%);
+}
+
+.md3-text-field--filled.md3-text-field--focused .md3-text-field__container {
+  border-bottom-width: 2px;
+  border-bottom-color: rgb(var(--md-sys-color-primary, 103 80 164));
+}
+
+.md3-text-field--filled.md3-text-field--error .md3-text-field__container {
+  border-bottom-color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* Outlined Variant */
+.md3-text-field--outlined .md3-text-field__container {
+  background-color: transparent;
+  border: 1px solid rgb(var(--md-sys-color-outline, 121 116 126));
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+  padding: 0 16px;
+}
+
+.md3-text-field--outlined:hover:not(.md3-text-field--disabled) .md3-text-field__container {
+  border-color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-text-field--outlined.md3-text-field--focused .md3-text-field__container {
+  border-width: 2px;
+  border-color: rgb(var(--md-sys-color-primary, 103 80 164));
+  padding: 0 15px; /* Adjust for thicker border */
+}
+
+.md3-text-field--outlined.md3-text-field--error .md3-text-field__container {
+  border-color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* ===============================================
+   INPUT ELEMENT
+   =============================================== */
+
+.md3-text-field__input-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.md3-text-field__input {
+  /* Reset browser styles */
+  border: none;
+  outline: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  
+  /* Layout */
+  width: 100%;
+  height: 32px;
+  
+  /* Typography */
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  font-weight: var(--md-sys-typescale-body-large-weight, 400);
+  line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
+  
+  /* Colors */
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  caret-color: rgb(var(--md-sys-color-primary, 103 80 164));
+  
+  /* Remove autofill styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.md3-text-field__input::placeholder {
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  opacity: 1;
+}
+
+.md3-text-field__input::-webkit-autofill,
+.md3-text-field__input::-webkit-autofill:hover,
+.md3-text-field__input::-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px rgb(var(--md-sys-color-surface-container-highest, 230 224 233)) inset;
+  -webkit-text-fill-color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* ===============================================
+   LABEL (FLOATING)
+   =============================================== */
+
+.md3-text-field__label {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  
+  /* Typography */
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  font-weight: var(--md-sys-typescale-body-large-weight, 400);
+  line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
+  
+  /* Colors */
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  
+  /* Animation */
+  transition: 
+    transform var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    font-size var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  
+  /* Interaction */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Floating label states */
+.md3-text-field--focused .md3-text-field__label,
+.md3-text-field--populated .md3-text-field__label {
+  transform: translateY(-28px);
+  font-size: var(--md-sys-typescale-body-small-size, 0.75rem);
+  font-weight: var(--md-sys-typescale-body-small-weight, 400);
+  line-height: var(--md-sys-typescale-body-small-line-height, 1rem);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking, 0.4px);
+}
+
+.md3-text-field--focused .md3-text-field__label {
+  color: rgb(var(--md-sys-color-primary, 103 80 164));
+}
+
+.md3-text-field--error .md3-text-field__label {
+  color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* Outlined variant label adjustments */
+.md3-text-field--outlined .md3-text-field__label {
+  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
+  padding: 0 4px;
+  margin-left: -4px;
+}
+
+.md3-text-field--outlined.md3-text-field--focused .md3-text-field__label,
+.md3-text-field--outlined.md3-text-field--populated .md3-text-field__label {
+  transform: translateY(-32px);
+}
+
+/* ===============================================
+   ICONS
+   =============================================== */
+
+.md3-text-field__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  transition: color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.md3-text-field__icon--leading {
+  margin-right: 12px;
+}
+
+.md3-text-field__icon--trailing {
+  margin-left: 12px;
+  cursor: pointer;
+}
+
+.md3-text-field__icon--trailing:hover {
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-text-field--focused .md3-text-field__icon--leading {
+  color: rgb(var(--md-sys-color-primary, 103 80 164));
+}
+
+.md3-text-field--error .md3-text-field__icon {
+  color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* ===============================================
+   SUPPORTING TEXT
+   =============================================== */
+
+.md3-text-field__supporting-text {
+  margin-top: 4px;
+  padding: 0 16px;
+  
+  /* Typography */
+  font-size: var(--md-sys-typescale-body-small-size, 0.75rem);
+  font-weight: var(--md-sys-typescale-body-small-weight, 400);
+  line-height: var(--md-sys-typescale-body-small-line-height, 1rem);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking, 0.4px);
+  
+  /* Colors */
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  
+  /* Animation */
+  transition: color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.md3-text-field--error .md3-text-field__supporting-text {
+  color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* ===============================================
+   ASTERISK (REQUIRED INDICATOR)
+   =============================================== */
+
+.md3-text-field__asterisk {
+  color: rgb(var(--md-sys-color-error, 186 26 26));
+  margin-left: 2px;
+}
+
+/* ===============================================
+   STATES
+   =============================================== */
+
+/* Disabled State */
+.md3-text-field--disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+.md3-text-field--disabled .md3-text-field__container {
+  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 4%, transparent);
+}
+
+.md3-text-field--disabled .md3-text-field__input {
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-text-field--disabled .md3-text-field__label {
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* Error State */
+.md3-text-field--error .md3-text-field__input {
+  caret-color: rgb(var(--md-sys-color-error, 186 26 26));
+}
+
+/* ===============================================
+   TEXT FIELD SIZES
+   =============================================== */
+
+.md3-text-field--small .md3-text-field__container {
+  min-height: 48px;
+}
+
+.md3-text-field--small .md3-text-field__input {
+  height: 24px;
+  font-size: var(--md-sys-typescale-body-medium-size, 0.875rem);
+}
+
+.md3-text-field--large .md3-text-field__container {
+  min-height: 64px;
+}
+
+.md3-text-field--large .md3-text-field__input {
+  height: 40px;
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+}
+
+/* ===============================================
+   TEXTAREA SUPPORT
+   =============================================== */
+
+.md3-text-field--textarea .md3-text-field__input {
+  resize: vertical;
+  min-height: 80px;
+  height: auto;
+  padding: 8px 0;
+  line-height: 1.5;
+}
+
+.md3-text-field--textarea .md3-text-field__container {
+  min-height: 96px;
+  align-items: flex-start;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.md3-text-field--textarea .md3-text-field__label {
+  top: 16px;
+}
+
+.md3-text-field--textarea.md3-text-field--focused .md3-text-field__label,
+.md3-text-field--textarea.md3-text-field--populated .md3-text-field__label {
+  transform: translateY(-20px);
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+
+@media (max-width: 600px) {
+  .md3-text-field__container {
+    min-height: 52px; /* Slightly larger touch targets on mobile */
+  }
+  
+  .md3-text-field__input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* ===============================================
+   HIGH CONTRAST MODE
+   =============================================== */
+
+@media (prefers-contrast: high) {
+  .md3-text-field--outlined .md3-text-field__container {
+    border-width: 2px;
+  }
+  
+  .md3-text-field--outlined.md3-text-field--focused .md3-text-field__container {
+    border-width: 3px;
+    padding: 0 14px;
+  }
+}
+
+/* ===============================================
+   REDUCED MOTION
+   =============================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .md3-text-field,
+  .md3-text-field__container,
+  .md3-text-field__label,
+  .md3-text-field__icon,
+  .md3-text-field__supporting-text {
+    transition: none;
+  }
+}
+
+/* ===============================================
+   DARK THEME ADJUSTMENTS
+   =============================================== */
+
+@media (prefers-color-scheme: dark) {
+  .md3-text-field--filled .md3-text-field__container {
+    background-color: rgb(var(--md-sys-color-surface-container-highest, 54 52 59));
+  }
+  
+  .md3-text-field__input::-webkit-autofill,
+  .md3-text-field__input::-webkit-autofill:hover,
+  .md3-text-field__input::-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px rgb(var(--md-sys-color-surface-container-highest, 54 52 59)) inset;
+    -webkit-text-fill-color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+  }
+  
+  .md3-text-field--outlined .md3-text-field__label {
+    background-color: rgb(var(--md-sys-color-surface, 28 27 31));
+  }
+}

@@ -1,0 +1,541 @@
+/* src/components/Material3/animations.css */
+
+/* Material Design 3 Core Animations and Micro-interactions */
+
+/* ===============================================
+   MOTION TOKENS AND CUSTOM PROPERTIES
+   =============================================== */
+
+:root {
+  /* Duration Tokens */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+
+  /* Easing Tokens */
+  --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+  /* Z-index Tokens */
+  --md-sys-z-index-dropdown: 1000;
+  --md-sys-z-index-sticky: 1020;
+  --md-sys-z-index-fixed: 1030;
+  --md-sys-z-index-modal: 1040;
+  --md-sys-z-index-snackbar: 1050;
+  --md-sys-z-index-tooltip: 1060;
+}
+
+/* ===============================================
+   SHARED AXIS TRANSITIONS
+   =============================================== */
+
+@keyframes md3-shared-axis-x-enter {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes md3-shared-axis-x-exit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes md3-shared-axis-y-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes md3-shared-axis-y-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes md3-shared-axis-z-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-shared-axis-z-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+/* ===============================================
+   CONTAINER TRANSFORM ANIMATIONS
+   =============================================== */
+
+@keyframes md3-container-transform-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-container-transform-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* ===============================================
+   FADE THROUGH TRANSITIONS
+   =============================================== */
+
+@keyframes md3-fade-through-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  35% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-fade-through-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+/* ===============================================
+   ELEVATION ANIMATIONS
+   =============================================== */
+
+@keyframes md3-elevation-rise {
+  from {
+    box-shadow: var(--md-sys-elevation-level0);
+  }
+  to {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+}
+
+@keyframes md3-elevation-lower {
+  from {
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+  to {
+    box-shadow: var(--md-sys-elevation-level0);
+  }
+}
+
+/* ===============================================
+   RIPPLE ANIMATIONS
+   =============================================== */
+
+@keyframes md3-ripple-expand {
+  from {
+    opacity: 0.12;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-ripple-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.12;
+  }
+}
+
+@keyframes md3-ripple-fade-out {
+  from {
+    opacity: 0.12;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ===============================================
+   FOCUS RING ANIMATIONS
+   =============================================== */
+
+@keyframes md3-focus-ring-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-focus-ring-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* ===============================================
+   SCALE ANIMATIONS
+   =============================================== */
+
+@keyframes md3-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+/* ===============================================
+   SLIDE ANIMATIONS
+   =============================================== */
+
+@keyframes md3-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes md3-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes md3-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes md3-slide-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* ===============================================
+   BOOK-SPECIFIC ANIMATIONS
+   =============================================== */
+
+@keyframes md3-book-flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(-90deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes md3-page-turn {
+  0% {
+    transform: rotateY(0deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  50% {
+    transform: rotateY(90deg);
+    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    transform: rotateY(180deg);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+@keyframes md3-bookmark-flutter {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(-1deg);
+  }
+}
+
+@keyframes md3-reading-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ===============================================
+   UTILITY ANIMATION CLASSES
+   =============================================== */
+
+.md3-animate-fade-in {
+  animation: md3-fade-through-enter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) forwards;
+}
+
+.md3-animate-fade-out {
+  animation: md3-fade-through-exit var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) forwards;
+}
+
+.md3-animate-scale-in {
+  animation: md3-scale-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-animate-scale-out {
+  animation: md3-scale-out var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-animate-slide-up {
+  animation: md3-slide-up var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-emphasized-decelerate) forwards;
+}
+
+.md3-animate-slide-down {
+  animation: md3-slide-down var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-emphasized-accelerate) forwards;
+}
+
+.md3-animate-shared-axis-x {
+  animation: md3-shared-axis-x-enter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) forwards;
+}
+
+.md3-animate-shared-axis-y {
+  animation: md3-shared-axis-y-enter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) forwards;
+}
+
+.md3-animate-container-transform {
+  animation: md3-container-transform-enter var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+/* ===============================================
+   HOVER AND INTERACTION EFFECTS
+   =============================================== */
+
+.md3-hover-lift {
+  transition: 
+    transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.md3-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.md3-hover-scale {
+  transition: transform var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.md3-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.md3-press-scale {
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-press-scale:active {
+  transform: scale(0.98);
+}
+
+/* ===============================================
+   LOADING ANIMATIONS
+   =============================================== */
+
+@keyframes md3-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes md3-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.md3-loading-pulse {
+  animation: md3-pulse var(--md-sys-motion-duration-long2) ease-in-out infinite;
+}
+
+.md3-loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--md-sys-color-surface-variant) / 0.1) 25%,
+    rgb(var(--md-sys-color-surface-variant) / 0.3) 50%,
+    rgb(var(--md-sys-color-surface-variant) / 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: md3-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ===============================================
+   ACCESSIBILITY CONSIDERATIONS
+   =============================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .md3-animate-fade-in,
+  .md3-animate-fade-out,
+  .md3-animate-scale-in,
+  .md3-animate-scale-out,
+  .md3-animate-slide-up,
+  .md3-animate-slide-down,
+  .md3-animate-shared-axis-x,
+  .md3-animate-shared-axis-y,
+  .md3-animate-container-transform {
+    animation: none;
+  }
+  
+  .md3-hover-lift,
+  .md3-hover-scale,
+  .md3-press-scale {
+    transition: none;
+  }
+}
+
+/* ===============================================
+   PERFORMANCE OPTIMIZATIONS
+   =============================================== */
+
+.md3-will-change-transform {
+  will-change: transform;
+}
+
+.md3-will-change-opacity {
+  will-change: opacity;
+}
+
+.md3-will-change-auto {
+  will-change: auto;
+}
+
+/* Force hardware acceleration for smooth animations */
+.md3-hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

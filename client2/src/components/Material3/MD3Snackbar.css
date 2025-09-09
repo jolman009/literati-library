@@ -1,0 +1,438 @@
+/* src/components/Material3/MD3Snackbar.css */
+
+.md3-snackbar__container {
+  position: fixed;
+  z-index: var(--md-sys-z-index-snackbar);
+  pointer-events: none;
+}
+
+.md3-snackbar {
+  --_container-color: var(--md-sys-color-inverse-surface);
+  --_container-elevation: var(--md-sys-elevation-level3);
+  --_container-shape: var(--md-sys-shape-corner-extra-small);
+  --_supporting-text-color: var(--md-sys-color-inverse-on-surface);
+  --_action-label-text-color: var(--md-sys-color-inverse-primary);
+  
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 344px;
+  max-width: 672px;
+  min-height: 48px;
+  background-color: rgb(var(--_container-color));
+  border-radius: var(--_container-shape);
+  box-shadow: var(--_container-elevation);
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.md3-snackbar__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.md3-snackbar__message {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--_supporting-text-color));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+}
+
+.md3-snackbar__action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.md3-snackbar__action .md3-button {
+  --md-sys-color-primary: var(--md-sys-color-inverse-primary);
+  --md-sys-color-on-primary: var(--md-sys-color-inverse-on-surface);
+  min-width: auto;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+}
+
+.md3-snackbar__close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgb(var(--_supporting-text-color));
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  flex-shrink: 0;
+}
+
+.md3-snackbar__close-button:hover {
+  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.08);
+}
+
+.md3-snackbar__close-button:active {
+  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.12);
+}
+
+.md3-snackbar__close-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Snackbar Variants */
+.md3-snackbar--success {
+  --_container-color: var(--md-sys-color-tertiary-container);
+  --_supporting-text-color: var(--md-sys-color-on-tertiary-container);
+  --_action-label-text-color: var(--md-sys-color-tertiary);
+}
+
+.md3-snackbar--error {
+  --_container-color: var(--md-sys-color-error-container);
+  --_supporting-text-color: var(--md-sys-color-on-error-container);
+  --_action-label-text-color: var(--md-sys-color-error);
+}
+
+.md3-snackbar--warning {
+  --_container-color: var(--md-sys-color-secondary-container);
+  --_supporting-text-color: var(--md-sys-color-on-secondary-container);
+  --_action-label-text-color: var(--md-sys-color-secondary);
+}
+
+.md3-snackbar--info {
+  --_container-color: var(--md-sys-color-primary-container);
+  --_supporting-text-color: var(--md-sys-color-on-primary-container);
+  --_action-label-text-color: var(--md-sys-color-primary);
+}
+
+/* Position Variants */
+.md3-snackbar--bottom-center {
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.md3-snackbar--bottom-left {
+  bottom: 16px;
+  left: 16px;
+}
+
+.md3-snackbar--bottom-right {
+  bottom: 16px;
+  right: 16px;
+}
+
+.md3-snackbar--top-center {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.md3-snackbar--top-left {
+  top: 16px;
+  left: 16px;
+}
+
+.md3-snackbar--top-right {
+  top: 16px;
+  right: 16px;
+}
+
+/* Animation States */
+.md3-snackbar--entering {
+  animation: md3-snackbar-enter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--exiting {
+  animation: md3-snackbar-exit var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+/* Animations */
+@keyframes md3-snackbar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes md3-snackbar-exit {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+  }
+}
+
+@keyframes md3-snackbar-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes md3-snackbar-exit-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes md3-snackbar-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes md3-snackbar-exit-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes md3-snackbar-enter-top {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes md3-snackbar-exit-top {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+
+/* Position-specific animations */
+.md3-snackbar--bottom-left.md3-snackbar--entering {
+  animation: md3-snackbar-enter-left var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--bottom-left.md3-snackbar--exiting {
+  animation: md3-snackbar-exit-left var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--bottom-right.md3-snackbar--entering {
+  animation: md3-snackbar-enter-right var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--bottom-right.md3-snackbar--exiting {
+  animation: md3-snackbar-exit-right var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--top-center.md3-snackbar--entering,
+.md3-snackbar--top-left.md3-snackbar--entering,
+.md3-snackbar--top-right.md3-snackbar--entering {
+  animation: md3-snackbar-enter-top var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+.md3-snackbar--top-center.md3-snackbar--exiting,
+.md3-snackbar--top-left.md3-snackbar--exiting,
+.md3-snackbar--top-right.md3-snackbar--exiting {
+  animation: md3-snackbar-exit-top var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized) forwards;
+}
+
+/* Progress Snackbar Styles */
+.md3-progress-snackbar__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.md3-progress-snackbar__message {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--_supporting-text-color));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+.md3-progress-snackbar__progress {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.24);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.md3-progress-snackbar__progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgb(var(--_action-label-text-color));
+  border-radius: inherit;
+  transition: width var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.md3-progress-snackbar__percentage {
+  font: var(--md-sys-typescale-label-small-font);
+  color: rgb(var(--_supporting-text-color));
+  line-height: var(--md-sys-typescale-label-small-line-height);
+  text-align: right;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .md3-snackbar {
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+    margin: 0 16px;
+  }
+  
+  .md3-snackbar--bottom-center,
+  .md3-snackbar--top-center {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    width: auto;
+  }
+  
+  .md3-snackbar__content {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  
+  .md3-snackbar__message {
+    font-size: 0.875rem;
+  }
+  
+  .md3-snackbar__action .md3-button {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .md3-snackbar {
+    min-width: 240px;
+  }
+  
+  .md3-snackbar__content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .md3-snackbar__action {
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  
+  .md3-snackbar__close-button {
+    align-self: flex-end;
+    margin-top: -4px;
+  }
+}
+
+/* Multiple Snackbars Stacking */
+.md3-snackbar:nth-of-type(1) {
+  z-index: calc(var(--md-sys-z-index-snackbar) + 3);
+}
+
+.md3-snackbar:nth-of-type(2) {
+  z-index: calc(var(--md-sys-z-index-snackbar) + 2);
+  bottom: 80px;
+  opacity: 0.9;
+  transform: translateX(-50%) scale(0.98);
+}
+
+.md3-snackbar:nth-of-type(3) {
+  z-index: calc(var(--md-sys-z-index-snackbar) + 1);
+  bottom: 144px;
+  opacity: 0.8;
+  transform: translateX(-50%) scale(0.96);
+}
+
+.md3-snackbar:nth-of-type(n + 4) {
+  display: none;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .md3-snackbar--entering,
+  .md3-snackbar--exiting {
+    animation: none;
+  }
+  
+  .md3-progress-snackbar__progress-bar {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-snackbar {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+  }
+  
+  .md3-snackbar__close-button:focus-visible {
+    outline: 2px solid rgb(var(--_supporting-text-color));
+    outline-offset: 2px;
+  }
+}
+
+/* Dark Theme Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-snackbar--success {
+    --_container-color: var(--md-sys-color-tertiary);
+    --_supporting-text-color: var(--md-sys-color-on-tertiary);
+  }
+  
+  .md3-snackbar--error {
+    --_container-color: var(--md-sys-color-error);
+    --_supporting-text-color: var(--md-sys-color-on-error);
+  }
+  
+  .md3-snackbar--warning {
+    --_container-color: var(--md-sys-color-secondary);
+    --_supporting-text-color: var(--md-sys-color-on-secondary);
+  }
+  
+  .md3-snackbar--info {
+    --_container-color: var(--md-sys-color-primary);
+    --_supporting-text-color: var(--md-sys-color-on-primary);
+  }
+}

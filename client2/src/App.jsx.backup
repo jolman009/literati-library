@@ -1,0 +1,318 @@
+// src/App.jsx - COMPLETE FIX for page loading issues
+import React, { Suspense, lazy, useEffect } from 'react';
+import './styles/gamification.css';
+import './styles/dashboard-unified.css';
+import './styles/material3.css';
+import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { GamificationProvider } from './contexts/GamificationContext';
+import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Material3';
+import AppLayout from './components/AppLayout';
+import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
+import { FloatingReadingTimer, ReadingSessionManager } from './components/ReadingSessionUI';
+
+// Import Login (non-lazy since it's critical)
+import Login from './pages/Login';
+
+// Lazy load page components with error handling
+const DashboardPage = lazy(() => 
+  import('./pages/DashboardPage').catch(err => {
+    console.error('Failed to load DashboardPage:', err);
+    return import('./components/ErrorFallback').catch(() => ({
+      default: () => <div>Error loading Dashboard. Please refresh.</div>
+    }));
+  })
+);
+
+const EnhancedBookLibraryApp = lazy(() => 
+  import('./components/EnhancedBookLibraryApp').catch(err => {
+    console.error('Failed to load Library:', err);
+    return { default: () => <div>Error loading Library. Please refresh.</div> };
+  })
+);
+
+const UploadPage = lazy(() => 
+  import('./pages/UploadPage').catch(err => {
+    console.error('Failed to load UploadPage:', err);
+    return { default: () => <div>Error loading Upload. Please refresh.</div> };
+  })
+);
+
+const NotesPage = lazy(() => 
+  import('./pages/NotesPage').catch(err => {
+    console.error('Failed to load NotesPage:', err);
+    return { default: () => <div>Error loading Notes. Please refresh.</div> };
+  })
+);
+
+const ReadBook = lazy(() => 
+  import('./pages/ReadBook').catch(err => {
+    console.error('Failed to load ReadBook:', err);
+    return { default: () => <div>Error loading Reader. Please refresh.</div> };
+  })
+);
+
+// Enhanced Loading Component
+const LoadingSpinner = () => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '60vh',
+    flexDirection: 'column',
+    gap: '16px'
+  }}>
+    <div style={{
+      width: '40px',
+      height: '40px',
+      border: '3px solid rgba(103, 80, 164, 0.2)',
+      borderTop: '3px solid rgb(103, 80, 164)',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }}></div>
+    <p style={{ 
+      color: 'rgb(103, 80, 164)', 
+      margin: 0,
+      fontWeight: 500 
+    }}>
+      Loading your reading experience...
+    </p>
+    <style>{`
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `}</style>
+  </div>
+);
+
+// Error Boundary for Lazy Loading
+class LazyLoadErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('LazyLoad Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '60vh',
+          flexDirection: 'column',
+          gap: '16px',
+          padding: '24px',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ color: '#ba1a1a', margin: 0 }}>
+            Page Failed to Load
+          </h3>
+          <p style={{ color: '#6c757d', maxWidth: '400px', margin: '8px 0' }}>
+            There was an error loading this page. This might be due to a missing file or import issue.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#6750a4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 500
+            }}
+          >
+            Refresh Page
+          </button>
+          <details style={{ marginTop: '16px', color: '#6c757d', fontSize: '14px' }}>
+            <summary style={{ cursor: 'pointer' }}>Error Details</summary>
+            <pre style={{ 
+              textAlign: 'left', 
+              fontSize: '12px', 
+              marginTop: '8px',
+              padding: '8px',
+              backgroundColor: '#f5f5f5',
+              borderRadius: '4px',
+              overflow: 'auto',
+              maxWidth: '400px'
+            }}>
+              {this.state.error?.toString()}
+            </pre>
+          </details>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Page Wrapper Component - Replaces the functionality of your old wrappers
+const PageWrapper = ({ children }) => {
+  return (
+    <LazyLoadErrorBoundary>
+      <ReadingSessionProvider>
+        {children}
+        <FloatingReadingTimer />
+        <ReadingSessionManager />
+      </ReadingSessionProvider>
+    </LazyLoadErrorBoundary>
+  );
+};
+
+// Protected Layout Wrapper
+const ProtectedLayout = () => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <AppLayout />;
+};
+
+// Main App Routes
+const AppRoutes = () => {
+  const { user, loading, isAuthenticated } = useAuth();
+
+  // Debug auth state
+  useEffect(() => {
+    console.log('🔍 AUTH DEBUG:', {
+      user: user ? `${user.name} (${user.email})` : 'null',
+      loading,
+      isAuthenticated,
+      hasToken: !!localStorage.getItem('literati_token'),
+      currentPath: window.location.pathname
+    });
+  }, [user, loading, isAuthenticated]);
+
+  if (loading) {
+    console.log('🔄 Loading auth state...');
+    return <LoadingSpinner />;
+  }
+
+  console.log('🔍 Rendering routes. User:', user ? user.name : 'none');
+
+  return (
+    <Routes>
+      {/* Public Route - Login */}
+      <Route 
+        path="/login" 
+        element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} 
+      />
+
+      {/* Protected Routes - Nested under AppLayout */}
+      <Route element={<ProtectedLayout />}>
+        {/* Dashboard - Default home page */}
+        <Route 
+          index
+          element={
+            <PageWrapper>
+              <Suspense fallback={<LoadingSpinner />}>
+                <DashboardPage />
+              </Suspense>
+            </PageWrapper>
+          } 
+        />
+        
+        {/* Dashboard explicit path */}
+        <Route 
+          path="dashboard"
+          element={<Navigate to="/" replace />}
+        />
+        
+        {/* Library Page */}
+        <Route 
+          path="library" 
+          element={
+            <PageWrapper>
+              <Suspense fallback={<LoadingSpinner />}>
+                <EnhancedBookLibraryApp />
+              </Suspense>
+            </PageWrapper>
+          } 
+        />
+
+        {/* Upload Page */}
+        <Route 
+          path="upload" 
+          element={
+            <LazyLoadErrorBoundary>
+              <Suspense fallback={<LoadingSpinner />}>
+                <UploadPage />
+              </Suspense>
+            </LazyLoadErrorBoundary>
+          } 
+        />
+
+        {/* Notes Page */}
+        <Route 
+          path="notes" 
+          element={
+            <LazyLoadErrorBoundary>
+              <Suspense fallback={<LoadingSpinner />}>
+                <NotesPage />
+              </Suspense>
+            </LazyLoadErrorBoundary>
+          } 
+        />
+      </Route>
+
+      {/* Read Book Page - Outside of AppLayout for full screen reading */}
+      <Route 
+        path="/read/:bookId" 
+        element={
+          isAuthenticated ? (
+            <PageWrapper>
+              <Suspense fallback={<LoadingSpinner />}>
+                <ReadBook />
+              </Suspense>
+            </PageWrapper>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        } 
+      />
+
+      {/* Catch-all fallback */}
+      <Route 
+        path="*" 
+        element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} 
+      />
+    </Routes>
+  );
+};
+
+// Main App Component with all providers
+const App = () => {
+  return (
+    <div className="app">
+      <AuthProvider>
+        <Material3ThemeProvider defaultTheme="auto">
+          <MD3SnackbarProvider>
+            <GamificationProvider>
+              <AppRoutes />
+            </GamificationProvider>
+          </MD3SnackbarProvider>
+        </Material3ThemeProvider>
+      </AuthProvider>
+    </div>
+  );
+};
+
+export default App;

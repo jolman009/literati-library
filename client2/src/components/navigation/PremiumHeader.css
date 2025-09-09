@@ -1,0 +1,320 @@
+/* Premium Header - Material Design 3 */
+
+.md3-header {
+  position: fixed;
+  top: 0;
+  left: 80px; /* Account for navigation rail */
+  right: 0;
+  height: 64px;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  z-index: 90;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When navigation is expanded */
+.premium-app-layout:has(.md3-navigation-rail:not(.collapsed)) .md3-header {
+  left: 280px;
+}
+
+/* Dark mode */
+.md3-header.dark {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+
+/* Header content container */
+.md3-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 24px;
+}
+
+/* Left section */
+.md3-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+/* Logo styling */
+.md3-header-logo {
+  height: 36px;
+  width: auto;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  border-radius: 8px;
+  padding: 2px;
+  object-fit: contain;
+  display: block;
+}
+
+.md3-header-logo:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+  background: var(--md-sys-color-surface-variant);
+}
+
+.md3-header.dark .md3-header-logo {
+  filter: brightness(1.1);
+}
+
+.md3-header.dark .md3-header-logo:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Logo fallback styling */
+.md3-header-logo-fallback {
+  height: 36px;
+  width: 36px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.md3-header-logo-fallback:hover {
+  transform: scale(1.05);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.md3-header.dark .md3-header-logo-fallback {
+  background: rgba(103, 80, 164, 0.2);
+  color: #d0bcff;
+}
+
+.md3-header.dark .md3-header-logo-fallback:hover {
+  background: rgba(103, 80, 164, 0.3);
+}
+
+.md3-header-title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--md-sys-color-on-surface);
+  letter-spacing: 0;
+  line-height: 28px;
+}
+
+.md3-header.dark .md3-header-title {
+  color: #f1f5f9;
+}
+
+/* Breadcrumbs */
+.md3-header-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.md3-header-breadcrumbs a {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.md3-header-breadcrumbs a:hover {
+  opacity: 0.8;
+}
+
+/* Search section */
+.md3-header-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.md3-search-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--md-sys-color-surface-variant);
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.md3-search-field:focus {
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.md3-header.dark .md3-search-field {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.md3-header.dark .md3-search-field:focus {
+  background: #475569;
+}
+
+/* Right section */
+.md3-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Icon buttons in header */
+.md3-header-icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.md3-header-icon-button:hover {
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface);
+}
+
+.md3-header.dark .md3-header-icon-button {
+  color: #94a3b8;
+}
+
+.md3-header.dark .md3-header-icon-button:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+/* Notification badge */
+.md3-header-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--md-sys-color-error);
+  border-radius: 50%;
+}
+
+/* User avatar */
+.md3-header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.md3-header-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Dropdown menus */
+.md3-header-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.md3-header-menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.md3-header.dark .md3-header-menu {
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.md3-header-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+  transition: background 0.2s;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.md3-header-menu-item:hover {
+  background: var(--md-sys-color-surface-variant);
+}
+
+.md3-header.dark .md3-header-menu-item {
+  color: #f1f5f9;
+}
+
+.md3-header.dark .md3-header-menu-item:hover {
+  background: #334155;
+}
+
+.md3-header-menu-divider {
+  height: 1px;
+  background: var(--md-sys-color-outline-variant);
+  margin: 4px 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .md3-header {
+    left: 80px;
+  }
+  
+  .premium-app-layout:has(.md3-navigation-rail:not(.collapsed)) .md3-header {
+    left: 80px;
+  }
+  
+  .md3-header-search {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .md3-header {
+    left: 0;
+    padding: 0 16px;
+  }
+  
+  .md3-header-title {
+    font-size: 18px;
+  }
+}

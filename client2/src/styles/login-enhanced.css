@@ -1,0 +1,308 @@
+/* src/styles/login-enhanced.css */
+/* Enhanced Login Screen Styles for Material Design 3 */
+
+/* ===============================================
+   LOGIN SCREEN ANIMATIONS & ENHANCEMENTS
+   =============================================== */
+
+/* Page entrance animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Login container animations */
+.login-container {
+  animation: slideInUp 0.6s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.login-card {
+  animation: fadeInScale 0.8s cubic-bezier(0.2, 0, 0, 1) 0.2s both;
+}
+
+.login-logo {
+  animation: fadeInScale 1s cubic-bezier(0.2, 0, 0, 1) 0.1s both;
+}
+
+/* Enhanced background effects */
+.login-background {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(var(--md-sys-color-primary), 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(var(--md-sys-color-secondary), 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(var(--md-sys-color-tertiary), 0.1) 0%, transparent 50%);
+}
+
+/* Floating decorative elements */
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element:nth-child(2) {
+  animation-delay: -2s;
+}
+
+.floating-element:nth-child(3) {
+  animation-delay: -4s;
+}
+
+/* Enhanced card styling */
+.login-card-enhanced {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(var(--md-sys-color-surface-container), 0.8);
+  border: 1px solid rgba(var(--md-sys-color-outline-variant), 0.2);
+  box-shadow: 
+    0 8px 32px rgba(var(--md-sys-color-shadow), 0.1),
+    0 4px 16px rgba(var(--md-sys-color-shadow), 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.login-card-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(var(--md-sys-color-shadow), 0.15),
+    0 8px 24px rgba(var(--md-sys-color-shadow), 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced logo container */
+.logo-container {
+  background: 
+    linear-gradient(135deg, 
+      rgba(var(--md-sys-color-primary), 0.15) 0%, 
+      rgba(var(--md-sys-color-primary), 0.05) 100%
+    );
+  border: 1px solid rgba(var(--md-sys-color-primary), 0.1);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.logo-container:hover {
+  transform: scale(1.05) rotate(2deg);
+  background: 
+    linear-gradient(135deg, 
+      rgba(var(--md-sys-color-primary), 0.2) 0%, 
+      rgba(var(--md-sys-color-primary), 0.1) 100%
+    );
+}
+
+/* Enhanced form field styling */
+.login-field {
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.login-field:focus-within {
+  transform: translateY(-1px);
+}
+
+/* Enhanced button styling */
+.login-button-primary {
+  background: linear-gradient(135deg, 
+    rgb(var(--md-sys-color-primary)) 0%, 
+    rgba(var(--md-sys-color-primary), 0.9) 100%
+  );
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.login-button-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.login-button-primary:hover::before {
+  left: 100%;
+}
+
+.login-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 8px 24px rgba(var(--md-sys-color-primary), 0.4),
+    0 4px 12px rgba(var(--md-sys-color-primary), 0.2);
+}
+
+.login-button-primary:active {
+  transform: translateY(0);
+}
+
+/* Loading spinner enhancement */
+.loading-spinner {
+  border: 2px solid rgba(var(--md-sys-color-on-primary), 0.3);
+  border-top: 2px solid rgb(var(--md-sys-color-on-primary));
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error message enhancement */
+.error-message {
+  animation: slideInUp 0.3s cubic-bezier(0.2, 0, 0, 1);
+  background: 
+    linear-gradient(135deg, 
+      rgba(var(--md-sys-color-error-container), 0.2) 0%, 
+      rgba(var(--md-sys-color-error-container), 0.1) 100%
+    );
+  border-left: 4px solid rgb(var(--md-sys-color-error));
+}
+
+/* Divider enhancement */
+.divider-enhanced {
+  position: relative;
+}
+
+.divider-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--md-sys-color-outline-variant), 0.5),
+    transparent
+  );
+}
+
+/* Footer links enhancement */
+.footer-link {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.footer-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgb(var(--md-sys-color-primary));
+  transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.footer-link:hover::after {
+  width: 100%;
+}
+
+/* Responsive enhancements */
+@media (max-width: 640px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
+  .login-card-enhanced {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  .logo-container {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .login-card-enhanced {
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  
+  .login-card-enhanced:hover {
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 8px 24px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .login-container,
+  .login-card,
+  .login-logo,
+  .floating-element,
+  .login-field,
+  .login-button-primary,
+  .error-message {
+    animation: none;
+  }
+  
+  .logo-container:hover,
+  .login-card-enhanced:hover,
+  .login-button-primary:hover,
+  .login-field:focus-within {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .login-card-enhanced {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+    background: rgb(var(--md-sys-color-surface));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  .logo-container {
+    border: 2px solid rgb(var(--md-sys-color-primary));
+  }
+}

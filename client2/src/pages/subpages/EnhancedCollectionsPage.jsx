@@ -1,0 +1,1121 @@
+
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { 
+  MD3Card, 
+  MD3Button, 
+  MD3TextField, 
+  MD3Chip, 
+  MD3Dialog, 
+  MD3Surface,
+  MD3Progress,
+  MD3FloatingActionButton
+} from '../../components/Material3';
+
+const EnhancedCollectionsPage = ({ 
+  books = [], 
+  onBookUpdate, 
+  user,
+  className = '' 
+}) => {
+  const { actualTheme } = useMaterial3Theme();
+  
+  // State management
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [editingCollection, setEditingCollection] = useState(null);
+  const [collectionDetailView, setCollectionDetailView] = useState(null);
+  const [draggedBook, setDraggedBook] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBooks, setSelectedBooks] = useState(new Set());
+  const [batchMode, setBatchMode] = useState(false);
+
+  // Collection creation state
+  const [newCollection, setNewCollection] = useState({
+    name: '',
+    description: '',
+    color: '#6750A4',
+    icon: '📚'
+  });
+
+  // Available colors for collections
+  const collectionColors = [
+    '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
+    '#00BCD4', '#009688', '#4CAF50', '#8BC34A',
+    '#CDDC39', '#FFC107', '#FF9800', '#FF5722',
+    '#F44336', '#E91E63', '#9C27B0', '#673AB7'
+  ];
+
+  // Available icons for collections
+  const collectionIcons = [
+    '📚', '📖', '📝', '🎓', '💼', '🌟', '❤️', '🔥',
+    '⭐', '📋', '🎯', '🚀', '💎', '🏆', '📊', '🎨'
+  ];
+
+  // Initialize collections with enhanced default categories
+  useEffect(() => {
+    const loadCollections = async () => {
+      setLoading(true);
+      try {
+        // Get saved collections from localStorage or initialize defaults
+        const savedCollections = localStorage.getItem('bookCollections');
+        
+        if (savedCollections) {
+          setCollections(JSON.parse(savedCollections));
+        } else {
+          // Create smart default collections based on available books
+          const defaultCollections = [
+            {
+              id: '1',
+              name: 'Favorites',
+              description: 'Your most beloved books',
+              color: '#F44336',
+              icon: '❤️',
+              bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id),
+              isDefault: true,
+              createdAt: Date.now()
+            },
+            {
+              id: '2',
+              name: 'Want to Read',
+              description: 'Books on your reading wishlist',
+              color: '#4CAF50',
+              icon: '📋',
+              bookIds: books.filter(b => b.status === 'want_to_read' || (!b.isReading && !b.completed)).map(b => b.id),
+              isDefault: true,
+              createdAt: Date.now()
+            },
+            {
+              id: '3',
+              name: 'Currently Reading',
+              description: 'Books you\'re actively reading',
+              color: '#2196F3',
+              icon: '📖',
+              bookIds: books.filter(b => b.isReading || b.status === 'reading').map(b => b.id),
+              isDefault: true,
+              createdAt: Date.now()
+            },
+            {
+              id: '4',
+              name: 'Completed',
+              description: 'Books you\'ve finished reading',
+              color: '#8BC34A',
+              icon: '✅',
+              bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id),
+              isDefault: true,
+              createdAt: Date.now()
+            }
+          ];
+          
+          setCollections(defaultCollections);
+          localStorage.setItem('bookCollections', JSON.stringify(defaultCollections));
+        }
+      } catch (error) {
+        console.error('Failed to load collections:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCollections();
+  }, [books]);
+
+  // Save collections to localStorage whenever they change
+  useEffect(() => {
+    if (collections.length > 0) {
+      localStorage.setItem('bookCollections', JSON.stringify(collections));
+    }
+  }, [collections]);
+
+  // Get books for a collection
+  const getBooksForCollection = useCallback((collection) => {
+    return books.filter(book => collection.bookIds.includes(book.id));
+  }, [books]);
+
+  // Filtered collections based on search
+  const filteredCollections = useMemo(() => {
+    if (!searchQuery.trim()) return collections;
+    
+    return collections.filter(collection =>
+      collection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      collection.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [collections, searchQuery]);
+
+  // Handle creating new collection
+  const handleCreateCollection = useCallback(() => {
+    if (!newCollection.name.trim()) return;
+
+    const collection = {
+      id: Date.now().toString(),
+      ...newCollection,
+      bookIds: [],
+      isDefault: false,
+      createdAt: Date.now()
+    };
+
+    setCollections(prev => [collection, ...prev]);
+    setNewCollection({ name: '', description: '', color: '#6750A4', icon: '📚' });
+    setIsCreating(false);
+  }, [newCollection]);
+
+  // Handle adding books to collection
+  const handleAddBooksToCollection = useCallback((collectionId, bookIds) => {
+    setCollections(prev => prev.map(collection => {
+      if (collection.id === collectionId) {
+        const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
+        return { ...collection, bookIds: newBookIds };
+      }
+      return collection;
+    }));
+  }, []);
+
+  // Handle removing books from collection
+  const handleRemoveBooksFromCollection = useCallback((collectionId, bookIds) => {
+    setCollections(prev => prev.map(collection => {
+      if (collection.id === collectionId) {
+        const newBookIds = collection.bookIds.filter(id => !bookIds.includes(id));
+        return { ...collection, bookIds: newBookIds };
+      }
+      return collection;
+    }));
+  }, []);
+
+  // Handle deleting collection
+  const handleDeleteCollection = useCallback((collectionId) => {
+    if (window.confirm('Are you sure you want to delete this collection?')) {
+      setCollections(prev => prev.filter(c => c.id !== collectionId));
+      setEditingCollection(null);
+      setCollectionDetailView(null);
+    }
+  }, []);
+
+  // Handle editing collection
+  const handleEditCollection = useCallback((updatedCollection) => {
+    setCollections(prev => prev.map(collection => 
+      collection.id === updatedCollection.id ? updatedCollection : collection
+    ));
+    setEditingCollection(null);
+  }, []);
+
+  // Handle drag and drop
+  const handleDragStart = useCallback((e, book) => {
+    setDraggedBook(book);
+    e.dataTransfer.effectAllowed = 'move';
+  }, []);
+
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleDrop = useCallback((e, collectionId) => {
+    e.preventDefault();
+    if (draggedBook) {
+      handleAddBooksToCollection(collectionId, [draggedBook.id]);
+      setDraggedBook(null);
+    }
+  }, [draggedBook, handleAddBooksToCollection]);
+
+  // Handle batch operations
+  const handleBatchAddToCollection = useCallback((collectionId) => {
+    handleAddBooksToCollection(collectionId, Array.from(selectedBooks));
+    setSelectedBooks(new Set());
+    setBatchMode(false);
+  }, [selectedBooks, handleAddBooksToCollection]);
+
+  // Render collection card
+  const renderCollectionCard = (collection) => {
+    const collectionBooks = getBooksForCollection(collection);
+    
+    return (
+      <MD3Card
+        key={collection.id}
+        variant="elevated"
+        interactive
+        className="collection-card"
+        style={{
+          background: `linear-gradient(135deg, ${collection.color}15, ${collection.color}05)`,
+          border: `2px solid ${collection.color}20`,
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+        onDragOver={handleDragOver}
+        onDrop={(e) => handleDrop(e, collection.id)}
+        onClick={() => setCollectionDetailView(collection)}
+      >
+        {/* Collection header */}
+        <div style={{
+          padding: '20px',
+          background: `linear-gradient(135deg, ${collection.color}25, ${collection.color}10)`,
+          borderBottom: `1px solid ${collection.color}20`
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '28px' }}>{collection.icon}</span>
+              <div>
+                <h3 style={{
+                  margin: '0 0 4px 0',
+                  fontSize: '1.25rem',
+                  fontWeight: '600',
+                  color: '#1C1B1F'
+                }}>
+                  {collection.name}
+                </h3>
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.875rem',
+                  color: '#49454F',
+                  opacity: 0.8
+                }}>
+                  {collection.description}
+                </p>
+              </div>
+            </div>
+            
+            {!collection.isDefault && (
+              <MD3Button
+                variant="text"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditingCollection(collection);
+                }}
+                style={{ color: collection.color }}
+              >
+                ⚙️
+              </MD3Button>
+            )}
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <MD3Chip
+              label={`${collectionBooks.length} books`}
+              size="small"
+              style={{
+                backgroundColor: `${collection.color}20`,
+                color: collection.color,
+                border: `1px solid ${collection.color}30`
+              }}
+            />
+            
+            {collectionBooks.length > 0 && (
+              <div style={{
+                fontSize: '0.75rem',
+                color: '#49454F',
+                opacity: 0.7
+              }}>
+                Updated {new Date(collection.createdAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Book preview grid */}
+        <div style={{ padding: '16px' }}>
+          {collectionBooks.length > 0 ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
+              gap: '8px',
+              maxHeight: '120px',
+              overflow: 'hidden'
+            }}>
+              {collectionBooks.slice(0, 8).map((book, index) => (
+                <div
+                  key={book.id}
+                  style={{
+                    position: 'relative',
+                    aspectRatio: '2/3',
+                    borderRadius: '6px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    transform: `translateY(${index % 2 === 0 ? '0' : '8px'})`,
+                    transition: 'transform 0.3s ease'
+                  }}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, book)}
+                >
+                  {book.cover_url ? (
+                    <img
+                      src={book.cover_url}
+                      alt={book.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: collection.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: 'white',
+                      textAlign: 'center',
+                      padding: '4px'
+                    }}>
+                      {book.title.slice(0, 10)}...
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {collectionBooks.length > 8 && (
+                <div style={{
+                  aspectRatio: '2/3',
+                  borderRadius: '6px',
+                  backgroundColor: `${collection.color}20`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  color: collection.color,
+                  fontWeight: '600'
+                }}>
+                  +{collectionBooks.length - 8}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div style={{
+              textAlign: 'center',
+              padding: '32px 16px',
+              color: '#49454F',
+              opacity: 0.6
+            }}>
+              <div style={{ fontSize: '48px', marginBottom: '8px' }}>📚</div>
+              <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                No books yet. Drag books here or click to add.
+              </p>
+            </div>
+          )}
+        </div>
+      </MD3Card>
+    );
+  };
+
+  if (loading) {
+    return (
+      <MD3Surface className={className} style={{ padding: '32px', textAlign: 'center' }}>
+        <MD3Progress variant="circular" />
+        <p style={{ marginTop: '16px', color: '#49454F' }}>Loading your collections...</p>
+      </MD3Surface>
+    );
+  }
+
+  return (
+    <MD3Surface className={className} style={{ 
+      minHeight: '100vh', 
+      backgroundColor: actualTheme === 'dark' ? '#0f172a' : '#FFFBFE' 
+    }}>
+      {/* Header Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #6750A4, #7C4DFF)',
+        color: 'white',
+        padding: '32px 24px',
+        marginBottom: '24px'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <h1 style={{
+            margin: '0 0 8px 0',
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px'
+          }}>
+            📚 Collections
+          </h1>
+          <p style={{
+            margin: '0 0 24px 0',
+            fontSize: '1.125rem',
+            opacity: 0.9
+          }}>
+            Organize your library with custom collections that reflect your reading journey
+          </p>
+          
+          {/* Search and controls */}
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <MD3TextField
+              placeholder="Search collections..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ 
+                minWidth: '300px',
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                color: 'white'
+              }}
+              leadingIcon="🔍"
+            />
+            
+            <MD3Button
+              variant="filled"
+              onClick={() => setIsCreating(true)}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                color: 'white',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}
+              icon="➕"
+            >
+              New Collection
+            </MD3Button>
+            
+            <MD3Button
+              variant={batchMode ? 'filled' : 'outlined'}
+              onClick={() => setBatchMode(!batchMode)}
+              style={{
+                backgroundColor: batchMode ? 'rgba(255,255,255,0.2)' : 'transparent',
+                color: 'white',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}
+              icon="📝"
+            >
+              Batch Mode
+            </MD3Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Collections Grid */}
+      <div style={{ padding: '0 24px 24px', maxWidth: '1200px', margin: '0 auto' }}>
+        {filteredCollections.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: '24px'
+          }}>
+            {filteredCollections.map(renderCollectionCard)}
+          </div>
+        ) : (
+          <div style={{
+            textAlign: 'center',
+            padding: '64px 24px',
+            color: '#49454F'
+          }}>
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>📚</div>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>
+              {searchQuery ? 'No collections found' : 'Start building your collections'}
+            </h3>
+            <p style={{ margin: '0 0 24px 0', fontSize: '1rem', opacity: 0.7 }}>
+              {searchQuery 
+                ? 'Try adjusting your search terms'
+                : 'Create themed collections to organize your books by genre, mood, or any way you like'
+              }
+            </p>
+            {!searchQuery && (
+              <MD3Button
+                variant="filled"
+                onClick={() => setIsCreating(true)}
+                icon="➕"
+              >
+                Create Your First Collection
+              </MD3Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Batch Mode Panel */}
+      {batchMode && (
+        <MD3Surface style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          padding: '16px 24px',
+          borderRadius: '24px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+          backgroundColor: '#6750A4',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          zIndex: 1000
+        }}>
+          <span>Selected: {selectedBooks.size} books</span>
+          
+          <select 
+            onChange={(e) => {
+              if (e.target.value) {
+                handleBatchAddToCollection(e.target.value);
+                e.target.value = '';
+              }
+            }}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: 'white'
+            }}
+          >
+            <option value="">Add to Collection...</option>
+            {collections.map(collection => (
+              <option key={collection.id} value={collection.id} style={{ color: '#333' }}>
+                {collection.icon} {collection.name}
+              </option>
+            ))}
+          </select>
+          
+          <MD3Button
+            variant="text"
+            onClick={() => {
+              setSelectedBooks(new Set());
+              setBatchMode(false);
+            }}
+            style={{ color: 'white', minWidth: 'auto', padding: '8px' }}
+          >
+            Cancel
+          </MD3Button>
+        </MD3Surface>
+      )}
+
+      {/* Available Books for Batch Mode */}
+      {batchMode && (
+        <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+          <h3 style={{ marginBottom: '16px' }}>Select Books to Add to Collections</h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+            gap: '16px'
+          }}>
+            {books.map(book => (
+              <div
+                key={book.id}
+                onClick={() => {
+                  const newSelected = new Set(selectedBooks);
+                  if (selectedBooks.has(book.id)) {
+                    newSelected.delete(book.id);
+                  } else {
+                    newSelected.add(book.id);
+                  }
+                  setSelectedBooks(newSelected);
+                }}
+                style={{
+                  position: 'relative',
+                  aspectRatio: '2/3',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  border: selectedBooks.has(book.id) ? '3px solid #6750A4' : '3px solid transparent',
+                  transition: 'border-color 0.2s ease'
+                }}
+              >
+                {book.cover_url ? (
+                  <img
+                    src={book.cover_url}
+                    alt={book.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: '#6750A4',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '12px',
+                    textAlign: 'center',
+                    padding: '8px'
+                  }}>
+                    {book.title}
+                  </div>
+                )}
+                
+                {selectedBooks.has(book.id) && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: '#6750A4',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                  }}>
+                    ✓
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Action Button */}
+      {!batchMode && (
+        <MD3FloatingActionButton
+          icon="➕"
+          onClick={() => setIsCreating(true)}
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            backgroundColor: '#6750A4'
+          }}
+        />
+      )}
+
+      {/* Collection Detail Dialog */}
+      <MD3Dialog
+        open={!!collectionDetailView}
+        onClose={() => setCollectionDetailView(null)}
+        title={collectionDetailView?.name || 'Collection Details'}
+        maxWidth="md"
+      >
+        {collectionDetailView && (
+          <div style={{ padding: '20px' }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px', 
+              marginBottom: '24px',
+              padding: '16px',
+              backgroundColor: `${collectionDetailView.color}10`,
+              borderRadius: '12px',
+              border: `1px solid ${collectionDetailView.color}30`
+            }}>
+              <span style={{ fontSize: '32px' }}>{collectionDetailView.icon}</span>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '1.5rem', fontWeight: '600' }}>
+                  {collectionDetailView.name}
+                </h3>
+                <p style={{ margin: 0, color: '#49454F', fontSize: '0.9rem' }}>
+                  {collectionDetailView.description}
+                </p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: '#6b7280' }}>
+                  {getBooksForCollection(collectionDetailView).length} books
+                </p>
+              </div>
+            </div>
+            
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', 
+              gap: '16px',
+              maxHeight: '400px',
+              overflowY: 'auto'
+            }}>
+              {getBooksForCollection(collectionDetailView).map(book => (
+                <div key={book.id} style={{
+                  position: 'relative',
+                  aspectRatio: '2/3',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  cursor: 'pointer'
+                }}>
+                  {book.cover_url ? (
+                    <img
+                      src={book.cover_url}
+                      alt={book.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: collectionDetailView.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: '12px',
+                      textAlign: 'center',
+                      padding: '8px'
+                    }}>
+                      {book.title}
+                    </div>
+                  )}
+                  
+                  {/* Remove book button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveBooksFromCollection(collectionDetailView.id, [book.id]);
+                      setCollectionDetailView(prev => ({
+                        ...prev,
+                        bookIds: prev.bookIds.filter(id => id !== book.id)
+                      }));
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(244, 67, 54, 0.9)',
+                      color: 'white',
+                      border: 'none',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+            
+            {getBooksForCollection(collectionDetailView).length === 0 && (
+              <div style={{ textAlign: 'center', padding: '32px', color: '#6b7280' }}>
+                <div style={{ fontSize: '48px', marginBottom: '12px' }}>📚</div>
+                <p>No books in this collection yet</p>
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+              {!collectionDetailView.isDefault && (
+                <MD3Button
+                  variant="text"
+                  onClick={() => {
+                    setEditingCollection(collectionDetailView);
+                    setCollectionDetailView(null);
+                  }}
+                  style={{ color: '#6750A4' }}
+                >
+                  Edit Collection
+                </MD3Button>
+              )}
+              <MD3Button
+                variant="text"
+                onClick={() => setCollectionDetailView(null)}
+              >
+                Close
+              </MD3Button>
+            </div>
+          </div>
+        )}
+      </MD3Dialog>
+
+      {/* Edit Collection Dialog */}
+      <MD3Dialog
+        open={!!editingCollection}
+        onClose={() => setEditingCollection(null)}
+        title="Edit Collection"
+        maxWidth="sm"
+      >
+        {editingCollection && (
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <MD3TextField
+              label="Collection Name"
+              value={editingCollection.name}
+              onChange={(e) => setEditingCollection(prev => ({ ...prev, name: e.target.value }))}
+              required
+            />
+            
+            <MD3TextField
+              label="Description"
+              value={editingCollection.description}
+              onChange={(e) => setEditingCollection(prev => ({ ...prev, description: e.target.value }))}
+              multiline
+              rows={2}
+            />
+            
+            <div>
+              <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#49454F', marginBottom: '8px', display: 'block' }}>
+                Choose an icon
+              </label>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {collectionIcons.map(icon => (
+                  <button
+                    key={icon}
+                    onClick={() => setEditingCollection(prev => ({ ...prev, icon }))}
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      border: `2px solid ${editingCollection.icon === icon ? '#6750A4' : '#E7E0EC'}`,
+                      borderRadius: '12px',
+                      backgroundColor: editingCollection.icon === icon ? '#6750A420' : 'transparent',
+                      fontSize: '20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {icon}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#49454F', marginBottom: '8px', display: 'block' }}>
+                Choose a color
+              </label>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {collectionColors.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => setEditingCollection(prev => ({ ...prev, color }))}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: color,
+                      border: `3px solid ${editingCollection.color === color ? '#1C1B1F' : 'transparent'}`,
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', marginTop: '20px' }}>
+              <MD3Button
+                variant="text"
+                onClick={() => handleDeleteCollection(editingCollection.id)}
+                style={{ color: '#F44336' }}
+              >
+                Delete Collection
+              </MD3Button>
+              
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <MD3Button
+                  variant="text"
+                  onClick={() => setEditingCollection(null)}
+                >
+                  Cancel
+                </MD3Button>
+                <MD3Button
+                  variant="filled"
+                  onClick={() => handleEditCollection(editingCollection)}
+                  disabled={!editingCollection.name.trim()}
+                >
+                  Save Changes
+                </MD3Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </MD3Dialog>
+
+      {/* Create Collection Dialog */}
+      <MD3Dialog
+        open={isCreating}
+        onClose={() => setIsCreating(false)}
+        title="Create New Collection"
+        maxWidth="sm"
+      >
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <MD3TextField
+            label="Collection Name"
+            value={newCollection.name}
+            onChange={(e) => setNewCollection(prev => ({ ...prev, name: e.target.value }))}
+            placeholder="e.g., Sci-Fi Favorites, Summer Reading..."
+            required
+          />
+          
+          <MD3TextField
+            label="Description"
+            value={newCollection.description}
+            onChange={(e) => setNewCollection(prev => ({ ...prev, description: e.target.value }))}
+            placeholder="Brief description of this collection..."
+            multiline
+            rows={2}
+          />
+          
+          <div>
+            <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#49454F', marginBottom: '8px', display: 'block' }}>
+              Choose an icon
+            </label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {collectionIcons.map(icon => (
+                <button
+                  key={icon}
+                  onClick={() => setNewCollection(prev => ({ ...prev, icon }))}
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    border: `2px solid ${newCollection.icon === icon ? '#6750A4' : '#E7E0EC'}`,
+                    borderRadius: '12px',
+                    backgroundColor: newCollection.icon === icon ? '#6750A420' : 'transparent',
+                    fontSize: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#49454F', marginBottom: '8px', display: 'block' }}>
+              Choose a color
+            </label>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {collectionColors.map(color => (
+                <button
+                  key={color}
+                  onClick={() => setNewCollection(prev => ({ ...prev, color }))}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    backgroundColor: color,
+                    border: `3px solid ${newCollection.color === color ? '#1C1B1F' : 'transparent'}`,
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <MD3Button
+              variant="text"
+              onClick={() => setIsCreating(false)}
+            >
+              Cancel
+            </MD3Button>
+            <MD3Button
+              variant="filled"
+              onClick={handleCreateCollection}
+              disabled={!newCollection.name.trim()}
+            >
+              Create Collection
+            </MD3Button>
+          </div>
+        </div>
+      </MD3Dialog>
+    </MD3Surface>
+  );
+};
+
+// Export utility functions
+export const createDefaultCollections = (books = []) => {
+  return [
+    {
+      id: '1',
+      name: 'Favorites',
+      description: 'Your most beloved books',
+      color: '#F44336',
+      icon: '❤️',
+      bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id),
+      isDefault: true,
+      createdAt: Date.now()
+    },
+    {
+      id: '2',
+      name: 'Want to Read',
+      description: 'Books on your reading wishlist',
+      color: '#4CAF50',
+      icon: '📋',
+      bookIds: books.filter(b => b.status === 'want_to_read' || (!b.isReading && !b.completed)).map(b => b.id),
+      isDefault: true,
+      createdAt: Date.now()
+    },
+    {
+      id: '3',
+      name: 'Currently Reading',
+      description: 'Books you\'re actively reading',
+      color: '#2196F3',
+      icon: '📖',
+      bookIds: books.filter(b => b.isReading || b.status === 'reading').map(b => b.id),
+      isDefault: true,
+      createdAt: Date.now()
+    },
+    {
+      id: '4',
+      name: 'Completed',
+      description: 'Books you\'ve finished reading',
+      color: '#8BC34A',
+      icon: '✅',
+      bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id),
+      isDefault: true,
+      createdAt: Date.now()
+    }
+  ];
+};
+
+export const loadCollectionsFromStorage = () => {
+  try {
+    const saved = localStorage.getItem('bookCollections');
+    return saved ? JSON.parse(saved) : null;
+  } catch (error) {
+    console.error('Failed to load collections from storage:', error);
+    return null;
+  }
+};
+
+export const addBookToCollection = (collections, collectionId, bookId) => {
+  return collections.map(collection => {
+    if (collection.id === collectionId) {
+      const newBookIds = [...new Set([...collection.bookIds, bookId])];
+      return { ...collection, bookIds: newBookIds };
+    }
+    return collection;
+  });
+};
+
+export const removeBookFromCollection = (collections, collectionId, bookId) => {
+  return collections.map(collection => {
+    if (collection.id === collectionId) {
+      const newBookIds = collection.bookIds.filter(id => id !== bookId);
+      return { ...collection, bookIds: newBookIds };
+    }
+    return collection;
+  });
+};
+
+export const validateCollection = (collection, existingCollections = []) => {
+  if (!collection.name || !collection.name.trim()) {
+    return { isValid: false, error: 'Collection name is required' };
+  }
+  
+  const nameExists = existingCollections.some(c => 
+    c.name.toLowerCase() === collection.name.toLowerCase() && c.id !== collection.id
+  );
+  
+  if (nameExists) {
+    return { isValid: false, error: 'A collection with this name already exists' };
+  }
+  
+  return { isValid: true };
+};
+
+export const COLLECTION_COLORS = [
+  '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
+  '#00BCD4', '#009688', '#4CAF50', '#8BC34A',
+  '#CDDC39', '#FFC107', '#FF9800', '#FF5722',
+  '#F44336', '#E91E63', '#9C27B0', '#673AB7'
+];
+
+export default EnhancedCollectionsPage;

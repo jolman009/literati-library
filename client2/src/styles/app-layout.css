@@ -1,0 +1,76 @@
+/* App Layout Styles */
+
+.premium-app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--md-sys-color-background);
+}
+
+.desktop-layout {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 80px; /* Space for navigation rail */
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When navigation is expanded */
+.premium-app-layout:has(.md3-navigation-rail:not(.collapsed)) .content-area {
+  margin-left: 280px;
+}
+
+.page-content {
+  flex: 1;
+  padding: 24px;
+  background: var(--md-sys-color-background);
+  min-height: calc(100vh - 64px); /* Account for header */
+  margin-top: 64px; /* Space for fixed header */
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Dark mode support */
+.premium-app-layout.dark {
+  background: #0f172a;
+}
+
+.premium-app-layout.dark .page-content {
+  background: #0f172a;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .content-area {
+    margin-left: 0;
+    margin-bottom: 80px; /* Space for mobile navigation */
+  }
+  
+  .page-content {
+    min-height: calc(100vh - 64px - 80px); /* Account for header and mobile nav */
+  }
+  
+  /* Show mobile-only elements */
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+/* Desktop styles - hide mobile-only by default */
+.mobile-only {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}

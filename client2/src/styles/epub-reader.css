@@ -1,0 +1,8 @@
+.epub-shell {
+  height: calc(100vh - 4rem); /* matches your header offset (pt-16 ~= 4rem) */
+}
+.epub-shell iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+}

@@ -1,0 +1,288 @@
+/* Enable GPU acceleration for frequently animated elements */
+.btn, .card, .chip, .dialog, .snackbar {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Use contain property to limit layout recalculation scope */
+.btn {
+  contain: layout style;
+}
+
+.card {
+  contain: layout style paint;
+}
+
+.list-item {
+  contain: layout;
+}
+
+/* ===== BUTTON OPTIMIZATIONS ===== */
+
+/* Faster interaction feedback - reduce from 200ms to 150ms */
+.btn {
+  transition: 
+    transform 150ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 150ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Optimize hover states for better responsiveness */
+.btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  transition-duration: 100ms; /* Faster hover response */
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 50ms; /* Very fast active state */
+}
+
+/* State layer optimization for Material3 buttons */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 75ms ease-out;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.btn:hover::before {
+  opacity: 0.08;
+}
+
+.btn:focus-visible::before {
+  opacity: 0.12;
+}
+
+.btn:active::before {
+  opacity: 0.16;
+  transition-duration: 25ms;
+}
+
+/* ===== INPUT FIELD OPTIMIZATIONS ===== */
+
+/* Reduce input lag by optimizing transitions */
+.text-field {
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+  will-change: border-color, box-shadow;
+}
+
+.text-field:focus {
+  transition-duration: 100ms;
+}
+
+/* Optimize label animations */
+.text-field-label {
+  transition: transform 150ms cubic-bezier(0.2, 0, 0, 1),
+             color 150ms cubic-bezier(0.2, 0, 0, 1),
+             font-size 150ms cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+
+/* ===== CARD OPTIMIZATIONS ===== */
+
+.card {
+  transition: transform 200ms cubic-bezier(0.2, 0, 0, 1),
+             box-shadow 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  transition-duration: 150ms;
+}
+
+/* ===== SCROLL OPTIMIZATIONS ===== */
+
+/* Optimize scrollable areas */
+.scroll-container {
+  contain: layout style;
+  overflow-anchor: auto;
+  scroll-behavior: smooth;
+}
+
+/* Use transform for scroll indicators instead of position changes */
+.scroll-indicator {
+  transform: translateX(var(--scroll-position, 0));
+  transition: transform 100ms ease-out;
+  will-change: transform;
+}
+
+/* ===== LIST PERFORMANCE ===== */
+
+/* Optimize virtual scrolling containers */
+.virtual-list-container {
+  contain: strict;
+  overflow-anchor: none;
+}
+
+.virtual-list-item {
+  contain: layout style;
+  will-change: transform;
+}
+
+/* ===== ANIMATION OPTIMIZATIONS ===== */
+
+/* Faster Material3 motion curves for better perceived performance */
+:root {
+  --motion-duration-short1: 50ms;
+  --motion-duration-short2: 100ms;
+  --motion-duration-short3: 150ms;
+  --motion-duration-short4: 200ms;
+  --motion-duration-medium1: 250ms;
+  --motion-duration-medium2: 300ms;
+  
+  --motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+/* ===== REDUCE PAINT AND LAYOUT THRASHING ===== */
+
+/* Use transform instead of changing top/left for animations */
+.slide-enter {
+  transform: translateX(100%);
+}
+
+.slide-enter-active {
+  transform: translateX(0);
+  transition: transform 200ms var(--motion-easing-emphasized);
+}
+
+.slide-exit {
+  transform: translateX(0);
+}
+
+.slide-exit-active {
+  transform: translateX(-100%);
+  transition: transform 200ms var(--motion-easing-emphasized);
+}
+
+/* ===== RIPPLE EFFECT OPTIMIZATION ===== */
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+  contain: layout style paint;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.24;
+  transform: scale(0);
+  animation: ripple 600ms cubic-bezier(0.2, 0, 0, 1);
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ===== FOCUS OPTIMIZATIONS ===== */
+
+/* Faster focus ring transitions */
+.focus-ring {
+  transition: box-shadow 100ms ease-out, outline 100ms ease-out;
+}
+
+/* ===== LOADING STATE OPTIMIZATIONS ===== */
+
+/* Optimize loading spinner to not trigger layout */
+.loading-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  will-change: transform;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== SKELETON LOADING OPTIMIZATIONS ===== */
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  will-change: background-position;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ===== PREVENT LAYOUT SHIFTS ===== */
+
+/* Reserve space for dynamically loaded content */
+.book-card {
+  min-height: 200px; /* Prevent layout shift when book data loads */
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px; /* Prevent shift when avatar loads */
+}
+
+/* ===== CRITICAL CSS INLINING CANDIDATES ===== */
+
+/* These should be inlined in the HTML head for fastest rendering */
+.surface { background-color: var(--md-sys-color-surface); }
+.on-surface { color: var(--md-sys-color-on-surface); }
+.primary { background-color: var(--md-sys-color-primary); }
+.on-primary { color: var(--md-sys-color-on-primary); }
+
+/* ===== PERFORMANCE MONITORING ===== */
+
+/* Mark performance-critical elements for easier debugging */
+.perf-critical {
+  /* Use this class to mark elements that need performance monitoring */
+}
+
+/* ===== MEDIA QUERIES FOR PERFORMANCE ===== */
+
+/* Reduce animations on slower devices */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimize for touch devices */
+@media (hover: none) {
+  .btn:hover {
+    transform: none; /* Disable hover effects on touch devices */
+  }
+}
+
+/* Performance optimizations for high refresh rate displays */
+@media (min-resolution: 120dpi) {
+  .btn, .card {
+    transition-duration: 120ms; /* Slightly faster on high refresh displays */
+  }
+}

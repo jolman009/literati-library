@@ -1,0 +1,357 @@
+/* src/components/Material3/MD3Surface.css */
+
+/* ===============================================
+   MD3 SURFACE COMPONENT STYLES
+   Material Design 3 Surface System
+   =============================================== */
+
+.md3-surface {
+  /* Base structure */
+  position: relative;
+  display: block;
+  
+  /* Material Design 3 Surface Fundamentals */
+  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  
+  /* Shape */
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  
+  /* Transition for smooth theme switching */
+  transition: 
+    background-color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    color var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+    box-shadow var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+/* ===============================================
+   SURFACE LEVELS (Background Hierarchy)
+   =============================================== */
+
+/* Surface (Base level) */
+.md3-surface--surface {
+  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* Surface Dim (Slightly darker background) */
+.md3-surface--surface-dim {
+  background-color: rgb(var(--md-sys-color-surface-dim, 222 216 225));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* Surface Bright (Slightly brighter background) */
+.md3-surface--surface-bright {
+  background-color: rgb(var(--md-sys-color-surface-bright, 255 251 255));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* Surface Container Levels */
+.md3-surface--surface-container-lowest {
+  background-color: rgb(var(--md-sys-color-surface-container-lowest, 255 255 255));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-surface--surface-container-low {
+  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-surface--surface-container {
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-surface--surface-container-high {
+  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-surface--surface-container-highest {
+  background-color: rgb(var(--md-sys-color-surface-container-highest, 230 224 233));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+/* Surface Variant */
+.md3-surface--surface-variant {
+  background-color: rgb(var(--md-sys-color-surface-variant, 231 224 236));
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+}
+
+/* Primary Surface */
+.md3-surface--primary {
+  background-color: rgb(var(--md-sys-color-primary, 103 80 164));
+  color: rgb(var(--md-sys-color-on-primary, 255 255 255));
+}
+
+.md3-surface--primary-container {
+  background-color: rgb(var(--md-sys-color-primary-container, 234 221 255));
+  color: rgb(var(--md-sys-color-on-primary-container, 33 0 93));
+}
+
+/* Secondary Surface */
+.md3-surface--secondary {
+  background-color: rgb(var(--md-sys-color-secondary, 98 91 113));
+  color: rgb(var(--md-sys-color-on-secondary, 255 255 255));
+}
+
+.md3-surface--secondary-container {
+  background-color: rgb(var(--md-sys-color-secondary-container, 232 222 248));
+  color: rgb(var(--md-sys-color-on-secondary-container, 29 25 43));
+}
+
+/* Tertiary Surface */
+.md3-surface--tertiary {
+  background-color: rgb(var(--md-sys-color-tertiary, 125 82 96));
+  color: rgb(var(--md-sys-color-on-tertiary, 255 255 255));
+}
+
+.md3-surface--tertiary-container {
+  background-color: rgb(var(--md-sys-color-tertiary-container, 255 216 228));
+  color: rgb(var(--md-sys-color-on-tertiary-container, 55 11 30));
+}
+
+/* Error Surface */
+.md3-surface--error {
+  background-color: rgb(var(--md-sys-color-error, 186 26 26));
+  color: rgb(var(--md-sys-color-on-error, 255 255 255));
+}
+
+.md3-surface--error-container {
+  background-color: rgb(var(--md-sys-color-error-container, 249 222 220));
+  color: rgb(var(--md-sys-color-on-error-container, 65 14 11));
+}
+
+/* ===============================================
+   ELEVATION LEVELS
+   =============================================== */
+
+.md3-surface--elevation-0 {
+  box-shadow: none;
+}
+
+.md3-surface--elevation-1 {
+  box-shadow: var(--md-sys-elevation-level1, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.md3-surface--elevation-2 {
+  box-shadow: var(--md-sys-elevation-level2, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.md3-surface--elevation-3 {
+  box-shadow: var(--md-sys-elevation-level3, 
+    0px 1px 3px rgba(0, 0, 0, 0.3), 
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.md3-surface--elevation-4 {
+  box-shadow: var(--md-sys-elevation-level4, 
+    0px 2px 3px rgba(0, 0, 0, 0.3), 
+    0px 6px 10px 4px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.md3-surface--elevation-5 {
+  box-shadow: var(--md-sys-elevation-level5, 
+    0px 4px 4px rgba(0, 0, 0, 0.3), 
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15)
+  );
+}
+
+/* ===============================================
+   SHAPE VARIATIONS
+   =============================================== */
+
+.md3-surface--rounded-none {
+  border-radius: 0;
+}
+
+.md3-surface--rounded-xs {
+  border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+}
+
+.md3-surface--rounded-sm {
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+}
+
+.md3-surface--rounded-md {
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+}
+
+.md3-surface--rounded-lg {
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+}
+
+.md3-surface--rounded-xl {
+  border-radius: var(--md-sys-shape-corner-extra-large, 24px);
+}
+
+.md3-surface--rounded-full {
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+}
+
+/* ===============================================
+   SPECIALIZED SURFACE TYPES
+   =============================================== */
+
+/* Book Card Surface */
+.md3-surface--book-card {
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  padding: var(--md-sys-spacing-4, 16px);
+  transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.md3-surface--book-card:hover {
+  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  box-shadow: var(--md-sys-elevation-level2, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15)
+  );
+}
+
+/* Navigation Surface */
+.md3-surface--navigation {
+  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  border-radius: 0;
+}
+
+/* Dialog Surface */
+.md3-surface--dialog {
+  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  border-radius: var(--md-sys-shape-corner-extra-large, 24px);
+  box-shadow: var(--md-sys-elevation-level5, 
+    0px 4px 4px rgba(0, 0, 0, 0.3), 
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15)
+  );
+}
+
+/* Floating Surface */
+.md3-surface--floating {
+  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  box-shadow: var(--md-sys-elevation-level3, 
+    0px 1px 3px rgba(0, 0, 0, 0.3), 
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15)
+  );
+}
+
+/* ===============================================
+   INTERACTIVE STATES
+   =============================================== */
+
+.md3-surface--interactive {
+  cursor: pointer;
+  transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.md3-surface--interactive:hover {
+  box-shadow: var(--md-sys-elevation-level2, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15)
+  );
+}
+
+.md3-surface--interactive:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline-offset: 2px;
+}
+
+.md3-surface--interactive:active {
+  box-shadow: var(--md-sys-elevation-level1, 
+    0px 1px 2px rgba(0, 0, 0, 0.3), 
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15)
+  );
+}
+
+/* ===============================================
+   DARK THEME ADJUSTMENTS
+   =============================================== */
+
+@media (prefers-color-scheme: dark) {
+  .md3-surface {
+    background-color: rgb(var(--md-sys-color-surface, 28 27 31));
+    color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+  }
+  
+  .md3-surface--surface-dim {
+    background-color: rgb(var(--md-sys-color-surface-dim, 17 16 20));
+  }
+  
+  .md3-surface--surface-bright {
+    background-color: rgb(var(--md-sys-color-surface-bright, 67 66 70));
+  }
+}
+
+/* ===============================================
+   HIGH CONTRAST MODE
+   =============================================== */
+
+@media (prefers-contrast: high) {
+  .md3-surface {
+    border: 1px solid rgb(var(--md-sys-color-outline, 121 116 126));
+  }
+  
+  .md3-surface--interactive:focus-visible {
+    outline-width: 3px;
+    outline-offset: 1px;
+  }
+}
+
+/* ===============================================
+   REDUCED MOTION
+   =============================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .md3-surface,
+  .md3-surface--interactive,
+  .md3-surface--book-card {
+    transition: none;
+  }
+}
+
+/* ===============================================
+   RESPONSIVE DESIGN
+   =============================================== */
+
+@media (max-width: 600px) {
+  .md3-surface--book-card {
+    padding: var(--md-sys-spacing-3, 12px);
+    border-radius: var(--md-sys-shape-corner-medium, 12px);
+  }
+}
+
+/* ===============================================
+   UTILITIES
+   =============================================== */
+
+.md3-surface--full-width {
+  width: 100%;
+}
+
+.md3-surface--full-height {
+  height: 100%;
+}
+
+.md3-surface--flex {
+  display: flex;
+}
+
+.md3-surface--grid {
+  display: grid;
+}
+
+.md3-surface--overflow-hidden {
+  overflow: hidden;
+}
+
+.md3-surface--overflow-auto {
+  overflow: auto;
+}

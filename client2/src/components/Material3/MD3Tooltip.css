@@ -1,0 +1,292 @@
+/* src/components/Material3/MD3Tooltip.css */
+
+.md3-tooltip {
+  --_container-color: var(--md-sys-color-inverse-surface);
+  --_container-shape: var(--md-sys-shape-corner-extra-small);
+  --_container-elevation: var(--md-sys-elevation-level2);
+  --_label-text-color: var(--md-sys-color-inverse-on-surface);
+  --_label-text-font: var(--md-sys-typescale-body-small-font);
+  
+  position: fixed;
+  z-index: var(--md-sys-z-index-tooltip);
+  max-width: 320px;
+  padding: 8px 12px;
+  background-color: rgb(var(--_container-color));
+  border-radius: var(--_container-shape);
+  box-shadow: var(--_container-elevation);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+  pointer-events: none;
+}
+
+.md3-tooltip--entering {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.md3-tooltip--exiting {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.md3-tooltip__content {
+  font: var(--_label-text-font);
+  color: rgb(var(--_label-text-color));
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* Tooltip Variants */
+.md3-tooltip--plain {
+  /* Default plain tooltip styles */
+}
+
+.md3-tooltip--rich {
+  --_container-color: var(--md-sys-color-surface-container-high);
+  --_label-text-color: var(--md-sys-color-on-surface);
+  max-width: 400px;
+  padding: 16px;
+}
+
+/* Placement-specific styles for arrow positioning */
+.md3-tooltip--top::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgb(var(--_container-color));
+}
+
+.md3-tooltip--bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgb(var(--_container-color));
+}
+
+.md3-tooltip--left::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid rgb(var(--_container-color));
+}
+
+.md3-tooltip--right::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid rgb(var(--_container-color));
+}
+
+/* Rich Tooltip Content */
+.md3-rich-tooltip__content {
+  text-align: left;
+}
+
+.md3-rich-tooltip__title {
+  font: var(--md-sys-typescale-title-small-font);
+  color: rgb(var(--md-sys-color-on-surface));
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.md3-rich-tooltip__description {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  margin-bottom: 12px;
+}
+
+.md3-rich-tooltip__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Book Tooltip Specific Styles */
+.book-tooltip-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.book-tooltip-details p {
+  margin: 0;
+  font: var(--md-sys-typescale-body-small-font);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+
+.book-tooltip-details strong {
+  color: rgb(var(--md-sys-color-on-surface));
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .md3-tooltip {
+    max-width: calc(100vw - 32px);
+    font-size: 14px;
+  }
+  
+  .md3-tooltip--rich {
+    max-width: calc(100vw - 32px);
+    padding: 12px;
+  }
+  
+  .md3-rich-tooltip__title {
+    font-size: 16px;
+  }
+  
+  .md3-rich-tooltip__description {
+    font-size: 14px;
+  }
+  
+  .md3-rich-tooltip__actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .md3-tooltip {
+    max-width: calc(100vw - 16px);
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .md3-tooltip--rich {
+    padding: 10px;
+  }
+  
+  /* Hide arrows on very small screens for better positioning */
+  .md3-tooltip::after {
+    display: none;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .md3-tooltip {
+    transition: none;
+  }
+  
+  .md3-tooltip--entering,
+  .md3-tooltip--exiting {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-tooltip {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+  }
+  
+  .md3-tooltip--rich {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+  }
+}
+
+/* Dark Theme Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-tooltip--rich {
+    --_container-color: var(--md-sys-color-surface-container-highest);
+  }
+}
+
+/* Animations for better UX */
+@keyframes md3-tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes md3-tooltip-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Prevent tooltip from interfering with pointer events */
+.md3-tooltip {
+  user-select: none;
+}
+
+/* Ensure tooltip content doesn't break layout */
+.md3-tooltip__content {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Special positioning for edge cases */
+.md3-tooltip--top.md3-tooltip--edge-left::after {
+  left: 16px;
+  transform: none;
+}
+
+.md3-tooltip--top.md3-tooltip--edge-right::after {
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
+.md3-tooltip--bottom.md3-tooltip--edge-left::after {
+  left: 16px;
+  transform: none;
+}
+
+.md3-tooltip--bottom.md3-tooltip--edge-right::after {
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
+/* Focus management for accessibility */
+.md3-tooltip[role="tooltip"] {
+  outline: none;
+}
+
+/* Ensure proper stacking with other elements */
+.md3-tooltip {
+  isolation: isolate;
+}

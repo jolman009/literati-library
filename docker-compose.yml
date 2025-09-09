@@ -1,0 +1,158 @@
+# Production Docker Compose for Literati Library App
+version: '3.8'
+
+services:
+  # Client (React SPA)
+  client:
+    build:
+      context: ./client2
+      dockerfile: Dockerfile
+    image: literati-client:latest
+    container_name: literati-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - VITE_AI_SERVICE_URL=http://localhost:8000
+      - NODE_ENV=production
+    depends_on:
+      - server
+    networks:
+      - literati-network
+    volumes:
+      - client-logs:/var/log/nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.literati-client.rule=Host(`literati.local`)"
+      - "traefik.http.services.literati-client.loadbalancer.server.port=80"
+
+  # Server (Node.js/Express)
+  server:
+    build:
+      context: ./server2
+      dockerfile: Dockerfile
+    image: literati-server:latest
+    container_name: literati-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - ai-service
+    networks:
+      - literati-network
+    volumes:
+      - server-logs:/app/logs
+      - uploads:/app/uploads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.literati-server.rule=Host(`api.literati.local`)"
+      - "traefik.http.services.literati-server.loadbalancer.server.port=5000"
+
+  # AI Service (Python/FastAPI)
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    image: literati-ai:latest
+    container_name: literati-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - PYTHONUNBUFFERED=1
+    networks:
+      - literati-network
+    volumes:
+      - ai-logs:/app/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.literati-ai.rule=Host(`ai.literati.local`)"
+      - "traefik.http.services.literati-ai.loadbalancer.server.port=8000"
+
+  # Reverse Proxy (Optional - for production)
+  traefik:
+    image: traefik:v3.0
+    container_name: literati-traefik
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Enable in production with real certificates
+      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - "--certificatesresolvers.myresolver.acme.email=your-email@domain.com"
+      # - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "traefik-certificates:/letsencrypt"
+    networks:
+      - literati-network
+    profiles:
+      - production
+
+  # Redis (Optional - for caching and sessions)
+  redis:
+    image: redis:7-alpine
+    container_name: literati-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - literati-network
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-literati123}
+    profiles:
+      - production
+
+  # Monitoring (Optional - Prometheus for metrics)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: literati-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - literati-network
+    profiles:
+      - monitoring
+
+networks:
+  literati-network:
+    driver: bridge
+
+volumes:
+  client-logs:
+    driver: local
+  server-logs:
+    driver: local
+  ai-logs:
+    driver: local
+  uploads:
+    driver: local
+  redis-data:
+    driver: local
+  traefik-certificates:
+    driver: local
+  prometheus-data:
+    driver: local

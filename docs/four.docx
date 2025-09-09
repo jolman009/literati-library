@@ -1,0 +1,720 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+
+
+// Premium Material 3 App with Modern Features
+const App = () => {
+  // State Management
+  const [user] = useState({ name: 'Alex Chen', email: 'alex@example.com', avatar: '👤' });
+  const [books, setBooks] = useState([]);
+  const [activeView, setActiveView] = useState('home');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showUploadSheet, setShowUploadSheet] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [notification, setNotification] = useState(null);
+
+  // Refs
+  const headerRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Categories with modern emoji icons
+  const categories = [
+    { id: 'all', label: 'All Books', icon: '📚', color: 'primary' },
+    { id: 'fiction', label: 'Fiction', icon: '🎭', color: 'secondary' },
+    { id: 'non-fiction', label: 'Non-Fiction', icon: '📖', color: 'tertiary' },
+    { id: 'technology', label: 'Technology', icon: '💻', color: 'primary' },
+    { id: 'science', label: 'Science', icon: '🔬', color: 'secondary' },
+    { id: 'business', label: 'Business', icon: '💼', color: 'tertiary' },
+    { id: 'self-help', label: 'Self-Help', icon: '🌱', color: 'primary' }
+  ];
+
+  // Mock data with rich metadata
+  const mockBooks = [
+    {
+      id: 1,
+      title: 'The Design of Everyday Things',
+      author: 'Don Norman',
+      cover: 'https://picsum.photos/seed/1/200/300',
+      category: 'technology',
+      progress: 75,
+      rating: 4.5,
+      readingTime: '5h 20m',
+      lastRead: '2 hours ago',
+      description: 'A classic on user-centered design principles.',
+      tags: ['Design', 'UX', 'Psychology']
+    },
+    {
+      id: 2,
+      title: 'Atomic Habits',
+      author: 'James Clear',
+      cover: 'https://picsum.photos/seed/2/200/300',
+      category: 'self-help',
+      progress: 100,
+      rating: 5,
+      readingTime: '4h 15m',
+      lastRead: 'Yesterday',
+      description: 'Transform your life with tiny changes.',
+      tags: ['Habits', 'Productivity', 'Psychology']
+    },
+    {
+      id: 3,
+      title: 'Sapiens',
+      author: 'Yuval Noah Harari',
+      cover: 'https://picsum.photos/seed/3/200/300',
+      category: 'non-fiction',
+      progress: 30,
+      rating: 4.8,
+      readingTime: '8h 45m',
+      lastRead: '3 days ago',
+      description: 'A brief history of humankind.',
+      tags: ['History', 'Anthropology', 'Society']
+    },
+    {
+      id: 4,
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      cover: 'https://picsum.photos/seed/4/200/300',
+      category: 'technology',
+      progress: 60,
+      rating: 4.7,
+      readingTime: '6h 30m',
+      lastRead: '1 week ago',
+      description: 'A handbook of agile software craftsmanship.',
+      tags: ['Programming', 'Best Practices', 'Software']
+    }
+  ];
+
+  // Effects
+  useEffect(() => {
+    setBooks(mockBooks);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.add('no-transition');
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    setTimeout(() => {
+      document.documentElement.classList.remove('no-transition');
+    }, 100);
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
+
+  // Filtered books
+  const filteredBooks = useMemo(() => {
+    return books.filter(book => {
+      const matchesSearch = searchQuery.trim() === '' || 
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesCategory = selectedCategory === 'all' || book.category === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [books, searchQuery, selectedCategory]);
+
+  // Handlers
+  const showNotification = useCallback((message, type = 'info') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  const handleBookAction = useCallback((action, book) => {
+    switch (action) {
+      case 'continue':
+        showNotification(`Continuing "${book.title}"`);
+        break;
+      case 'favorite':
+        showNotification(`Added "${book.title}" to favorites`);
+        break;
+      case 'share':
+        showNotification(`Sharing "${book.title}"`);
+        break;
+      default:
+        break;
+    }
+  }, [showNotification]);
+
+  // Components
+  const NavigationBar = () => (
+    <nav className={`fixed bottom-0 left-0 right-0 z-fixed lg:hidden bg-surface-container border-t border-outline-variant safe-bottom ${
+      showUploadSheet ? 'translate-y-full' : 'translate-y-0'
+    } transition-transform duration-medium4`}>
+      <div className="flex items-center justify-around py-2">
+        {[
+          { id: 'home', icon: '🏠', label: 'Home' },
+          { id: 'library', icon: '📚', label: 'Library' },
+          { id: 'stats', icon: '📊', label: 'Stats' },
+          { id: 'explore', icon: '🔍', label: 'Explore' }
+        ].map(item => (
+          <button
+            key={item.id}
+            onClick={() => setActiveView(item.id)}
+            className={`flex flex-col items-center justify-center p-2 rounded-large transition-all duration-medium2 ${
+              activeView === item.id
+                ? 'text-primary bg-primary-container'
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            <span className="text-2xl mb-1">{item.icon}</span>
+            <span className="text-label-small">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+
+  const Header = () => (
+    <header 
+      ref={headerRef}
+      className={`sticky top-0 z-sticky transition-all duration-medium4 ${
+        isScrolled ? 'bg-surface/80 backdrop-blur-lg shadow-premium-sm' : 'bg-surface'
+      }`}
+    >
+      <div className="container-fluid safe-top">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo/Title */}
+          <div className="flex items-center space-x-3">
+            <h1 className="text-title-large font-medium text-on-surface flex items-center">
+              <span className="text-3xl mr-2">📚</span>
+              <span className="hidden sm:inline">Literati</span>
+            </h1>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-1">
+            {[
+              { id: 'home', label: 'Home' },
+              { id: 'library', label: 'Library' },
+              { id: 'stats', label: 'Statistics' },
+              { id: 'explore', label: 'Explore' }
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setActiveView(item.id)}
+                className={`px-4 py-2 rounded-full text-label-large font-medium transition-all duration-medium2 ${
+                  activeView === item.id
+                    ? 'bg-secondary-container text-on-secondary-container'
+                    : 'text-on-surface-variant hover:bg-surface-container'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+
+          {/* Actions */}
+          <div className="flex items-center space-x-2">
+            {/* Search Toggle */}
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className="p-2 rounded-full hover:bg-surface-container transition-all duration-medium2 relative group"
+            >
+              <svg className="w-6 h-6 text-on-surface-variant group-hover:text-on-surface transition-colors duration-medium2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2 rounded-full hover:bg-surface-container transition-all duration-medium2 relative group"
+            >
+              <div className="relative w-6 h-6">
+                <svg
+                  className={`absolute inset-0 transform transition-all duration-medium4 ${
+                    isDarkMode ? 'opacity-0 rotate-180 scale-0' : 'opacity-100 rotate-0 scale-100'
+                  } text-on-surface-variant group-hover:text-on-surface`}
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
+                </svg>
+                
+                <svg
+                  className={`absolute inset-0 transform transition-all duration-medium4 ${
+                    isDarkMode ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-0'
+                  } text-on-surface-variant group-hover:text-on-surface`}
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+                </svg>
+              </div>
+            </button>
+
+            {/* Profile Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center space-x-2 p-2 rounded-full hover:bg-surface-container transition-all duration-medium2"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                  <span className="text-label-large font-medium">{user.name.charAt(0)}</span>
+                </div>
+              </button>
+
+              {/* Profile Dropdown */}
+              {showProfileMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-dropdown"
+                    onClick={() => setShowProfileMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-64 bg-surface-container-high rounded-large shadow-premium-lg z-dropdown overflow-hidden animate-scale-in origin-top-right">
+                    <div className="p-4 border-b border-outline-variant">
+                      <p className="text-title-medium text-on-surface">{user.name}</p>
+                      <p className="text-body-small text-on-surface-variant">{user.email}</p>
+                    </div>
+                    <div className="py-2">
+                      {[
+                        { icon: '👤', label: 'Profile', badge: null },
+                        { icon: '⚙️', label: 'Settings', badge: null },
+                        { icon: '🎯', label: 'Goals', badge: '3' },
+                        { icon: '❓', label: 'Help', badge: null }
+                      ].map((item, index) => (
+                        <button
+                          key={index}
+                          className="w-full px-4 py-3 flex items-center justify-between hover:bg-surface-container transition-colors duration-medium2"
+                        >
+                          <span className="flex items-center space-x-3">
+                            <span className="text-xl">{item.icon}</span>
+                            <span className="text-body-large text-on-surface">{item.label}</span>
+                          </span>
+                          {item.badge && (
+                            <span className="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container rounded-full text-label-small">
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="border-t border-outline-variant p-2">
+                      <button className="w-full px-4 py-2 text-left text-body-large text-error hover:bg-error-container rounded-medium transition-colors duration-medium2">
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className={`overflow-hidden transition-all duration-medium4 ${
+          showSearch ? 'max-h-20' : 'max-h-0'
+        }`}>
+          <div className="px-4 pb-4">
+            <div className="relative">
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search books, authors, or tags..."
+                className="w-full pl-12 pr-4 py-3 bg-surface-container-highest rounded-full text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-medium2"
+              />
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors duration-medium2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+
+  const HeroSection = () => (
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 gradient-premium opacity-10" />
+      <div className="container-fluid py-12 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="space-y-6">
+            <h1 className="display-large text-on-surface">
+              Welcome back,{' '}
+              <span className="text-primary">{user.name.split(' ')[0]}</span>
+            </h1>
+            <p className="text-body-large text-on-surface-variant max-w-lg">
+              You've read <span className="font-medium text-on-surface">12 books</span> this year 
+              and spent <span className="font-medium text-on-surface">48 hours</span> reading. 
+              Keep up the amazing progress!
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setActiveView('library')}
+                className="px-6 py-3 bg-primary text-on-primary rounded-full shadow-premium-sm hover:shadow-premium-md hover-lift transition-all duration-medium4 text-label-large font-medium"
+              >
+                Continue Reading
+              </button>
+              <button
+                onClick={() => setShowUploadSheet(true)}
+                className="px-6 py-3 bg-surface-container-high text-primary rounded-full shadow-premium-sm hover:shadow-premium-md hover-lift transition-all duration-medium4 text-label-large font-medium border border-outline-variant"
+              >
+                Add New Book
+              </button>
+            </div>
+          </div>
+          
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-4">
+              {books.slice(0, 4).map((book, index) => (
+                <div
+                  key={book.id}
+                  className={`relative rounded-large overflow-hidden shadow-premium-md hover-lift ${
+                    index === 0 ? 'col-span-2 row-span-2' : ''
+                  }`}
+                  style={{
+                    animationDelay: `${index * 100}ms`
+                  }}
+                >
+                  <img
+                    src={book.cover}
+                    alt={book.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    <h3 className="text-title-medium font-medium">{book.title}</h3>
+                    <p className="text-body-small opacity-90">{book.author}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const CategoryChips = () => (
+    <div className="container-fluid py-4">
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+        {categories.map(category => (
+          <button
+            key={category.id}
+            onClick={() => setSelectedCategory(category.id)}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all duration-medium2 ${
+              selectedCategory === category.id
+                ? `bg-${category.color}-container text-on-${category.color}-container shadow-premium-sm`
+                : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
+            }`}
+          >
+            <span className="text-lg">{category.icon}</span>
+            <span className="text-label-large font-medium">{category.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const BookGrid = () => (
+    <div className="container-fluid py-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filteredBooks.map((book, index) => (
+          <div
+            key={book.id}
+            className="group relative bg-surface rounded-large overflow-hidden shadow-premium-sm hover:shadow-premium-lg hover-lift transition-all duration-medium4"
+            style={{
+              animationDelay: `${index * 50}ms`
+            }}
+          >
+            {/* Book Cover */}
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <img
+                src={book.cover}
+                alt={book.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-medium4"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-medium4" />
+              
+              {/* Quick Actions */}
+              <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-medium4">
+                <button
+                  onClick={() => handleBookAction('favorite', book)}
+                  className="p-2 bg-surface/80 backdrop-blur-md rounded-full shadow-premium-sm hover:bg-surface transition-all duration-medium2"
+                >
+                  <svg className="w-5 h-5 text-error" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => handleBookAction('share', book)}
+                  className="p-2 bg-surface/80 backdrop-blur-md rounded-full shadow-premium-sm hover:bg-surface transition-all duration-medium2"
+                >
+                  <svg className="w-5 h-5 text-on-surface" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.632 4.684a3 3 0 11-5.368-2.684m5.368 2.684a3 3 0 00-5.368-2.684m0 0a3 3 0 00-5.368 2.684" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Progress Badge */}
+              {book.progress > 0 && (
+                <div className="absolute bottom-2 left-2 px-3 py-1 bg-surface/80 backdrop-blur-md rounded-full shadow-premium-sm">
+                  <span className="text-label-small font-medium text-on-surface">
+                    {book.progress}% Complete
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Book Info */}
+            <div className="p-4 space-y-3">
+              <div>
+                <h3 className="text-title-medium font-medium text-on-surface line-clamp-1">
+                  {book.title}
+                </h3>
+                <p className="text-body-medium text-on-surface-variant">
+                  {book.author}
+                </p>
+              </div>
+
+              {/* Metadata */}
+              <div className="flex items-center gap-4 text-body-small text-on-surface-variant">
+                <span className="flex items-center gap-1">
+                  <span>⭐</span>
+                  <span>{book.rating}</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span>⏱️</span>
+                  <span>{book.readingTime}</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span>📅</span>
+                  <span>{book.lastRead}</span>
+                </span>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2">
+                {book.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded-full text-label-small"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Continue Button */}
+              <button
+                onClick={() => handleBookAction('continue', book)}
+                className="w-full py-2 bg-primary-container text-on-primary-container rounded-medium hover:bg-primary hover:text-on-primary transition-all duration-medium2 text-label-large font-medium"
+              >
+                Continue Reading
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {filteredBooks.length === 0 && (
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4">📚</div>
+          <h3 className="text-headline-medium text-on-surface mb-2">
+            No books found
+          </h3>
+          <p className="text-body-large text-on-surface-variant mb-6">
+            Try adjusting your filters or search query
+          </p>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              setSelectedCategory('all');
+            }}
+            className="px-6 py-3 bg-primary text-on-primary rounded-full shadow-premium-sm hover:shadow-premium-md transition-all duration-medium4 text-label-large font-medium"
+          >
+            Clear Filters
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const FloatingActionButton = () => (
+    <button
+      onClick={() => setShowUploadSheet(true)}
+      className="fixed bottom-20 right-4 lg:bottom-8 lg:right-8 w-14 h-14 bg-primary text-on-primary rounded-large shadow-premium-lg hover:shadow-premium-md active:scale-95 transition-all duration-medium2 flex items-center justify-center z-fixed group"
+    >
+      <svg className="w-6 h-6 group-active:rotate-45 transition-transform duration-medium4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+  );
+
+  const UploadSheet = () => (
+    <>
+      {/* Backdrop */}
+      <div 
+        className={`fixed inset-0 bg-scrim/50 z-modal-backdrop transition-opacity duration-medium4 ${
+          showUploadSheet ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setShowUploadSheet(false)}
+      />
+      
+      {/* Sheet */}
+      <div className={`fixed bottom-0 left-0 right-0 bg-surface-container-high rounded-t-extra-large z-modal transition-transform duration-medium4 ease-emphasized ${
+        showUploadSheet ? 'translate-y-0' : 'translate-y-full'
+      }`}>
+        <div className="p-6 pb-8 safe-bottom max-h-[90vh] overflow-y-auto">
+          {/* Handle */}
+          <div className="w-12 h-1 bg-outline-variant rounded-full mx-auto mb-6" />
+          
+          <h2 className="text-headline-medium text-on-surface mb-6">
+            Add New Book
+          </h2>
+          
+          <div className="space-y-4">
+            {/* Upload Area */}
+            <div className="border-2 border-dashed border-outline-variant rounded-large p-8 text-center hover:border-primary hover:bg-primary-container/10 transition-all duration-medium2 cursor-pointer">
+              <div className="text-5xl mb-4">📥</div>
+              <p className="text-body-large text-on-surface mb-2">
+                Drag & drop your book here
+              </p>
+              <p className="text-body-medium text-on-surface-variant">
+                or click to browse (PDF, EPUB)
+              </p>
+            </div>
+            
+            {/* Quick Add Options */}
+            <div className="grid grid-cols-2 gap-4">
+              <button className="p-4 bg-surface-container rounded-large hover:bg-surface-container-high transition-colors duration-medium2">
+                <div className="text-3xl mb-2">📷</div>
+                <p className="text-label-large text-on-surface">Scan ISBN</p>
+              </button>
+              <button className="p-4 bg-surface-container rounded-large hover:bg-surface-container-high transition-colors duration-medium2">
+                <div className="text-3xl mb-2">✍️</div>
+                <p className="text-label-large text-on-surface">Manual Entry</p>
+              </button>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={() => setShowUploadSheet(false)}
+                className="flex-1 py-3 bg-surface-container text-on-surface rounded-full hover:bg-surface-container-high transition-colors duration-medium2 text-label-large font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowUploadSheet(false);
+                  showNotification('Book added successfully!', 'success');
+                }}
+                className="flex-1 py-3 bg-primary text-on-primary rounded-full hover:shadow-premium-sm transition-all duration-medium2 text-label-large font-medium"
+              >
+                Add Book
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const Notification = () => (
+    <div className={`fixed bottom-24 left-4 right-4 lg:left-auto lg:right-8 lg:w-auto z-tooltip transition-all duration-medium4 ${
+      notification ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
+    }`}>
+      <div className={`px-4 py-3 rounded-medium shadow-premium-lg flex items-center gap-3 min-w-[280px] ${
+        notification?.type === 'success' ? 'bg-primary text-on-primary' :
+        notification?.type === 'error' ? 'bg-error text-on-error' :
+        'bg-inverse-surface text-inverse-on-surface'
+      }`}>
+        <span className="text-body-medium">{notification?.message}</span>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="pb-20 lg:pb-0">
+        {activeView === 'home' && (
+          <>
+            <HeroSection />
+            <CategoryChips />
+            <BookGrid />
+          </>
+        )}
+        
+        {activeView === 'library' && (
+          <>
+            <CategoryChips />
+            <BookGrid />
+          </>
+        )}
+        
+        {activeView === 'stats' && (
+          <div className="container-fluid py-8">
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">📊</div>
+              <h2 className="text-headline-large text-on-surface mb-2">
+                Statistics Coming Soon
+              </h2>
+              <p className="text-body-large text-on-surface-variant">
+                Track your reading habits and progress
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {activeView === 'explore' && (
+          <div className="container-fluid py-8">
+            <div className="text-center py-16">
+              <div className="text-6xl mb-4">🔍</div>
+              <h2 className="text-headline-large text-on-surface mb-2">
+                Explore New Books
+              </h2>
+              <p className="text-body-large text-on-surface-variant">
+                Discover your next favorite read
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+      
+      <NavigationBar />
+      <FloatingActionButton />
+      <UploadSheet />
+      <Notification />
+    </div>
+  );
+};
+
+export default App;

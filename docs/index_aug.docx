@@ -1,0 +1,1601 @@
+const express = require('express');
+const cors = require('cors');
+const multer = require('multer');
+const { createClient } = require('@supabase/supabase-js');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+// ===== ENHANCED SUPABASE CLIENT SETUP =====
+// Create two clients: admin (bypasses RLS) and regular (follows RLS)
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY // This bypasses RLS
+);
+
+const supabaseClient = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY // Regular anon key
+);
+
+const supabase = supabaseClient; // Default to client for most operations
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// ===== COMPREHENSIVE CORS CONFIGURATION =====
+
+// Define allowed origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174', 
+  'http://127.0.0.1:3000',
+  'https://www.literati.pro',
+  'https://literati.pro',
+  'https://literati.vercel.app'
+];
+
+// CORS options
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('❌ CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With', 
+    'Content-Type', 
+    'Accept',
+    'Authorization',
+    'Cache-Control'
+  ],
+  exposedHeaders: ['Content-Length', 'X-Requested-With']
+};
+
+// Apply CORS middleware FIRST
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Max-Age', '86400'); // 24 hours
+    res.sendStatus(204);
+  } else {
+    console.log('❌ OPTIONS blocked for origin:', origin);
+    res.sendStatus(403);
+  }
+});
+
+// Additional CORS headers middleware (as backup)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // Log all requests for debugging
+  console.log('🔍 Request:', {
+    method: req.method,
+    path: req.path,
+    origin: origin || 'no-origin',
+    userAgent: req.headers['user-agent']?.substring(0, 50) || 'unknown'
+  });
+  
+  // Set CORS headers if origin is allowed
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization');
+  }
+  
+  next();
+});
+
+// Body parsing middleware (AFTER CORS)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'application/epub+zip'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF and EPUB files are allowed.'));
+    }
+  }
+});
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.header('Content-Type', 'text/plain');
+  res.send('✅ Literati Library Server is running!');
+});
+
+// CORS debug endpoint
+app.get('/cors-test', (req, res) => {
+  res.json({
+    message: 'CORS is working!',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString(),
+    allowedOrigins: allowedOrigins
+  });
+});
+
+// ===== ENHANCED AUTHENTICATION MIDDLEWARE =====
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+  
+  try {
+    // Verify JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error('Token verification failed:', error.message);
+    return res.status(403).json({ error: 'Invalid or expired token' });
+  }
+};
+
+// ===== AUTH ENDPOINTS =====
+
+// Register endpoint
+app.post('/auth/register', async (req, res) => {
+  const { email, password, name } = req.body;
+  
+  console.log('👤 Creating user in database...');
+  
+  // Validation
+  if (!email || !password || !name) {
+    return res.status(400).json({ error: 'Email, password, and name are required' });
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+  
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+  
+  try {
+    // Check if user exists using ADMIN CLIENT (bypasses RLS)
+    const { data: existingUser, error: checkError } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('email', email.toLowerCase().trim())
+      .single();
+    
+    if (existingUser && !checkError) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('🔐 Password hashed successfully');
+    
+    // Create user using ADMIN CLIENT (bypasses RLS)
+    const { data: user, error: insertError } = await supabaseAdmin
+      .from('users')
+      .insert([{
+        email: email.toLowerCase().trim(),
+        password: hashedPassword,
+        name: name.trim()
+      }])
+      .select()
+      .single();
+    
+    if (insertError) {
+      console.error('❌ Supabase insert error:', insertError);
+      
+      if (insertError.code === '23505') {
+        return res.status(400).json({ error: 'User already exists' });
+      }
+      
+      return res.status(500).json({ 
+        error: 'Failed to create user',
+        details: insertError.message 
+      });
+    }
+    
+    if (!user) {
+      return res.status(500).json({ error: 'User creation failed - no user returned' });
+    }
+    
+    // Generate JWT token with 'sub' claim for RLS compatibility
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        email: user.email,
+        sub: user.id // Important for RLS policies
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    console.log('✅ Registration successful for:', user.email);
+    
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    });
+  } catch (error) {
+    console.error('❌ Register error:', error);
+    res.status(500).json({ 
+      error: 'Server error during registration',
+      details: error.message 
+    });
+  }
+});
+
+// Login endpoint
+app.post('/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  
+  console.log('🔐 Login attempt for:', email);
+  
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+  
+  try {
+    // Get user using ADMIN CLIENT (bypasses RLS)
+    const { data: user, error: fetchError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email.toLowerCase().trim())
+      .single();
+    
+    if (fetchError || !user) {
+      console.log('❌ User not found:', email);
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+      console.log('❌ Invalid password for:', email);
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    // Generate JWT token with 'sub' claim for RLS compatibility
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        email: user.email,
+        sub: user.id // Important for RLS policies
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    console.log('✅ Login successful for:', user.email);
+    
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      }
+    });
+  } catch (error) {
+    console.error('❌ Login error:', error);
+    res.status(500).json({ 
+      error: 'Server error during login',
+      details: error.message 
+    });
+  }
+});
+
+// ===== BOOK ENDPOINTS =====
+
+// Upload book
+app.post('/upload-book', authenticateToken, upload.single('file'), async (req, res) => {
+  console.log("📨 Upload route hit!");
+  console.log("User:", req.user);
+  console.log("Body:", req.body);
+  console.log("File:", req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'No file');
+
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const { title, author, description, genre } = req.body;
+    
+    if (!title || !author) {
+      return res.status(400).json({ error: 'Title and author are required' });
+    }
+
+    // Create unique filename
+    const timestamp = Date.now();
+    const fileExtension = req.file.originalname.split('.').pop();
+    const fileName = `${req.user.id}/${timestamp}-${title.replace(/[^a-zA-Z0-9]/g, '_')}.${fileExtension}`;
+    
+    console.log("📁 Uploading to Supabase Storage:", fileName);
+
+    // Upload file to Supabase Storage
+    const { data: fileData, error: uploadError } = await supabase.storage
+      .from('book-files')
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("❌ File upload error:", uploadError);
+      return res.status(500).json({ 
+        error: 'Failed to upload file to storage',
+        details: uploadError.message 
+      });
+    }
+
+    console.log("✅ File uploaded successfully:", fileData);
+
+    // Get public URL for the file
+    const { data: { publicUrl } } = supabase.storage
+      .from('book-files')
+      .getPublicUrl(fileName);
+
+    console.log("🔗 Public URL:", publicUrl);
+
+    // Save book metadata to database using ADMIN CLIENT
+    const { data: book, error: dbError } = await supabaseAdmin
+      .from('books')
+      .insert([{
+        user_id: req.user.id,
+        title: title.trim(),
+        author: author.trim(),
+        description: description?.trim() || null,
+        genre: genre?.trim() || null,
+        file_url: publicUrl,
+        file_type: req.file.mimetype,
+        file_size: req.file.size,
+        format: fileExtension.toUpperCase(),
+        status: 'uploaded'
+      }])
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error("❌ Database insert error:", dbError);
+      
+      // Clean up uploaded file if database insert fails
+      await supabase.storage
+        .from('book-files')
+        .remove([fileName]);
+        
+      return res.status(500).json({ 
+        error: 'Failed to save book metadata',
+        details: dbError.message 
+      });
+    }
+
+    console.log("✅ Book saved to database:", book.id);
+
+    // Return success response
+    res.json({
+      message: 'Book uploaded successfully',
+      book: {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        format: book.format,
+        file_type: book.file_type,
+        file_size: book.file_size,
+        status: book.status,
+        uploaded_at: book.uploaded_at
+      }
+    });
+
+  } catch (error) {
+    console.error('Upload endpoint error:', error);
+    res.status(500).json({ 
+      error: 'Server error during file upload',
+      details: error.message 
+    });
+  }
+});
+
+// Get all books for user
+app.get('/books', authenticateToken, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('books')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching books:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Failed to fetch books' });
+  }
+});
+
+// Get single book
+app.get('/books/:bookId', authenticateToken, async (req, res) => {
+  const { bookId } = req.params;
+  
+  try {
+    const { data, error } = await supabase
+      .from('books')
+      .select('*')
+      .eq('id', bookId)
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching book:', error);
+      return res.status(404).json({ error: 'Book not found' });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Failed to fetch book' });
+  }
+});
+
+// ✅ Update book reading status
+app.patch('/books/:id/reading-status', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { isReading, last_read } = req.body;
+  const userId = req.user.id;
+
+  try {
+    console.log(`📖 Updating reading status for book ${id}: ${isReading ? 'START' : 'STOP'}`);
+    
+    // Update the book's reading status
+    const { data: book, error: updateError } = await supabase
+      .from('books')
+      .update({
+        isReading: isReading,
+        last_read: last_read || new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .eq('user_id', userId)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Database update error:', updateError);
+      return res.status(400).json({ error: updateError.message });
+    }
+
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found or access denied' });
+    }
+
+    // Track action for gamification (if you have gamification system)
+    try {
+      if (isReading) {
+        await trackUserAction(userId, 'start_reading', { bookId: id });
+      } else {
+        await trackUserAction(userId, 'stop_reading', { bookId: id });
+      }
+    } catch (gamError) {
+      console.log('Gamification tracking failed:', gamError.message);
+      // Don't fail the request if gamification fails
+    }
+
+    res.json({
+      success: true,
+      book: book,
+      message: `${isReading ? 'Started' : 'Stopped'} reading "${book.title}"`
+    });
+
+  } catch (error) {
+    console.error('Failed to update reading status:', error);
+    res.status(500).json({ 
+      error: 'Failed to update reading status',
+      details: error.message 
+    });
+  }
+});
+
+// ✅ Create reading session
+app.post('/reading-session', authenticateToken, async (req, res) => {
+  const { bookId, duration, pagesRead, startTime, endTime } = req.body;
+  const userId = req.user.id;
+
+  try {
+    console.log(`📊 Creating reading session: ${duration} minutes for book ${bookId}`);
+    
+    // Create reading session record
+    const { data: session, error: sessionError } = await supabase
+      .from('reading_sessions')
+      .insert([{
+        user_id: userId,
+        book_id: bookId,
+        start_time: startTime || new Date(Date.now() - duration * 60000).toISOString(),
+        end_time: endTime || new Date().toISOString(),
+        duration: duration, // in minutes
+        pages_read: pagesRead || 0
+      }])
+      .select()
+      .single();
+
+    if (sessionError) {
+      console.error('Failed to create reading session:', sessionError);
+      return res.status(400).json({ error: sessionError.message });
+    }
+
+    // Update book's total reading time and progress
+    const { error: bookUpdateError } = await supabase
+      .from('books')
+      .update({
+        reading_time: supabase.raw(`COALESCE(reading_time, 0) + ${duration}`),
+        current_page: supabase.raw(`GREATEST(COALESCE(current_page, 0), ${pagesRead})`),
+        last_read: new Date().toISOString()
+      })
+      .eq('id', bookId)
+      .eq('user_id', userId);
+
+    if (bookUpdateError) {
+      console.error('Failed to update book stats:', bookUpdateError);
+    }
+
+    // Track gamification actions
+    try {
+      if (duration > 0) {
+        await trackUserAction(userId, 'reading_time', { 
+          minutes: duration, 
+          bookId: bookId 
+        });
+      }
+      if (pagesRead > 0) {
+        await trackUserAction(userId, 'pages_read', { 
+          pages: pagesRead, 
+          bookId: bookId 
+        });
+      }
+    } catch (gamError) {
+      console.log('Gamification tracking failed:', gamError.message);
+    }
+
+    res.json({
+      success: true,
+      session: session,
+      message: `Logged ${duration} minutes of reading`
+    });
+
+  } catch (error) {
+    console.error('Failed to create reading session:', error);
+    res.status(500).json({ 
+      error: 'Failed to log reading session',
+      details: error.message 
+    });
+  }
+});
+
+// ✅ Get user reading analytics
+app.get('/analytics', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(`📊 Fetching analytics for user ${userId}`);
+
+    // Get user's books
+    const { data: books } = await supabase
+      .from('books')
+      .select('*')
+      .eq('user_id', userId);
+
+    const totalBooks = books?.length || 0;
+    const booksRead = books?.filter(b => b.completed).length || 0;
+    const currentlyReading = books?.filter(b => b.isReading).length || 0;
+
+    // Get reading sessions from the last week
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const { data: sessions } = await supabase
+      .from('reading_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .gte('start_time', weekAgo.toISOString());
+
+    const weeklyMinutes = sessions?.reduce((sum, s) => sum + (s.duration || 0), 0) || 0;
+    const totalReadingTime = sessions?.reduce((sum, s) => sum + (s.duration || 0), 0) || 0;
+
+    // Calculate reading streak
+    const { data: recentSessions } = await supabase
+      .from('reading_sessions')
+      .select('start_time')
+      .eq('user_id', userId)
+      .order('start_time', { ascending: false })
+      .limit(30);
+
+    const currentStreak = calculateReadingStreak(recentSessions);
+
+    // Get favorite genres
+    const genreCounts = books?.reduce((acc, book) => {
+      if (book.genre) {
+        acc[book.genre] = (acc[book.genre] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    const favoriteGenres = Object.entries(genreCounts || {})
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    const analytics = {
+      totalBooks,
+      booksRead,
+      currentlyReading,
+      readingTime: weeklyMinutes,
+      totalReadingTime,
+      currentStreak,
+      favoriteGenres,
+      weeklyMinutes,
+      averageSessionDuration: sessions?.length > 0 
+        ? Math.round(totalReadingTime / sessions.length) 
+        : 0
+    };
+
+    console.log('📊 Analytics calculated:', analytics);
+    res.json(analytics);
+
+  } catch (error) {
+    console.error('Failed to fetch analytics:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch analytics',
+      details: error.message 
+    });
+  }
+});
+
+// ✅ Get user stats for dashboard
+app.get('/user-stats', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Try to get gamification stats if available
+    let userStats = {
+      level: 1,
+      points: 0,
+      nextLevelPoints: 100,
+      totalBooks: 0,
+      achievements: []
+    };
+
+    try {
+      const { data: gamificationStats } = await supabase
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (gamificationStats) {
+        userStats = {
+          ...userStats,
+          ...gamificationStats,
+          nextLevelPoints: calculateNextLevelPoints(gamificationStats.level || 1)
+        };
+      }
+    } catch (error) {
+      console.log('Gamification stats not available, using defaults');
+    }
+
+    // Get basic book count
+    const { data: books } = await supabase
+      .from('books')
+      .select('id')
+      .eq('user_id', userId);
+
+    userStats.totalBooks = books?.length || 0;
+
+    res.json(userStats);
+
+  } catch (error) {
+    console.error('Failed to fetch user stats:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch user stats',
+      details: error.message 
+    });
+  }
+});
+
+// ✅ Helper functions
+
+// Calculate reading streak from sessions
+function calculateReadingStreak(sessions) {
+  if (!sessions || sessions.length === 0) return 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  let streak = 0;
+  let currentDate = new Date(today);
+  
+  // Group sessions by date
+  const sessionsByDate = {};
+  sessions.forEach(session => {
+    const date = new Date(session.start_time);
+    date.setHours(0, 0, 0, 0);
+    const dateKey = date.toISOString().split('T')[0];
+    sessionsByDate[dateKey] = true;
+  });
+  
+  // Count consecutive days
+  while (true) {
+    const dateKey = currentDate.toISOString().split('T')[0];
+    if (sessionsByDate[dateKey]) {
+      streak++;
+      currentDate.setDate(currentDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+}
+
+// Calculate next level points requirement
+function calculateNextLevelPoints(level) {
+  return level * 100; // Simple formula, adjust as needed
+}
+
+// Track user action for gamification (implement based on your gamification system)
+async function trackUserAction(userId, actionType, metadata = {}) {
+  try {
+    // This is a placeholder - implement based on your gamification system
+    console.log(`🎮 Tracking action: ${actionType} for user ${userId}`, metadata);
+    
+    // Example implementation:
+    const points = getPointsForAction(actionType, metadata);
+    
+    if (points > 0) {
+      await supabase
+        .from('user_actions')
+        .insert([{
+          user_id: userId,
+          action_type: actionType,
+          points: points,
+          metadata: metadata,
+          created_at: new Date().toISOString()
+        }]);
+      
+      // Update user total points
+      await supabase
+        .rpc('increment_user_points', {
+          p_user_id: userId,
+          p_points: points
+        });
+    }
+    
+  } catch (error) {
+    console.error('Failed to track user action:', error);
+    throw error;
+  }
+}
+
+// Get points for different actions
+function getPointsForAction(actionType, metadata = {}) {
+  const pointsMap = {
+    'start_reading': 5,
+    'stop_reading': 0,
+    'reading_time': Math.floor((metadata.minutes || 0) / 5), // 1 point per 5 minutes
+    'pages_read': (metadata.pages || 0) * 2, // 2 points per page
+    'book_completed': 100,
+    'note_created': 10,
+    'daily_checkin': 25
+  };
+  
+  return pointsMap[actionType] || 0;
+}
+
+// ===== NOTES API ENDPOINTS =====
+// Add these endpoints to your existing index.js file (after the books endpoints)
+
+// Get all notes for the authenticated user
+app.get('/notes', authenticateToken, async (req, res) => {
+  try {
+    console.log('📋 Fetching notes for user:', req.user.id);
+    
+    const { data: notes, error } = await supabase
+      .from('notes')
+      .select(`
+        *,
+        books(title, author)
+      `)
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('❌ Notes fetch error:', error);
+      throw error;
+    }
+    
+    console.log(`✅ Retrieved ${notes?.length || 0} notes`);
+    res.json(notes || []);
+  } catch (error) {
+    console.error('❌ Notes endpoint error:', error);
+    res.status(500).json({ error: 'Failed to fetch notes' });
+  }
+});
+
+// Get notes for a specific book
+app.get('/books/:bookId/notes', authenticateToken, async (req, res) => {
+  try {
+    const { bookId } = req.params;
+    console.log('📋 Fetching notes for book:', bookId);
+    
+    // Verify book belongs to user
+    const { data: book } = await supabase
+      .from('books')
+      .select('id')
+      .eq('id', bookId)
+      .eq('user_id', req.user.id)
+      .single();
+    
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    
+    const { data: notes, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('book_id', bookId)
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    console.log(`✅ Retrieved ${notes?.length || 0} notes for book`);
+    res.json(notes || []);
+  } catch (error) {
+    console.error('❌ Book notes fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch book notes' });
+  }
+});
+
+// Create a new note
+app.post('/notes', authenticateToken, async (req, res) => {
+  try {
+    const { title, content, book_id, tags, type = 'note', highlight_text, chapter, page, color } = req.body;
+    
+    console.log('📝 Creating note:', { title, book_id, type });
+    
+    // Validation
+    if (!title || !content) {
+      return res.status(400).json({ error: 'Title and content are required' });
+    }
+    
+    // If book_id is provided, verify it belongs to the user
+    if (book_id) {
+      const { data: book } = await supabase
+        .from('books')
+        .select('id')
+        .eq('id', book_id)
+        .eq('user_id', req.user.id)
+        .single();
+      
+      if (!book) {
+        return res.status(400).json({ error: 'Invalid book ID' });
+      }
+    }
+    
+    // Create the note
+    const noteData = {
+      user_id: req.user.id,
+      title: title.trim(),
+      content: content.trim(),
+      book_id: book_id || null,
+      tags: Array.isArray(tags) ? tags : [],
+      type: type || 'note',
+      highlight_text: highlight_text || null,
+      chapter: chapter || null,
+      page: page || null,
+      color: color || '#ffeb3b',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    const { data: note, error } = await supabase
+      .from('notes')
+      .insert([noteData])
+      .select(`
+        *,
+        books(title, author)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('❌ Note creation error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Note created successfully:', note.id);
+    res.status(201).json(note);
+  } catch (error) {
+    console.error('❌ Create note error:', error);
+    res.status(500).json({ error: 'Failed to create note' });
+  }
+});
+
+// Update an existing note
+app.patch('/notes/:noteId', authenticateToken, async (req, res) => {
+  try {
+    const { noteId } = req.params;
+    const { title, content, book_id, tags, type, highlight_text, chapter, page, color } = req.body;
+    
+    console.log('✏️ Updating note:', noteId);
+    
+    // Verify note belongs to user
+    const { data: existingNote } = await supabase
+      .from('notes')
+      .select('user_id')
+      .eq('id', noteId)
+      .single();
+    
+    if (!existingNote || existingNote.user_id !== req.user.id) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+    
+    // Validation
+    if (title && !title.trim()) {
+      return res.status(400).json({ error: 'Title cannot be empty' });
+    }
+    
+    if (content && !content.trim()) {
+      return res.status(400).json({ error: 'Content cannot be empty' });
+    }
+    
+    // If book_id is provided, verify it belongs to the user
+    if (book_id) {
+      const { data: book } = await supabase
+        .from('books')
+        .select('id')
+        .eq('id', book_id)
+        .eq('user_id', req.user.id)
+        .single();
+      
+      if (!book) {
+        return res.status(400).json({ error: 'Invalid book ID' });
+      }
+    }
+    
+    // Prepare update data
+    const updateData = {
+      updated_at: new Date().toISOString()
+    };
+    
+    if (title !== undefined) updateData.title = title.trim();
+    if (content !== undefined) updateData.content = content.trim();
+    if (book_id !== undefined) updateData.book_id = book_id;
+    if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : [];
+    if (type !== undefined) updateData.type = type;
+    if (highlight_text !== undefined) updateData.highlight_text = highlight_text;
+    if (chapter !== undefined) updateData.chapter = chapter;
+    if (page !== undefined) updateData.page = page;
+    if (color !== undefined) updateData.color = color;
+    
+    const { data: note, error } = await supabase
+      .from('notes')
+      .update(updateData)
+      .eq('id', noteId)
+      .select(`
+        *,
+        books(title, author)
+      `)
+      .single();
+    
+    if (error) {
+      console.error('❌ Note update error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Note updated successfully:', noteId);
+    res.json(note);
+  } catch (error) {
+    console.error('❌ Update note error:', error);
+    res.status(500).json({ error: 'Failed to update note' });
+  }
+});
+
+// Delete a note
+app.delete('/notes/:noteId', authenticateToken, async (req, res) => {
+  try {
+    const { noteId } = req.params;
+    
+    console.log('🗑️ Deleting note:', noteId);
+    
+    // Verify note belongs to user and delete in one operation
+    const { data: deletedNote, error } = await supabase
+      .from('notes')
+      .delete()
+      .eq('id', noteId)
+      .eq('user_id', req.user.id)
+      .select()
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Note not found' });
+      }
+      throw error;
+    }
+    
+    if (!deletedNote) {
+      return res.status(404).json({ error: 'Note not found' });
+    }
+    
+    console.log('✅ Note deleted successfully:', noteId);
+    res.json({ success: true, message: 'Note deleted successfully' });
+  } catch (error) {
+    console.error('❌ Delete note error:', error);
+    res.status(500).json({ error: 'Failed to delete note' });
+  }
+});
+
+// Get note statistics for the user
+app.get('/notes/stats', authenticateToken, async (req, res) => {
+  try {
+    console.log('📊 Fetching note statistics for user:', req.user.id);
+    
+    const { data: notes, error } = await supabase
+      .from('notes')
+      .select('type, tags, created_at')
+      .eq('user_id', req.user.id);
+    
+    if (error) throw error;
+    
+    const stats = {
+      total: notes?.length || 0,
+      byType: {},
+      byMonth: {},
+      totalTags: 0
+    };
+    
+    // Process notes for statistics
+    if (notes && notes.length > 0) {
+      const allTags = new Set();
+      const monthCounts = {};
+      
+      notes.forEach(note => {
+        // Count by type
+        stats.byType[note.type] = (stats.byType[note.type] || 0) + 1;
+        
+        // Count by month
+        const month = new Date(note.created_at).toISOString().substring(0, 7);
+        monthCounts[month] = (monthCounts[month] || 0) + 1;
+        
+        // Count unique tags
+        if (note.tags && Array.isArray(note.tags)) {
+          note.tags.forEach(tag => allTags.add(tag));
+        }
+      });
+      
+      stats.byMonth = monthCounts;
+      stats.totalTags = allTags.size;
+    }
+    
+    console.log('✅ Note statistics calculated');
+    res.json(stats);
+  } catch (error) {
+    console.error('❌ Note stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch note statistics' });
+  }
+});
+
+// Search notes
+app.get('/notes/search', authenticateToken, async (req, res) => {
+  try {
+    const { q: query, type, book_id } = req.query;
+    
+    console.log('🔍 Searching notes:', { query, type, book_id });
+    
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({ error: 'Search query must be at least 2 characters' });
+    }
+    
+    let searchQuery = supabase
+      .from('notes')
+      .select(`
+        *,
+        books(title, author)
+      `)
+      .eq('user_id', req.user.id);
+    
+    // Add text search
+    searchQuery = searchQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
+    
+    // Add filters
+    if (type) {
+      searchQuery = searchQuery.eq('type', type);
+    }
+    
+    if (book_id) {
+      searchQuery = searchQuery.eq('book_id', book_id);
+    }
+    
+    const { data: notes, error } = await searchQuery
+      .order('created_at', { ascending: false })
+      .limit(50);
+    
+    if (error) throw error;
+    
+    console.log(`✅ Found ${notes?.length || 0} notes matching search`);
+    res.json(notes || []);
+  } catch (error) {
+    console.error('❌ Search notes error:', error);
+    res.status(500).json({ error: 'Failed to search notes' });
+  }
+});
+
+// Backend API endpoints to add to your index.js file
+// These endpoints support the enhanced gamification system
+
+// ============================================================================
+// GAMIFICATION ENDPOINTS
+// ============================================================================
+
+// Get user gamification stats
+app.get('/gamification/stats', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get basic book statistics
+    const { data: books } = await supabase
+      .from('books')
+      .select('*')
+      .eq('user_id', userId);
+    
+    // Get reading sessions for time tracking
+    const { data: sessions } = await supabase
+      .from('reading_sessions')
+      .select('*')
+      .eq('user_id', userId);
+    
+    // Get notes for engagement metrics
+    const { data: notes } = await supabase
+      .from('notes')
+      .select('type')
+      .eq('user_id', userId);
+    
+    // Calculate stats
+    const stats = {
+      totalPoints: await getUserPoints(userId),
+      level: calculateUserLevel(await getUserPoints(userId)),
+      booksRead: books?.length || 0,
+      booksCompleted: books?.filter(b => b.completed).length || 0,
+      pagesRead: books?.reduce((sum, book) => sum + (book.pages_read || 0), 0) || 0,
+      totalReadingTime: sessions?.reduce((sum, session) => sum + (session.duration || 0), 0) || 0,
+      readingStreak: await calculateReadingStreak(userId),
+      notesCreated: notes?.filter(n => n.type === 'note').length || 0,
+      highlightsCreated: notes?.filter(n => n.type === 'highlight').length || 0
+    };
+    
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching gamification stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// Get user achievements
+app.get('/gamification/achievements', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const { data: achievements } = await supabase
+      .from('user_achievements')
+      .select('*')
+      .eq('user_id', userId)
+      .order('unlocked_at', { ascending: false });
+    
+    res.json(achievements || []);
+  } catch (error) {
+    console.error('Error fetching achievements:', error);
+    res.status(500).json({ error: 'Failed to fetch achievements' });
+  }
+});
+
+// Get user goals
+app.get('/gamification/goals', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const active = req.query.active === 'true';
+    
+    let query = supabase
+      .from('user_goals')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (active) {
+      query = query.eq('completed', false);
+    }
+    
+    const { data: goals } = await query.order('created_at', { ascending: false });
+    
+    // Calculate progress for each goal
+    const goalsWithProgress = await Promise.all(
+      (goals || []).map(async (goal) => {
+        const currentValue = await calculateGoalProgress(userId, goal);
+        const progress = Math.min(100, (currentValue / goal.target_value) * 100);
+        
+        return {
+          ...goal,
+          currentValue,
+          progress
+        };
+      })
+    );
+    
+    res.json(goalsWithProgress);
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    res.status(500).json({ error: 'Failed to fetch goals' });
+  }
+});
+
+// Track user action and award points
+app.post('/gamification/actions', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { action, points, metadata } = req.body;
+    
+    // Log the action
+    const { data: actionLog } = await supabase
+      .from('user_actions')
+      .insert([{
+        user_id: userId,
+        action,
+        points,
+        metadata,
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+    
+    // Update user points
+    await updateUserPoints(userId, points);
+    
+    // Check for new achievements
+    const newAchievements = await checkUserAchievements(userId, action, metadata);
+    
+    // Update goal progress
+    await updateGoalProgress(userId, action, metadata);
+    
+    res.json({
+      success: true,
+      actionId: actionLog.id,
+      pointsAwarded: points,
+      newAchievements
+    });
+  } catch (error) {
+    console.error('Error tracking action:', error);
+    res.status(500).json({ error: 'Failed to track action' });
+  }
+});
+
+// Create or update user goal
+app.post('/gamification/goals', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { title, description, type, targetValue, reward } = req.body;
+    
+    const { data: goal } = await supabase
+      .from('user_goals')
+      .insert([{
+        user_id: userId,
+        title,
+        description,
+        type,
+        target_value: targetValue,
+        reward,
+        current_value: 0,
+        completed: false,
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+    
+    res.json(goal);
+  } catch (error) {
+    console.error('Error creating goal:', error);
+    res.status(500).json({ error: 'Failed to create goal' });
+  }
+});
+
+// Update gamification stats (batch update)
+app.post('/gamification/stats', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const stats = req.body;
+    
+    // Update or create user stats record
+    const { data: existingStats } = await supabase
+      .from('user_stats')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
+    
+    if (existingStats) {
+      await supabase
+        .from('user_stats')
+        .update(stats)
+        .eq('user_id', userId);
+    } else {
+      await supabase
+        .from('user_stats')
+        .insert([{ user_id: userId, ...stats }]);
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating stats:', error);
+    res.status(500).json({ error: 'Failed to update stats' });
+  }
+});
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+// Calculate user's total points
+async function getUserPoints(userId) {
+  const { data: actions } = await supabase
+    .from('user_actions')
+    .select('points')
+    .eq('user_id', userId);
+  
+  return actions?.reduce((sum, action) => sum + (action.points || 0), 0) || 0;
+}
+
+// Calculate user level based on points
+function calculateUserLevel(totalPoints) {
+  const levels = [
+    { level: 1, points: 0 },
+    { level: 2, points: 200 },
+    { level: 3, points: 500 },
+    { level: 4, points: 1000 },
+    { level: 5, points: 2000 },
+    { level: 6, points: 4000 },
+    { level: 7, points: 8000 },
+    { level: 8, points: 15000 },
+    { level: 9, points: 25000 },
+    { level: 10, points: 50000 }
+  ];
+  
+  for (let i = levels.length - 1; i >= 0; i--) {
+    if (totalPoints >= levels[i].points) {
+      return levels[i].level;
+    }
+  }
+  return 1;
+}
+
+// Calculate reading streak
+async function calculateReadingStreak(userId) {
+  const { data: sessions } = await supabase
+    .from('reading_sessions')
+    .select('start_time')
+    .eq('user_id', userId)
+    .order('start_time', { ascending: false });
+  
+  if (!sessions || sessions.length === 0) return 0;
+  
+  let streak = 0;
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  
+  // Group sessions by date
+  const sessionsByDate = {};
+  sessions.forEach(session => {
+    const date = new Date(session.start_time);
+    date.setHours(0, 0, 0, 0);
+    const dateKey = date.toISOString().split('T')[0];
+    sessionsByDate[dateKey] = true;
+  });
+  
+  // Count consecutive days
+  while (true) {
+    const dateKey = currentDate.toISOString().split('T')[0];
+    if (sessionsByDate[dateKey]) {
+      streak++;
+      currentDate.setDate(currentDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+}
+
+// Update user points
+async function updateUserPoints(userId, points) {
+  const { data: existingStats } = await supabase
+    .from('user_stats')
+    .select('total_points')
+    .eq('user_id', userId)
+    .single();
+  
+  const newTotal = (existingStats?.total_points || 0) + points;
+  
+  if (existingStats) {
+    await supabase
+      .from('user_stats')
+      .update({ total_points: newTotal })
+      .eq('user_id', userId);
+  } else {
+    await supabase
+      .from('user_stats')
+      .insert([{ user_id: userId, total_points: newTotal }]);
+  }
+}
+
+// Check for new achievements
+async function checkUserAchievements(userId, action, metadata) {
+  const newAchievements = [];
+  
+  // Get current user stats
+  const { data: stats } = await supabase
+    .from('user_stats')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+  
+  // Get existing achievements
+  const { data: existingAchievements } = await supabase
+    .from('user_achievements')
+    .select('achievement_id')
+    .eq('user_id', userId);
+  
+  const unlockedIds = new Set(existingAchievements?.map(a => a.achievement_id) || []);
+  
+  // Define achievement checks
+  const achievementChecks = {
+    'first_book': () => action === 'book_uploaded' && !unlockedIds.has('first_book'),
+    'bibliophile_10': () => (stats?.books_read || 0) >= 10 && !unlockedIds.has('bibliophile_10'),
+    'page_turner': () => (stats?.pages_read || 0) >= 100 && !unlockedIds.has('page_turner'),
+    'daily_reader': () => (stats?.reading_streak || 0) >= 7 && !unlockedIds.has('daily_reader'),
+    'finisher': () => action === 'book_completed' && !unlockedIds.has('finisher'),
+    'note_taker': () => (stats?.notes_created || 0) >= 10 && !unlockedIds.has('note_taker')
+  };
+  
+  // Check each achievement
+  for (const [achievementId, checkFunction] of Object.entries(achievementChecks)) {
+    if (checkFunction()) {
+      await supabase
+        .from('user_achievements')
+        .insert([{
+          user_id: userId,
+          achievement_id: achievementId,
+          unlocked_at: new Date().toISOString()
+        }]);
+      
+      newAchievements.push(achievementId);
+    }
+  }
+  
+  return newAchievements;
+}
+
+// Calculate goal progress
+async function calculateGoalProgress(userId, goal) {
+  switch (goal.type) {
+    case 'pages':
+      const { data: books } = await supabase
+        .from('books')
+        .select('pages_read')
+        .eq('user_id', userId);
+      return books?.reduce((sum, book) => sum + (book.pages_read || 0), 0) || 0;
+      
+    case 'time':
+      const { data: sessions } = await supabase
+        .from('reading_sessions')
+        .select('duration')
+        .eq('user_id', userId);
+      return sessions?.reduce((sum, session) => sum + (session.duration || 0), 0) || 0;
+      
+    case 'streak':
+      return await calculateReadingStreak(userId);
+      
+    case 'books':
+      const { data: completedBooks } = await supabase
+        .from('books')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('completed', true);
+      return completedBooks?.length || 0;
+      
+    default:
+      return goal.current_value || 0;
+  }
+}
+
+// Update goal progress
+async function updateGoalProgress(userId, action, metadata) {
+  const { data: goals } = await supabase
+    .from('user_goals')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('completed', false);
+  
+  for (const goal of goals || []) {
+    const currentValue = await calculateGoalProgress(userId, goal);
+    const completed = currentValue >= goal.target_value;
+    
+    await supabase
+      .from('user_goals')
+      .update({
+        current_value: currentValue,
+        completed,
+        completed_at: completed ? new Date().toISOString() : null
+      })
+      .eq('id', goal.id);
+    
+    // Award goal completion points
+    if (completed && !goal.completed) {
+      await updateUserPoints(userId, goal.reward);
+    }
+  }
+}
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('❌ Server error:', err);
+  
+  // Handle CORS errors specifically
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({
+      error: 'CORS policy violation',
+      origin: req.headers.origin,
+      allowedOrigins: allowedOrigins
+    });
+  }
+  
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log('✅ CORS configured for origins:', allowedOrigins);
+});
+
+// Export for testing
+module.exports = app;

@@ -1,0 +1,191 @@
+// src/pages/UploadPage.jsx - Fixed version with proper upload handling
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import BookUpload from '../components/gamification/BookUpload';
+import { useSnackbar } from '../components/Material3/providers/SnackbarProvider';
+import { useGamification } from '../contexts/GamificationContext';
+
+
+
+const UploadPage = () => {
+  const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
+  const { trackAction } = useGamification();
+
+  /**
+   * Handle successful book upload
+   * This callback is called when BookUpload successfully uploads a book
+   */
+  const handleUploadComplete = async (uploadedBook) => {
+    console.log('📚 Book upload completed in UploadPage:', uploadedBook);
+    
+    if (!uploadedBook || !uploadedBook.id) {
+      console.error('❌ Invalid book data received:', uploadedBook);
+      showSnackbar({ 
+        message: 'Book uploaded but ID not received. Please check your library.', 
+        variant: 'warning' 
+      });
+      // Navigate to library anyway so user can see their books
+      setTimeout(() => {
+        navigate('/library');
+      }, 2000);
+      return;
+    }
+
+    // Show success notification
+    showSnackbar({ 
+      message: `"${uploadedBook.title}" has been successfully uploaded!`, 
+      variant: 'success' 
+    });
+
+    // Track gamification action
+    try {
+      await trackAction('book_uploaded', {
+        bookId: uploadedBook.id,
+        bookTitle: uploadedBook.title,
+        author: uploadedBook.author,
+        genre: uploadedBook.genre
+      });
+      console.log('✅ Gamification tracking successful');
+    } catch (error) {
+      console.warn('⚠️ Gamification tracking failed (non-critical):', error);
+    }
+
+    // Give user options for what to do next
+    setTimeout(() => {
+      const userChoice = window.confirm(
+        `Would you like to start reading "${uploadedBook.title}" now?\n\n` +
+        `Click OK to open the reader, or Cancel to go to your library.`
+      );
+
+      if (userChoice) {
+        // Navigate to the reader with the book ID
+        console.log(`📖 Navigating to reader for book ID: ${uploadedBook.id}`);
+        navigate(`/read/${uploadedBook.id}`);
+      } else {
+        // Navigate to the library
+        console.log('📚 Navigating to library');
+        navigate('/library');
+      }
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8 py-12">
+        
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-display-medium text-on-surface font-bold mb-4">
+            <span className="bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">
+              Upload a New Book
+            </span>
+          </h1>
+          <p className="text-body-large text-on-surface-variant max-w-2xl mx-auto">
+            Add a new book to your digital library. We support PDF and EPUB formats. 
+            Your books are securely stored and accessible from any device.
+          </p>
+        </div>
+
+        {/* Upload Component with onUploadComplete handler */}
+        <BookUpload onUploadComplete={handleUploadComplete} />
+
+        {/* Help Section */}
+        <div className="mt-16 space-y-8">
+          <div className="text-center">
+            <h2 className="text-headline-medium text-on-surface font-semibold mb-8">
+              Supported Formats & Tips
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* PDF Info */}
+            <div className="bg-surface-container rounded-large p-6">
+              <div className="flex items-start space-x-4">
+                <div className="bg-error/20 p-3 rounded-large">
+                  <span className="material-symbols-outlined text-error text-2xl">picture_as_pdf</span>
+                </div>
+                <div>
+                  <h3 className="text-title-medium text-on-surface font-semibold mb-2">PDF Files</h3>
+                  <p className="text-body-medium text-on-surface-variant mb-3">
+                    Perfect for textbooks, academic papers, and documents with complex layouts.
+                  </p>
+                  <ul className="text-body-small text-on-surface-variant space-y-1">
+                    <li>• Read directly in your browser</li>
+                    <li>• Maintains original formatting</li>
+                    <li>• Great for reference materials</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* EPUB Info */}
+            <div className="bg-surface-container rounded-large p-6">
+              <div className="flex items-start space-x-4">
+                <div className="bg-primary/20 p-3 rounded-large">
+                  <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
+                </div>
+                <div>
+                  <h3 className="text-title-medium text-on-surface font-semibold mb-2">EPUB Files</h3>
+                  <p className="text-body-medium text-on-surface-variant mb-3">
+                    Ideal for novels, fiction, and reflowable text content.
+                  </p>
+                  <ul className="text-body-small text-on-surface-variant space-y-1">
+                    <li>• Adjustable text size</li>
+                    <li>• Responsive layout</li>
+                    <li>• Perfect for long reading sessions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tips Section */}
+          <div className="bg-surface-container-high rounded-large p-6">
+            <h3 className="text-title-medium text-on-surface font-semibold mb-4">
+              💡 Pro Tips
+            </h3>
+            <ul className="space-y-3 text-body-medium text-on-surface-variant">
+              <li className="flex items-start">
+                <span className="material-symbols-outlined text-primary mr-2 mt-0.5">check_circle</span>
+                <span>Files up to 50MB are supported for optimal performance</span>
+              </li>
+              <li className="flex items-start">
+                <span className="material-symbols-outlined text-primary mr-2 mt-0.5">check_circle</span>
+                <span>Book metadata (title, author, genre) helps with organization</span>
+              </li>
+              <li className="flex items-start">
+                <span className="material-symbols-outlined text-primary mr-2 mt-0.5">check_circle</span>
+                <span>You can drag and drop files directly onto the upload area</span>
+              </li>
+              <li className="flex items-start">
+                <span className="material-symbols-outlined text-primary mr-2 mt-0.5">check_circle</span>
+                <span>Uploaded books sync across all your devices automatically</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex justify-center gap-4 mt-8">
+            <button
+              onClick={() => navigate('/library')}
+              className="px-6 py-3 bg-surface-container rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined mr-2 align-middle">library_books</span>
+              View Library
+            </button>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="px-6 py-3 bg-surface-container rounded-full text-on-surface hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined mr-2 align-middle">dashboard</span>
+              Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UploadPage;

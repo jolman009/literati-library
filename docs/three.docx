@@ -1,0 +1,608 @@
+import React, { useEffect, useState, useMemo } from 'react';
+
+// Mock API URL
+const API = 'https://library-server-m6gr.onrender.com';
+
+// Material 3 Components
+const NavigationRail = ({ activeTab, setActiveTab }) => (
+  <nav className="hidden lg:flex flex-col w-20 bg-surface-container py-3 border-r border-outline-variant h-full">
+    <div className="flex flex-col items-center space-y-3">
+      {/* Logo/Brand */}
+      <div className="mb-6 mt-3">
+        <div className="w-14 h-14 bg-primary rounded-large flex items-center justify-center text-on-primary text-2xl shadow-elevation-1">
+          📚
+        </div>
+      </div>
+      
+      {/* Navigation Items */}
+      <NavigationRailItem
+        icon="📊"
+        label="Overview"
+        active={activeTab === 'overview'}
+        onClick={() => setActiveTab('overview')}
+      />
+      <NavigationRailItem
+        icon="📚"
+        label="Library"
+        active={activeTab === 'library'}
+        badge={4}
+        onClick={() => setActiveTab('library')}
+      />
+      <NavigationRailItem
+        icon="📈"
+        label="Progress"
+        active={activeTab === 'progress'}
+        onClick={() => setActiveTab('progress')}
+      />
+      <NavigationRailItem
+        icon="⭐"
+        label="Goals"
+        active={activeTab === 'goals'}
+        onClick={() => setActiveTab('goals')}
+      />
+    </div>
+    
+    {/* FAB */}
+    <div className="mt-auto mb-6 flex justify-center">
+      <button className="w-14 h-14 bg-tertiary-container text-on-tertiary-container rounded-large shadow-elevation-3 hover:shadow-elevation-4 transition-all duration-medium2 flex items-center justify-center text-xl relative overflow-hidden group">
+        <span className="relative z-10">➕</span>
+        <div className="absolute inset-0 bg-on-tertiary-container opacity-0 group-hover:opacity-hover transition-opacity duration-short4"></div>
+      </button>
+    </div>
+  </nav>
+);
+
+const NavigationRailItem = ({ icon, label, active, badge, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`relative w-16 h-16 rounded-large flex flex-col items-center justify-center transition-all duration-medium2 ${
+      active 
+        ? 'bg-secondary-container text-on-secondary-container' 
+        : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+    }`}
+  >
+    <span className="text-2xl">{icon}</span>
+    <span className="text-label-small mt-1">{label}</span>
+    {badge && (
+      <div className="absolute top-2 right-2 w-5 h-5 bg-error text-on-error rounded-full text-label-small flex items-center justify-center">
+        {badge}
+      </div>
+    )}
+  </button>
+);
+
+// Material 3 Card Component
+const Card = ({ children, type = 'elevated', className = '' }) => {
+  const typeClasses = {
+    elevated: 'bg-surface shadow-elevation-1 hover:shadow-elevation-2',
+    filled: 'bg-surface-container-highest',
+    outlined: 'bg-surface border border-outline-variant'
+  };
+  
+  return (
+    <div className={`rounded-large transition-all duration-medium2 ${typeClasses[type]} ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+// Material 3 Chip Component
+const Chip = ({ label, selected, onClick, icon }) => (
+  <button
+    onClick={onClick}
+    className={`inline-flex items-center px-4 py-2 rounded-small text-label-large transition-all duration-medium2 ${
+      selected
+        ? 'bg-secondary-container text-on-secondary-container border border-outline'
+        : 'bg-surface-container-low text-on-surface-variant border border-outline-variant hover:bg-surface-container'
+    }`}
+  >
+    {icon && <span className="mr-2">{icon}</span>}
+    {label}
+  </button>
+);
+
+// Material 3 FAB (Floating Action Button)
+const FAB = ({ onClick, extended = false, icon, label }) => (
+  <button
+    onClick={onClick}
+    className={`${
+      extended ? 'px-6' : 'w-14 h-14'
+    } h-14 bg-primary-container text-on-primary-container rounded-large shadow-elevation-3 hover:shadow-elevation-4 active:shadow-elevation-2 transition-all duration-medium2 flex items-center justify-center space-x-2 relative overflow-hidden group`}
+  >
+    <span className="text-xl relative z-10">{icon}</span>
+    {extended && label && <span className="text-label-large font-medium relative z-10">{label}</span>}
+    <div className="absolute inset-0 bg-on-primary-container opacity-0 group-hover:opacity-hover group-active:opacity-pressed transition-opacity duration-short4"></div>
+  </button>
+);
+
+// Material 3 Search Bar
+const SearchBar = ({ value, onChange, placeholder }) => (
+  <div className="relative">
+    <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-on-surface-variant">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="w-full pl-12 pr-4 py-3 bg-surface-container-highest rounded-full text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-medium2"
+    />
+  </div>
+);
+
+// Material 3 Icon Button
+const IconButton = ({ icon, onClick, variant = 'standard' }) => {
+  const variantClasses = {
+    standard: 'text-on-surface-variant hover:text-on-surface',
+    filled: 'bg-surface-container-highest text-on-surface',
+    tonal: 'bg-secondary-container text-on-secondary-container',
+    outlined: 'border border-outline text-on-surface-variant'
+  };
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-medium2 relative overflow-hidden group ${variantClasses[variant]}`}
+    >
+      <span className="relative z-10">{icon}</span>
+      <div className="absolute inset-0 bg-on-surface opacity-0 group-hover:opacity-hover group-active:opacity-pressed transition-opacity duration-short4"></div>
+    </button>
+  );
+};
+
+// Enhanced Theme Toggle with Material 3 styling
+const ThemeToggleButton = () => {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.add('no-transition');
+    
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    
+    setTimeout(() => {
+      document.documentElement.classList.remove('no-transition');
+    }, 100);
+  }, [isDarkMode]);
+
+  return (
+    <IconButton
+      icon={
+        <div className="relative w-6 h-6">
+          <svg
+            className={`absolute inset-0 transform transition-all duration-medium4 ease-emphasized ${
+              isDarkMode ? 'opacity-0 rotate-180 scale-0' : 'opacity-100 rotate-0 scale-100'
+            }`}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
+          </svg>
+          
+          <svg
+            className={`absolute inset-0 transform transition-all duration-medium4 ease-emphasized ${
+              isDarkMode ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-0'
+            }`}
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+          </svg>
+        </div>
+      }
+      onClick={() => setIsDarkMode(!isDarkMode)}
+      variant="tonal"
+    />
+  );
+};
+
+// Material 3 Progress Indicator
+const LinearProgress = ({ value, className = '' }) => (
+  <div className={`w-full bg-surface-container-highest rounded-full h-1 overflow-hidden ${className}`}>
+    <div 
+      className="h-full bg-primary rounded-full transition-all duration-medium4 ease-emphasized"
+      style={{ width: `${value}%` }}
+    />
+  </div>
+);
+
+// Enhanced Book Card with Material 3 principles
+const BookCard = ({ book, onClick }) => (
+  <Card type="elevated" className="p-0 overflow-hidden cursor-pointer group">
+    <div onClick={onClick} className="relative">
+      {/* Book Cover Placeholder */}
+      <div className="aspect-[3/4] bg-gradient-to-br from-primary-container to-tertiary-container flex items-center justify-center">
+        <span className="text-6xl opacity-50">📖</span>
+      </div>
+      
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="text-title-medium text-on-surface line-clamp-1 group-hover:text-primary transition-colors duration-medium2">
+          {book.title}
+        </h3>
+        <p className="text-body-medium text-on-surface-variant mt-1">{book.author}</p>
+        
+        <div className="flex items-center justify-between mt-4">
+          <Chip
+            label={book.format}
+            selected={false}
+            icon={book.format === 'PDF' ? '📄' : '📱'}
+          />
+          <span className="text-label-small text-on-surface-variant">
+            {book.progress_percentage || 0}% read
+          </span>
+        </div>
+        
+        <LinearProgress value={book.progress_percentage || 0} className="mt-3" />
+      </div>
+    </div>
+  </Card>
+);
+
+// Mock data
+const mockBooks = [
+  { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', format: 'PDF', genre: 'Fiction', progress_percentage: 75, file_url: '#' },
+  { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', format: 'EPUB', genre: 'Fiction', progress_percentage: 30, file_url: '#' },
+  { id: 3, title: 'Clean Code', author: 'Robert C. Martin', format: 'PDF', genre: 'Technology', progress_percentage: 100, file_url: '#' },
+  { id: 4, title: 'The Lean Startup', author: 'Eric Ries', format: 'PDF', genre: 'Business', progress_percentage: 45, file_url: '#' }
+];
+
+function App() {
+  const [user] = useState({ name: 'Demo User', email: 'demo@example.com' });
+  const [books, setBooks] = useState(mockBooks);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState('all');
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const genres = ['all', 'Fiction', 'Non-Fiction', 'Technology', 'Science', 'Business', 'Self-Help'];
+
+  const filteredBooks = useMemo(() => {
+    return books.filter(book => {
+      const matchesSearch = searchQuery.trim() === '' || 
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesGenre = selectedGenre === 'all' || book.genre === selectedGenre;
+      
+      return matchesSearch && matchesGenre;
+    });
+  }, [books, searchQuery, selectedGenre]);
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Navigation Rail - Desktop */}
+      <NavigationRail activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Top App Bar */}
+        <header className="bg-surface border-b border-outline-variant">
+          <div className="h-16 px-4 flex items-center justify-between">
+            {/* Leading Section */}
+            <div className="flex items-center space-x-4">
+              {/* Menu button - Mobile only */}
+              <IconButton
+                icon={
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                }
+                onClick={() => setShowMenu(!showMenu)}
+                variant="standard"
+              />
+              
+              <h1 className="text-title-large text-on-surface hidden md:block">
+                My Library
+              </h1>
+            </div>
+            
+            {/* Trailing Section */}
+            <div className="flex items-center space-x-2">
+              <SearchBar
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search books..."
+              />
+              
+              <IconButton
+                icon={
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  </svg>
+                }
+                variant="standard"
+              />
+              
+              <ThemeToggleButton />
+              
+              {/* User Avatar */}
+              <button className="w-10 h-10 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center text-label-large font-medium">
+                {user.name.charAt(0)}
+              </button>
+            </div>
+          </div>
+        </header>
+        
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-6">
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Hero Section */}
+                <Card type="filled" className="p-8 bg-primary-container">
+                  <div className="max-w-2xl">
+                    <h2 className="text-display-small text-on-primary-container mb-2">
+                      Welcome back, {user.name.split(' ')[0]}!
+                    </h2>
+                    <p className="text-body-large text-on-primary-container opacity-90">
+                      You've read 12 books this year. Keep up the great work!
+                    </p>
+                    <div className="mt-6 flex items-center space-x-4">
+                      <FAB
+                        icon="📚"
+                        label="Continue Reading"
+                        extended={true}
+                        onClick={() => setActiveTab('library')}
+                      />
+                      <button className="px-6 py-3 text-on-primary-container hover:bg-on-primary-container hover:bg-opacity-hover rounded-full transition-all duration-medium2 text-label-large font-medium">
+                        View Stats
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+                
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Card type="outlined" className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-4xl">📚</span>
+                      <Chip label="+2" selected={true} />
+                    </div>
+                    <h3 className="text-title-medium text-on-surface">Total Books</h3>
+                    <p className="text-display-medium text-on-surface mt-2">{books.length}</p>
+                  </Card>
+                  
+                  <Card type="outlined" className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-4xl">✅</span>
+                      <Chip label="70%" selected={true} />
+                    </div>
+                    <h3 className="text-title-medium text-on-surface">Completed</h3>
+                    <p className="text-display-medium text-on-surface mt-2">
+                      {books.filter(b => b.progress_percentage === 100).length}
+                    </p>
+                  </Card>
+                  
+                  <Card type="outlined" className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-4xl">🔥</span>
+                      <IconButton icon="📈" variant="tonal" />
+                    </div>
+                    <h3 className="text-title-medium text-on-surface">Reading Streak</h3>
+                    <p className="text-display-medium text-on-surface mt-2">12 days</p>
+                  </Card>
+                  
+                  <Card type="outlined" className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-4xl">⏱️</span>
+                      <IconButton icon="➕" variant="tonal" />
+                    </div>
+                    <h3 className="text-title-medium text-on-surface">Time Today</h3>
+                    <p className="text-display-medium text-on-surface mt-2">2h 34m</p>
+                  </Card>
+                </div>
+                
+                {/* Recent Activity */}
+                <Card type="elevated" className="p-6">
+                  <h3 className="text-headline-small text-on-surface mb-4">Recent Activity</h3>
+                  <div className="space-y-4">
+                    {books.slice(0, 3).map((book) => (
+                      <div key={book.id} className="flex items-center justify-between p-4 bg-surface-container rounded-large">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-16 bg-primary-container rounded-small flex items-center justify-center">
+                            <span className="text-2xl">📖</span>
+                          </div>
+                          <div>
+                            <h4 className="text-title-medium text-on-surface">{book.title}</h4>
+                            <p className="text-body-medium text-on-surface-variant">{book.author}</p>
+                          </div>
+                        </div>
+                        <LinearProgress value={book.progress_percentage} className="w-24" />
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
+            )}
+            
+            {activeTab === 'library' && (
+              <div className="space-y-6">
+                {/* Genre Filter Chips */}
+                <div className="flex items-center space-x-2 overflow-x-auto pb-2">
+                  {genres.map((genre) => (
+                    <Chip
+                      key={genre}
+                      label={genre.charAt(0).toUpperCase() + genre.slice(1)}
+                      selected={selectedGenre === genre}
+                      onClick={() => setSelectedGenre(genre)}
+                    />
+                  ))}
+                </div>
+                
+                {/* Books Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredBooks.map((book) => (
+                    <BookCard
+                      key={book.id}
+                      book={book}
+                      onClick={() => console.log('Open book:', book.id)}
+                    />
+                  ))}
+                </div>
+                
+                {/* Empty State */}
+                {filteredBooks.length === 0 && (
+                  <Card type="filled" className="p-16 text-center">
+                    <div className="text-6xl mb-4">📚</div>
+                    <h3 className="text-headline-medium text-on-surface mb-2">
+                      No books found
+                    </h3>
+                    <p className="text-body-large text-on-surface-variant mb-6">
+                      Try adjusting your search or filters
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedGenre('all');
+                      }}
+                      className="px-6 py-3 bg-primary text-on-primary rounded-full hover:shadow-elevation-2 transition-all duration-medium2 text-label-large font-medium"
+                    >
+                      Clear Filters
+                    </button>
+                  </Card>
+                )}
+              </div>
+            )}
+            
+            {activeTab === 'progress' && (
+              <div className="space-y-6">
+                <Card type="elevated" className="p-6">
+                  <h3 className="text-headline-medium text-on-surface mb-6">Reading Progress</h3>
+                  <div className="space-y-8">
+                    {/* Weekly Chart */}
+                    <div>
+                      <h4 className="text-title-large text-on-surface mb-4">This Week</h4>
+                      <div className="grid grid-cols-7 gap-2">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
+                          <div key={day} className="text-center">
+                            <div className="mb-2">
+                              <div 
+                                className="w-full bg-surface-container-highest rounded-full mx-auto"
+                                style={{ height: '120px' }}
+                              >
+                                <div 
+                                  className="w-full bg-primary rounded-full transition-all duration-medium4"
+                                  style={{ 
+                                    height: `${Math.random() * 100}%`,
+                                    marginTop: `${120 - (Math.random() * 120)}px`
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <span className="text-label-medium text-on-surface-variant">{day}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Monthly Goal */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-title-large text-on-surface">Monthly Goal</h4>
+                        <Chip label="3/5 books" selected={true} />
+                      </div>
+                      <LinearProgress value={60} className="h-2" />
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+            
+            {activeTab === 'goals' && (
+              <div className="space-y-6">
+                <Card type="filled" className="p-8 bg-secondary-container">
+                  <h2 className="text-headline-large text-on-secondary-container mb-4">
+                    2024 Reading Goals
+                  </h2>
+                  <p className="text-body-large text-on-secondary-container mb-6">
+                    Track your progress and stay motivated throughout the year
+                  </p>
+                </Card>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card type="elevated" className="p-6">
+                    <h3 className="text-title-large text-on-surface mb-4">Annual Target</h3>
+                    <div className="text-center py-8">
+                      <div className="text-display-large text-primary">24</div>
+                      <p className="text-body-large text-on-surface-variant">books this year</p>
+                      <LinearProgress value={50} className="mt-4 h-2" />
+                    </div>
+                  </Card>
+                  
+                  <Card type="elevated" className="p-6">
+                    <h3 className="text-title-large text-on-surface mb-4">Genre Diversity</h3>
+                    <div className="space-y-3">
+                      {['Fiction', 'Non-Fiction', 'Science', 'Technology'].map((genre) => (
+                        <div key={genre} className="flex items-center justify-between">
+                          <span className="text-body-medium text-on-surface">{genre}</span>
+                          <div className="flex items-center space-x-2">
+                            <LinearProgress value={Math.random() * 100} className="w-24" />
+                            <span className="text-label-medium text-on-surface-variant">
+                              {Math.floor(Math.random() * 10)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+        
+        {/* Bottom App Bar - Mobile */}
+        <nav className="lg:hidden bg-surface-container border-t border-outline-variant">
+          <div className="flex items-center justify-around py-2">
+            <IconButton
+              icon="📊"
+              onClick={() => setActiveTab('overview')}
+              variant={activeTab === 'overview' ? 'tonal' : 'standard'}
+            />
+            <IconButton
+              icon="📚"
+              onClick={() => setActiveTab('library')}
+              variant={activeTab === 'library' ? 'tonal' : 'standard'}
+            />
+            <FAB icon="➕" onClick={() => setShowUploadForm(true)} />
+            <IconButton
+              icon="📈"
+              onClick={() => setActiveTab('progress')}
+              variant={activeTab === 'progress' ? 'tonal' : 'standard'}
+            />
+            <IconButton
+              icon="⭐"
+              onClick={() => setActiveTab('goals')}
+              variant={activeTab === 'goals' ? 'tonal' : 'standard'}
+            />
+          </div>
+        </nav>
+      </div>
+      
+      {/* Extended FAB - Desktop */}
+      <div className="hidden lg:block fixed bottom-6 right-6">
+        <FAB
+          icon="➕"
+          label="Add Book"
+          extended={true}
+          onClick={() => setShowUploadForm(true)}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default App;

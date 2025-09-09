@@ -1,0 +1,259 @@
+/* MD3Progress.css - Material Design 3 Progress Components */
+
+/* Linear Progress Container */
+.md3-linear-progress-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md3-linear-progress__label-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.md3-linear-progress__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+.md3-linear-progress__value {
+  font-size: 12px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+/* Linear Progress Bar */
+.md3-linear-progress {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background-color: rgb(var(--md-sys-color-surface-container-highest));
+}
+
+.md3-linear-progress--small {
+  height: 2px;
+}
+
+.md3-linear-progress--medium {
+  height: 4px;
+}
+
+.md3-linear-progress--large {
+  height: 6px;
+}
+
+.md3-linear-progress__track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(var(--md-sys-color-surface-container-highest));
+}
+
+.md3-linear-progress__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgb(var(--md-sys-color-primary));
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+}
+
+/* Indeterminate Animation */
+.md3-linear-progress--indeterminate .md3-linear-progress__indicator {
+  animation: md3-linear-progress-indeterminate 2s infinite linear;
+  transform-origin: center;
+}
+
+.md3-linear-progress--indeterminate .md3-linear-progress__indicator--secondary {
+  animation: md3-linear-progress-indeterminate-secondary 2s infinite linear;
+  animation-delay: 0.5s;
+}
+
+@keyframes md3-linear-progress-indeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.5);
+  }
+  50% {
+    transform: translateX(0%) scaleX(1);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+}
+
+@keyframes md3-linear-progress-indeterminate-secondary {
+  0% {
+    transform: translateX(-100%) scaleX(0.3);
+  }
+  60% {
+    transform: translateX(0%) scaleX(0.8);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.3);
+  }
+}
+
+/* Circular Progress Container */
+.md3-circular-progress-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md3-circular-progress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.md3-circular-progress__svg {
+  transform: rotate(-90deg);
+}
+
+.md3-circular-progress__track {
+  fill: none;
+  stroke: rgb(var(--md-sys-color-surface-container-highest));
+}
+
+.md3-circular-progress__indicator {
+  fill: none;
+  stroke: rgb(var(--md-sys-color-primary));
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Indeterminate Circular Animation */
+.md3-circular-progress--indeterminate .md3-circular-progress__indicator {
+  animation: md3-circular-progress-rotate 2s linear infinite;
+}
+
+@keyframes md3-circular-progress-rotate {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 100, 200;
+    stroke-dashoffset: -15;
+  }
+  100% {
+    stroke-dasharray: 100, 200;
+    stroke-dashoffset: -125;
+  }
+}
+
+/* Center Content */
+.md3-circular-progress__value,
+.md3-circular-progress__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--md-sys-color-on-surface));
+  text-align: center;
+}
+
+/* Reading Progress Specific Styles */
+.md3-reading-progress {
+  width: 100%;
+}
+
+.md3-reading-progress__details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+.md3-reading-progress__pages {
+  font-weight: 500;
+}
+
+.md3-reading-progress__time {
+  font-style: italic;
+}
+
+/* Loading Progress Styles */
+.md3-loading-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.md3-loading-progress--overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(var(--md-sys-color-surface), 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+.md3-loading-progress__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.md3-loading-progress__label {
+  font-size: 14px;
+  color: rgb(var(--md-sys-color-on-surface));
+  text-align: center;
+}
+
+/* Size Variants */
+.md3-circular-progress--small {
+  width: 24px;
+  height: 24px;
+}
+
+.md3-circular-progress--medium {
+  width: 48px;
+  height: 48px;
+}
+
+.md3-circular-progress--large {
+  width: 64px;
+  height: 64px;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .md3-linear-progress__indicator,
+  .md3-circular-progress__indicator {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-linear-progress__track,
+  .md3-circular-progress__track {
+    stroke: rgb(var(--md-sys-color-outline));
+  }
+  
+  .md3-linear-progress__indicator,
+  .md3-circular-progress__indicator {
+    background-color: rgb(var(--md-sys-color-primary));
+    stroke: rgb(var(--md-sys-color-primary));
+  }
+}

@@ -1,0 +1,59 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'client2/**' ]
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: 🚀 Deploy Client to Vercel
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: 'client2/pnpm-lock.yaml'
+
+      - name: 📦 Install dependencies
+        working-directory: ./client2
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧪 Run tests
+        working-directory: ./client2
+        run: pnpm run test:unit --run
+
+      - name: 🔍 Lint code
+        working-directory: ./client2
+        run: pnpm run lint
+
+      - name: 📦 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 🔄 Pull Vercel environment
+        working-directory: ./client2
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🏗️ Build project artifacts
+        working-directory: ./client2
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🚀 Deploy to Vercel
+        working-directory: ./client2
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

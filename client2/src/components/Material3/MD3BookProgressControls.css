@@ -1,0 +1,319 @@
+/* MD3BookProgressControls.css */
+/* Material Design 3 Book Progress Controls */
+
+.md3-book-progress-controls {
+  --md3-progress-controls-spacing: var(--md-sys-spacing-4, 16px);
+  --md3-progress-controls-spacing-small: var(--md-sys-spacing-2, 8px);
+  --md3-progress-controls-spacing-large: var(--md-sys-spacing-6, 24px);
+  
+  display: flex;
+  flex-direction: column;
+  gap: var(--md3-progress-controls-spacing);
+  padding: var(--md3-progress-controls-spacing);
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  background: rgb(var(--md-sys-color-surface-container-lowest, 255, 255, 255));
+  border: 1px solid rgb(var(--md-sys-color-outline-variant, 196, 199, 197));
+  transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.md3-book-progress-controls:hover {
+  background: rgb(var(--md-sys-color-surface-container-low, 247, 243, 249));
+  box-shadow: var(--md-sys-elevation-level1, 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15));
+}
+
+.md3-book-progress-controls--compact {
+  padding: var(--md3-progress-controls-spacing-small);
+  gap: var(--md3-progress-controls-spacing-small);
+}
+
+/* Header Section */
+.md3-book-progress-controls__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--md3-progress-controls-spacing-small);
+}
+
+.md3-book-progress-controls__label {
+  font-family: var(--md-sys-typescale-label-large-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-large-font-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-font-weight, 500);
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+}
+
+.md3-book-progress-controls__current {
+  font-family: var(--md-sys-typescale-title-medium-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-title-medium-font-size, 1rem);
+  font-weight: var(--md-sys-typescale-title-medium-font-weight, 500);
+  color: rgb(var(--md-sys-color-primary, 64, 109, 183));
+}
+
+/* Progress Bar */
+.md3-book-progress-controls__progress {
+  margin: var(--md3-progress-controls-spacing-small) 0;
+}
+
+/* Preset Chips Container */
+.md3-book-progress-controls__presets {
+  display: flex;
+  gap: var(--md3-progress-controls-spacing-small);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.md3-book-progress-controls__preset-chip {
+  transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+  min-width: 60px;
+}
+
+.md3-book-progress-controls__preset-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--md-sys-elevation-level2, 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15));
+}
+
+.md3-book-progress-controls__preset-chip:active {
+  transform: translateY(0);
+  box-shadow: var(--md-sys-elevation-level1, 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15));
+}
+
+/* Actions */
+.md3-book-progress-controls__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--md3-progress-controls-spacing-small);
+}
+
+/* Dialog Styles */
+.md3-book-progress-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md3-progress-controls-spacing-large);
+  min-width: 400px;
+  max-width: 500px;
+}
+
+/* Book Info Header */
+.md3-book-progress-dialog__book-info {
+  text-align: center;
+  padding-bottom: var(--md3-progress-controls-spacing);
+  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant, 196, 199, 197));
+}
+
+.md3-book-progress-dialog__title {
+  font-family: var(--md-sys-typescale-headline-small-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-headline-small-font-size, 1.5rem);
+  font-weight: var(--md-sys-typescale-headline-small-font-weight, 400);
+  color: rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+  margin: 0 0 var(--md3-progress-controls-spacing-small) 0;
+  line-height: 1.3;
+}
+
+.md3-book-progress-dialog__author {
+  font-family: var(--md-sys-typescale-body-medium-font-family, 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-body-medium-font-size, 0.875rem);
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  margin: 0;
+}
+
+/* Progress Comparison */
+.md3-book-progress-dialog__comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--md3-progress-controls-spacing);
+  background: rgb(var(--md-sys-color-surface-container-highest, 230, 225, 229));
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+}
+
+.md3-book-progress-dialog__current,
+.md3-book-progress-dialog__new {
+  text-align: center;
+}
+
+.md3-book-progress-dialog__label {
+  display: block;
+  font-family: var(--md-sys-typescale-label-small-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-small-font-size, 0.6875rem);
+  font-weight: var(--md-sys-typescale-label-small-font-weight, 500);
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--md3-progress-controls-spacing-small);
+}
+
+.md3-book-progress-dialog__value {
+  display: block;
+  font-family: var(--md-sys-typescale-headline-medium-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-headline-medium-font-size, 1.75rem);
+  font-weight: var(--md-sys-typescale-headline-medium-font-weight, 400);
+  color: rgb(var(--md-sys-color-primary, 64, 109, 183));
+}
+
+.md3-book-progress-dialog__arrow {
+  font-size: 1.5rem;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  margin: 0 var(--md3-progress-controls-spacing);
+}
+
+/* Progress Preview */
+.md3-book-progress-dialog__preview {
+  margin: var(--md3-progress-controls-spacing) 0;
+}
+
+/* Slider Section */
+.md3-book-progress-dialog__slider {
+  position: relative;
+}
+
+.md3-book-progress-dialog__slider-label {
+  display: block;
+  font-family: var(--md-sys-typescale-label-large-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-large-font-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-font-weight, 500);
+  color: rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+  margin-bottom: var(--md3-progress-controls-spacing);
+}
+
+.md3-book-progress-dialog__slider-input {
+  width: 100%;
+  height: 8px;
+  background: rgb(var(--md-sys-color-surface-variant, 231, 224, 236));
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.md3-book-progress-dialog__slider-input::-webkit-slider-track {
+  height: 8px;
+  background: rgb(var(--md-sys-color-surface-variant, 231, 224, 236));
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+}
+
+.md3-book-progress-dialog__slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 24px;
+  width: 24px;
+  background: rgb(var(--md-sys-color-primary, 64, 109, 183));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--md-sys-elevation-level2, 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15));
+  transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.md3-book-progress-dialog__slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: var(--md-sys-elevation-level3, 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15));
+}
+
+.md3-book-progress-dialog__slider-input::-moz-range-track {
+  height: 8px;
+  background: rgb(var(--md-sys-color-surface-variant, 231, 224, 236));
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+  border: none;
+}
+
+.md3-book-progress-dialog__slider-input::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+  background: rgb(var(--md-sys-color-primary, 64, 109, 183));
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--md-sys-elevation-level2, 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15));
+}
+
+.md3-book-progress-dialog__slider-marks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--md3-progress-controls-spacing-small);
+  font-family: var(--md-sys-typescale-body-small-font-family, 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-body-small-font-size, 0.75rem);
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+}
+
+/* Numeric Input */
+.md3-book-progress-dialog__numeric {
+  width: 100%;
+}
+
+/* Quick Actions */
+.md3-book-progress-dialog__quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md3-progress-controls-spacing-small);
+}
+
+.md3-book-progress-dialog__quick-label {
+  font-family: var(--md-sys-typescale-label-large-font-family, 'Google Sans', 'Inter', system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-large-font-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-font-weight, 500);
+  color: rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+}
+
+.md3-book-progress-dialog__quick-chips {
+  display: flex;
+  gap: var(--md3-progress-controls-spacing-small);
+  flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .md3-book-progress-dialog {
+    min-width: 280px;
+    max-width: 100%;
+  }
+  
+  .md3-book-progress-controls__presets {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .md3-book-progress-controls__preset-chip {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .md3-book-progress-dialog__comparison {
+    flex-direction: column;
+    gap: var(--md3-progress-controls-spacing);
+  }
+  
+  .md3-book-progress-dialog__arrow {
+    transform: rotate(90deg);
+    margin: var(--md3-progress-controls-spacing-small) 0;
+  }
+}
+
+/* Focus and Accessibility */
+.md3-book-progress-controls *:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 64, 109, 183));
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .md3-book-progress-controls {
+    border-width: 2px;
+  }
+  
+  .md3-book-progress-dialog__slider-input::-webkit-slider-thumb {
+    border: 2px solid rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .md3-book-progress-controls,
+  .md3-book-progress-controls__preset-chip,
+  .md3-book-progress-dialog__slider-input::-webkit-slider-thumb {
+    transition: none;
+  }
+  
+  .md3-book-progress-controls__preset-chip:hover {
+    transform: none;
+  }
+}

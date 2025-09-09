@@ -1,0 +1,485 @@
+/* Enhanced Notes Page Styles */
+
+.md3-notes-page {
+  min-height: 100vh;
+  padding: 0;
+  background: var(--md3-surface);
+}
+
+.md3-notes-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Enhanced Header */
+.md3-notes-header {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(103, 80, 164, 0.15) !important;
+}
+
+.md3-notes-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.md3-notes-header-text {
+  text-align: center;
+}
+
+.md3-notes-title {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.md3-notes-subtitle {
+  margin: 0;
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+.md3-notes-header-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.md3-notes-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.md3-notes-search input {
+  color: white !important;
+}
+
+.md3-notes-search input::placeholder {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Grid Layout */
+.md3-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Note Card */
+.md3-note-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.md3-note-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6750A4, #7C4DFF);
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.md3-note-card:hover::before {
+  transform: translateY(0);
+}
+
+.md3-note-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.md3-note-content {
+  padding: 20px;
+}
+
+.md3-note-title {
+  margin: 0 0 12px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--md3-on-surface);
+  line-height: 1.3;
+}
+
+.md3-note-text {
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+  color: var(--md3-on-surface-variant);
+  line-height: 1.6;
+}
+
+.md3-note-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.md3-note-book {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--md3-surface-container-low);
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.md3-note-book-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--md3-primary);
+}
+
+.md3-note-date {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--md3-on-surface-variant);
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+.md3-note-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.md3-note-card:hover .md3-note-actions {
+  opacity: 1;
+}
+
+.md3-icon-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--md3-on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.md3-icon-button:hover {
+  background: var(--md3-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.md3-icon-button--error:hover {
+  background: #F44336;
+}
+
+.md3-icon-small {
+  width: 16px;
+  height: 16px;
+}
+
+/* Empty State */
+.md3-notes-empty-state {
+  padding: 64px 32px;
+  text-align: center;
+  background: var(--md3-surface-container);
+}
+
+.md3-notes-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  color: var(--md3-primary);
+  opacity: 0.3;
+}
+
+.md3-notes-empty-title {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--md3-on-surface);
+}
+
+.md3-notes-empty-text {
+  margin: 0 0 24px 0;
+  color: var(--md3-on-surface-variant);
+}
+
+/* Loading State */
+.md3-notes-loading {
+  padding: 64px;
+  text-align: center;
+}
+
+.md3-notes-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--md3-outline-variant);
+  border-top-color: var(--md3-primary);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 1s linear infinite;
+}
+
+/* FAB */
+.md3-notes-fab {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 1000;
+}
+
+/* Dialog */
+.md3-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.md3-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md3-field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--md3-on-surface-variant);
+}
+
+.md3-select {
+  padding: 12px;
+  border: 1px solid var(--md3-outline);
+  border-radius: 8px;
+  background: var(--md3-surface);
+  color: var(--md3-on-surface);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.md3-select:focus {
+  outline: none;
+  border-color: var(--md3-primary);
+  box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.1);
+}
+
+/* Timeline View */
+.timeline-container {
+  padding: 24px;
+}
+
+.timeline-date-group {
+  margin-bottom: 32px;
+}
+
+.timeline-date-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--md3-primary);
+  margin-right: 16px;
+}
+
+.timeline-date {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--md3-primary);
+}
+
+.timeline-line {
+  flex: 1;
+  height: 1px;
+  background: var(--md3-outline-variant);
+  margin-left: 16px;
+}
+
+.timeline-notes {
+  margin-left: 28px;
+  border-left: 2px solid var(--md3-outline-variant);
+  padding-left: 24px;
+}
+
+.timeline-note-item {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--md3-surface-container-low);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeline-note-item:hover {
+  background: var(--md3-surface-container);
+  transform: translateX(4px);
+}
+
+/* Word Cloud */
+.word-cloud-container {
+  padding: 24px;
+  min-height: 300px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.word-cloud-word {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.word-cloud-word:hover {
+  transform: scale(1.1);
+  background: rgba(103, 80, 164, 0.1);
+}
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 24px;
+}
+
+.stat-card {
+  padding: 20px;
+  text-align: center;
+  background: var(--md3-surface-container);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--md3-on-surface);
+}
+
+.stat-label {
+  margin: 0;
+  font-size: 14px;
+  color: var(--md3-on-surface-variant);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .md3-notes-container {
+    padding: 16px;
+  }
+  
+  .md3-notes-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .md3-notes-header-content {
+    text-align: center;
+  }
+  
+  .md3-notes-header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .md3-notes-search {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-notes-page {
+    background: #0f172a;
+  }
+  
+  .md3-note-card {
+    background: #1e293b;
+  }
+  
+  .md3-note-card:hover {
+    background: #334155;
+  }
+  
+  .md3-icon-button {
+    background: rgba(30, 41, 59, 0.9);
+    color: #e2e8f0;
+  }
+  
+  .md3-icon-button:hover {
+    background: #6750A4;
+  }
+  
+  .timeline-note-item {
+    background: #1e293b;
+  }
+  
+  .timeline-note-item:hover {
+    background: #334155;
+  }
+  
+  .stat-card {
+    background: #1e293b;
+  }
+}

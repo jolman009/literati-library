@@ -1,0 +1,140 @@
+/* Reading Streak Component Styles */
+.reading-streak-card {
+  padding: 1.5rem;
+  max-width: 400px;
+  margin: 1rem auto;
+}
+
+.streak-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.streak-header h3 {
+  color: rgb(var(--md-sys-color-on-surface));
+  margin: 0;
+}
+
+.streak-emoji {
+  font-size: 2rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Streak Statistics */
+.streak-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.streak-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: rgb(var(--md-sys-color-surface-variant), 0.3);
+  border-radius: 12px;
+}
+
+.streak-number {
+  font-size: 2rem;
+  font-weight: 600;
+  color: rgb(var(--md-sys-color-primary));
+}
+
+.streak-label {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+/* Weekly Progress */
+.weekly-progress {
+  margin-bottom: 1.5rem;
+}
+
+.weekly-progress > p {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  margin-bottom: 0.75rem;
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.day-indicator {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--md-sys-color-surface-variant));
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.day-indicator.active {
+  background: rgb(var(--md-sys-color-tertiary));
+  color: rgb(var(--md-sys-color-on-tertiary));
+}
+
+.day-indicator.today {
+  border: 2px solid rgb(var(--md-sys-color-primary));
+}
+
+.day-name {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+/* Streak Actions */
+.streak-actions {
+  margin-bottom: 1rem;
+}
+
+/* Motivational Message */
+.streak-message {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
+}
+
+.streak-message p {
+  margin: 0;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .reading-streak-card {
+    padding: 1rem;
+  }
+  
+  .streak-number {
+    font-size: 1.5rem;
+  }
+  
+  .day-indicator {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+}

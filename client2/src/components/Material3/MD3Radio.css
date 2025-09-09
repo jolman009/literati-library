@@ -1,0 +1,353 @@
+/* src/components/Material3/MD3Radio.css */
+
+.md3-radio {
+  --_selected-icon-color: var(--md-sys-color-primary);
+  --_unselected-outline-color: var(--md-sys-color-on-surface-variant);
+  --_label-text-color: var(--md-sys-color-on-surface);
+  --_supporting-text-color: var(--md-sys-color-on-surface-variant);
+  --_container-size: 20px;
+  --_icon-size: 10px;
+  --_outline-width: 2px;
+  
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.md3-radio__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  position: relative;
+  min-height: 40px;
+}
+
+.md3-radio__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.md3-radio__input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: inherit;
+  z-index: 1;
+}
+
+.md3-radio__button {
+  position: relative;
+  width: var(--_container-size);
+  height: var(--_container-size);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.md3-radio__background {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: var(--_outline-width) solid rgb(var(--_unselected-outline-color));
+  background-color: transparent;
+  transition: 
+    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-radio__indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  border-radius: 50%;
+  background-color: rgb(var(--_selected-icon-color));
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-emphasized);
+}
+
+.md3-radio__ripple {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background-color: rgb(var(--md-sys-color-on-surface) / 0.12);
+  opacity: 0;
+  transform: scale(0);
+  transition: 
+    opacity var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+.md3-radio__label-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  padding-top: 10px;
+}
+
+.md3-radio__label {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--_label-text-color));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  user-select: none;
+}
+
+.md3-radio__supporting-text {
+  font: var(--md-sys-typescale-body-small-font);
+  color: rgb(var(--_supporting-text-color));
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+
+.md3-radio__asterisk {
+  color: rgb(var(--md-sys-color-error));
+}
+
+/* Selected State */
+.md3-radio__input:checked + .md3-radio__button .md3-radio__background {
+  border-color: rgb(var(--_selected-icon-color));
+}
+
+.md3-radio__input:checked + .md3-radio__button .md3-radio__indicator {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Interactive States */
+.md3-radio__input:hover + .md3-radio__button .md3-radio__background {
+  border-color: rgb(var(--md-sys-color-on-surface));
+}
+
+.md3-radio__input:hover:checked + .md3-radio__button .md3-radio__background {
+  border-color: rgb(var(--md-sys-color-primary));
+}
+
+.md3-radio__input:active ~ .md3-radio__ripple {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.md3-radio__input:focus-visible + .md3-radio__button {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+}
+
+/* Disabled State */
+.md3-radio--disabled {
+  opacity: 0.38;
+}
+
+.md3-radio--disabled .md3-radio__container {
+  cursor: not-allowed;
+}
+
+.md3-radio--disabled .md3-radio__input {
+  cursor: not-allowed;
+}
+
+/* Error State */
+.md3-radio--error .md3-radio__background {
+  border-color: rgb(var(--md-sys-color-error));
+}
+
+.md3-radio--error .md3-radio__input:checked + .md3-radio__button .md3-radio__background {
+  border-color: rgb(var(--md-sys-color-error));
+}
+
+.md3-radio--error .md3-radio__indicator {
+  background-color: rgb(var(--md-sys-color-error));
+}
+
+.md3-radio--error .md3-radio__supporting-text {
+  color: rgb(var(--md-sys-color-error));
+}
+
+/* Radio Group Styles */
+.md3-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md3-radio-group__label-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.md3-radio-group__label {
+  font: var(--md-sys-typescale-body-large-font);
+  color: rgb(var(--md-sys-color-on-surface));
+  line-height: var(--md-sys-typescale-body-large-line-height);
+}
+
+.md3-radio-group__supporting-text {
+  font: var(--md-sys-typescale-body-small-font);
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+
+.md3-radio-group__asterisk {
+  color: rgb(var(--md-sys-color-error));
+}
+
+.md3-radio-group__options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.md3-radio-group--horizontal .md3-radio-group__options {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.md3-radio-group--disabled {
+  opacity: 0.38;
+}
+
+.md3-radio-group--error .md3-radio-group__label {
+  color: rgb(var(--md-sys-color-error));
+}
+
+.md3-radio-group--error .md3-radio-group__supporting-text {
+  color: rgb(var(--md-sys-color-error));
+}
+
+/* Specialized Component Styles */
+.md3-reading-preference-radio .md3-radio-group__options {
+  gap: 16px;
+}
+
+.md3-reading-preference-radio .md3-radio {
+  background-color: rgb(var(--md-sys-color-surface-container-low));
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: 12px;
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-reading-preference-radio .md3-radio:hover {
+  background-color: rgb(var(--md-sys-color-surface-container));
+}
+
+.md3-reading-preference-radio .md3-radio__input:checked ~ .md3-radio {
+  background-color: rgb(var(--md-sys-color-primary-container));
+}
+
+.md3-book-format-radio .md3-radio {
+  flex: 1;
+  min-width: 120px;
+}
+
+.md3-book-format-radio .md3-radio__container {
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border-radius: var(--md-sys-shape-corner-medium);
+  transition: 
+    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-book-format-radio .md3-radio__container:hover {
+  background-color: rgb(var(--md-sys-color-surface-container-low));
+  border-color: rgb(var(--md-sys-color-outline));
+}
+
+.md3-book-format-radio .md3-radio__input:checked + .md3-radio__control + .md3-radio__label-container {
+  color: rgb(var(--md-sys-color-primary));
+}
+
+.md3-book-format-radio .md3-radio__input:checked ~ .md3-radio__container {
+  background-color: rgb(var(--md-sys-color-primary-container));
+  border-color: rgb(var(--md-sys-color-primary));
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .md3-radio__container {
+    gap: 12px;
+  }
+  
+  .md3-radio-group__options {
+    gap: 8px;
+  }
+  
+  .md3-radio-group--horizontal .md3-radio-group__options {
+    gap: 16px;
+  }
+  
+  .md3-reading-preference-radio .md3-radio {
+    padding: 8px;
+  }
+  
+  .md3-book-format-radio .md3-radio__container {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .md3-radio-group--horizontal .md3-radio-group__options {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .md3-book-format-radio .md3-radio {
+    min-width: unset;
+  }
+  
+  .md3-book-format-radio .md3-radio__container {
+    padding: 16px 8px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .md3-radio__background,
+  .md3-radio__indicator,
+  .md3-radio__ripple,
+  .md3-radio {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-radio__background {
+    border-width: 3px;
+  }
+  
+  .md3-radio__input:focus-visible + .md3-radio__button {
+    outline-width: 3px;
+  }
+  
+  .md3-book-format-radio .md3-radio__container {
+    border-width: 2px;
+  }
+  
+  .md3-book-format-radio .md3-radio__input:checked ~ .md3-radio__container {
+    border-width: 3px;
+  }
+}
+
+/* Dark Theme Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-reading-preference-radio .md3-radio {
+    background-color: rgb(var(--md-sys-color-surface-container));
+  }
+  
+  .md3-reading-preference-radio .md3-radio:hover {
+    background-color: rgb(var(--md-sys-color-surface-container-high));
+  }
+}

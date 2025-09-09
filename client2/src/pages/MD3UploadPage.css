@@ -1,0 +1,237 @@
+/* MD3 Upload Page Styles */
+.md3-upload-page {
+  min-height: 100vh;
+  background: rgb(var(--md-sys-color-surface));
+  padding: 2rem;
+}
+
+.md3-upload-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Header */
+.md3-upload-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.md3-upload-header h1 {
+  color: rgb(var(--md-sys-color-on-surface));
+  margin-bottom: 0.5rem;
+}
+
+.md3-upload-header p {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+/* Progress Steps */
+.md3-upload-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.md3-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  position: relative;
+}
+
+.md3-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: rgb(var(--md-sys-color-surface-variant));
+  z-index: -1;
+}
+
+.md3-step-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--md-sys-color-surface-variant));
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.md3-step-indicator.active {
+  background: rgb(var(--md-sys-color-primary));
+  color: rgb(var(--md-sys-color-on-primary));
+  transform: scale(1.1);
+}
+
+.md3-step-indicator.complete {
+  background: rgb(var(--md-sys-color-tertiary));
+  color: rgb(var(--md-sys-color-on-tertiary));
+}
+
+.md3-step-label {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  text-align: center;
+}
+
+.md3-step-label.active {
+  color: rgb(var(--md-sys-color-primary));
+  font-weight: 500;
+}
+
+/* Upload Content Card */
+.md3-upload-content {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+/* Dropzone */
+.md3-dropzone {
+  border: 2px dashed rgb(var(--md-sys-color-outline));
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgb(var(--md-sys-color-surface-variant), 0.3);
+}
+
+.md3-dropzone:hover {
+  border-color: rgb(var(--md-sys-color-primary));
+  background: rgb(var(--md-sys-color-primary-container), 0.1);
+}
+
+.md3-dropzone.active {
+  border-color: rgb(var(--md-sys-color-primary));
+  background: rgb(var(--md-sys-color-primary-container));
+  transform: scale(1.02);
+}
+
+.md3-dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.md3-dropzone-icon {
+  font-size: 4rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.md3-upload-button {
+  margin-top: 1rem;
+}
+
+/* File Preview */
+.md3-file-preview {
+  margin-bottom: 2rem;
+}
+
+.md3-file-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.file-icon {
+  font-size: 2rem;
+}
+
+/* Form Grid */
+.md3-form-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.md3-form-grid > *:nth-child(1),
+.md3-form-grid > *:nth-child(2) {
+  grid-column: span 1;
+}
+
+@media (min-width: 640px) {
+  .md3-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .md3-form-grid > *:nth-child(3),
+  .md3-form-grid > *:nth-child(4) {
+    grid-column: span 2;
+  }
+}
+
+/* Upload Actions */
+.md3-upload-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Progress State */
+.md3-upload-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.md3-progress-icon {
+  font-size: 4rem;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Complete State */
+.md3-upload-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.md3-success-icon {
+  font-size: 4rem;
+  color: rgb(var(--md-sys-color-tertiary));
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .md3-dropzone {
+    background: rgb(var(--md-sys-color-surface-variant), 0.1);
+  }
+  
+  .md3-dropzone:hover {
+    background: rgb(var(--md-sys-color-primary-container), 0.2);
+  }
+}

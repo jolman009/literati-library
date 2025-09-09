@@ -1,0 +1,275 @@
+/* Premium Navigation Rail - Material Design 3 */
+
+.md3-navigation-rail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 80px;
+  background: var(--md-sys-color-surface);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.md3-navigation-rail:not(.collapsed) {
+  width: 280px;
+}
+
+/* Dark mode */
+.md3-navigation-rail.dark {
+  background: #1e293b;
+  border-right-color: #334155;
+}
+
+/* Header section */
+.md3-rail-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  min-height: 64px;
+}
+
+.md3-navigation-rail.dark .md3-rail-header {
+  border-bottom-color: #334155;
+}
+
+.md3-rail-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+}
+
+/* Icon button */
+.md3-icon-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.md3-icon-button:hover {
+  background: var(--md-sys-color-surface-variant);
+}
+
+.md3-navigation-rail.dark .md3-icon-button {
+  color: #f1f5f9;
+}
+
+.md3-navigation-rail.dark .md3-icon-button:hover {
+  background: #334155;
+}
+
+/* Destinations container */
+.md3-rail-destinations {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+/* Navigation destination item */
+.md3-rail-destination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 56px;
+  border-radius: 28px;
+  text-decoration: none;
+  color: var(--md-sys-color-on-surface-variant);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.md3-navigation-rail.collapsed .md3-rail-destination {
+  padding: 0;
+  justify-content: center;
+}
+
+.md3-rail-destination:hover {
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface);
+}
+
+.md3-rail-destination.active {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+/* Dark mode destination styles */
+.md3-navigation-rail.dark .md3-rail-destination {
+  color: #94a3b8;
+}
+
+.md3-navigation-rail.dark .md3-rail-destination:hover {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.md3-navigation-rail.dark .md3-rail-destination.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+/* Destination icon */
+.md3-rail-destination-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.md3-rail-destination-icon .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* Destination label */
+.md3-rail-destination-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badge */
+.md3-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Footer section */
+.md3-rail-footer {
+  padding: 12px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.md3-navigation-rail.dark .md3-rail-footer {
+  border-top-color: #334155;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.md3-navigation-rail {
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive - hide labels on small screens */
+@media (max-width: 1024px) {
+  .md3-navigation-rail:not(.collapsed) {
+    width: 80px;
+  }
+  
+  .md3-rail-destination-label,
+  .md3-rail-title {
+    display: none;
+  }
+  
+  .md3-rail-destination {
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+/* Mobile - convert to bottom navigation */
+@media (max-width: 768px) {
+  .md3-navigation-rail {
+    display: none;
+  }
+}
+
+/* Hover effects with MD3 state layers */
+.md3-rail-destination::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.md3-rail-destination:hover::before {
+  opacity: 0.08;
+}
+
+.md3-rail-destination:active::before {
+  opacity: 0.12;
+}
+
+.md3-rail-destination.active::before {
+  opacity: 0;
+}
+
+/* Focus visible styles */
+.md3-rail-destination:focus-visible,
+.md3-icon-button:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+.md3-rail-destinations::-webkit-scrollbar {
+  width: 4px;
+}
+
+.md3-rail-destinations::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.md3-rail-destinations::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: 2px;
+}
+
+.md3-rail-destinations::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-outline);
+}

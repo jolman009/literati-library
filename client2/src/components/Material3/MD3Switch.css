@@ -1,0 +1,366 @@
+/* src/components/Material3/MD3Switch.css */
+
+.md3-switch {
+  --_track-width: 52px;
+  --_track-height: 32px;
+  --_track-shape: calc(var(--_track-height) / 2);
+  --_handle-size: 24px;
+  --_handle-size-selected: 24px;
+  --_track-color-unselected: var(--md-sys-color-surface-container-highest);
+  --_track-color-selected: var(--md-sys-color-primary);
+  --_track-outline-color: var(--md-sys-color-outline);
+  --_handle-color: var(--md-sys-color-outline);
+  --_handle-color-selected: var(--md-sys-color-on-primary);
+  --_icon-color: var(--md-sys-color-surface-container-highest);
+  --_icon-color-selected: var(--md-sys-color-primary-container);
+  --_label-text-color: var(--md-sys-color-on-surface);
+  --_supporting-text-color: var(--md-sys-color-on-surface-variant);
+  
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+
+.md3-switch__container {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  position: relative;
+  min-height: 40px;
+}
+
+.md3-switch__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 60px;
+  height: 40px;
+}
+
+.md3-switch__input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: inherit;
+  z-index: 1;
+}
+
+.md3-switch__track {
+  position: relative;
+  width: var(--_track-width);
+  height: var(--_track-height);
+  border-radius: var(--_track-shape);
+  overflow: hidden;
+}
+
+.md3-switch__track-background {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(var(--_track-color-unselected));
+  border: 2px solid rgb(var(--_track-outline-color));
+  border-radius: inherit;
+  transition: 
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-switch__handle-container {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: var(--_handle-size);
+  height: var(--_handle-size);
+  transform: translateX(0);
+  transition: transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized);
+}
+
+.md3-switch__handle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.md3-switch__handle-background {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(var(--_handle-color));
+  border-radius: inherit;
+  transition: 
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-switch__icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  color: rgb(var(--_icon-color));
+  z-index: 1;
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-switch__icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.md3-switch__ripple {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background-color: rgb(var(--md-sys-color-on-surface) / 0.12);
+  opacity: 0;
+  transform: scale(0);
+  transition: 
+    opacity var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+.md3-switch__label-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  padding-top: 8px;
+}
+
+.md3-switch__label {
+  font: var(--md-sys-typescale-body-large-font);
+  color: rgb(var(--_label-text-color));
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  user-select: none;
+}
+
+.md3-switch__supporting-text {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--_supporting-text-color));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+
+/* Selected State */
+.md3-switch__input:checked + .md3-switch__track .md3-switch__track-background {
+  background-color: rgb(var(--_track-color-selected));
+  border-color: transparent;
+}
+
+.md3-switch__input:checked + .md3-switch__track .md3-switch__handle-container {
+  transform: translateX(20px);
+}
+
+.md3-switch__input:checked + .md3-switch__track .md3-switch__handle-background {
+  background-color: rgb(var(--_handle-color-selected));
+}
+
+.md3-switch--with-icons .md3-switch__input:checked + .md3-switch__track .md3-switch__icon {
+  color: rgb(var(--_icon-color-selected));
+}
+
+/* Interactive States */
+.md3-switch__input:hover + .md3-switch__track .md3-switch__handle-background {
+  transform: scale(1.1);
+}
+
+.md3-switch__input:active ~ .md3-switch__ripple {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.md3-switch__input:focus-visible + .md3-switch__track {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+}
+
+/* Disabled State */
+.md3-switch--disabled {
+  opacity: 0.38;
+}
+
+.md3-switch--disabled .md3-switch__container {
+  cursor: not-allowed;
+}
+
+.md3-switch--disabled .md3-switch__input {
+  cursor: not-allowed;
+}
+
+/* With Icons Variant */
+.md3-switch--with-icons {
+  --_handle-size: 24px;
+  --_handle-size-selected: 24px;
+}
+
+.md3-switch--with-icons .md3-switch__handle-container {
+  width: var(--_handle-size);
+  height: var(--_handle-size);
+}
+
+/* Settings Group Styles */
+.md3-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background-color: rgb(var(--md-sys-color-surface-container-low));
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+.md3-settings-group__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
+}
+
+.md3-settings-group__title {
+  font: var(--md-sys-typescale-title-medium-font);
+  color: rgb(var(--md-sys-color-on-surface));
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  margin: 0;
+}
+
+.md3-settings-group__description {
+  font: var(--md-sys-typescale-body-medium-font);
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  margin: 0;
+}
+
+.md3-settings-group__switches {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Specialized Settings Components */
+.md3-reading-settings .md3-switch {
+  padding: 12px;
+  background-color: rgb(var(--md-sys-color-surface));
+  border-radius: var(--md-sys-shape-corner-medium);
+  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md3-reading-settings .md3-switch:hover {
+  background-color: rgb(var(--md-sys-color-surface-container));
+}
+
+.md3-privacy-settings .md3-switch {
+  padding: 8px 0;
+  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant) / 0.5);
+}
+
+.md3-privacy-settings .md3-switch:last-child {
+  border-bottom: none;
+}
+
+.md3-privacy-settings .md3-switch__supporting-text {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .md3-switch__container {
+    gap: 12px;
+  }
+  
+  .md3-settings-group {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .md3-settings-group__switches {
+    gap: 8px;
+  }
+  
+  .md3-reading-settings .md3-switch {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .md3-switch {
+    --_track-width: 48px;
+    --_track-height: 28px;
+    --_handle-size: 20px;
+  }
+  
+  .md3-switch__control {
+    width: 56px;
+    height: 36px;
+  }
+  
+  .md3-switch__input:checked + .md3-switch__track .md3-switch__handle-container {
+    transform: translateX(16px);
+  }
+  
+  .md3-switch__label {
+    font-size: 1rem;
+  }
+  
+  .md3-switch__supporting-text {
+    font-size: 0.875rem;
+  }
+  
+  .md3-settings-group__title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .md3-switch__track-background,
+  .md3-switch__handle-container,
+  .md3-switch__handle-background,
+  .md3-switch__icon,
+  .md3-switch__ripple,
+  .md3-switch {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-switch__track-background {
+    border-width: 3px;
+  }
+  
+  .md3-switch__input:focus-visible + .md3-switch__track {
+    outline-width: 3px;
+  }
+  
+  .md3-settings-group {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+  }
+  
+  .md3-reading-settings .md3-switch {
+    border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  }
+}
+
+/* Dark Theme Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-settings-group {
+    background-color: rgb(var(--md-sys-color-surface-container));
+  }
+  
+  .md3-reading-settings .md3-switch {
+    background-color: rgb(var(--md-sys-color-surface-container-low));
+  }
+  
+  .md3-reading-settings .md3-switch:hover {
+    background-color: rgb(var(--md-sys-color-surface-container-high));
+  }
+}
