@@ -1,0 +1,322 @@
+/* Enhanced Error Boundary Styles */
+
+/* Full Error Boundary */
+.error-boundary-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 24px;
+  background: var(--md-sys-color-surface);
+}
+
+.error-boundary-content {
+  max-width: 500px;
+  text-align: center;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 32px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  margin: 0 auto 24px;
+}
+
+.error-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+}
+
+.error-message {
+  font-size: 16px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.error-suggestion {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0 0 24px 0;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.error-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.error-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-button.primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.error-button.primary:hover:not(:disabled) {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.error-button.secondary {
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+.error-button.secondary:hover:not(:disabled) {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.error-button.tertiary {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+}
+
+.error-button.tertiary:hover:not(:disabled) {
+  background: var(--md-sys-color-surface-container-highest);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.retry-counter {
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 16px 0 0 0;
+  opacity: 0.7;
+}
+
+/* Compact Error Boundary */
+.error-boundary-compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 8px 0;
+  border: 1px solid var(--md-sys-color-error);
+}
+
+.error-icon-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-message-small {
+  flex: 1;
+  font-weight: 500;
+}
+
+.retry-button-small {
+  background: transparent;
+  border: 1px solid var(--md-sys-color-on-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.retry-button-small:hover:not(:disabled) {
+  background: var(--md-sys-color-on-error-container);
+  color: var(--md-sys-color-error-container);
+}
+
+.retry-button-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error Details (Development) */
+.error-details {
+  margin-top: 24px;
+  text-align: left;
+  background: var(--md-sys-color-surface-container-high);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.error-details summary {
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.error-details summary:hover {
+  color: var(--md-sys-color-primary);
+}
+
+.error-stack {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.4;
+}
+
+.error-stack pre {
+  background: var(--md-sys-color-surface-container);
+  padding: 8px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 8px 0;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.error-stack strong {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .error-boundary-content {
+    padding: 24px;
+    margin: 16px;
+  }
+  
+  .error-title {
+    font-size: 20px;
+  }
+  
+  .error-message {
+    font-size: 14px;
+  }
+  
+  .error-actions {
+    width: 100%;
+  }
+  
+  .error-button {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .error-boundary-compact {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    text-align: left;
+  }
+  
+  .error-message-small {
+    width: 100%;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .error-boundary-content {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .error-button.primary:hover:not(:disabled) {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  .error-button.secondary:hover:not(:disabled) {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  
+  .error-button.tertiary:hover:not(:disabled) {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Animations */
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-boundary-container {
+  animation: errorFadeIn 0.3s ease-out;
+}
+
+.error-boundary-compact {
+  animation: errorFadeIn 0.3s ease-out;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .error-boundary-content {
+    border: 2px solid var(--md-sys-color-outline);
+  }
+  
+  .error-button {
+    border: 2px solid currentColor;
+  }
+  
+  .error-boundary-compact {
+    border: 2px solid var(--md-sys-color-error);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .error-boundary-container,
+  .error-boundary-compact,
+  .error-button {
+    animation: none;
+    transition: none;
+  }
+  
+  .error-button:hover:not(:disabled) {
+    transform: none;
+  }
+}

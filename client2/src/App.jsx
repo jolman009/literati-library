@@ -7,6 +7,16 @@ import { initWebVitals } from './utils/webVitals';
 import PerformanceMonitor from './components/PerformanceMonitor';
 import CacheMonitor from './components/CacheMonitor';
 
+// Import enhanced UX components
+import { LoadingSpinner, PageTransition, NetworkStatus } from './components/ui/LoadingStates';
+import ErrorBoundary, { 
+  LibraryErrorBoundary, 
+  ReaderErrorBoundary, 
+  UploadErrorBoundary, 
+  NotesErrorBoundary 
+} from './components/ui/ErrorBoundary';
+import { useNetworkStatus } from './hooks/useNetworkStatus';
+
 // Import performance testing for development
 if (process.env.NODE_ENV === 'development') {
   import('./utils/performanceTest');
@@ -73,85 +83,15 @@ const ReadBookWrapper = lazy(() =>
   })
 );
 
-// Enhanced Loading Spinner
-const LoadingSpinner = () => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '60vh',
-    flexDirection: 'column',
-    gap: '16px'
-  }}>
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: '3px solid #e0e0e0',
-      borderTop: '3px solid #6750a4',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite'
-    }}></div>
-    <p style={{ color: '#6750a4', margin: 0, fontWeight: 500 }}>Loading Literati...</p>
-    <style>{`
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `}</style>
-  </div>
+// Enhanced Loading Component (now using imported component)
+const AppLoadingSpinner = ({ message = "Loading Literati..." }) => (
+  <LoadingSpinner message={message} size="large" variant="primary" />
 );
-
-// Error Boundary for Lazy Loading
-class LazyLoadErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error('Lazy load error:', error, errorInfo);
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '60vh',
-          flexDirection: 'column',
-          gap: '16px',
-          textAlign: 'center'
-        }}>
-          <h3 style={{ color: '#6750a4' }}>Something went wrong</h3>
-          <p>This might be due to a missing file or import issue.</p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#6750a4',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 500
-            }}
-          >
-            Refresh Page
-          </button>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 // Protected Layout Component with Outlet
 const ProtectedAppLayout = () => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <AppLoadingSpinner message="Verifying authentication..." />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <AppLayout />;
 };
@@ -172,56 +112,56 @@ const AppRoutes = () => {
 
   if (loading) {
     console.log('🔄 Loading auth state...');
-    return <LoadingSpinner />;
+    return <AppLoadingSpinner message="Initializing Literati..." />;
   }
 
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/signup" element={
-        <LazyLoadErrorBoundary>
-          <Suspense fallback={<LoadingSpinner />}>
+        <ErrorBoundary fallbackComponent="signup" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading sign up..." />}>
             <SignUpPage />
           </Suspense>
-        </LazyLoadErrorBoundary>
+        </ErrorBoundary>
       } />
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <MD3Login />} />
 
       <Route element={<ProtectedAppLayout />}>
         <Route path="/dashboard" element={
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
+          <ErrorBoundary fallbackComponent="dashboard" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your dashboard..." />}>
               <DashboardPage />
             </Suspense>
-          </LazyLoadErrorBoundary>
+          </ErrorBoundary>
         } />
         <Route path="/library" element={
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
+          <LibraryErrorBoundary>
+            <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
               <LibraryPage />
             </Suspense>
-          </LazyLoadErrorBoundary>
+          </LibraryErrorBoundary>
         } />
         <Route path="/upload" element={
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
+          <UploadErrorBoundary>
+            <Suspense fallback={<AppLoadingSpinner message="Preparing upload..." />}>
               <UploadPageWrapper />
             </Suspense>
-          </LazyLoadErrorBoundary>
+          </UploadErrorBoundary>
         } />
         <Route path="/notes" element={
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
+          <NotesErrorBoundary>
+            <Suspense fallback={<AppLoadingSpinner message="Loading your notes..." />}>
               <NotesPageWrapper />
             </Suspense>
-          </LazyLoadErrorBoundary>
+          </NotesErrorBoundary>
         } />
         <Route path="/read/:bookId" element={
-          <LazyLoadErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
+          <ReaderErrorBoundary>
+            <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
               <ReadBookWrapper />
             </Suspense>
-          </LazyLoadErrorBoundary>
+          </ReaderErrorBoundary>
         } />
       </Route>
 
@@ -232,6 +172,8 @@ const AppRoutes = () => {
 
 // Main App Component
 const App = () => {
+  const { isOnline, isReconnecting } = useNetworkStatus();
+
   useEffect(() => {
     initWebVitals(); // ✅ keep web vitals monitoring
   }, []);
@@ -243,6 +185,7 @@ const App = () => {
           <MD3SnackbarProvider>
             <GamificationProvider>
               <ReadingSessionProvider>
+                <NetworkStatus isOnline={isOnline} isReconnecting={isReconnecting} />
                 <AppRoutes />
                 <ReadingSessionTimer />
                 <PerformanceMonitor />
