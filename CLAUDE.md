@@ -175,3 +175,4 @@ npm test  # Note: No test script defined, would need configuration
 3. Update Material3ThemeContext if needed
 - reference the Literati Development Checklist to guide the development
 - revisit Collections page for functionality
+- Always use pnpm

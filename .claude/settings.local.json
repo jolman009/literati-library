@@ -10,7 +10,8 @@
       "Bash(git push:*)",
       "Bash(pnpm run lint:*)",
       "Bash(pnpm run:*)",
-      "Bash(gh workflow:*)"
+      "Bash(gh workflow:*)",
+      "Bash(pnpm add:*)"
     ],
     "deny": [],
     "ask": []
