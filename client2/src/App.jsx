@@ -35,12 +35,14 @@ import AppLayout from './components/AppLayout';
 import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
 
-// Import pages directly (not lazy loaded for critical routes)
+// Import only critical auth pages directly
 import LandingPage from './pages/LandingPage';
-import SignUpPage from './pages/SignUpPage';
 import MD3Login from './pages/MD3Login';
-import DashboardPage from './pages/DashboardPage';
-import LibraryPage from './pages/LibraryPage';
+
+// Lazy load all other pages for better performance
+const SignUpPage = lazy(() => import('./pages/SignUpPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const LibraryPage = lazy(() => import('./pages/LibraryPage'));
 
 // Lazy load secondary pages with error handling
 const LibraryPageWrapper = lazy(() =>
@@ -176,12 +178,30 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/signup" element={
+        <LazyLoadErrorBoundary>
+          <Suspense fallback={<LoadingSpinner />}>
+            <SignUpPage />
+          </Suspense>
+        </LazyLoadErrorBoundary>
+      } />
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <MD3Login />} />
 
       <Route element={<ProtectedAppLayout />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/library" element={<LibraryPage />} />
+        <Route path="/dashboard" element={
+          <LazyLoadErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
+              <DashboardPage />
+            </Suspense>
+          </LazyLoadErrorBoundary>
+        } />
+        <Route path="/library" element={
+          <LazyLoadErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
+              <LibraryPage />
+            </Suspense>
+          </LazyLoadErrorBoundary>
+        } />
         <Route path="/upload" element={
           <LazyLoadErrorBoundary>
             <Suspense fallback={<LoadingSpinner />}>

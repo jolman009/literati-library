@@ -1,7 +1,6 @@
 // LiteraryMentor.js - Your Personal AI Reading Companion & Literary Teacher
 import API from '../config/api';
 import AIKeyManager from './AIKeyManager';
-import LLMProvider from './LLMProvider';
 
 class LiteraryMentor {
   constructor() {
@@ -10,6 +9,12 @@ class LiteraryMentor {
     this.discussionHistory = [];
     this.readingPatterns = new Map();
     this.comprehensionData = new Map();
+  }
+
+  // Helper method for dynamic LLMProvider loading
+  async getLLMProvider() {
+    const LLMProvider = (await import('./LLMProvider')).default;
+    return LLMProvider;
   }
 
   // ===== CORE MENTOR CAPABILITIES =====
@@ -158,6 +163,7 @@ class LiteraryMentor {
 
     // Use real AI to generate personalized recommendations
     try {
+      const LLMProvider = await this.getLLMProvider();
       const aiResult = await LLMProvider.generateBookRecommendations(profile, factors);
       return aiResult.recommendations;
     } catch (aiError) {
@@ -206,6 +212,7 @@ class LiteraryMentor {
         userNotes: userNotes
       };
       
+      const LLMProvider = await this.getLLMProvider();
       const aiResult = await LLMProvider.generateQuizQuestions(bookContent, comprehensionLevel);
       return {
         questions: aiResult.questions,
@@ -309,6 +316,7 @@ class LiteraryMentor {
       };
       
       const discussionTopic = topic || 'general discussion';
+      const LLMProvider = await this.getLLMProvider();
       const aiResult = await LLMProvider.generateSocraticQuestions(bookContext, discussionTopic);
       
       return {
@@ -357,6 +365,7 @@ class LiteraryMentor {
     
     // Try to use AI for enhanced Socratic questions
     try {
+      const LLMProvider = await this.getLLMProvider();
       const aiResult = await LLMProvider.generateSocraticQuestions(context, depth);
       return aiResult.questions.map(q => q.question);
     } catch (aiError) {
@@ -511,6 +520,7 @@ class LiteraryMentor {
 
     // Use real AI to analyze annotation and provide feedback
     try {
+      const LLMProvider = await this.getLLMProvider();
       const aiResult = await LLMProvider.analyzeAnnotation(annotation.content || annotation, bookContext);
       
       return {

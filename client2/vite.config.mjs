@@ -96,14 +96,68 @@ export default defineConfig({
   ],
 
   build: {
-    sourcemap: true, // so you can see the real runtime error in preview
+    sourcemap: true,
+    chunkSizeWarningLimit: 1000, // Increase limit to 1MB to reduce noise
+    minify: 'terser', // Use terser for better compression
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+      },
+    },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['lucide-react'],
-          supabase: ['@supabase/supabase-js'],
-          utils: ['axios', 'clsx', 'react-dropzone', 'react-window'],
+        manualChunks: (id) => {
+          // Core React chunks
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-core';
+          }
+          if (id.includes('node_modules/react-router-dom')) {
+            return 'react-router';
+          }
+          
+          // Material UI chunks (heavy library)
+          if (id.includes('node_modules/@mui') || id.includes('node_modules/@emotion')) {
+            return 'material-ui';
+          }
+          
+          // PDF processing (very heavy)
+          if (id.includes('node_modules/pdfjs-dist') || id.includes('node_modules/react-pdf')) {
+            return 'pdf-processing';
+          }
+          
+          // EPUB processing
+          if (id.includes('node_modules/epubjs') || id.includes('node_modules/react-reader')) {
+            return 'epub-processing';
+          }
+          
+          // External services
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase';
+          }
+          
+          // Utility libraries
+          if (id.includes('node_modules/axios') || 
+              id.includes('node_modules/clsx') || 
+              id.includes('node_modules/react-dropzone') ||
+              id.includes('node_modules/react-window')) {
+            return 'utils';
+          }
+          
+          // Icon libraries
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons';
+          }
+          
+          // Tailwind and CSS
+          if (id.includes('node_modules/tailwindcss') || id.includes('.css')) {
+            return 'styles';
+          }
+          
+          // All other node_modules as vendor
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
       },
     },
