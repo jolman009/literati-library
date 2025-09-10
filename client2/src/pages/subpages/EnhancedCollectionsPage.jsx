@@ -20,6 +20,17 @@ const EnhancedCollectionsPage = ({
 }) => {
   const { actualTheme } = useMaterial3Theme();
   
+  // Debug the books prop vs API data
+  console.log('🔍 Collections: Component initialized with books prop:', books.length, 'books');
+  console.log('🔍 Collections: Books prop currently reading:', books.filter(b => b.is_reading).map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
+  
+  useEffect(() => {
+    console.log('🔍 Collections: books prop changed - now has', books.length, 'books');
+    const propsCurrentlyReading = books.filter(b => b.is_reading);
+    console.log('🔍 Collections: Currently reading from books prop:', propsCurrentlyReading.length, 'books');
+    console.log('🔍 Collections: Props reading book details:', propsCurrentlyReading.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
+  }, [books]);
+  
   // State management
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -60,41 +71,28 @@ const EnhancedCollectionsPage = ({
     '⭐', '📋', '🎯', '🚀', '💎', '🏆', '📊', '🎨'
   ];
 
-  // Fetch currently reading books from API (synced with Dashboard)
+  // Use books prop instead of separate API call to ensure consistency with Dashboard
   useEffect(() => {
-    const fetchCurrentlyReading = async () => {
-      try {
-        const token = localStorage.getItem('literati_token');
-        if (!token) {
-          console.log('🔍 Collections: No auth token found');
-          return;
-        }
-        
-        console.log('🔍 Collections: Fetching currently reading books...');
-        const response = await fetch('http://localhost:5000/books', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('🔍 Collections: API response:', data);
-          const booksArray = Array.isArray(data.books) ? data.books : [];
-          console.log('🔍 Collections: Books array:', booksArray.length, 'books');
-          const readingBooks = booksArray.filter(book => book.is_reading);
-          console.log('🔍 Collections: Currently reading books:', readingBooks.length, 'books:', readingBooks.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
-          setCurrentlyReadingBooks(readingBooks);
-        } else {
-          console.error('🔍 Collections: API request failed:', response.status, response.statusText);
-        }
-      } catch (error) {
-        console.error('🔍 Collections: Failed to fetch currently reading books:', error);
-      }
-    };
+    console.log('🔍 Collections: Extracting currently reading from books prop...');
+    console.log('🔍 Collections: Raw books prop structure:', books.length > 0 ? {
+      firstBook: books[0],
+      totalBooks: books.length,
+      booksWithIsReading: books.filter(b => b.hasOwnProperty('is_reading')).length,
+      booksWithTrueIsReading: books.filter(b => b.is_reading === true).length
+    } : 'No books');
     
-    fetchCurrentlyReading();
-  }, []);
+    const readingBooks = books.filter(book => book.is_reading);
+    console.log('🔍 Collections: Currently reading books from props:', readingBooks.length, 'books:', readingBooks.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
+    
+    if (readingBooks.length === 0 && books.length > 0) {
+      console.log('🔍 Collections: WARNING - No currently reading books found. Checking all books is_reading status:');
+      books.slice(0, 5).forEach((book, index) => {
+        console.log(`🔍 Collections: Book ${index}: ${book.title}, is_reading: ${book.is_reading} (type: ${typeof book.is_reading})`);
+      });
+    }
+    
+    setCurrentlyReadingBooks(readingBooks);
+  }, [books]);
 
   // Update Currently Reading collection when currentlyReadingBooks changes
   useEffect(() => {
@@ -309,10 +307,23 @@ const EnhancedCollectionsPage = ({
 
   // Handle drag and drop
   const handleDragStart = useCallback((e, book) => {
-    console.log('🔥 Drag started for book:', book.title, 'ID:', book.id);
-    setDraggedBook(book);
-    e.dataTransfer.effectAllowed = 'move';
-  }, []);
+    console.log('🔥 ======= DRAG START =======');
+    console.log('🔥 handleDragStart called with book:', book);
+    console.log('🔥 Book ID:', book?.id, 'Title:', book?.title);
+    console.log('🔥 Event target:', e.target);
+    console.log('🔥 Current draggedBook state before setting:', draggedBook);
+    
+    if (book && book.id) {
+      setDraggedBook(book);
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', book.id);
+      console.log('🔥 draggedBook set to:', book.title, 'ID:', book.id);
+      console.log('🔥 dataTransfer effectAllowed set to: move');
+    } else {
+      console.log('🔥 ERROR: Invalid book object received in handleDragStart');
+    }
+    console.log('🔥 ===========================');
+  }, [draggedBook]);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -321,7 +332,11 @@ const EnhancedCollectionsPage = ({
 
   const handleDrop = useCallback((e, collectionId) => {
     e.preventDefault();
+    console.log('🔥 ======= DROP EVENT =======');
     console.log('🔥 Drop event - draggedBook:', draggedBook, 'collectionId:', collectionId);
+    console.log('🔥 Event target:', e.target);
+    console.log('🔥 dataTransfer data:', e.dataTransfer.getData('text/plain'));
+    
     if (draggedBook) {
       console.log('🔥 Adding book', draggedBook.id, 'to collection', collectionId);
       handleAddBooksToCollection(collectionId, [draggedBook.id]);
@@ -329,8 +344,23 @@ const EnhancedCollectionsPage = ({
       console.log('🔥 Book added to collection, draggedBook cleared');
     } else {
       console.log('🔥 No draggedBook found during drop');
+      // Try to get book ID from dataTransfer as fallback
+      const bookId = e.dataTransfer.getData('text/plain');
+      if (bookId) {
+        console.log('🔥 Fallback: Found bookId in dataTransfer:', bookId);
+        const book = books.find(b => b.id === bookId);
+        if (book) {
+          console.log('🔥 Fallback: Found book in books array:', book.title);
+          handleAddBooksToCollection(collectionId, [book.id]);
+        } else {
+          console.log('🔥 Fallback: Book not found in books array');
+        }
+      } else {
+        console.log('🔥 No bookId found in dataTransfer either');
+      }
     }
-  }, [draggedBook, handleAddBooksToCollection]);
+    console.log('🔥 ==========================');
+  }, [draggedBook, handleAddBooksToCollection, books]);
 
   // Handle batch operations with enhanced feedback
   const handleBatchAddToCollection = useCallback(async (collectionId) => {
@@ -716,29 +746,31 @@ const EnhancedCollectionsPage = ({
                 {filteredCollections.map(renderCollectionCard)}
               </div>
             ) : (
-          <div style={{
-            textAlign: 'center',
-            padding: '64px 24px',
-            color: '#49454F'
-          }}>
-            <div style={{ fontSize: '64px', marginBottom: '16px' }}>📚</div>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>
-              {searchQuery ? 'No collections found' : 'Start building your collections'}
-            </h3>
-            <p style={{ margin: '0 0 24px 0', fontSize: '1rem', opacity: 0.7 }}>
-              {searchQuery 
-                ? 'Try adjusting your search terms'
-                : 'Create themed collections to organize your books by genre, mood, or any way you like'
-              }
-            </p>
-            {!searchQuery && (
-              <MD3Button
-                variant="filled"
-                onClick={() => setIsCreating(true)}
-                icon="➕"
-              >
-                Create Your First Collection
-              </MD3Button>
+              <div style={{
+                textAlign: 'center',
+                padding: '64px 24px',
+                color: '#49454F'
+              }}>
+                <div style={{ fontSize: '64px', marginBottom: '16px' }}>📚</div>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>
+                  {searchQuery ? 'No collections found' : 'Start building your collections'}
+                </h3>
+                <p style={{ margin: '0 0 24px 0', fontSize: '1rem', opacity: 0.7 }}>
+                  {searchQuery 
+                    ? 'Try adjusting your search terms'
+                    : 'Create themed collections to organize your books by genre, mood, or any way you like'
+                  }
+                </p>
+                {!searchQuery && (
+                  <MD3Button
+                    variant="filled"
+                    onClick={() => setIsCreating(true)}
+                    icon="➕"
+                  >
+                    Create Your First Collection
+                  </MD3Button>
+                )}
+              </div>
             )}
           </div>
           
@@ -788,7 +820,7 @@ const EnhancedCollectionsPage = ({
                   gap: '12px',
                   padding: '4px'
                 }}>
-                  {books.map(book => (
+                  {console.log('🔥 Book Library Rendering - books.length:', books.length) || books.map(book => (
                     <div
                       key={book.id}
                       draggable
