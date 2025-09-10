@@ -125,27 +125,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: 🏗️ Build and push server image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./server2
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/literati-server:latest
-            ${{ secrets.DOCKER_USERNAME }}/literati-server:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: 🏗️ Build and push AI service image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./ai-service
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/literati-ai:latest
-            ${{ secrets.DOCKER_USERNAME }}/literati-ai:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   deploy-staging:
     name: 🚀 Deploy to Staging
