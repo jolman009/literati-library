@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { MD3NavigationBar } from '@/components/Material3';
+import { MD3NavigationBar } from '../Material3';
 
 const NAV = [
   { to: '/library/reading',     label: 'Reading',     icon: 'menu_book' },

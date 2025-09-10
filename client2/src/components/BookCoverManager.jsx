@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from '@/config/api';
+import API from '../config/api';
 import './BookCoverManager.css';
 
 // Component to manage and display book covers with fallback

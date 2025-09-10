@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { MD3NavigationRail, MD3NavigationBar, MD3Surface } from '@/components/Material3';
-import { useResponsive } from '@/components/Material3/hooks/useResponsive';
+import { MD3NavigationRail, MD3NavigationBar, MD3Surface } from '../../components/Material3';
+import { useResponsive } from '../../components/Material3/hooks/useResponsive';
 
 const NAV_ITEMS = [
   { to: '/library/reading',     label: 'Reading',     icon: 'menu_book' },

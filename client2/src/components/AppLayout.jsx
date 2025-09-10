@@ -1,8 +1,8 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import PremiumNavigation from '@/components/navigation/PremiumNavigation';
-import MobileNavigation from '@/components/navigation/MobileNavigation';
-import PremiumHeader from '@/components/navigation/PremiumHeader';
-import { useMaterial3Theme } from '@/contexts/Material3ThemeContext';
+import PremiumNavigation from './navigation/PremiumNavigation';
+import MobileNavigation from './navigation/MobileNavigation';
+import PremiumHeader from './navigation/PremiumHeader';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import GlobalSearch from './GlobalSearch';
 import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';

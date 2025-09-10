@@ -568,6 +568,49 @@ export const MD3Switch = React.forwardRef(({ checked = false, onChange, disabled
 });
 MD3Switch.displayName = 'MD3Switch';
 
+// Checkbox (inline)
+export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabled = false, label, className = '', style = {}, ...props }, ref) => {
+  const checkboxStyle = { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1, ...style };
+  const boxStyle = { 
+    width: '18px', 
+    height: '18px', 
+    borderRadius: '2px', 
+    border: `2px solid ${checked ? '#6750a4' : '#79747e'}`, 
+    backgroundColor: checked ? '#6750a4' : 'transparent', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    transition: 'all 0.2s ease',
+    cursor: disabled ? 'not-allowed' : 'pointer'
+  };
+  const checkStyle = { 
+    width: '10px', 
+    height: '10px', 
+    color: '#ffffff', 
+    fontSize: '12px', 
+    lineHeight: '1',
+    opacity: checked ? 1 : 0,
+    transition: 'opacity 0.2s ease'
+  };
+
+  return (
+    <label ref={ref} style={checkboxStyle} className={`md3-checkbox ${className}`} {...props}>
+      <div style={boxStyle} onClick={() => !disabled && onChange && onChange({ target: { checked: !checked } })}>
+        <div style={checkStyle}>✓</div>
+      </div>
+      {label && <span style={{ fontSize: '14px', color: '#1c1b1f' }}>{label}</span>}
+      <input 
+        type="checkbox" 
+        checked={checked} 
+        onChange={onChange} 
+        disabled={disabled} 
+        style={{ display: 'none' }} 
+      />
+    </label>
+  );
+});
+MD3Checkbox.displayName = 'MD3Checkbox';
+
 // Dialog Actions (inline)
 export const MD3DialogActions = React.forwardRef(({ children, className = '', style = {}, ...props }, ref) => {
   const actionsStyle = { display: 'flex', gap: '12px', justifyContent: 'flex-end', padding: '16px 20px 20px', borderTop: '1px solid #e7e0ec', ...style };

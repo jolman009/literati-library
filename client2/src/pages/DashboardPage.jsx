@@ -1,13 +1,13 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useGamification } from '@/contexts/GamificationContext';
-import { useSnackbar } from '@/components/Material3';
-import { useMaterial3Theme } from '@/contexts/Material3ThemeContext';
-import API from '@/config/api';
-import MD3Card from '@/components/Material3/MD3Card';
-import LiteraryMentorUI from '@/components/LiteraryMentorUI';
+import { useAuth } from '../contexts/AuthContext';
+import { useGamification } from '../contexts/GamificationContext';
+import { useSnackbar } from '../components/Material3';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import API from '../config/api';
+import MD3Card from '../components/Material3/MD3Card';
+import LiteraryMentorUI from '../components/LiteraryMentorUI';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {

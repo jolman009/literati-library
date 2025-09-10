@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useMaterial3Theme } from '@/contexts/Material3ThemeContext';
-import { useReadingSession } from '@/contexts/ReadingSessionContext';
-import API from '@/config/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
+import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates';
+import API from '../config/api';
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));

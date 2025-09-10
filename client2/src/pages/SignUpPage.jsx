@@ -1,93 +1,36 @@
-import * as React from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
-
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
-import { styled } from '@mui/material/styles';
-
-import AppTheme from '../theme/AppTheme';
-import ColorModeSelect from '../theme/ColorModeSelect';
-import { SitemarkIcon } from '../components/CustomIcons';
+import React, { useState, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { MD3Card, MD3TextField, MD3Button, MD3Checkbox } from '../components/Material3';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { Sun, Moon, Monitor } from 'lucide-react';
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: { maxWidth: '520px' },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles?.('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
-
-const PageContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
-  padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
-  '&::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-    ...(theme.applyStyles
-      ? theme.applyStyles('dark', {
-          backgroundImage:
-            'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-        })
-      : {}),
-  },
-}));
-
-export default function SignUpPage(props) {
+const SignUpPage = () => {
   const navigate = useNavigate();
   const auth = useAuth();
+  const { actualTheme, setTheme } = useMaterial3Theme();
 
   // form state
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
-  const [acceptedTos, setAcceptedTos] = React.useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [acceptedTos, setAcceptedTos] = useState(false);
 
   // ui state
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // field errors + global error
-  const [nameError, setNameError] = React.useState('');
-  const [emailError, setEmailError] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState('');
-  const [confirmError, setConfirmError] = React.useState('');
-  const [formError, setFormError] = React.useState('');
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [formError, setFormError] = useState('');
 
-  // success snackbar
-  const [snack, setSnack] = React.useState({ open: false, message: '', severity: 'success' });
+  // success message
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const validate = React.useCallback(() => {
+  const validate = useCallback(() => {
     let ok = true;
 
     // reset
@@ -135,12 +78,8 @@ export default function SignUpPage(props) {
     try {
       const result = await auth.register(email, password, name);
       if (result?.success) {
-        setSnack({
-          open: true,
-          message: `Welcome to Literati${result.user?.name ? `, ${result.user.name}` : ''}!`,
-          severity: 'success',
-        });
-        setTimeout(() => navigate('/dashboard', { replace: true }), 300);
+        setSuccessMessage(`Welcome to Literati${result.user?.name ? `, ${result.user.name}` : ''}!`);
+        setTimeout(() => navigate('/dashboard', { replace: true }), 1000);
       } else {
         setFormError(result?.error || 'Registration failed. Please try again.');
       }
@@ -151,166 +90,234 @@ export default function SignUpPage(props) {
     }
   };
 
+  const ThemeToggle = () => (
+    <div style={{
+      position: 'fixed',
+      top: '1rem',
+      right: '1rem',
+      display: 'flex',
+      gap: '8px',
+      background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
+      borderRadius: '12px',
+      padding: '4px',
+      border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    }}>
+      <button
+        onClick={() => setTheme('light')}
+        style={{
+          padding: '8px',
+          borderRadius: '8px',
+          border: 'none',
+          background: actualTheme === 'light' ? '#6750a4' : 'transparent',
+          color: actualTheme === 'light' ? '#ffffff' : actualTheme === 'dark' ? '#f1f5f9' : '#374151',
+          cursor: 'pointer'
+        }}
+      >
+        <Sun size={16} />
+      </button>
+      <button
+        onClick={() => setTheme('dark')}
+        style={{
+          padding: '8px',
+          borderRadius: '8px',
+          border: 'none',
+          background: actualTheme === 'dark' ? '#6750a4' : 'transparent',
+          color: actualTheme === 'dark' ? '#ffffff' : '#374151',
+          cursor: 'pointer'
+        }}
+      >
+        <Moon size={16} />
+      </button>
+      <button
+        onClick={() => setTheme('system')}
+        style={{
+          padding: '8px',
+          borderRadius: '8px',
+          border: 'none',
+          background: 'transparent',
+          color: actualTheme === 'dark' ? '#f1f5f9' : '#374151',
+          cursor: 'pointer'
+        }}
+      >
+        <Monitor size={16} />
+      </button>
+    </div>
+  );
+
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <PageContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-
-        <Card variant="outlined">
-          <SitemarkIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+      background: actualTheme === 'dark' 
+        ? 'radial-gradient(ellipse at center, #1e293b 0%, #0f172a 100%)'
+        : 'radial-gradient(ellipse at center, #f8fafc 0%, #ffffff 100%)'
+    }}>
+      <ThemeToggle />
+      
+      <MD3Card style={{
+        width: '100%',
+        maxWidth: '480px',
+        padding: '32px',
+        background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginBottom: '24px'
+        }}>
+          <img 
+            src="/literatiLOGO.png" 
+            alt="Literati" 
+            style={{ 
+              height: '60px', 
+              width: 'auto',
+              marginBottom: '16px',
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+            }}
+          />
+          <h1 style={{
+            fontSize: '1.75rem',
+            fontWeight: '500',
+            color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
+            margin: 0,
+            textAlign: 'center'
+          }}>
             Create your account
-          </Typography>
+          </h1>
+        </div>
 
-          {/* Inline Alert for actionable form errors */}
-          {formError && (
-            <Alert
-              severity="error"
-              variant="filled"
-              sx={{ mb: 1, borderRadius: 2 }}
-              onClose={() => setFormError('')}
-            >
-              {formError}
-            </Alert>
-          )}
+        {/* Error Alert */}
+        {formError && (
+          <div style={{
+            padding: '12px',
+            marginBottom: '16px',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            color: '#dc2626',
+            fontSize: '14px'
+          }}>
+            {formError}
+          </div>
+        )}
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
-          >
-            <FormControl>
-              <FormLabel htmlFor="fullName">Full name</FormLabel>
-              <TextField
-                id="fullName"
-                name="fullName"
-                type="text"
-                autoComplete="name"
-                placeholder="Jane Doe"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                error={!!nameError}
-                helperText={nameError}
-                disabled={isLoading}
-              />
-            </FormControl>
+        {/* Success Alert */}
+        {successMessage && (
+          <div style={{
+            padding: '12px',
+            marginBottom: '16px',
+            backgroundColor: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: '8px',
+            color: '#16a34a',
+            fontSize: '14px'
+          }}>
+            {successMessage}
+          </div>
+        )}
 
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-                fullWidth
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={!!emailError}
-                helperText={emailError}
-                disabled={isLoading}
-              />
-            </FormControl>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <MD3TextField
+            label="Full name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={!!nameError}
+            helperText={nameError}
+            disabled={isLoading}
+            required
+            autoFocus
+          />
 
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                placeholder="At least 8 characters"
-                required
-                fullWidth
-                variant="outlined"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={!!passwordError}
-                helperText={passwordError}
-                disabled={isLoading}
-              />
-            </FormControl>
+          <MD3TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={!!emailError}
+            helperText={emailError}
+            disabled={isLoading}
+            required
+          />
 
-            <FormControl>
-              <FormLabel htmlFor="confirmPassword">Confirm password</FormLabel>
-              <TextField
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                fullWidth
-                variant="outlined"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!!confirmError}
-                helperText={confirmError}
-                disabled={isLoading}
-              />
-            </FormControl>
+          <MD3TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
+            disabled={isLoading}
+            required
+          />
 
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={acceptedTos}
-                  onChange={(e) => setAcceptedTos(e.target.checked)}
-                  color="primary"
-                  disabled={isLoading}
-                />
-              }
-              label={
-                <Typography variant="body2">
-                  I agree to the{' '}
-                  <Link href="#" underline="hover">Terms of Service</Link> and{' '}
-                  <Link href="#" underline="hover">Privacy Policy</Link>.
-                </Typography>
-              }
+          <MD3TextField
+            label="Confirm password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!confirmError}
+            helperText={confirmError}
+            disabled={isLoading}
+            required
+          />
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <MD3Checkbox
+              checked={acceptedTos}
+              onChange={(e) => setAcceptedTos(e.target.checked)}
+              disabled={isLoading}
             />
+            <span style={{
+              fontSize: '14px',
+              color: actualTheme === 'dark' ? '#e2e8f0' : '#374151',
+              lineHeight: '1.4'
+            }}>
+              I agree to the{' '}
+              <a href="#" style={{ color: '#6750a4', textDecoration: 'none' }}>Terms of Service</a> and{' '}
+              <a href="#" style={{ color: '#6750a4', textDecoration: 'none' }}>Privacy Policy</a>.
+            </span>
+          </div>
 
-            <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
-              {isLoading ? 'Creating account…' : 'Create account'}
-            </Button>
+          <MD3Button
+            type="submit"
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              backgroundColor: '#6750a4',
+              color: '#ffffff'
+            }}
+          >
+            {isLoading ? 'Creating account...' : 'Create account'}
+          </MD3Button>
 
-            <Typography sx={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <span style={{
+              fontSize: '14px',
+              color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
+            }}>
               Already have an account?{' '}
-              <Link component={RouterLink} to="/login" variant="body2" sx={{ alignSelf: 'center' }}>
+              <Link 
+                to="/login"
+                style={{
+                  color: '#6750a4',
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+              >
                 Sign in
               </Link>
-            </Typography>
-          </Box>
-
-          <Divider sx={{ my: 1.5 }}>or</Divider>
-        </Card>
-
-        {/* Success snackbar */}
-        <Snackbar
-          open={snack.open}
-          autoHideDuration={2500}
-          onClose={() => setSnack((s) => ({ ...s, open: false }))}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        >
-          <Alert
-            onClose={() => setSnack((s) => ({ ...s, open: false }))}
-            severity={snack.severity}
-            variant="filled"
-            sx={{ width: '100%' }}
-          >
-            {snack.message}
-          </Alert>
-        </Snackbar>
-      </PageContainer>
-    </AppTheme>
+            </span>
+          </div>
+        </form>
+      </MD3Card>
+    </div>
   );
-}
+};
+
+export default SignUpPage;

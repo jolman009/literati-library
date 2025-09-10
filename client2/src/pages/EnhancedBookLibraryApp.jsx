@@ -7,7 +7,7 @@ import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { useGamification } from '../contexts/GamificationContext';
 import MD3StatisticsPage from '../components/MD3StatisticsPage';
 import { MD3Button, MD3FloatingActionButton, useSnackbar } from '../components/Material3';
-import { fetchBooksWithCovers } from '@/api/books';
+import { fetchBooksWithCovers } from '../api/books';
 import { ensureCoverForBook } from '../services/covers.js';
 import VirtualizedBookGrid from '../components/VirtualizedBookGrid';
 import { generateMockBooks, performanceTest } from '../utils/mockBookGenerator.js';

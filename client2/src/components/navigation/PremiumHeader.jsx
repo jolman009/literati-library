@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useMaterial3Theme } from '@/contexts/Material3ThemeContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 import './PremiumHeader.css';
 
 const PremiumHeader = ({

@@ -31,6 +31,12 @@ const EnhancedCollectionsPage = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBooks, setSelectedBooks] = useState(new Set());
   const [batchMode, setBatchMode] = useState(false);
+  const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
+  
+  // Enhanced UX states
+  const [operationLoading, setOperationLoading] = useState(false);
+  const [lastError, setLastError] = useState(null);
+  const [actionFeedback, setActionFeedback] = useState(null);
 
   // Collection creation state
   const [newCollection, setNewCollection] = useState({
@@ -54,21 +60,106 @@ const EnhancedCollectionsPage = ({
     '⭐', '📋', '🎯', '🚀', '💎', '🏆', '📊', '🎨'
   ];
 
+  // Fetch currently reading books from API (synced with Dashboard)
+  useEffect(() => {
+    const fetchCurrentlyReading = async () => {
+      try {
+        const token = localStorage.getItem('literati_token');
+        if (!token) {
+          console.log('🔍 Collections: No auth token found');
+          return;
+        }
+        
+        console.log('🔍 Collections: Fetching currently reading books...');
+        const response = await fetch('http://localhost:5000/books', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('🔍 Collections: API response:', data);
+          const booksArray = Array.isArray(data.books) ? data.books : [];
+          console.log('🔍 Collections: Books array:', booksArray.length, 'books');
+          const readingBooks = booksArray.filter(book => book.is_reading);
+          console.log('🔍 Collections: Currently reading books:', readingBooks.length, 'books:', readingBooks.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
+          setCurrentlyReadingBooks(readingBooks);
+        } else {
+          console.error('🔍 Collections: API request failed:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('🔍 Collections: Failed to fetch currently reading books:', error);
+      }
+    };
+    
+    fetchCurrentlyReading();
+  }, []);
+
+  // Update Currently Reading collection when currentlyReadingBooks changes
+  useEffect(() => {
+    console.log('🔍 Collections: currentlyReadingBooks changed:', currentlyReadingBooks.length, 'books');
+    if (currentlyReadingBooks.length > 0) {
+      console.log('🔍 Collections: Updating Currently Reading collection with book IDs:', currentlyReadingBooks.map(b => b.id));
+      setCollections(prev => prev.map(collection => {
+        if (collection.id === 'currently-reading') {
+          const updated = {
+            ...collection,
+            bookIds: currentlyReadingBooks.map(b => b.id)
+          };
+          console.log('🔍 Collections: Updated Currently Reading collection:', updated);
+          return updated;
+        }
+        return collection;
+      }));
+    } else {
+      console.log('🔍 Collections: No currently reading books, clearing collection');
+      setCollections(prev => prev.map(collection => {
+        if (collection.id === 'currently-reading') {
+          return {
+            ...collection,
+            bookIds: []
+          };
+        }
+        return collection;
+      }));
+    }
+  }, [currentlyReadingBooks]);
+
   // Initialize collections with enhanced default categories
   useEffect(() => {
     const loadCollections = async () => {
+      console.log('🔥 loadCollections called due to books dependency change');
+      console.log('🔥 loadCollections - Current books array:', books.length, 'books');
+      console.log('🔥 loadCollections - Current collections before loading:', collections.length, 'collections');
       setLoading(true);
       try {
         // Get saved collections from localStorage or initialize defaults
         const savedCollections = localStorage.getItem('bookCollections');
+        console.log('🔥 Loading collections from localStorage:', savedCollections ? 'found saved data' : 'no saved data');
         
         if (savedCollections) {
-          setCollections(JSON.parse(savedCollections));
+          const parsed = JSON.parse(savedCollections);
+          console.log('🔥 loadCollections - Parsed collections:', parsed.length, 'collections');
+          console.log('🔥 loadCollections - About to call setCollections with parsed data');
+          setCollections(parsed);
+          console.log('🔥 loadCollections - setCollections called with parsed data');
         } else {
           // Create smart default collections based on available books
           const defaultCollections = [
             {
-              id: '1',
+              id: 'currently-reading',
+              name: 'Currently Reading',
+              description: 'Books you\'re actively reading (synced with Dashboard)',
+              color: '#2196F3',
+              icon: '📖',
+              bookIds: currentlyReadingBooks.map(b => b.id),
+              isDefault: true,
+              isAutomatic: true,
+              createdAt: Date.now()
+            },
+            {
+              id: 'favorites',
               name: 'Favorites',
               description: 'Your most beloved books',
               color: '#F44336',
@@ -78,7 +169,7 @@ const EnhancedCollectionsPage = ({
               createdAt: Date.now()
             },
             {
-              id: '2',
+              id: 'wishlist',
               name: 'Want to Read',
               description: 'Books on your reading wishlist',
               color: '#4CAF50',
@@ -88,17 +179,7 @@ const EnhancedCollectionsPage = ({
               createdAt: Date.now()
             },
             {
-              id: '3',
-              name: 'Currently Reading',
-              description: 'Books you\'re actively reading',
-              color: '#2196F3',
-              icon: '📖',
-              bookIds: books.filter(b => b.isReading || b.status === 'reading').map(b => b.id),
-              isDefault: true,
-              createdAt: Date.now()
-            },
-            {
-              id: '4',
+              id: 'completed',
               name: 'Completed',
               description: 'Books you\'ve finished reading',
               color: '#8BC34A',
@@ -109,23 +190,31 @@ const EnhancedCollectionsPage = ({
             }
           ];
           
+          console.log('🔥 loadCollections - Creating default collections with', books.length, 'books');
           setCollections(defaultCollections);
           localStorage.setItem('bookCollections', JSON.stringify(defaultCollections));
+          console.log('🔥 loadCollections - Default collections created and saved');
         }
       } catch (error) {
-        console.error('Failed to load collections:', error);
+        console.error('🔥 loadCollections - Failed to load collections:', error);
       } finally {
+        console.log('🔥 loadCollections - Complete, setting loading to false');
         setLoading(false);
       }
     };
 
+    console.log('🔥 loadCollections - About to call loadCollections()');
     loadCollections();
+    console.log('🔥 loadCollections - loadCollections() called');
   }, [books]);
 
   // Save collections to localStorage whenever they change
   useEffect(() => {
+    console.log('🔥 localStorage save effect triggered - collections.length:', collections.length);
     if (collections.length > 0) {
+      console.log('🔥 Saving collections to localStorage:', collections.map(c => ({id: c.id, name: c.name, bookCount: c.bookIds.length})));
       localStorage.setItem('bookCollections', JSON.stringify(collections));
+      console.log('🔥 Collections saved to localStorage');
     }
   }, [collections]);
 
@@ -163,14 +252,32 @@ const EnhancedCollectionsPage = ({
 
   // Handle adding books to collection
   const handleAddBooksToCollection = useCallback((collectionId, bookIds) => {
-    setCollections(prev => prev.map(collection => {
-      if (collection.id === collectionId) {
-        const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
-        return { ...collection, bookIds: newBookIds };
+    console.log('🔥 handleAddBooksToCollection called - collectionId:', collectionId, 'bookIds:', bookIds);
+    console.log('🔥 handleAddBooksToCollection - Current collections count:', collections.length);
+    console.log('🔥 handleAddBooksToCollection - Target collection exists?', collections.some(c => c.id === collectionId));
+    
+    setCollections(prev => {
+      console.log('🔥 handleAddBooksToCollection - setCollections callback executed with prev:', prev.length, 'collections');
+      const targetCollection = prev.find(c => c.id === collectionId);
+      if (targetCollection) {
+        console.log('🔥 handleAddBooksToCollection - Found target collection:', targetCollection.name, 'current books:', targetCollection.bookIds);
+      } else {
+        console.log('🔥 handleAddBooksToCollection - ERROR: Target collection not found!');
       }
-      return collection;
-    }));
-  }, []);
+      
+      const updated = prev.map(collection => {
+        if (collection.id === collectionId) {
+          const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
+          console.log('🔥 Updated collection', collection.name, 'bookIds:', collection.bookIds, '→', newBookIds);
+          return { ...collection, bookIds: newBookIds };
+        }
+        return collection;
+      });
+      console.log('🔥 Collections state updated - returning', updated.length, 'collections');
+      return updated;
+    });
+    console.log('🔥 handleAddBooksToCollection - setCollections call completed');
+  }, [collections]);
 
   // Handle removing books from collection
   const handleRemoveBooksFromCollection = useCallback((collectionId, bookIds) => {
@@ -202,6 +309,7 @@ const EnhancedCollectionsPage = ({
 
   // Handle drag and drop
   const handleDragStart = useCallback((e, book) => {
+    console.log('🔥 Drag started for book:', book.title, 'ID:', book.id);
     setDraggedBook(book);
     e.dataTransfer.effectAllowed = 'move';
   }, []);
@@ -213,18 +321,44 @@ const EnhancedCollectionsPage = ({
 
   const handleDrop = useCallback((e, collectionId) => {
     e.preventDefault();
+    console.log('🔥 Drop event - draggedBook:', draggedBook, 'collectionId:', collectionId);
     if (draggedBook) {
+      console.log('🔥 Adding book', draggedBook.id, 'to collection', collectionId);
       handleAddBooksToCollection(collectionId, [draggedBook.id]);
       setDraggedBook(null);
+      console.log('🔥 Book added to collection, draggedBook cleared');
+    } else {
+      console.log('🔥 No draggedBook found during drop');
     }
   }, [draggedBook, handleAddBooksToCollection]);
 
-  // Handle batch operations
-  const handleBatchAddToCollection = useCallback((collectionId) => {
-    handleAddBooksToCollection(collectionId, Array.from(selectedBooks));
-    setSelectedBooks(new Set());
-    setBatchMode(false);
-  }, [selectedBooks, handleAddBooksToCollection]);
+  // Handle batch operations with enhanced feedback
+  const handleBatchAddToCollection = useCallback(async (collectionId) => {
+    const bookCount = selectedBooks.size;
+    const targetCollection = collections.find(c => c.id === collectionId);
+    
+    setOperationLoading(true);
+    
+    try {
+      await handleAddBooksToCollection(collectionId, Array.from(selectedBooks));
+      setSelectedBooks(new Set());
+      setBatchMode(false);
+      
+      setActionFeedback({ 
+        type: 'success', 
+        message: `${bookCount} book${bookCount > 1 ? 's' : ''} added to "${targetCollection?.name}"` 
+      });
+      setTimeout(() => setActionFeedback(null), 3000);
+    } catch (error) {
+      setActionFeedback({ 
+        type: 'error', 
+        message: 'Failed to add books to collection' 
+      });
+      setTimeout(() => setActionFeedback(null), 3000);
+    } finally {
+      setOperationLoading(false);
+    }
+  }, [selectedBooks, handleAddBooksToCollection, collections]);
 
   // Render collection card
   const renderCollectionCard = (collection) => {
@@ -243,8 +377,20 @@ const EnhancedCollectionsPage = ({
           overflow: 'hidden'
         }}
         onDragOver={handleDragOver}
-        onDrop={(e) => handleDrop(e, collection.id)}
-        onClick={() => setCollectionDetailView(collection)}
+        onDrop={(e) => {
+          console.log('Drop event triggered on collection:', collection.name);
+          e.preventDefault();
+          e.stopPropagation();
+          handleDrop(e, collection.id);
+        }}
+        onClick={(e) => {
+          if (draggedBook || batchMode) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+          }
+          if (!operationLoading) setCollectionDetailView(collection);
+        }}
       >
         {/* Collection header */}
         <div style={{
@@ -280,19 +426,39 @@ const EnhancedCollectionsPage = ({
               </div>
             </div>
             
-            {!collection.isDefault && (
-              <MD3Button
-                variant="text"
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingCollection(collection);
-                }}
-                style={{ color: collection.color }}
-              >
-                ⚙️
-              </MD3Button>
-            )}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {batchMode && selectedBooks.size > 0 && (
+                <MD3Button
+                  variant="filled"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleBatchAddToCollection(collection.id);
+                  }}
+                  disabled={operationLoading}
+                  style={{ 
+                    backgroundColor: collection.color,
+                    color: 'white',
+                    fontSize: '12px'
+                  }}
+                >
+                  + Add {selectedBooks.size}
+                </MD3Button>
+              )}
+              {!collection.isDefault && (
+                <MD3Button
+                  variant="text"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingCollection(collection);
+                  }}
+                  style={{ color: collection.color }}
+                >
+                  ⚙️
+                </MD3Button>
+              )}
+            </div>
           </div>
           
           <div style={{
@@ -401,11 +567,48 @@ const EnhancedCollectionsPage = ({
             }}>
               <div style={{ fontSize: '48px', marginBottom: '8px' }}>📚</div>
               <p style={{ margin: 0, fontSize: '0.875rem' }}>
-                No books yet. Drag books here or click to add.
+                {batchMode 
+                  ? 'Select books on the right and use the Add button above'
+                  : 'No books yet. Drag books here from your library'
+                }
               </p>
             </div>
           )}
         </div>
+        
+        {/* Operation Loading Overlay */}
+        {operationLoading && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+            borderRadius: '12px'
+          }}>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <MD3Progress variant="circular" size={24} />
+              <span style={{ 
+                fontSize: '0.8rem', 
+                color: '#49454F',
+                fontWeight: '500' 
+              }}>
+                Processing...
+              </span>
+            </div>
+          </div>
+        )}
       </MD3Card>
     );
   };
@@ -499,17 +702,20 @@ const EnhancedCollectionsPage = ({
         </div>
       </div>
 
-      {/* Collections Grid */}
+      {/* Main Content Area */}
       <div style={{ padding: '0 24px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-        {filteredCollections.length > 0 ? (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-            gap: '24px'
-          }}>
-            {filteredCollections.map(renderCollectionCard)}
-          </div>
-        ) : (
+        <div style={{ display: 'flex', gap: '24px' }}>
+          {/* Collections Grid */}
+          <div style={{ flex: '2' }}>
+            {filteredCollections.length > 0 ? (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '20px'
+              }}>
+                {filteredCollections.map(renderCollectionCard)}
+              </div>
+            ) : (
           <div style={{
             textAlign: 'center',
             padding: '64px 24px',
@@ -535,8 +741,258 @@ const EnhancedCollectionsPage = ({
               </MD3Button>
             )}
           </div>
-        )}
+          
+          {/* Draggable Book Library */}
+          {!batchMode && (
+            <div style={{ flex: '1', minWidth: '300px' }}>
+              <MD3Card style={{
+                padding: '20px',
+                background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
+                position: 'sticky',
+                top: '20px',
+                maxHeight: '80vh',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{
+                  marginBottom: '16px',
+                  borderBottom: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
+                  paddingBottom: '12px'
+                }}>
+                  <h3 style={{
+                    margin: 0,
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    📚 Select Books
+                  </h3>
+                  <p style={{
+                    margin: '4px 0 0 0',
+                    fontSize: '0.875rem',
+                    color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
+                  }}>
+                    Drag books to collections
+                  </p>
+                </div>
+                
+                <div style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                  gap: '12px',
+                  padding: '4px'
+                }}>
+                  {books.map(book => (
+                    <div
+                      key={book.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, book)}
+                      style={{
+                        position: 'relative',
+                        aspectRatio: '2/3',
+                        borderRadius: '6px',
+                        overflow: 'hidden',
+                        cursor: 'grab',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        border: `2px solid transparent`,
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                      }}
+                      title={`Drag "${book.title}" to a collection`}
+                    >
+                      {book.cover_url ? (
+                        <img
+                          src={book.cover_url}
+                          alt={book.title}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            pointerEvents: 'none'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          backgroundColor: '#6750A4',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '10px',
+                          textAlign: 'center',
+                          padding: '4px',
+                          fontWeight: '500'
+                        }}>
+                          {book.title.slice(0, 20)}...
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                {books.length === 0 && (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '32px 16px',
+                    color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
+                  }}>
+                    <div style={{ fontSize: '48px', marginBottom: '8px' }}>📚</div>
+                    <p style={{ margin: 0, fontSize: '0.875rem' }}>No books available</p>
+                  </div>
+                )}
+              </MD3Card>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Batch Mode Book Selection Panel */}
+      {batchMode && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          width: '400px',
+          maxHeight: '70vh',
+          background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
+          borderRadius: '16px',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+          border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <div style={{
+            padding: '20px',
+            borderBottom: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{
+                margin: 0,
+                fontSize: '16px',
+                fontWeight: 'bold',
+                color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
+              }}>
+                Select Books ({selectedBooks.size})
+              </h3>
+              <MD3Button
+                variant="text"
+                size="small"
+                onClick={() => {
+                  setSelectedBooks(new Set());
+                  setBatchMode(false);
+                }}
+                style={{ minWidth: 'auto', padding: '4px 8px' }}
+              >
+                ✕
+              </MD3Button>
+            </div>
+            <p style={{
+              margin: '4px 0 0 0',
+              fontSize: '12px',
+              color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
+            }}>
+              Select books, then use Add buttons on collections
+            </p>
+          </div>
+          
+          <div style={{
+            flex: 1,
+            padding: '16px',
+            overflowY: 'auto'
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+              gap: '12px'
+            }}>
+              {books.map(book => (
+                <div
+                  key={book.id}
+                  onClick={() => {
+                    const newSelected = new Set(selectedBooks);
+                    if (selectedBooks.has(book.id)) {
+                      newSelected.delete(book.id);
+                    } else {
+                      newSelected.add(book.id);
+                    }
+                    setSelectedBooks(newSelected);
+                  }}
+                  style={{
+                    position: 'relative',
+                    aspectRatio: '2/3',
+                    borderRadius: '6px',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    border: selectedBooks.has(book.id) ? '2px solid #6750A4' : '2px solid transparent',
+                    transition: 'all 0.2s ease',
+                    transform: selectedBooks.has(book.id) ? 'scale(1.05)' : 'scale(1)'
+                  }}
+                >
+                  {book.cover_url ? (
+                    <img
+                      src={book.cover_url}
+                      alt={book.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#6750A4',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      fontSize: '10px',
+                      textAlign: 'center',
+                      padding: '4px'
+                    }}>
+                      {book.title.slice(0, 20)}...
+                    </div>
+                  )}
+                  
+                  {selectedBooks.has(book.id) && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: '#6750A4',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)'
+                    }}>
+                      ✓
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Batch Mode Panel */}
       {batchMode && (
@@ -548,129 +1004,70 @@ const EnhancedCollectionsPage = ({
           padding: '16px 24px',
           borderRadius: '24px',
           boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-          backgroundColor: '#6750A4',
+          backgroundColor: operationLoading ? 'rgba(103, 80, 164, 0.8)' : '#6750A4',
           color: 'white',
           display: 'flex',
           alignItems: 'center',
           gap: '16px',
-          zIndex: 1000
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
         }}>
-          <span>Selected: {selectedBooks.size} books</span>
-          
-          <select 
-            onChange={(e) => {
-              if (e.target.value) {
-                handleBatchAddToCollection(e.target.value);
-                e.target.value = '';
-              }
-            }}
-            style={{
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: 'none',
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: 'white'
-            }}
-          >
-            <option value="">Add to Collection...</option>
-            {collections.map(collection => (
-              <option key={collection.id} value={collection.id} style={{ color: '#333' }}>
-                {collection.icon} {collection.name}
-              </option>
-            ))}
-          </select>
-          
-          <MD3Button
-            variant="text"
-            onClick={() => {
-              setSelectedBooks(new Set());
-              setBatchMode(false);
-            }}
-            style={{ color: 'white', minWidth: 'auto', padding: '8px' }}
-          >
-            Cancel
-          </MD3Button>
+          {operationLoading ? (
+            <>
+              <MD3Progress variant="circular" size={20} style={{ color: 'white' }} />
+              <span>Adding books...</span>
+            </>
+          ) : (
+            <>
+              <span>Selected: {selectedBooks.size} books</span>
+              
+              <select 
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleBatchAddToCollection(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
+                disabled={operationLoading || selectedBooks.size === 0}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  opacity: operationLoading ? 0.5 : 1,
+                  cursor: operationLoading ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <option value="">Add to Collection...</option>
+                {collections.map(collection => (
+                  <option key={collection.id} value={collection.id} style={{ color: '#333' }}>
+                    {collection.icon} {collection.name}
+                  </option>
+                ))}
+              </select>
+              
+              <MD3Button
+                variant="text"
+                onClick={() => {
+                  setSelectedBooks(new Set());
+                  setBatchMode(false);
+                }}
+                disabled={operationLoading}
+                style={{ 
+                  color: 'white', 
+                  minWidth: 'auto', 
+                  padding: '8px',
+                  opacity: operationLoading ? 0.5 : 1
+                }}
+              >
+                Cancel
+              </MD3Button>
+            </>
+          )}
         </MD3Surface>
       )}
 
-      {/* Available Books for Batch Mode */}
-      {batchMode && (
-        <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-          <h3 style={{ marginBottom: '16px' }}>Select Books to Add to Collections</h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
-            gap: '16px'
-          }}>
-            {books.map(book => (
-              <div
-                key={book.id}
-                onClick={() => {
-                  const newSelected = new Set(selectedBooks);
-                  if (selectedBooks.has(book.id)) {
-                    newSelected.delete(book.id);
-                  } else {
-                    newSelected.add(book.id);
-                  }
-                  setSelectedBooks(newSelected);
-                }}
-                style={{
-                  position: 'relative',
-                  aspectRatio: '2/3',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  border: selectedBooks.has(book.id) ? '3px solid #6750A4' : '3px solid transparent',
-                  transition: 'border-color 0.2s ease'
-                }}
-              >
-                {book.cover_url ? (
-                  <img
-                    src={book.cover_url}
-                    alt={book.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: '#6750A4',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '12px',
-                    textAlign: 'center',
-                    padding: '8px'
-                  }}>
-                    {book.title}
-                  </div>
-                )}
-                
-                {selectedBooks.has(book.id) && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    backgroundColor: '#6750A4',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '14px',
-                    fontWeight: 'bold'
-                  }}>
-                    ✓
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Floating Action Button */}
       {!batchMode && (
@@ -1008,9 +1405,24 @@ const EnhancedCollectionsPage = ({
             <MD3Button
               variant="filled"
               onClick={handleCreateCollection}
-              disabled={!newCollection.name.trim()}
+              disabled={!newCollection.name.trim() || operationLoading}
+              style={{
+                position: 'relative',
+                minWidth: '140px'
+              }}
             >
-              Create Collection
+              {operationLoading ? (
+                <>
+                  <MD3Progress 
+                    variant="circular" 
+                    size={16} 
+                    style={{ marginRight: '8px', color: 'white' }} 
+                  />
+                  Creating...
+                </>
+              ) : (
+                'Create Collection'
+              )}
             </MD3Button>
           </div>
         </div>
@@ -1044,16 +1456,6 @@ export const createDefaultCollections = (books = []) => {
     },
     {
       id: '3',
-      name: 'Currently Reading',
-      description: 'Books you\'re actively reading',
-      color: '#2196F3',
-      icon: '📖',
-      bookIds: books.filter(b => b.isReading || b.status === 'reading').map(b => b.id),
-      isDefault: true,
-      createdAt: Date.now()
-    },
-    {
-      id: '4',
       name: 'Completed',
       description: 'Books you\'ve finished reading',
       color: '#8BC34A',
