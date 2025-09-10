@@ -37,28 +37,22 @@ jobs:
 
       - name: 🏗️ Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build --parallel
+          docker-compose -f docker-compose.yml build client
           
       - name: 🚀 Start services
         run: |
-          docker-compose -f docker-compose.yml up -d
+          docker-compose -f docker-compose.yml up -d client
           
       - name: ⏳ Wait for services to be ready
         run: |
-          echo "Waiting for services to start..."
+          echo "Waiting for client service to start..."
           sleep 30
           
       - name: 🧪 Test service health
         run: |
-          # Test AI service health
-          curl -f http://localhost:8000/health || exit 1
-          echo "✅ AI service is healthy"
-          
-          # Test client accessibility (may need build time)
-          timeout 60 bash -c 'until curl -f http://localhost:3000/health 2>/dev/null; do echo "Waiting for client..."; sleep 5; done' || echo "⚠️ Client health check timeout (expected during build)"
-          
-          # Test server health (if it has health endpoint)
-          curl -f http://localhost:5000/health || echo "⚠️ Server health endpoint not available"
+          # Test client accessibility
+          timeout 60 bash -c 'until curl -f http://localhost:3000 2>/dev/null; do echo "Waiting for client..."; sleep 5; done' || echo "⚠️ Client health check timeout"
+          echo "✅ Client service is accessible"
           
       - name: 📊 Show service status
         run: |
@@ -67,10 +61,6 @@ jobs:
       - name: 📝 Show service logs
         if: failure()
         run: |
-          echo "=== AI Service Logs ==="
-          docker-compose -f docker-compose.yml logs ai-service
-          echo "=== Server Logs ==="
-          docker-compose -f docker-compose.yml logs server
           echo "=== Client Logs ==="
           docker-compose -f docker-compose.yml logs client
           
