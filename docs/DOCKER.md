@@ -265,8 +265,8 @@ docker stats
 ```bash
 # Supabase
 VITE_SUPABASE_URL=https://xxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIs...
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
+SUPABASE_SERVICE_KEY=your_service_key_here
 
 # JWT
 JWT_SECRET=your-super-secure-secret-minimum-32-characters

@@ -11,7 +11,8 @@
       "Bash(pnpm run lint:*)",
       "Bash(pnpm run:*)",
       "Bash(gh workflow:*)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(pnpm dev:*)"
     ],
     "deny": [],
     "ask": []

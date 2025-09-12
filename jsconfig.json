@@ -21,13 +21,13 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"]
+      "@/*": ["./client2/src/*"],
+      "@components/*": ["./client2/src/components/*"]
     },
     "typeRoots": []
   },
   "include": [
-    "src/**/*"
+    "client2/src/**/*"
   ],
   "exclude": [
     "node_modules",
