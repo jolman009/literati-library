@@ -20,16 +20,6 @@ const EnhancedCollectionsPage = ({
 }) => {
   const { actualTheme } = useMaterial3Theme();
   
-  // Debug the books prop vs API data
-  console.log('🔍 Collections: Component initialized with books prop:', books.length, 'books');
-  console.log('🔍 Collections: Books prop currently reading:', books.filter(b => b.is_reading).map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
-  
-  useEffect(() => {
-    console.log('🔍 Collections: books prop changed - now has', books.length, 'books');
-    const propsCurrentlyReading = books.filter(b => b.is_reading);
-    console.log('🔍 Collections: Currently reading from books prop:', propsCurrentlyReading.length, 'books');
-    console.log('🔍 Collections: Props reading book details:', propsCurrentlyReading.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
-  }, [books]);
   
   // State management
   const [collections, setCollections] = useState([]);
@@ -71,148 +61,101 @@ const EnhancedCollectionsPage = ({
     '⭐', '📋', '🎯', '🚀', '💎', '🏆', '📊', '🎨'
   ];
 
-  // Use books prop instead of separate API call to ensure consistency with Dashboard
+  // Use books prop to ensure consistency with Dashboard
   useEffect(() => {
-    console.log('🔍 Collections: Extracting currently reading from books prop...');
-    console.log('🔍 Collections: Raw books prop structure:', books.length > 0 ? {
-      firstBook: books[0],
-      totalBooks: books.length,
-      booksWithIsReading: books.filter(b => b.hasOwnProperty('is_reading')).length,
-      booksWithTrueIsReading: books.filter(b => b.is_reading === true).length
-    } : 'No books');
-    
     const readingBooks = books.filter(book => book.is_reading);
-    console.log('🔍 Collections: Currently reading books from props:', readingBooks.length, 'books:', readingBooks.map(b => ({id: b.id, title: b.title, is_reading: b.is_reading})));
-    
-    if (readingBooks.length === 0 && books.length > 0) {
-      console.log('🔍 Collections: WARNING - No currently reading books found. Checking all books is_reading status:');
-      books.slice(0, 5).forEach((book, index) => {
-        console.log(`🔍 Collections: Book ${index}: ${book.title}, is_reading: ${book.is_reading} (type: ${typeof book.is_reading})`);
-      });
-    }
-    
     setCurrentlyReadingBooks(readingBooks);
   }, [books]);
 
-  // Update Currently Reading collection when currentlyReadingBooks changes
-  useEffect(() => {
-    console.log('🔍 Collections: currentlyReadingBooks changed:', currentlyReadingBooks.length, 'books');
-    if (currentlyReadingBooks.length > 0) {
-      console.log('🔍 Collections: Updating Currently Reading collection with book IDs:', currentlyReadingBooks.map(b => b.id));
-      setCollections(prev => prev.map(collection => {
-        if (collection.id === 'currently-reading') {
-          const updated = {
-            ...collection,
-            bookIds: currentlyReadingBooks.map(b => b.id)
-          };
-          console.log('🔍 Collections: Updated Currently Reading collection:', updated);
-          return updated;
-        }
-        return collection;
-      }));
-    } else {
-      console.log('🔍 Collections: No currently reading books, clearing collection');
-      setCollections(prev => prev.map(collection => {
-        if (collection.id === 'currently-reading') {
-          return {
-            ...collection,
-            bookIds: []
-          };
-        }
-        return collection;
-      }));
-    }
-  }, [currentlyReadingBooks]);
+  // This useEffect is now handled by the main loadCollections logic above
 
-  // Initialize collections with enhanced default categories
+  // Initialize collections: Database-first for automatic, localStorage for user-created
   useEffect(() => {
     const loadCollections = async () => {
-      console.log('🔥 loadCollections called due to books dependency change');
-      console.log('🔥 loadCollections - Current books array:', books.length, 'books');
-      console.log('🔥 loadCollections - Current collections before loading:', collections.length, 'collections');
       setLoading(true);
       try {
-        // Get saved collections from localStorage or initialize defaults
+        // ALWAYS create automatic collections from database data first
+        const automaticCollections = [
+          {
+            id: 'currently-reading',
+            name: 'Currently Reading',
+            description: 'Books you\'re actively reading (synced with Dashboard)',
+            color: '#2196F3',
+            icon: '📖',
+            bookIds: books.filter(b => b.is_reading).map(b => b.id), // ALWAYS from database
+            isDefault: true,
+            isAutomatic: true,
+            createdAt: Date.now()
+          },
+          {
+            id: 'favorites',
+            name: 'Favorites',
+            description: 'Your most beloved books',
+            color: '#F44336',
+            icon: '❤️',
+            bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id), // ALWAYS from database
+            isDefault: true,
+            isAutomatic: true,
+            createdAt: Date.now()
+          },
+          {
+            id: 'wishlist',
+            name: 'Want to Read',
+            description: 'Books on your reading wishlist',
+            color: '#4CAF50',
+            icon: '📋',
+            bookIds: books.filter(b => b.status === 'want_to_read' || (!b.is_reading && !b.completed)).map(b => b.id), // ALWAYS from database
+            isDefault: true,
+            isAutomatic: true,
+            createdAt: Date.now()
+          },
+          {
+            id: 'completed',
+            name: 'Completed',
+            description: 'Books you\'ve finished reading',
+            color: '#8BC34A',
+            icon: '✅',
+            bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id), // ALWAYS from database
+            isDefault: true,
+            isAutomatic: true,
+            createdAt: Date.now()
+          }
+        ];
+
+        // Get user-created collections from localStorage (exclude automatic ones)
         const savedCollections = localStorage.getItem('bookCollections');
-        console.log('🔥 Loading collections from localStorage:', savedCollections ? 'found saved data' : 'no saved data');
+        let userCollections = [];
         
         if (savedCollections) {
-          const parsed = JSON.parse(savedCollections);
-          console.log('🔥 loadCollections - Parsed collections:', parsed.length, 'collections');
-          console.log('🔥 loadCollections - About to call setCollections with parsed data');
-          setCollections(parsed);
-          console.log('🔥 loadCollections - setCollections called with parsed data');
-        } else {
-          // Create smart default collections based on available books
-          const defaultCollections = [
-            {
-              id: 'currently-reading',
-              name: 'Currently Reading',
-              description: 'Books you\'re actively reading (synced with Dashboard)',
-              color: '#2196F3',
-              icon: '📖',
-              bookIds: currentlyReadingBooks.map(b => b.id),
-              isDefault: true,
-              isAutomatic: true,
-              createdAt: Date.now()
-            },
-            {
-              id: 'favorites',
-              name: 'Favorites',
-              description: 'Your most beloved books',
-              color: '#F44336',
-              icon: '❤️',
-              bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id),
-              isDefault: true,
-              createdAt: Date.now()
-            },
-            {
-              id: 'wishlist',
-              name: 'Want to Read',
-              description: 'Books on your reading wishlist',
-              color: '#4CAF50',
-              icon: '📋',
-              bookIds: books.filter(b => b.status === 'want_to_read' || (!b.isReading && !b.completed)).map(b => b.id),
-              isDefault: true,
-              createdAt: Date.now()
-            },
-            {
-              id: 'completed',
-              name: 'Completed',
-              description: 'Books you\'ve finished reading',
-              color: '#8BC34A',
-              icon: '✅',
-              bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id),
-              isDefault: true,
-              createdAt: Date.now()
-            }
-          ];
-          
-          console.log('🔥 loadCollections - Creating default collections with', books.length, 'books');
-          setCollections(defaultCollections);
-          localStorage.setItem('bookCollections', JSON.stringify(defaultCollections));
-          console.log('🔥 loadCollections - Default collections created and saved');
+          const parsedCollections = JSON.parse(savedCollections);
+          userCollections = parsedCollections.filter(collection => !collection.isAutomatic);
         }
+
+        // Combine: automatic collections (from database) + user collections (from localStorage)
+        const finalCollections = [...automaticCollections, ...userCollections];
+        
+        setCollections(finalCollections);
+        // Store only user-created collections in localStorage
+        localStorage.setItem('bookCollections', JSON.stringify(userCollections));
+        
       } catch (error) {
-        console.error('🔥 loadCollections - Failed to load collections:', error);
+        console.error('Failed to load collections:', error);
       } finally {
-        console.log('🔥 loadCollections - Complete, setting loading to false');
         setLoading(false);
       }
     };
 
-    console.log('🔥 loadCollections - About to call loadCollections()');
-    loadCollections();
-    console.log('🔥 loadCollections - loadCollections() called');
+    // Only run when we have books data
+    if (books.length >= 0) {
+      loadCollections();
+    }
   }, [books]);
 
-  // Save collections to localStorage whenever they change
+  // Save only user-created collections to localStorage when they change
   useEffect(() => {
-    console.log('🔥 localStorage save effect triggered - collections.length:', collections.length);
     if (collections.length > 0) {
-      console.log('🔥 Saving collections to localStorage:', collections.map(c => ({id: c.id, name: c.name, bookCount: c.bookIds.length})));
-      localStorage.setItem('bookCollections', JSON.stringify(collections));
-      console.log('🔥 Collections saved to localStorage');
+      const userCollections = collections.filter(collection => !collection.isAutomatic);
+      localStorage.setItem('bookCollections', JSON.stringify(userCollections));
     }
   }, [collections]);
 
@@ -250,32 +193,14 @@ const EnhancedCollectionsPage = ({
 
   // Handle adding books to collection
   const handleAddBooksToCollection = useCallback((collectionId, bookIds) => {
-    console.log('🔥 handleAddBooksToCollection called - collectionId:', collectionId, 'bookIds:', bookIds);
-    console.log('🔥 handleAddBooksToCollection - Current collections count:', collections.length);
-    console.log('🔥 handleAddBooksToCollection - Target collection exists?', collections.some(c => c.id === collectionId));
-    
-    setCollections(prev => {
-      console.log('🔥 handleAddBooksToCollection - setCollections callback executed with prev:', prev.length, 'collections');
-      const targetCollection = prev.find(c => c.id === collectionId);
-      if (targetCollection) {
-        console.log('🔥 handleAddBooksToCollection - Found target collection:', targetCollection.name, 'current books:', targetCollection.bookIds);
-      } else {
-        console.log('🔥 handleAddBooksToCollection - ERROR: Target collection not found!');
+    setCollections(prev => prev.map(collection => {
+      if (collection.id === collectionId) {
+        const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
+        return { ...collection, bookIds: newBookIds };
       }
-      
-      const updated = prev.map(collection => {
-        if (collection.id === collectionId) {
-          const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
-          console.log('🔥 Updated collection', collection.name, 'bookIds:', collection.bookIds, '→', newBookIds);
-          return { ...collection, bookIds: newBookIds };
-        }
-        return collection;
-      });
-      console.log('🔥 Collections state updated - returning', updated.length, 'collections');
-      return updated;
-    });
-    console.log('🔥 handleAddBooksToCollection - setCollections call completed');
-  }, [collections]);
+      return collection;
+    }));
+  }, []);
 
   // Handle removing books from collection
   const handleRemoveBooksFromCollection = useCallback((collectionId, bookIds) => {
@@ -307,23 +232,10 @@ const EnhancedCollectionsPage = ({
 
   // Handle drag and drop
   const handleDragStart = useCallback((e, book) => {
-    console.log('🔥 ======= DRAG START =======');
-    console.log('🔥 handleDragStart called with book:', book);
-    console.log('🔥 Book ID:', book?.id, 'Title:', book?.title);
-    console.log('🔥 Event target:', e.target);
-    console.log('🔥 Current draggedBook state before setting:', draggedBook);
-    
-    if (book && book.id) {
-      setDraggedBook(book);
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', book.id);
-      console.log('🔥 draggedBook set to:', book.title, 'ID:', book.id);
-      console.log('🔥 dataTransfer effectAllowed set to: move');
-    } else {
-      console.log('🔥 ERROR: Invalid book object received in handleDragStart');
-    }
-    console.log('🔥 ===========================');
-  }, [draggedBook]);
+    setDraggedBook(book);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', book.id);
+  }, []);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -332,34 +244,20 @@ const EnhancedCollectionsPage = ({
 
   const handleDrop = useCallback((e, collectionId) => {
     e.preventDefault();
-    console.log('🔥 ======= DROP EVENT =======');
-    console.log('🔥 Drop event - draggedBook:', draggedBook, 'collectionId:', collectionId);
-    console.log('🔥 Event target:', e.target);
-    console.log('🔥 dataTransfer data:', e.dataTransfer.getData('text/plain'));
     
     if (draggedBook) {
-      console.log('🔥 Adding book', draggedBook.id, 'to collection', collectionId);
       handleAddBooksToCollection(collectionId, [draggedBook.id]);
       setDraggedBook(null);
-      console.log('🔥 Book added to collection, draggedBook cleared');
     } else {
-      console.log('🔥 No draggedBook found during drop');
       // Try to get book ID from dataTransfer as fallback
       const bookId = e.dataTransfer.getData('text/plain');
       if (bookId) {
-        console.log('🔥 Fallback: Found bookId in dataTransfer:', bookId);
         const book = books.find(b => b.id === bookId);
         if (book) {
-          console.log('🔥 Fallback: Found book in books array:', book.title);
           handleAddBooksToCollection(collectionId, [book.id]);
-        } else {
-          console.log('🔥 Fallback: Book not found in books array');
         }
-      } else {
-        console.log('🔥 No bookId found in dataTransfer either');
       }
     }
-    console.log('🔥 ==========================');
   }, [draggedBook, handleAddBooksToCollection, books]);
 
   // Handle batch operations with enhanced feedback
@@ -820,7 +718,7 @@ const EnhancedCollectionsPage = ({
                   gap: '12px',
                   padding: '4px'
                 }}>
-                  {console.log('🔥 Book Library Rendering - books.length:', books.length) || books.map(book => (
+                  {books.map(book => (
                     <div
                       key={book.id}
                       draggable

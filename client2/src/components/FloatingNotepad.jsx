@@ -1,7 +1,7 @@
 // src/components/FloatingNotepad.jsx
 import React, { useEffect, useRef, useState } from "react";
 import API from "../config/api";
-import { useSnackbar } from "../components/Material3";
+import { useSnackbar } from "./Material3";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
 import "./FloatingNotepad.css";
 

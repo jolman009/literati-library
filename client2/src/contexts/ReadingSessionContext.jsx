@@ -13,6 +13,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { useGamification } from './GamificationContext';
+import API from '../config/api';
 
 // Create context
 const ReadingSessionContext = createContext({});
@@ -78,6 +79,27 @@ export const ReadingSessionProvider = ({ children }) => {
         pagesRead: 0,
         notes: ''
       };
+      // Update book's is_reading status in database
+      try {
+        const response = await fetch(`${API.BASE_URL}/books/${book.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            is_reading: true,
+            last_opened: new Date().toISOString()
+          }),
+        });
+
+        if (!response.ok) {
+          console.warn('Failed to update book is_reading status:', await response.text());
+        }
+      } catch (error) {
+        console.warn('Failed to update book reading status:', error);
+      }
+
       // Track to gamification system
       if (trackAction) {
         try {
@@ -161,6 +183,27 @@ export const ReadingSessionProvider = ({ children }) => {
       const endTime = new Date();
       const startTime = new Date(activeSession.startTime);
       const durationMinutes = Math.floor((endTime - startTime) / 60000);
+      // Update book's is_reading status in database
+      try {
+        const response = await fetch(`${API.BASE_URL}/books/${activeSession.book.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            is_reading: false,
+            last_opened: new Date().toISOString()
+          }),
+        });
+
+        if (!response.ok) {
+          console.warn('Failed to update book is_reading status on stop:', await response.text());
+        }
+      } catch (error) {
+        console.warn('Failed to update book reading status on stop:', error);
+      }
+
       // Track session end to gamification system
       if (trackAction && durationMinutes > 0) {
         try {

@@ -539,3 +539,290 @@
 .insights-content > * {
   animation: slideIn 400ms ease forwards;
 }
+
+/* Premium Achievement Sections */
+.near-completion-card {
+  padding: 32px !important;
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--md3-primary) 8%, var(--md3-surface-container)),
+    var(--md3-surface-container)) !important;
+  border: 2px solid var(--md3-primary) !important;
+  border-radius: 16px !important;
+  margin-bottom: 32px;
+  box-shadow: var(--md3-elevation-3);
+}
+
+.near-completion-card h3 {
+  color: var(--md3-primary);
+  font-size: var(--md3-typography-headline-medium-size);
+  font-weight: var(--md3-typography-headline-medium-weight);
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.motivation-text {
+  text-align: center;
+  color: var(--md3-on-surface-variant);
+  font-size: var(--md3-typography-body-large-size);
+  margin: 0 0 24px 0;
+}
+
+.near-completion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.near-completion-item {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background: var(--md3-surface-container-highest);
+  border-radius: 12px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  border: 1px solid var(--md3-outline-variant);
+}
+
+.near-completion-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--md3-elevation-2);
+}
+
+.achievement-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.achievement-icon-large {
+  font-size: 48px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.progress-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-circle {
+  transition: stroke-dasharray 500ms ease;
+}
+
+.progress-percentage {
+  position: absolute;
+  font-size: var(--md3-typography-label-large-size);
+  font-weight: var(--md3-typography-label-large-weight);
+  color: var(--md3-primary);
+}
+
+.achievement-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievement-details h4 {
+  font-size: var(--md3-typography-title-medium-size);
+  font-weight: var(--md3-typography-title-medium-weight);
+  color: var(--md3-on-surface);
+  margin: 0;
+}
+
+.achievement-details p {
+  font-size: var(--md3-typography-body-medium-size);
+  color: var(--md3-on-surface-variant);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.achievement-progress-text {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--md3-typography-title-small-size);
+  margin: 8px 0;
+}
+
+.progress-current {
+  font-weight: var(--md3-typography-title-small-weight);
+  color: var(--md3-primary);
+}
+
+.progress-separator {
+  color: var(--md3-on-surface-variant);
+}
+
+.progress-target {
+  color: var(--md3-on-surface);
+}
+
+.progress-unit {
+  font-size: var(--md3-typography-body-small-size);
+  color: var(--md3-on-surface-variant);
+  margin-left: 8px;
+}
+
+/* Motivational Achievements */
+.motivational-card {
+  padding: 24px !important;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #4caf50 8%, var(--md3-surface-container)),
+    var(--md3-surface-container)) !important;
+  border: 1px solid color-mix(in srgb, #4caf50 30%, var(--md3-outline-variant)) !important;
+  border-radius: 12px !important;
+  margin-bottom: 24px;
+}
+
+.motivational-card h3 {
+  color: #2e7d32;
+  font-size: var(--md3-typography-title-large-size);
+  font-weight: var(--md3-typography-title-large-weight);
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.motivational-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.motivational-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--md3-surface-container-highest);
+  border-radius: 8px;
+  transition: transform 200ms ease;
+}
+
+.motivational-item:hover {
+  transform: translateY(-2px);
+}
+
+.motivational-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.motivational-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.motivational-content h5 {
+  font-size: var(--md3-typography-body-large-size);
+  font-weight: var(--md3-typography-body-large-weight);
+  color: var(--md3-on-surface);
+  margin: 0;
+}
+
+.motivational-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.small-progress {
+  height: 4px !important;
+  flex: 1;
+}
+
+.motivational-percentage {
+  font-size: var(--md3-typography-label-small-size);
+  color: var(--md3-primary);
+  font-weight: 500;
+  min-width: 35px;
+}
+
+.motivational-remaining {
+  font-size: var(--md3-typography-body-small-size);
+  color: var(--md3-on-surface-variant);
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 1024px) {
+  .near-completion-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .near-completion-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .achievement-visual {
+    flex-direction: row;
+  }
+  
+  .motivational-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .near-completion-card,
+  .motivational-card {
+    padding: 20px !important;
+    margin: 0 -8px 24px -8px;
+  }
+  
+  .near-completion-item {
+    padding: 16px;
+  }
+  
+  .achievement-icon-large {
+    font-size: 36px;
+  }
+  
+  .motivational-item {
+    padding: 12px;
+  }
+  
+  .motivational-icon {
+    font-size: 24px;
+  }
+}
+
+/* Dark theme enhancements */
+.dark .near-completion-card {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--md3-primary) 12%, var(--md3-surface-container-high)),
+    var(--md3-surface-container-high)) !important;
+  border-color: var(--md3-primary);
+}
+
+.dark .motivational-card {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, #4caf50 12%, var(--md3-surface-container-high)),
+    var(--md3-surface-container-high)) !important;
+  border-color: color-mix(in srgb, #4caf50 50%, var(--md3-outline-variant));
+}
+
+.dark .near-completion-item,
+.dark .motivational-item {
+  background: var(--md3-surface-container-highest);
+  border-color: var(--md3-outline);
+}
+
+/* Pulse animation for near completion */
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--md3-primary) 30%, transparent);
+  }
+  50% { 
+    box-shadow: 0 0 20px 5px color-mix(in srgb, var(--md3-primary) 15%, transparent);
+  }
+}
+
+.near-completion-item:hover {
+  animation: pulse-glow 2s infinite;
+}

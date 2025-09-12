@@ -191,15 +191,18 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
     };
   }, [books, readingSessions, timeRange]);
 
-  // Achievement definitions
-  const ACHIEVEMENTS = {
+  // Enhanced Achievement definitions with near-completion tracking
+  const ENHANCED_ACHIEVEMENTS = {
     FIRST_BOOK: {
       id: 'first_book',
       title: 'First Steps',
       description: 'Complete your first book',
       icon: '📖',
       points: 100,
-      condition: () => statistics.completedBooks >= 1
+      target: 1,
+      current: statistics.completedBooks,
+      condition: () => statistics.completedBooks >= 1,
+      category: 'reading'
     },
     BOOK_WORM: {
       id: 'book_worm',
@@ -207,7 +210,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Complete 10 books',
       icon: '🐛',
       points: 500,
-      condition: () => statistics.completedBooks >= 10
+      target: 10,
+      current: statistics.completedBooks,
+      condition: () => statistics.completedBooks >= 10,
+      category: 'reading'
     },
     SPEED_READER: {
       id: 'speed_reader',
@@ -215,7 +221,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Read 50+ pages per hour',
       icon: '⚡',
       points: 300,
-      condition: () => statistics.avgReadingSpeed >= 50
+      target: 50,
+      current: statistics.avgReadingSpeed,
+      condition: () => statistics.avgReadingSpeed >= 50,
+      category: 'performance'
     },
     MARATHON_READER: {
       id: 'marathon_reader',
@@ -223,7 +232,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Read for 100+ hours total',
       icon: '🏃',
       points: 1000,
-      condition: () => statistics.totalHours >= 100
+      target: 100,
+      current: statistics.totalHours,
+      condition: () => statistics.totalHours >= 100,
+      category: 'time'
     },
     STREAK_MASTER: {
       id: 'streak_master',
@@ -231,7 +243,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Maintain a 30-day reading streak',
       icon: '🔥',
       points: 750,
-      condition: () => statistics.longestStreak >= 30
+      target: 30,
+      current: statistics.longestStreak,
+      condition: () => statistics.longestStreak >= 30,
+      category: 'consistency'
     },
     GENRE_EXPLORER: {
       id: 'genre_explorer',
@@ -239,7 +254,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Read books from 5+ different genres',
       icon: '🗺️',
       points: 400,
-      condition: () => Object.keys(statistics.genreDistribution).length >= 5
+      target: 5,
+      current: Object.keys(statistics.genreDistribution).length,
+      condition: () => Object.keys(statistics.genreDistribution).length >= 5,
+      category: 'diversity'
     },
     NIGHT_OWL: {
       id: 'night_owl',
@@ -247,7 +265,10 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Most reading done after 9 PM',
       icon: '🦉',
       points: 200,
-      condition: () => statistics.peakReadingHour >= 21
+      target: 21,
+      current: statistics.peakReadingHour,
+      condition: () => statistics.peakReadingHour >= 21,
+      category: 'habits'
     },
     EARLY_BIRD: {
       id: 'early_bird',
@@ -255,12 +276,57 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       description: 'Most reading done before 9 AM',
       icon: '🐦',
       points: 200,
-      condition: () => statistics.peakReadingHour < 9
+      target: 9,
+      current: statistics.peakReadingHour,
+      condition: () => statistics.peakReadingHour < 9,
+      category: 'habits'
+    },
+    PAGE_TURNER: {
+      id: 'page_turner',
+      title: 'Page Turner',
+      description: 'Read 1000+ pages total',
+      icon: '📄',
+      points: 300,
+      target: 1000,
+      current: statistics.totalPages,
+      condition: () => statistics.totalPages >= 1000,
+      category: 'reading'
+    },
+    DEDICATION: {
+      id: 'dedication',
+      title: 'Dedication',
+      description: 'Read for 7+ days this week',
+      icon: '💪',
+      points: 150,
+      target: 7,
+      current: statistics.currentStreak,
+      condition: () => statistics.currentStreak >= 7,
+      category: 'consistency'
     }
   };
 
-  // Calculate unlocked achievements
-  const unlockedAchievements = Object.values(ACHIEVEMENTS).filter(a => a.condition());
+  // Calculate unlocked and near-completion achievements
+  const unlockedAchievements = Object.values(ENHANCED_ACHIEVEMENTS).filter(a => a.condition());
+  
+  // Near-completion achievements (50-90% progress)
+  const nearCompletionAchievements = Object.values(ENHANCED_ACHIEVEMENTS)
+    .map(achievement => ({
+      ...achievement,
+      progress: Math.min(100, (achievement.current / achievement.target) * 100)
+    }))
+    .filter(a => a.progress >= 50 && a.progress < 100)
+    .sort((a, b) => b.progress - a.progress)
+    .slice(0, 6);
+
+  // Motivational achievements (20-50% progress)  
+  const motivationalAchievements = Object.values(ENHANCED_ACHIEVEMENTS)
+    .map(achievement => ({
+      ...achievement,
+      progress: Math.min(100, (achievement.current / achievement.target) * 100)
+    }))
+    .filter(a => a.progress >= 20 && a.progress < 50)
+    .sort((a, b) => b.progress - a.progress)
+    .slice(0, 4);
 
   // Goals definitions
   const GOALS = [
@@ -528,17 +594,110 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
             <h2>Your Achievements</h2>
             <div className="achievement-stats">
               <span className="unlocked-count">
-                🏆 {unlockedAchievements.length} / {Object.keys(ACHIEVEMENTS).length} Unlocked
+                🏆 {unlockedAchievements.length} / {Object.keys(ENHANCED_ACHIEVEMENTS).length} Unlocked
               </span>
               <span className="total-points">
                 ⭐ {unlockedAchievements.reduce((sum, a) => sum + a.points, 0)} Points
               </span>
             </div>
           </div>
+
+          {/* Near Completion Achievements - Premium Section */}
+          {nearCompletionAchievements.length > 0 && (
+            <MD3Card className="near-completion-card">
+              <h3>🔥 Almost There! So Close to Victory!</h3>
+              <p className="motivation-text">You're incredibly close to these achievements. Just a little more effort!</p>
+              <div className="near-completion-grid">
+                {nearCompletionAchievements.map(achievement => (
+                  <div key={achievement.id} className="near-completion-item">
+                    <div className="achievement-visual">
+                      <div className="achievement-icon-large">{achievement.icon}</div>
+                      <div className="progress-ring">
+                        <svg width="60" height="60" viewBox="0 0 60 60">
+                          <circle cx="30" cy="30" r="25" fill="none" stroke="var(--md3-outline-variant)" strokeWidth="4"/>
+                          <circle 
+                            cx="30" 
+                            cy="30" 
+                            r="25" 
+                            fill="none" 
+                            stroke="var(--md3-primary)" 
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                            strokeDasharray={`${achievement.progress * 1.57} 157`}
+                            transform="rotate(-90 30 30)"
+                            className="progress-circle"
+                          />
+                        </svg>
+                        <span className="progress-percentage">{Math.round(achievement.progress)}%</span>
+                      </div>
+                    </div>
+                    <div className="achievement-details">
+                      <h4>{achievement.title}</h4>
+                      <p>{achievement.description}</p>
+                      <div className="achievement-progress-text">
+                        <span className="progress-current">{achievement.current}</span>
+                        <span className="progress-separator">/</span>
+                        <span className="progress-target">{achievement.target}</span>
+                        <span className="progress-unit">
+                          {achievement.category === 'reading' ? 'books' : 
+                           achievement.category === 'time' ? 'hours' :
+                           achievement.category === 'performance' ? 'pages/hr' :
+                           achievement.category === 'consistency' ? 'days' : 'items'}
+                        </span>
+                      </div>
+                      <MD3Chip 
+                        icon="⭐" 
+                        label={`${achievement.points} points`} 
+                        color="primary" 
+                        variant="outlined"
+                        size="small"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </MD3Card>
+          )}
+
+          {/* Motivational Achievements */}
+          {motivationalAchievements.length > 0 && (
+            <MD3Card className="motivational-card">
+              <h3>💪 Keep Going! You've Got This!</h3>
+              <p className="motivation-text">Great progress! These achievements are waiting for you.</p>
+              <div className="motivational-grid">
+                {motivationalAchievements.map(achievement => (
+                  <div key={achievement.id} className="motivational-item">
+                    <div className="motivational-icon">{achievement.icon}</div>
+                    <div className="motivational-content">
+                      <h5>{achievement.title}</h5>
+                      <div className="motivational-progress">
+                        <MD3Progress value={achievement.progress} className="small-progress" />
+                        <span className="motivational-percentage">{Math.round(achievement.progress)}%</span>
+                      </div>
+                      <span className="motivational-remaining">
+                        {achievement.target - achievement.current} more to go!
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </MD3Card>
+          )}
           
           <AchievementSystem 
             achievements={unlockedAchievements.map(a => a.id)}
-            ACHIEVEMENTS={ACHIEVEMENTS}
+            ACHIEVEMENTS={Object.fromEntries(
+              Object.entries(ENHANCED_ACHIEVEMENTS).map(([key, value]) => [
+                key.toUpperCase(), 
+                {
+                  id: value.id,
+                  title: value.title,
+                  description: value.description,
+                  icon: value.icon,
+                  points: value.points
+                }
+              ])
+            )}
             showAll={true}
           />
         </div>

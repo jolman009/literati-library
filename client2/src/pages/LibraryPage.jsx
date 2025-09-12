@@ -56,7 +56,7 @@ const LibraryPage = () => {
     if (user && token) {
       fetchBooks();
     }
-  }, [user, token]);
+  }, [user, token, activeSession]); // Also refresh when active session changes
 
   // Handle navigation from global search
   useEffect(() => {

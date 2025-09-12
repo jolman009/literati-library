@@ -58,7 +58,7 @@ class IntegrationValidator {
     
     // Test dynamic imports work correctly
     try {
-      const LibraryComponent = await import('../components/wrappers/LibraryPageWrapper');
+      const LibraryComponent = await import('../components/wrappers/LibraryPageWrapper.jsx');
       const importTime = performance.now() - bundleStart;
       
       this.results.bundlePerformance = {

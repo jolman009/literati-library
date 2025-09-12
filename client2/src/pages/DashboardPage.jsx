@@ -3,11 +3,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { useSnackbar } from '../components/Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
+import ReadingStatsOverview from '../components/dashboard/ReadingStatsOverview';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
@@ -454,6 +456,7 @@ const RecentAchievements = () => {
 // Currently Reading Section Component
 const CurrentlyReading = () => {
   const { actualTheme } = useMaterial3Theme();
+  const { activeSession } = useReadingSession(); // Listen to session changes
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -485,7 +488,7 @@ const CurrentlyReading = () => {
     };
     
     fetchCurrentlyReading();
-  }, []);
+  }, [activeSession]); // Refresh when active session changes
   
   if (loading) return null;
   if (currentlyReading.length === 0) return null;
@@ -756,12 +759,39 @@ const DashboardPage = () => {
   const { showSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [checkInStreak, setCheckInStreak] = useState(0);
+  const [books, setBooks] = useState([]);
   
   // Load check-in streak on mount
   useEffect(() => {
     console.log(' DashboardPage: useEffect for check-in streak');
     const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
     setCheckInStreak(streak);
+  }, []);
+
+  // Load books data for statistics
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API.BASE_URL}/books`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const booksArray = Array.isArray(data.books) ? data.books : [];
+          setBooks(booksArray);
+        }
+      } catch (error) {
+        console.error('Error loading books for dashboard:', error);
+        setBooks([]); // Fallback to empty array
+      }
+    };
+
+    loadBooks();
   }, []);
 
   return (
@@ -810,6 +840,9 @@ const DashboardPage = () => {
 
       {/* Currently Reading Section */}
       <CurrentlyReading />
+
+      {/* Reading Statistics Overview */}
+      <ReadingStatsOverview books={books} />
 
       {/* Recently Added Section */}
       <RecentlyAdded />

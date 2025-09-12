@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MD3Button as Button, MD3Chip as Chip, MD3Progress as Progress } from "../components/Material3";
+import { MD3Button as Button, MD3Chip as Chip, MD3Progress as Progress } from "./Material3";
 import { useGamification } from "../contexts/GamificationContext"; // exposes trackAction(...)
-import { useMaterial3Theme } from "../components/Material3";       // for colors if needed
+import { useMaterial3Theme } from "./Material3";       // for colors if needed
 
 /**
  * Props:
