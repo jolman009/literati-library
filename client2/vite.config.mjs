@@ -149,8 +149,8 @@ export default defineConfig({
             return 'icons';
           }
           
-          // Tailwind and CSS
-          if (id.includes('node_modules/tailwindcss') || id.includes('.css')) {
+          // CSS modules and styles
+          if (id.includes('.css')) {
             return 'styles';
           }
           

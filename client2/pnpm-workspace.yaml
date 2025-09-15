@@ -2,6 +2,5 @@ packages:
   - '.'
 
 ignoredBuiltDependencies:
-  - '@tailwindcss/oxide'
   - canvas
   - esbuild
