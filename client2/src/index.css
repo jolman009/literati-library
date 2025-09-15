@@ -1,111 +1,29 @@
 @import './components/Material3/animations.css';
-@import './styles/material3.css';
-@import './styles/dashboard-unified.css';
-@import './styles/gamification.css';
+@import './styles/md3-unified-colors.css';
+@import './styles/md3-components.css';
 
+/* All colors are now defined in md3-unified-colors.css with proper hex values */
 
-/* Material 3 Color System - From the enhanced colors artifact */
-:root {
-  /* Light Theme - Vibrant Material You Colors */
-  --md-sys-color-primary: 103 80 164;
-  --md-sys-color-on-primary: 255 255 255;
-  --md-sys-color-primary-container: 234 221 255;
-  --md-sys-color-on-primary-container: 33 0 94;
-  
-  --md-sys-color-secondary: 98 91 113;
-  --md-sys-color-on-secondary: 255 255 255;
-  --md-sys-color-secondary-container: 232 222 248;
-  --md-sys-color-on-secondary-container: 30 25 43;
-
-  --md-sys-color-tertiary: 125 82 96;
-  --md-sys-color-on-tertiary: 255 255 255;
-  --md-sys-color-tertiary-container: 255 216 228;
-  --md-sys-color-on-tertiary-container: 55 11 30;
-
-  --md-sys-color-error: 179 38 30;
-  --md-sys-color-on-error: 255 255 255;
-  --md-sys-color-error-container: 249 222 220;
-  --md-sys-color-on-error-container: 65 14 11;
-
-  --md-sys-color-background: 255 251 254;
-  --md-sys-color-on-background: 28 27 31;
-  
-  --md-sys-color-surface: 255 251 254;
-  --md-sys-color-on-surface: 28 27 31;
-  
-  --md-sys-color-surface-variant: 231 224 236;
-  --md-sys-color-on-surface-variant: 73 69 79;
-
-  --md-sys-color-outline: 121 116 126;
-  --md-sys-color-outline-variant: 202 196 208;
-
-  --md-sys-color-shadow: 0 0 0;
-  --md-sys-color-scrim: 0 0 0;
-  --md-sys-color-inverse-surface: 49 48 51;
-  --md-sys-color-inverse-on-surface: 244 239 244;
-  --md-sys-color-inverse-primary: 208 188 255;
-}
-
-.dark {
-  /* Dark Theme - Vibrant Material You Colors */
-  --md-sys-color-primary: 208 188 255;
-  --md-sys-color-on-primary: 56 30 114;
-  --md-sys-color-primary-container: 79 55 139;
-  --md-sys-color-on-primary-container: 234 221 255;
-
-  --md-sys-color-secondary: 204 194 220;
-  --md-sys-color-on-secondary: 51 45 65;
-  --md-sys-color-secondary-container: 74 68 88;
-  --md-sys-color-on-secondary-container: 232 222 248;
-
-  --md-sys-color-tertiary: 239 184 200;
-  --md-sys-color-on-tertiary: 73 37 50;
-  --md-sys-color-tertiary-container: 99 59 72;
-  --md-sys-color-on-tertiary-container: 255 216 228;
-
-  --md-sys-color-error: 242 184 181;
-  --md-sys-color-on-error: 96 20 16;
-  --md-sys-color-error-container: 140 29 24;
-  --md-sys-color-on-error-container: 249 222 220;
-
-  --md-sys-color-background: 28 27 31;
-  --md-sys-color-on-background: 230 225 229;
-  
-  --md-sys-color-surface: 28 27 31;
-  --md-sys-color-on-surface: 230 225 229;
-  
-  --md-sys-color-surface-variant: 73 69 79;
-  --md-sys-color-on-surface-variant: 202 196 208;
-
-  --md-sys-color-outline: 147 143 153;
-  --md-sys-color-outline-variant: 73 69 79;
-
-  --md-sys-color-shadow: 0 0 0;
-  --md-sys-color-scrim: 0 0 0;
-  --md-sys-color-inverse-surface: 230 225 229;
-  --md-sys-color-inverse-on-surface: 49 48 51;
-  --md-sys-color-inverse-primary: 103 80 164;
-}
-/* Additional text utilities */
+/* Text utilities using proper MD3 color tokens */
 .text-on-primary-container {
-  color: rgb(var(--md-sys-color-on-primary-container));
+  color: var(--md-sys-color-on-primary-container);
 }
 .text-on-secondary-container {
-  color: rgb(var(--md-sys-color-on-secondary-container));
+  color: var(--md-sys-color-on-secondary-container);
 }
 .text-on-tertiary-container {
-  color: rgb(var(--md-sys-color-on-tertiary-container));
+  color: var(--md-sys-color-on-tertiary-container);
 }
 .text-on-background {
-  color: rgb(var(--md-sys-color-on-background));
+  color: var(--md-sys-color-on-background);
 }
 
-/* Border and outline */
+/* Border and outline utilities */
 .border-outline {
-  border-color: rgb(var(--md-sys-color-outline));
+  border-color: var(--md-sys-color-outline);
 }
 .border-outline-variant {
-  border-color: rgb(var(--md-sys-color-outline-variant));
+  border-color: var(--md-sys-color-outline-variant);
 }
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
@@ -156,25 +74,25 @@
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: rgb(var(--md-sys-color-surface-container));
+  background: var(--md-sys-color-surface-container);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--md-sys-color-surface-container-high));
+  background: var(--md-sys-color-surface-container-high);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--md-sys-color-outline));
+  background: var(--md-sys-color-outline);
 }
 
 /* General focus and selection styles */
 :focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: rgb(var(--md-sys-color-primary) / 0.3);
-  color: rgb(var(--md-sys-color-on-surface));
+  background: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Skeleton loader animation */
@@ -186,9 +104,9 @@
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgb(var(--md-sys-color-surface-variant) / 0.3) 25%,
-    rgb(var(--md-sys-color-surface-variant) / 0.5),
-    rgb(var(--md-sys-color-surface-variant) / 0.3) 75%
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 30%, transparent) 25%,
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 50%, transparent),
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 30%, transparent) 75%
   );
   background-size: 200% 100%;
   animation: 1.5s ease-in-out infinite skeleton-pulse;

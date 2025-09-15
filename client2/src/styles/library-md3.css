@@ -7,10 +7,7 @@
   color: var(--md-sys-color-on-background);
 }
 
-.md3-library-page.dark {
-  background: #0f172a;
-  color: #f1f5f9;
-}
+/* Dark mode colors now handled by unified MD3 system */
 
 /* Loading State */
 .md3-library-loading {
@@ -83,14 +80,10 @@
 /* Recently Added Books Section */
 .md3-recent-books-section {
   background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.md3-library-page.dark .md3-recent-books-section {
-  background: linear-gradient(135deg, #3b4252, #434c5e);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: var(--md-sys-spacing-5);
+  margin-bottom: var(--md-sys-spacing-6);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .md3-recent-books-header {

@@ -6,10 +6,9 @@ import { BrowserRouter } from 'react-router-dom';
 // 1) Configure PDF.js worker first (must come before any <Document/> usage)
 import './pdfjs-setup';
 // Global styles (order matters)
-import './styles/material3.css';          // MD3 variables + tokens + base (expressive)
-import './styles/dashboard-md3.css';      // MD3 dashboard specific styles
-import './styles/dashboard-unified.css';  // dashboard clusters & grids
-import './styles/gamification.css';       // badges, progress rings, confetti
+import './styles/md3-unified-colors.css';  // MD3 color system foundation
+import './styles/md3-components.css';       // All dashboard, navigation, gamification components
+import './styles/library-md3.css';         // Library-specific styles
 import './styles/performance-optimized.css';
 import './index.css';
 

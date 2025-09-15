@@ -5,8 +5,7 @@
    Main Application Layout & Global Styles
    =============================================== */
 
-/* Import Material Design 3 Base Styles */
-@import './styles/material3.css';
+/* Material Design 3 Base Styles imported in App.jsx */
 
 /* Import Material Design 3 Component Animations */
 @import './components/Material3/animations.css';

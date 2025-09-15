@@ -24,12 +24,8 @@ if (process.env.NODE_ENV === 'development') {
   import('./utils/browserCompatibilityTest');
   import('./utils/mobileResponsivenessTest');
 }
-import './styles/md3-tokens.css';
-import './styles/material3.css';
-import './styles/app-layout.css';
-import './styles/dashboard-md3.css';
-import './styles/dashboard-unified.css';
-import './styles/gamification.css';
+import './styles/md3-unified-colors.css';
+import './styles/md3-components.css';
 import './styles/library-md3.css';
 import './styles/reading-timer-md3.css';
 import './App.css';
