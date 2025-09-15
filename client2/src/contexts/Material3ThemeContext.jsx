@@ -62,14 +62,18 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
   useEffect(() => {
     try {
       const root = document.documentElement;
+
+      // Set data-theme attribute for MD3 unified colors
       root.setAttribute('data-theme', theme);
-      
-      // Also set class for compatibility
+
+      // Also set class for compatibility with existing components
       root.classList.remove('light', 'dark');
       root.classList.add(theme);
-      
+
       // Store user preference
       localStorage.setItem('literati-theme', theme);
+
+      console.log(`🎨 Theme applied: ${theme}`);
     } catch (error) {
       console.warn('Failed to apply theme to DOM:', error);
     }
