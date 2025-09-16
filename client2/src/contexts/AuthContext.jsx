@@ -123,6 +123,42 @@ export const AuthProvider = ({ children }) => {
   );
 
   /**
+   * Attempt to refresh the token using the refresh endpoint
+   */
+  const attemptTokenRefresh = useCallback(async () => {
+    try {
+      console.log('🔄 Attempting token refresh...');
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include', // Include cookies for refresh token
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.token) {
+          console.log('✅ Token refresh successful');
+          setToken(data.token);
+          localStorage.setItem(TOKEN_KEY, data.token);
+          if (data.user) {
+            setUser(data.user);
+            localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+          }
+          return data.token;
+        }
+      }
+
+      console.warn('❌ Token refresh failed');
+      return null;
+    } catch (err) {
+      console.warn('❌ Token refresh error:', err);
+      return null;
+    }
+  }, []);
+
+  /**
    * Wrap protected calls to handle token expiry centrally.
    */
   const makeAuthenticatedApiCall = useCallback(
@@ -139,19 +175,36 @@ export const AuthProvider = ({ children }) => {
           /Token verification failed/i.test(msg);
 
         if (expired) {
-          // eslint-disable-next-line no-console
-          console.warn('Token expired/invalid → logging out');
-          // Clear state + storage, then bubble a friendly error
-          localStorage.removeItem(TOKEN_KEY);
-          localStorage.removeItem(USER_KEY);
-          setToken(null);
-          setUser(null);
-          throw new Error('Your session has expired. Please log in again.');
+          console.warn('🔄 Token expired/invalid → attempting refresh');
+
+          // Try to refresh the token first
+          const newToken = await attemptTokenRefresh();
+
+          if (newToken) {
+            // Retry the original request with the new token
+            console.log('🔄 Retrying original request with new token');
+            const retryOptions = {
+              ...options,
+              headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${newToken}`,
+              },
+            };
+            return await makeApiCall(endpoint, retryOptions);
+          } else {
+            // Refresh failed, log out
+            console.warn('❌ Token refresh failed → logging out');
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+            setToken(null);
+            setUser(null);
+            throw new Error('Your session has expired. Please log in again.');
+          }
         }
         throw err;
       }
     },
-    [makeApiCall]
+    [makeApiCall, attemptTokenRefresh]
   );
 
   /**
