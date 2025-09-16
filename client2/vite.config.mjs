@@ -108,53 +108,111 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Core React chunks
+          // Critical path - Core React (always needed)
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
             return 'react-core';
           }
-          if (id.includes('node_modules/react-router-dom')) {
+
+          // Navigation - React Router (needed for SPA)
+          if (id.includes('node_modules/react-router-dom') || id.includes('node_modules/react-router')) {
             return 'react-router';
           }
-          
-          // Material UI chunks (heavy library)
-          if (id.includes('node_modules/@mui') || id.includes('node_modules/@emotion')) {
-            return 'material-ui';
-          }
-          
-          // PDF processing (very heavy)
-          if (id.includes('node_modules/pdfjs-dist') || id.includes('node_modules/react-pdf')) {
+
+          // Heavy processing libraries - separate for lazy loading
+          if (id.includes('node_modules/pdfjs-dist') ||
+              id.includes('node_modules/react-pdf') ||
+              id.includes('node_modules/pdf-lib')) {
             return 'pdf-processing';
           }
-          
-          // EPUB processing
-          if (id.includes('node_modules/epubjs') || id.includes('node_modules/react-reader')) {
+
+          if (id.includes('node_modules/epubjs') ||
+              id.includes('node_modules/react-reader') ||
+              id.includes('node_modules/epub')) {
             return 'epub-processing';
           }
-          
-          // External services
-          if (id.includes('node_modules/@supabase')) {
+
+          // UI Framework - Material Design (medium priority)
+          if (id.includes('node_modules/@mui') ||
+              id.includes('node_modules/@emotion') ||
+              id.includes('node_modules/@material')) {
+            return 'material-ui';
+          }
+
+          // Data & Storage - Supabase and related
+          if (id.includes('node_modules/@supabase') ||
+              id.includes('node_modules/postgrest') ||
+              id.includes('node_modules/gotrue')) {
             return 'supabase';
           }
-          
-          // Utility libraries
-          if (id.includes('node_modules/axios') || 
-              id.includes('node_modules/clsx') || 
-              id.includes('node_modules/react-dropzone') ||
-              id.includes('node_modules/react-window')) {
-            return 'utils';
+
+          // Performance libraries - Virtual scrolling, lazy loading
+          if (id.includes('node_modules/react-window') ||
+              id.includes('node_modules/react-virtualized') ||
+              id.includes('node_modules/react-intersection-observer')) {
+            return 'performance';
           }
-          
-          // Icon libraries
-          if (id.includes('node_modules/lucide-react')) {
+
+          // File handling - Upload, dropzone, file processing
+          if (id.includes('node_modules/react-dropzone') ||
+              id.includes('node_modules/file-type') ||
+              id.includes('node_modules/mime')) {
+            return 'file-handling';
+          }
+
+          // HTTP & API utilities
+          if (id.includes('node_modules/axios') ||
+              id.includes('node_modules/fetch') ||
+              id.includes('node_modules/ky')) {
+            return 'http-utils';
+          }
+
+          // Icons and graphics
+          if (id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/@tabler/icons') ||
+              id.includes('node_modules/heroicons')) {
             return 'icons';
           }
-          
-          // CSS modules and styles
-          if (id.includes('.css')) {
+
+          // Animation and transitions
+          if (id.includes('node_modules/framer-motion') ||
+              id.includes('node_modules/react-spring') ||
+              id.includes('node_modules/lottie')) {
+            return 'animations';
+          }
+
+          // Date and time utilities
+          if (id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/moment') ||
+              id.includes('node_modules/dayjs')) {
+            return 'date-utils';
+          }
+
+          // Chart and visualization libraries
+          if (id.includes('node_modules/chart.js') ||
+              id.includes('node_modules/recharts') ||
+              id.includes('node_modules/d3')) {
+            return 'charts';
+          }
+
+          // Utility libraries (lightweight)
+          if (id.includes('node_modules/clsx') ||
+              id.includes('node_modules/classnames') ||
+              id.includes('node_modules/lodash') ||
+              id.includes('node_modules/ramda')) {
+            return 'utils';
+          }
+
+          // CSS and styling
+          if (id.includes('.css') || id.includes('.scss') || id.includes('.sass')) {
             return 'styles';
           }
-          
-          // All other node_modules as vendor
+
+          // Service Workers and PWA
+          if (id.includes('workbox') || id.includes('sw-')) {
+            return 'pwa';
+          }
+
+          // All other node_modules as vendor (catch-all)
           if (id.includes('node_modules')) {
             return 'vendor';
           }
