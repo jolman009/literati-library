@@ -3,7 +3,9 @@
 .md3-notes-page {
   min-height: 100vh;
   padding: 0;
-  background: var(--md3-surface);
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .md3-notes-container {
@@ -75,6 +77,9 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  background: var(--md-sys-color-surface) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 .md3-note-card::before {
@@ -106,14 +111,14 @@
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--md3-on-surface);
+  color: var(--md-sys-color-on-surface);
   line-height: 1.3;
 }
 
 .md3-note-text {
   margin: 0 0 16px 0;
   font-size: 0.95rem;
-  color: var(--md3-on-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
   line-height: 1.6;
 }
 
@@ -130,15 +135,16 @@
   gap: 8px;
   margin-bottom: 12px;
   padding: 8px 12px;
-  background: var(--md3-surface-container-low);
+  background: var(--md-sys-color-surface-container-low);
   border-radius: 8px;
   font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .md3-note-book-icon {
   width: 16px;
   height: 16px;
-  color: var(--md3-primary);
+  color: var(--md-sys-color-primary);
 }
 
 .md3-note-date {
@@ -164,29 +170,7 @@
   opacity: 1;
 }
 
-.md3-icon-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--md3-on-surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.md3-icon-button:hover {
-  background: var(--md3-primary);
-  color: white;
-  transform: scale(1.1);
-}
-
-.md3-icon-button--error:hover {
-  background: #F44336;
-}
+/* Icon button styles moved to enhanced section below */
 
 .md3-icon-small {
   width: 16px;
@@ -448,38 +432,55 @@
   }
 }
 
-/* Dark Mode Adjustments */
-@media (prefers-color-scheme: dark) {
-  .md3-notes-page {
-    background: #0f172a;
-  }
-  
-  .md3-note-card {
-    background: #1e293b;
-  }
-  
-  .md3-note-card:hover {
-    background: #334155;
-  }
-  
-  .md3-icon-button {
-    background: rgba(30, 41, 59, 0.9);
-    color: #e2e8f0;
-  }
-  
-  .md3-icon-button:hover {
-    background: #6750A4;
-  }
-  
-  .timeline-note-item {
-    background: #1e293b;
-  }
-  
-  .timeline-note-item:hover {
-    background: #334155;
-  }
-  
-  .stat-card {
-    background: #1e293b;
-  }
+/* Enhanced Material Design 3 Integration */
+.md3-icon-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.md3-icon-button:hover {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  transform: scale(1.1);
+}
+
+.md3-icon-button--error:hover {
+  background: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
+}
+
+.timeline-note-item {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.timeline-note-item:hover {
+  background: var(--md-sys-color-surface-container);
+  transform: translateX(4px);
+  border-color: var(--md-sys-color-outline);
+}
+
+.stat-card {
+  padding: 20px;
+  text-align: center;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface);
 }

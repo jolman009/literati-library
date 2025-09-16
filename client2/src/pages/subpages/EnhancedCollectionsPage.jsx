@@ -1,16 +1,17 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
-import { 
-  MD3Card, 
-  MD3Button, 
-  MD3TextField, 
-  MD3Chip, 
-  MD3Dialog, 
+import {
+  MD3Card,
+  MD3Button,
+  MD3TextField,
+  MD3Chip,
+  MD3Dialog,
   MD3Surface,
   MD3Progress,
   MD3FloatingActionButton
 } from '../../components/Material3';
+import { createDefaultCollections, loadCollectionsFromStorage, migrateDuplicateCollections } from '../../utils/collections';
 
 const EnhancedCollectionsPage = ({ 
   books = [], 
@@ -69,75 +70,37 @@ const EnhancedCollectionsPage = ({
 
   // This useEffect is now handled by the main loadCollections logic above
 
-  // Initialize collections: Database-first for automatic, localStorage for user-created
+  // Initialize collections using unified collections logic
   useEffect(() => {
     const loadCollections = async () => {
       setLoading(true);
       try {
-        // ALWAYS create automatic collections from database data first
-        const automaticCollections = [
-          {
-            id: 'currently-reading',
-            name: 'Currently Reading',
-            description: 'Books you\'re actively reading (synced with Dashboard)',
-            color: '#2196F3',
-            icon: '📖',
-            bookIds: books.filter(b => b.is_reading).map(b => b.id), // ALWAYS from database
-            isDefault: true,
-            isAutomatic: true,
-            createdAt: Date.now()
-          },
-          {
-            id: 'favorites',
-            name: 'Favorites',
-            description: 'Your most beloved books',
-            color: '#F44336',
-            icon: '❤️',
-            bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id), // ALWAYS from database
-            isDefault: true,
-            isAutomatic: true,
-            createdAt: Date.now()
-          },
-          {
-            id: 'wishlist',
-            name: 'Want to Read',
-            description: 'Books on your reading wishlist',
-            color: '#4CAF50',
-            icon: '📋',
-            bookIds: books.filter(b => b.status === 'want_to_read' || (!b.is_reading && !b.completed)).map(b => b.id), // ALWAYS from database
-            isDefault: true,
-            isAutomatic: true,
-            createdAt: Date.now()
-          },
-          {
-            id: 'completed',
-            name: 'Completed',
-            description: 'Books you\'ve finished reading',
-            color: '#8BC34A',
-            icon: '✅',
-            bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id), // ALWAYS from database
-            isDefault: true,
-            isAutomatic: true,
-            createdAt: Date.now()
-          }
-        ];
+        // Run migration to clean up any duplicate collections first
+        migrateDuplicateCollections();
 
-        // Get user-created collections from localStorage (exclude automatic ones)
-        const savedCollections = localStorage.getItem('bookCollections');
-        let userCollections = [];
-        
-        if (savedCollections) {
-          const parsedCollections = JSON.parse(savedCollections);
-          userCollections = parsedCollections.filter(collection => !collection.isAutomatic);
-        }
+        // Use the centralized collections utility for default collections
+        const defaultCollections = createDefaultCollections(books);
 
-        // Combine: automatic collections (from database) + user collections (from localStorage)
-        const finalCollections = [...automaticCollections, ...userCollections];
-        
+        // Get user-created collections from localStorage (exclude default ones)
+        const savedCollections = loadCollectionsFromStorage();
+        const userCollections = savedCollections.filter(collection => !collection.isDefault);
+
+        // Combine: default collections (auto-updated) + user collections (from localStorage)
+        const finalCollections = [...defaultCollections, ...userCollections];
+
         setCollections(finalCollections);
+
+        console.log('✅ Collections loaded:', {
+          total: finalCollections.length,
+          default: defaultCollections.length,
+          userCreated: userCollections.length,
+          defaultNames: defaultCollections.map(c => c.name)
+        });
+
         // Store only user-created collections in localStorage
-        localStorage.setItem('bookCollections', JSON.stringify(userCollections));
-        
+        const userOnlyCollections = finalCollections.filter(c => !c.isDefault);
+        localStorage.setItem('book_collections', JSON.stringify(userOnlyCollections));
+
       } catch (error) {
         console.error('Failed to load collections:', error);
       } finally {
@@ -154,14 +117,15 @@ const EnhancedCollectionsPage = ({
   // Save only user-created collections to localStorage when they change
   useEffect(() => {
     if (collections.length > 0) {
-      const userCollections = collections.filter(collection => !collection.isAutomatic);
-      localStorage.setItem('bookCollections', JSON.stringify(userCollections));
+      const userCollections = collections.filter(collection => !collection.isDefault);
+      localStorage.setItem('book_collections', JSON.stringify(userCollections));
     }
   }, [collections]);
 
   // Get books for a collection
   const getBooksForCollection = useCallback((collection) => {
-    return books.filter(book => collection.bookIds.includes(book.id));
+    const bookIds = collection.books || collection.bookIds || [];
+    return books.filter(book => bookIds.includes(book.id));
   }, [books]);
 
   // Filtered collections based on search
@@ -181,7 +145,8 @@ const EnhancedCollectionsPage = ({
     const collection = {
       id: Date.now().toString(),
       ...newCollection,
-      bookIds: [],
+      books: [],
+      bookIds: [], // Keep both for compatibility
       isDefault: false,
       createdAt: Date.now()
     };
@@ -195,8 +160,9 @@ const EnhancedCollectionsPage = ({
   const handleAddBooksToCollection = useCallback((collectionId, bookIds) => {
     setCollections(prev => prev.map(collection => {
       if (collection.id === collectionId) {
-        const newBookIds = [...new Set([...collection.bookIds, ...bookIds])];
-        return { ...collection, bookIds: newBookIds };
+        const currentBookIds = collection.books || collection.bookIds || [];
+        const newBookIds = [...new Set([...currentBookIds, ...bookIds])];
+        return { ...collection, books: newBookIds, bookIds: newBookIds };
       }
       return collection;
     }));
@@ -206,8 +172,9 @@ const EnhancedCollectionsPage = ({
   const handleRemoveBooksFromCollection = useCallback((collectionId, bookIds) => {
     setCollections(prev => prev.map(collection => {
       if (collection.id === collectionId) {
-        const newBookIds = collection.bookIds.filter(id => !bookIds.includes(id));
-        return { ...collection, bookIds: newBookIds };
+        const currentBookIds = collection.books || collection.bookIds || [];
+        const newBookIds = currentBookIds.filter(id => !bookIds.includes(id));
+        return { ...collection, books: newBookIds, bookIds: newBookIds };
       }
       return collection;
     }));
@@ -1361,88 +1328,7 @@ const EnhancedCollectionsPage = ({
   );
 };
 
-// Export utility functions
-export const createDefaultCollections = (books = []) => {
-  return [
-    {
-      id: '1',
-      name: 'Favorites',
-      description: 'Your most beloved books',
-      color: '#F44336',
-      icon: '❤️',
-      bookIds: books.filter(b => b.favorite || b.rating >= 4).map(b => b.id),
-      isDefault: true,
-      createdAt: Date.now()
-    },
-    {
-      id: '2',
-      name: 'Want to Read',
-      description: 'Books on your reading wishlist',
-      color: '#4CAF50',
-      icon: '📋',
-      bookIds: books.filter(b => b.status === 'want_to_read' || (!b.isReading && !b.completed)).map(b => b.id),
-      isDefault: true,
-      createdAt: Date.now()
-    },
-    {
-      id: '3',
-      name: 'Completed',
-      description: 'Books you\'ve finished reading',
-      color: '#8BC34A',
-      icon: '✅',
-      bookIds: books.filter(b => b.completed || b.status === 'completed').map(b => b.id),
-      isDefault: true,
-      createdAt: Date.now()
-    }
-  ];
-};
-
-export const loadCollectionsFromStorage = () => {
-  try {
-    const saved = localStorage.getItem('bookCollections');
-    return saved ? JSON.parse(saved) : null;
-  } catch (error) {
-    console.error('Failed to load collections from storage:', error);
-    return null;
-  }
-};
-
-export const addBookToCollection = (collections, collectionId, bookId) => {
-  return collections.map(collection => {
-    if (collection.id === collectionId) {
-      const newBookIds = [...new Set([...collection.bookIds, bookId])];
-      return { ...collection, bookIds: newBookIds };
-    }
-    return collection;
-  });
-};
-
-export const removeBookFromCollection = (collections, collectionId, bookId) => {
-  return collections.map(collection => {
-    if (collection.id === collectionId) {
-      const newBookIds = collection.bookIds.filter(id => id !== bookId);
-      return { ...collection, bookIds: newBookIds };
-    }
-    return collection;
-  });
-};
-
-export const validateCollection = (collection, existingCollections = []) => {
-  if (!collection.name || !collection.name.trim()) {
-    return { isValid: false, error: 'Collection name is required' };
-  }
-  
-  const nameExists = existingCollections.some(c => 
-    c.name.toLowerCase() === collection.name.toLowerCase() && c.id !== collection.id
-  );
-  
-  if (nameExists) {
-    return { isValid: false, error: 'A collection with this name already exists' };
-  }
-  
-  return { isValid: true };
-};
-
+// Collection colors for UI
 export const COLLECTION_COLORS = [
   '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
   '#00BCD4', '#009688', '#4CAF50', '#8BC34A',

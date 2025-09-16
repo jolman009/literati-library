@@ -35,6 +35,14 @@ const PremiumHeader = ({
     navigate('/login');
   };
 
+  const handleLaunchOnboarding = () => {
+    // Remove the completed flag to show onboarding again
+    localStorage.removeItem('literati-onboarding-completed');
+    setUserMenuOpen(false);
+    // Refresh page to trigger onboarding
+    window.location.reload();
+  };
+
 
   // Get user initials for avatar
   const userInitials = user?.name
@@ -173,6 +181,10 @@ const PremiumHeader = ({
                 <button className="md3-header-menu-item" onClick={() => navigate('/settings')}>
                   <span className="material-symbols-outlined">settings</span>
                   <span>Settings</span>
+                </button>
+                <button className="md3-header-menu-item" onClick={handleLaunchOnboarding}>
+                  <span className="material-symbols-outlined">help</span>
+                  <span>Rewards Tutorial</span>
                 </button>
                 <button className="md3-header-menu-item" onClick={handleLogout}>
                   <span className="material-symbols-outlined">logout</span>

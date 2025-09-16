@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { useGamification } from '../../contexts/GamificationContext';
 import { MD3Card, MD3Button, CircularProgress } from '../Material3';
+import PointsLegend from './PointsLegend';
 
 // Achievement Notification Component
 const AchievementNotification = ({ achievement, onDismiss }) => {
@@ -628,6 +629,11 @@ const GamificationDashboard = () => {
           achievements={achievements}
           ACHIEVEMENTS={ACHIEVEMENTS}
         />
+      </div>
+
+      {/* Points Legend */}
+      <div style={{ marginBottom: '32px' }}>
+        <PointsLegend />
       </div>
 
       {/* Quick Actions */}

@@ -631,16 +631,11 @@ const EnhancedNotesPage = () => {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        transition: 'all 0.3s ease',
-        backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-        border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`,
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
+        transition: 'all 0.3s ease'
       }}
     >
       <div className="md3-note-content">
-        <h3 className="md3-note-title" style={{
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-        }}>
+        <h3 className="md3-note-title">
           {note.title}
         </h3>
         <p className="md3-note-text" style={{
@@ -648,8 +643,7 @@ const EnhancedNotesPage = () => {
           textOverflow: 'ellipsis',
           display: '-webkit-box',
           WebkitLineClamp: 4,
-          WebkitBoxOrient: 'vertical',
-          color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
+          WebkitBoxOrient: 'vertical'
         }}>
           {note.content}
         </p>
@@ -687,13 +681,8 @@ const EnhancedNotesPage = () => {
         
         {/* Linked Book */}
         {note.book_id && (
-          <div className="md3-note-book" style={{
-            backgroundColor: actualTheme === 'dark' ? '#475569' : '#f3f4f6',
-            color: actualTheme === 'dark' ? '#f1f5f9' : '#374151'
-          }}>
-            <BookOpen className="md3-note-book-icon" style={{
-              color: actualTheme === 'dark' ? '#a78bfa' : '#6750A4'
-            }} />
+          <div className="md3-note-book">
+            <BookOpen className="md3-note-book-icon" />
             <span className="md3-note-book-text">
               {books.find(book => book.id === note.book_id)?.title || 'Unknown Book'}
             </span>
@@ -701,13 +690,10 @@ const EnhancedNotesPage = () => {
         )}
         
         {/* Creation Date */}
-        <p className="md3-note-date" style={{
-          color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
-        }}>
-          <Clock size={14} style={{ 
-            marginRight: '4px', 
-            verticalAlign: 'middle',
-            color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
+        <p className="md3-note-date">
+          <Clock size={14} style={{
+            marginRight: '4px',
+            verticalAlign: 'middle'
           }} />
           {new Date(note.created_at).toLocaleDateString()}
         </p>
@@ -715,25 +701,17 @@ const EnhancedNotesPage = () => {
       
       {/* Actions */}
       <div className="md3-note-actions">
-        <button 
+        <button
           onClick={() => handleOpenModal(note)}
           title="Edit note"
           className="md3-icon-button"
-          style={{
-            backgroundColor: actualTheme === 'dark' ? '#475569' : 'rgba(255, 255, 255, 0.9)',
-            color: actualTheme === 'dark' ? '#f1f5f9' : '#374151'
-          }}
         >
           <Edit className="md3-icon-small" />
         </button>
-        <button 
+        <button
           onClick={() => handleDeleteNote(note.id)}
           title="Delete note"
           className="md3-icon-button md3-icon-button--error"
-          style={{
-            backgroundColor: actualTheme === 'dark' ? '#475569' : 'rgba(255, 255, 255, 0.9)',
-            color: actualTheme === 'dark' ? '#f87171' : '#ef4444'
-          }}
         >
           <Trash2 className="md3-icon-small" />
         </button>
@@ -757,7 +735,7 @@ const EnhancedNotesPage = () => {
   }
   
   return (
-    <div className="md3-notes-page" style={{ backgroundColor: actualTheme === 'dark' ? '#0f172a' : '#FFFBFE' }}>
+    <div className="md3-notes-page">
       <div className="md3-notes-container">
         {/* Enhanced Header */}
         <MD3Card variant="filled" className="md3-notes-header" style={{

@@ -1,56 +1,85 @@
 import '@testing-library/jest-dom'
-import { expect, afterEach, vi } from 'vitest'
+import { expect, afterEach, vi, beforeEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
-import * as matchers from '@testing-library/jest-dom/matchers'
 
-// extends Vitest's expect method with methods from react-testing-library
-expect.extend(matchers)
+// Make vi globally available
+global.vi = vi
 
-// runs a cleanup after each test case (e.g. clearing jsdom)
-afterEach(() => {
-  cleanup()
-})
+// Mock modules that cause issues in test environment
+vi.mock('epubjs', () => ({
+  default: vi.fn(() => ({
+    renderTo: vi.fn(),
+    open: vi.fn(),
+    destroy: vi.fn()
+  })),
+  Book: vi.fn()
+}))
+
+vi.mock('pdfjs-dist', () => ({
+  getDocument: vi.fn(() => Promise.resolve({
+    numPages: 1,
+    getPage: vi.fn(() => Promise.resolve({
+      render: vi.fn(),
+      getViewport: vi.fn(() => ({ width: 100, height: 100 }))
+    }))
+  })),
+  GlobalWorkerOptions: {
+    workerSrc: ''
+  }
+}))
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-}
+global.IntersectionObserver = vi.fn(() => ({
+  observe: vi.fn(),
+  disconnect: vi.fn(),
+  unobserve: vi.fn(),
+}))
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-}
+global.ResizeObserver = vi.fn(() => ({
+  observe: vi.fn(),
+  disconnect: vi.fn(),
+  unobserve: vi.fn(),
+}))
 
-// Mock matchMedia
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+global.localStorage = localStorageMock
+
+// Mock sessionStorage
+const sessionStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+global.sessionStorage = sessionStorageMock
+
+// Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: vi.fn(), // Deprecated
-    removeListener: vi.fn(), // Deprecated
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
 })
 
-// Mock window.location
-Object.defineProperty(window, 'location', {
-  value: {
-    href: 'http://localhost:3000/',
-    origin: 'http://localhost:3000',
-    hostname: 'localhost',
-    pathname: '/',
-    search: '',
-    hash: ''
-  },
-  writable: true
+// Cleanup after each test
+afterEach(() => {
+  cleanup()
+  vi.clearAllMocks()
 })
+
+// Extend expect with jest-dom matchers
+expect.extend({})

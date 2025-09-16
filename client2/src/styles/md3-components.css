@@ -20,6 +20,9 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
+  background: var(--md-sys-color-surface);
+  overflow: visible;
+  width: 100%;
 }
 
 /* ============================================================================
@@ -67,14 +70,14 @@
 }
 
 .stat-card {
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface-container);
   border-radius: 16px;
   padding: 24px;
   text-align: center;
-  border: 2px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-sys-color-outline);
   color: var(--md-sys-color-on-surface);
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--md-sys-elevation-level2);
   position: relative;
   overflow: hidden;
 }
@@ -112,13 +115,14 @@
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 4px;
-  color: var(--md-sys-color-on-surface);
+  color:  #000000 !important;
 }
 
 .stat-label {
   font-size: 0.875rem;
   color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
+  opacity: 0.8;
 }
 
 /* Themed stat card variations */
@@ -134,14 +138,24 @@
    ============================================================================ */
 
 .welcome-header {
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
-  border-radius: 20px;
-  padding: 32px;
-  color: var(--md-sys-color-on-primary);
+  border-radius: 16px;
+  padding: 24px 32px;
+  color: white;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: visible;
+  box-shadow: var(--md-sys-elevation-level3);
   margin-bottom: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.welcome-header.theme-light {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.welcome-header.theme-dark {
+  background: linear-gradient(135deg, #1e3a8a, #312e81);
 }
 
 .welcome-header::before {
@@ -159,14 +173,16 @@
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 8px;
-  color: inherit;
+  color: white;
+  margin: 0 0 8px 0;
 }
 
 .welcome-subtitle {
   font-size: 16px;
   opacity: 0.9;
-  margin-bottom: 20px;
-  color: inherit;
+  margin-bottom: 16px;
+  color: white;
+  margin: 0 0 16px 0;
 }
 
 /* Level Progress in Welcome */
@@ -452,11 +468,12 @@
    ============================================================================ */
 
 .section-card {
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface-container-low);
   border-radius: 16px;
   padding: 24px;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-sys-color-outline);
   margin-bottom: 32px;
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .section-title {
@@ -464,6 +481,8 @@
   font-weight: bold;
   margin-bottom: 16px;
   color: var(--md-sys-color-on-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  padding-bottom: 8px;
 }
 
 .reading-tip-card {
@@ -670,6 +689,14 @@
     padding: 16px;
   }
 }
+
+  /* TEMPORARY DEBUG RULE */
+  .welcome-header {
+    position: relative !important;
+    z-index: 999 !important;
+    overflow: visible !important;
+    margin-top: 20px !important;
+  }
 
 /* ============================================================================
    DARK MODE SUPPORT (Automatic via CSS Custom Properties)

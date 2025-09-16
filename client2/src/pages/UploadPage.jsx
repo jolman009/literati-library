@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
+import '../styles/upload-page.css';
 
 const UploadPage = () => {
   const navigate = useNavigate();
@@ -184,40 +185,38 @@ const UploadPage = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-[#f7f2fa] to-[#fff8e1] transition-all duration-1000 ${animationState === 'active' ? 'opacity-100' : 'opacity-0'}`}>
-      <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="upload-page-container">
+      <div className="upload-page-content">
         
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Upload Your Book
-            </span>
+        <div className="upload-header">
+          <h1 className="upload-title">
+            Upload Your Book
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="upload-subtitle">
             Add a new book to your digital library. We support PDF and EPUB formats.
           </p>
         </div>
 
         {/* Upload Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center space-x-4">
+        <div className="upload-steps">
+          <div className="steps-container">
             {['select', 'details', 'uploading', 'complete'].map((step, index) => (
-              <div key={step} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
-                  uploadStep === step 
-                    ? 'bg-purple-600 text-white scale-110 shadow-lg' 
+              <div key={step} className="step-item">
+                <div className={`step-circle ${
+                  uploadStep === step
+                    ? 'active'
                     : index < ['select', 'details', 'uploading', 'complete'].indexOf(uploadStep)
-                    ? 'bg-green-500 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    ? 'completed'
+                    : 'pending'
                 }`}>
                   {index + 1}
                 </div>
                 {index < 3 && (
-                  <div className={`w-12 h-1 transition-all duration-300 ${
+                  <div className={`step-connector ${
                     index < ['select', 'details', 'uploading', 'complete'].indexOf(uploadStep)
-                      ? 'bg-green-500'
-                      : 'bg-gray-200'
+                      ? 'completed'
+                      : 'pending'
                   }`} />
                 )}
               </div>
@@ -227,13 +226,9 @@ const UploadPage = () => {
 
         {/* Step 1: File Selection */}
         {uploadStep === 'select' && (
-          <div className="bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-500">
+          <div className="upload-card">
             <div
-              className={`relative group border-3 border-dashed rounded-3xl p-12 text-center transition-all duration-300 cursor-pointer ${
-                dragActive 
-                  ? 'border-purple-600 bg-purple-50 scale-105' 
-                  : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50'
-              }`}
+              className={`file-drop-zone ${dragActive ? 'drag-active' : ''}`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
@@ -241,38 +236,26 @@ const UploadPage = () => {
               onClick={() => fileInputRef.current?.click()}
             >
               {/* Animated Background Pattern */}
-              <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-purple-200 to-blue-200 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-1000"></div>
-                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-gradient-to-br from-blue-200 to-green-200 rounded-full opacity-20 group-hover:scale-150 transition-transform duration-1000 delay-200"></div>
-              </div>
+              <div className="drop-zone-bg-element"></div>
+              <div className="drop-zone-bg-element"></div>
 
-              <div className="relative z-10 text-center space-y-6">
-                <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full transition-all duration-500 ${
-                  dragActive 
-                    ? 'bg-purple-600 shadow-lg scale-110' 
-                    : 'bg-gradient-to-br from-purple-100 to-blue-100 group-hover:from-purple-200 group-hover:to-blue-200'
-                }`}>
-                  <span className={`text-4xl transition-colors duration-500 ${
-                    dragActive ? 'text-white animate-bounce' : 'text-purple-600'
-                  }`}>
+              <div className="upload-text-container">
+                <div className="upload-icon-container">
+                  <span className="upload-icon">
                     📖
                   </span>
                 </div>
 
-                <div className="space-y-3">
-                  <h3 className="text-xl font-semibold text-gray-800">
+                <div>
+                  <h3 className="upload-main-text">
                     {dragActive ? 'Drop your book here!' : 'Choose or drag your book file'}
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="upload-helper-text">
                     Supports PDF and EPUB formats up to 50MB
                   </p>
                 </div>
 
-                <button className={`px-8 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 ${
-                  dragActive 
-                    ? 'bg-purple-600 border-purple-600 text-white shadow-lg transform scale-110'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white shadow-md hover:shadow-lg'
-                }`}>
+                <button className="browse-button">
                   Browse Files
                 </button>
               </div>
@@ -285,9 +268,9 @@ const UploadPage = () => {
                 className="hidden"
               />
             </div>
-            
+
             {message && (
-              <div className={`mt-4 p-4 rounded-lg ${isError ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+              <div className={`upload-message ${isError ? 'error' : 'success'}`}>
                 {message}
               </div>
             )}

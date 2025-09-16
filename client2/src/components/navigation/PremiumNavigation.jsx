@@ -19,7 +19,9 @@ const PremiumNavigation = ({
   const navigationItems = [
     { to: '/dashboard', label: 'Dashboard', icon: 'space_dashboard' },
     { to: '/library', label: 'Library', icon: 'menu_book' },
+    { to: '/collections', label: 'Collections', icon: 'collections_bookmark' },
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
+    { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
   ];
 
