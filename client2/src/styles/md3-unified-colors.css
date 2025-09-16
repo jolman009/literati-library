@@ -136,11 +136,11 @@
   --md-sys-color-primary-container: #eef2ff;
   --md-sys-color-on-primary-container: #1e1b4b;
 
-  /* Secondary Colors - Warm sage greens */
-  --md-sys-color-secondary: #059669;
+  /* Secondary Colors - Complementary purples */
+  --md-sys-color-secondary: #7c3aed;
   --md-sys-color-on-secondary: #ffffff;
-  --md-sys-color-secondary-container: #ecfdf5;
-  --md-sys-color-on-secondary-container: #064e3b;
+  --md-sys-color-secondary-container: #f3f4f6;
+  --md-sys-color-on-secondary-container: #4c1d95;
 
   /* Tertiary Colors - Rich accent oranges */
   --md-sys-color-tertiary: #ea580c;

@@ -346,8 +346,10 @@ const CurrentlyReading = () => {
     fetchCurrentlyReading();
   }, [activeSession]); // Refresh when active session changes
   
-  if (loading) return null;
-  if (currentlyReading.length === 0) return null;
+  if (loading) return <div className="section-card"><h3>Loading currently reading...</h3></div>;
+
+  // Debug: Always show the component with information
+  console.log('📖 CurrentlyReading render - books count:', currentlyReading.length);
   
   return (
     <div className="section-card">
@@ -440,8 +442,10 @@ const RecentlyAdded = () => {
     fetchRecentBooks();
   }, []);
   
-  if (loading) return null;
-  if (recentBooks.length === 0) return null;
+  if (loading) return <div className="section-card-compact"><h3>Loading recent books...</h3></div>;
+
+  // Debug: Always show the component with information
+  console.log('📚 RecentlyAdded render - books count:', recentBooks.length);
   
   return (
     <div className="section-card-compact">

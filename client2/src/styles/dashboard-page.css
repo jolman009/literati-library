@@ -51,17 +51,18 @@
 }
 
 /* Light mode darker background for stat cards */
-:root:not([data-theme="dark"]) .stat-card {
-  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
-  border: 1px solid #374151;
-  color: white;
+:root:not([data-theme="dark"]) .stat-card,
+:root:not([data-theme="dark"]) .progress-section .stats-grid .stat-card {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%) !important;
+  border: 1px solid #374151 !important;
+  color: white !important;
 }
 
 /* Ensure all stat card text is white in light mode */
 :root:not([data-theme="dark"]) .stat-value,
 :root:not([data-theme="dark"]) .stat-label,
 :root:not([data-theme="dark"]) .stat-icon {
-  color: white;
+  color: white !important;
 }
 
 .theme-toggle-button {
@@ -150,9 +151,9 @@
 
 .action-button-primary {
   padding: 12px 24px;
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  border: none;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border: 1px solid var(--md-sys-color-primary);
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
@@ -165,7 +166,7 @@
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .action-button-secondary {
@@ -188,15 +189,22 @@
 
 .checkin-button {
   padding: 10px 20px;
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
-  border: 1px solid var(--md-sys-color-tertiary);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border: 1px solid var(--md-sys-color-primary);
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+}
+
+.checkin-button:hover:not(:disabled) {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .checkin-button:disabled {
@@ -249,13 +257,25 @@
   margin-bottom: 32px;
 }
 
+/* Override md3-components.css with higher specificity for dashboard stat cards */
+.progress-section .stats-grid .stat-card {
+  background: var(--md-sys-color-primary-container) !important;
+  border: 1px solid var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+}
+
+.progress-section .stats-grid .stat-card:hover {
+  background: var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary) !important;
+}
+
 .stat-card {
-  background: var(--md-sys-color-surface-container);
+  background: var(--md-sys-color-primary-container);
   border-radius: 16px;
   padding: 24px;
   text-align: center;
   transition: all 0.3s ease;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-sys-color-primary);
   position: relative;
   overflow: hidden;
 }
@@ -273,7 +293,8 @@
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  background: var(--md-sys-color-surface-container-high);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
 .stat-icon {
@@ -285,14 +306,18 @@
 .stat-value {
   font-size: 24px;
   font-weight: bold;
-  color: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-on-primary-container);
   margin-bottom: 4px;
 }
 
 .stat-label {
   font-size: 14px;
-  color: var(--md-sys-color-on-surface-variant);
+  color: var(--md-sys-color-on-primary-container);
   font-weight: 500;
+}
+
+.stat-icon {
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* Loading Shimmer */

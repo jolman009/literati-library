@@ -133,8 +133,8 @@
 }
 
 .md3-rail-destination.active {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* Destination icon with premium hover effects */
@@ -308,7 +308,7 @@
 .md3-rail-destination.active::before {
   opacity: 0.2;
   transform: scale(1);
-  background: var(--md-sys-color-secondary);
+  background: var(--md-sys-color-primary);
 }
 
 .md3-rail-destination.active::after {
