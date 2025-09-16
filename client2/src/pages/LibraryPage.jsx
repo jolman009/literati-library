@@ -18,6 +18,7 @@ import WelcomeWidget from '../components/WelcomeWidget';
 import EnhancedBookCard from '../components/EnhancedBookCard';
 import { BookCoverManager, BatchCoverProcessor } from '../components/BookCoverManager';
 import FloatingTimer from '../components/FloatingTimer';
+import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 
 const LibraryPage = () => {
   const { actualTheme } = useMaterial3Theme();
@@ -43,6 +44,12 @@ const LibraryPage = () => {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [highlightedBookId, setHighlightedBookId] = useState(null);
   const [openMenuBookId, setOpenMenuBookId] = useState(null);
+  const [useVirtualization, setUseVirtualization] = useState(false);
+
+  // Enable virtualization for large libraries (>50 books for better performance)
+  useEffect(() => {
+    setUseVirtualization(books.length > 50);
+  }, [books.length]);
 
   // Analytics data for welcome widget
   const analytics = {
@@ -219,6 +226,12 @@ const LibraryPage = () => {
       }, 100);
     }
   };
+
+  // Handler for virtualized grid menu clicks
+  const handleVirtualizedMenuClick = (bookId) => {
+    setOpenMenuBookId(openMenuBookId === bookId ? null : bookId);
+  };
+
 
   const renderPageContent = () => {
     switch (currentPage) {
@@ -436,6 +449,23 @@ const LibraryPage = () => {
                     Upload Your First Book
                   </button>
                 )}
+              </div>
+            ) : useVirtualization ? (
+              <div className="md3-virtualized-container" style={{ height: '600px' }}>
+                <VirtualizedBookGrid
+                  books={filteredBooks}
+                  onBookClick={handleBookClick}
+                  onBookMenuClick={handleVirtualizedMenuClick}
+                  highlightedBookId={highlightedBookId}
+                  openMenuBookId={openMenuBookId}
+                  activeSession={activeSession}
+                  isPaused={isPaused}
+                  onResumeSession={handleResumeSession}
+                  onPauseSession={handlePauseSession}
+                  onEndSession={handleEndSession}
+                  viewMode={viewMode}
+                  className="library-virtualized-grid"
+                />
               </div>
             ) : (
               <div className={`md3-books-container ${viewMode}`}>

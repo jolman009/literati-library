@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.12.4",
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
-    "axios": "^1.10.0",
+    "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "epubjs": "^0.3.93",
     "lucide-react": "^0.525.0",
@@ -17,7 +17,8 @@
     "react-pdf": "^10.1.0",
     "react-reader": "^2.0.13",
     "react-router-dom": "^7.6.2",
-    "react-window": "^1.8.11",
+    "react-window": "^2.1.0",
+    "react-window-infinite-loader": "^2.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

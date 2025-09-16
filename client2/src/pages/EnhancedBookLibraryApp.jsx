@@ -9,7 +9,7 @@ import MD3StatisticsPage from '../components/MD3StatisticsPage';
 import { MD3Button, MD3FloatingActionButton, useSnackbar } from '../components/Material3';
 import { fetchBooksWithCovers } from '../api/books';
 import { ensureCoverForBook } from '../services/covers.js';
-import VirtualizedBookGrid from '../components/VirtualizedBookGrid';
+import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 import { generateMockBooks, performanceTest } from '../utils/mockBookGenerator.js';
 import { measureCustomMetric } from '../utils/webVitals';
 import { cachedApi, prefetchAppData, getApiMetrics } from '../api/cachedApi.js';

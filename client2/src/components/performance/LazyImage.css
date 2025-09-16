@@ -1,0 +1,326 @@
+/* Lazy Image Container */
+.lazy-image-container {
+  position: relative;
+  overflow: hidden;
+  background: var(--md3-surface-variant);
+  border-radius: 8px;
+}
+
+/* Main lazy image */
+.lazy-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.lazy-image.loading {
+  opacity: 0;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Placeholder styles */
+.lazy-image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md3-surface-variant);
+  color: var(--md3-on-surface-variant);
+}
+
+/* Skeleton placeholder */
+.lazy-image-skeleton {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--md3-surface-variant) 0%,
+    var(--md3-surface-container) 50%,
+    var(--md3-surface-variant) 100%
+  );
+  background-size: 200% 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-content {
+  position: relative;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+.skeleton-content .material-symbols-outlined {
+  font-size: 2rem;
+  color: var(--md3-on-surface-variant);
+}
+
+/* Fallback styles */
+.lazy-image-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md3-error-container);
+  color: var(--md3-on-error-container);
+}
+
+.lazy-image-fallback-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Loading spinner */
+.lazy-image-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--md3-outline-variant);
+  border-top: 2px solid var(--md3-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Book cover specific styles */
+.lazy-book-cover {
+  border-radius: var(--md3-shape-corner-medium);
+  box-shadow: var(--md3-elevation-1);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  cursor: pointer;
+}
+
+.lazy-book-cover:hover {
+  box-shadow: var(--md3-elevation-2);
+  transform: translateY(-1px);
+}
+
+/* Book cover fallback */
+.book-cover-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    var(--md3-primary-container) 0%,
+    var(--md3-secondary-container) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-spine {
+  text-align: center;
+  padding: 16px 8px;
+  color: var(--md3-on-primary-container);
+  position: relative;
+  z-index: 1;
+  max-width: 90%;
+}
+
+.book-spine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  border-radius: 4px;
+}
+
+.book-title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.book-author {
+  font-size: 10px;
+  opacity: 0.8;
+  line-height: 1.1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* Size variants */
+.lazy-book-cover.small .book-title {
+  font-size: 10px;
+  -webkit-line-clamp: 2;
+  margin-bottom: 4px;
+}
+
+.lazy-book-cover.small .book-author {
+  font-size: 8px;
+  -webkit-line-clamp: 1;
+}
+
+.lazy-book-cover.small .book-spine {
+  padding: 8px 4px;
+}
+
+.lazy-book-cover.large .book-title {
+  font-size: 14px;
+  -webkit-line-clamp: 4;
+  margin-bottom: 12px;
+}
+
+.lazy-book-cover.large .book-author {
+  font-size: 12px;
+  -webkit-line-clamp: 3;
+}
+
+.lazy-book-cover.large .book-spine {
+  padding: 24px 12px;
+}
+
+/* Progressive enhancement */
+.lazy-image-container.progressive {
+  background: var(--md3-surface-container);
+}
+
+.lazy-image-container.progressive .lazy-image {
+  transition: opacity 0.5s ease, filter 0.3s ease;
+}
+
+.lazy-image-container.progressive .lazy-image.loading {
+  opacity: 0.6;
+  filter: blur(2px);
+}
+
+.lazy-image-container.progressive .lazy-image.loaded {
+  opacity: 1;
+  filter: blur(0px);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .lazy-image,
+  .skeleton-shimmer,
+  .loading-spinner,
+  .lazy-book-cover {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .lazy-image-placeholder {
+    border: 2px solid currentColor;
+  }
+
+  .book-cover-fallback {
+    border: 2px solid var(--md3-outline);
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+  }
+
+  .book-cover-fallback {
+    background: linear-gradient(
+      135deg,
+      var(--md3-primary-container) 0%,
+      var(--md3-tertiary-container) 100%
+    );
+  }
+}
+
+/* Performance optimizations */
+.lazy-image-container {
+  contain: layout style paint;
+  will-change: transform;
+}
+
+.lazy-image {
+  will-change: opacity;
+}
+
+/* Error state */
+.lazy-image-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--md3-error);
+  padding: 16px;
+  text-align: center;
+}
+
+.lazy-image-error .material-symbols-outlined {
+  font-size: 2rem;
+  opacity: 0.6;
+}
+
+.lazy-image-error-message {
+  font-size: 12px;
+  opacity: 0.8;
+}

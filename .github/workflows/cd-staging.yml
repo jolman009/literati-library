@@ -1,0 +1,308 @@
+# Staging Deployment Pipeline
+# Automatically deploys to staging environment on develop branch
+
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if tests fail'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/literati
+
+jobs:
+  # Build and Push Images
+  build-images:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.tag.outputs.tag }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Generate Image Tag
+        id: tag
+        run: |
+          TAG="staging-$(date +%Y%m%d)-${GITHUB_SHA::8}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Generated tag: $TAG"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Client Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client2
+          file: ./client2/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-client:${{ steps.tag.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-client:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            BUILD_VERSION=${{ steps.tag.outputs.tag }}
+
+      - name: Build and Push Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server2
+          file: ./server2/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-server:${{ steps.tag.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-server:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            BUILD_VERSION=${{ steps.tag.outputs.tag }}
+
+      - name: Build and Push AI Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai-service
+          file: ./ai-service/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-ai:${{ steps.tag.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-ai:staging-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_VERSION=${{ steps.tag.outputs.tag }}
+
+  # Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build-images
+    environment: staging
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.STAGING_SSH_KEY }}
+
+      - name: Add Staging Server to Known Hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.STAGING_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create Environment File
+        run: |
+          cat > .env.staging << EOF
+          NODE_ENV=staging
+          BUILD_VERSION=${{ needs.build-images.outputs.image-tag }}
+          IMAGE_TAG=${{ needs.build-images.outputs.image-tag }}
+
+          # Server Configuration
+          PORT=5000
+          HTTPS_PORT=5443
+          DOMAIN=${{ secrets.STAGING_DOMAIN }}
+          FRONTEND_URL=https://${{ secrets.STAGING_DOMAIN }}
+          CORS_ORIGIN=https://${{ secrets.STAGING_DOMAIN }}
+
+          # Database
+          SUPABASE_URL=${{ secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY=${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_ANON_KEY=${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+
+          # JWT
+          JWT_SECRET=${{ secrets.STAGING_JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.STAGING_JWT_REFRESH_SECRET }}
+
+          # AI Service
+          GOOGLE_API_KEY=${{ secrets.STAGING_GOOGLE_API_KEY }}
+          AI_SERVICE_URL=https://ai.${{ secrets.STAGING_DOMAIN }}
+
+          # Client Environment
+          VITE_API_BASE_URL=https://api.${{ secrets.STAGING_DOMAIN }}
+          VITE_SUPABASE_URL=${{ secrets.STAGING_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+          VITE_AI_SERVICE_URL=https://ai.${{ secrets.STAGING_DOMAIN }}
+
+          # Monitoring
+          ENABLE_MONITORING=true
+          LOG_LEVEL=debug
+
+          # Docker Registry
+          REGISTRY=${{ env.REGISTRY }}
+          IMAGE_PREFIX=${{ env.IMAGE_PREFIX }}
+          EOF
+
+      - name: Copy Files to Staging Server
+        run: |
+          scp -r .env.staging docker-compose.yml docker-compose.production.yml scripts/ \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/opt/literati/
+
+      - name: Deploy to Staging
+        run: |
+          ssh ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'EOF'
+            cd /opt/literati
+
+            # Set environment
+            export ENV_FILE=".env.staging"
+            export IMAGE_TAG="${{ needs.build-images.outputs.image-tag }}"
+
+            # Log in to container registry
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+            # Pull latest images
+            docker-compose -f docker-compose.production.yml pull
+
+            # Deploy with rolling update
+            docker-compose -f docker-compose.production.yml up -d --remove-orphans
+
+            # Wait for services to be ready
+            sleep 30
+
+            # Health check
+            curl -f http://localhost:3000/health || exit 1
+            curl -f http://localhost:5000/api/monitoring/health || exit 1
+            curl -f http://localhost:8000/health || exit 1
+
+            echo "✅ Staging deployment successful"
+          EOF
+
+      - name: Run Smoke Tests
+        run: |
+          # Wait for services to stabilize
+          sleep 60
+
+          # Basic smoke tests
+          curl -f https://${{ secrets.STAGING_DOMAIN }}/health
+          curl -f https://api.${{ secrets.STAGING_DOMAIN }}/api/monitoring/health
+          curl -f https://ai.${{ secrets.STAGING_DOMAIN }}/health
+
+          echo "✅ Smoke tests passed"
+
+      - name: Notify Deployment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}' === 'success' ? '✅' : '❌';
+            const tag = '${{ needs.build-images.outputs.image-tag }}';
+            const domain = '${{ secrets.STAGING_DOMAIN }}';
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: `${status} **Staging Deployment**\n\n` +
+                    `**Version:** \`${tag}\`\n` +
+                    `**Environment:** [Staging](https://${domain})\n` +
+                    `**Status:** ${{ job.status }}\n\n` +
+                    `🔗 [View App](https://${domain})\n` +
+                    `📊 [Monitoring](https://${domain}/api/monitoring/dashboard)\n` +
+                    `🤖 [AI Service](https://ai.${domain}/docs)`
+            });
+
+  # Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: success()
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8.x'
+
+      - name: Install Test Dependencies
+        run: |
+          pnpm add -D @playwright/test
+          npx playwright install
+
+      - name: Run Integration Tests
+        run: |
+          # Run Playwright tests against staging
+          npx playwright test --config=playwright.staging.config.js
+        env:
+          STAGING_URL: https://${{ secrets.STAGING_DOMAIN }}
+          API_URL: https://api.${{ secrets.STAGING_DOMAIN }}
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: test-results/
+          retention-days: 7
+
+  # Performance Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: success()
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            https://${{ secrets.STAGING_DOMAIN }}
+            https://${{ secrets.STAGING_DOMAIN }}/dashboard
+            https://${{ secrets.STAGING_DOMAIN }}/library
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Load Test with Artillery
+        run: |
+          npm install -g artillery
+          cat > load-test.yml << EOF
+          config:
+            target: 'https://api.${{ secrets.STAGING_DOMAIN }}'
+            phases:
+              - duration: 60
+                arrivalRate: 5
+                name: "Warm up"
+              - duration: 300
+                arrivalRate: 10
+                name: "Load test"
+          scenarios:
+            - name: "Health check"
+              requests:
+                - get:
+                    url: "/api/monitoring/health"
+          EOF
+
+          artillery run load-test.yml
