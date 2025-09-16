@@ -40,6 +40,7 @@ import { MD3SnackbarProvider } from './components/Material3';
 import AppLayout from './components/AppLayout';
 import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
+import GamificationOnboarding from './components/gamification/GamificationOnboarding';
 
 // Import only critical auth pages directly
 import LandingPage from './pages/LandingPage';
@@ -49,6 +50,7 @@ import MD3Login from './pages/MD3Login';
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LibraryPage = lazy(() => import('./pages/LibraryPage'));
+const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 
 // Lazy load secondary pages with error handling
 const LibraryPageWrapper = lazy(() =>
@@ -76,6 +78,13 @@ const ReadBookWrapper = lazy(() =>
   import('./components/wrappers/ReadBookWrapper').catch(err => {
     console.error('Failed to load ReadBookWrapper:', err);
     return { default: () => <div>Error loading Reader. Please refresh.</div> };
+  })
+);
+
+const CollectionsPageWrapper = lazy(() =>
+  import('./components/wrappers/CollectionsPageWrapper').catch(err => {
+    console.error('Failed to load CollectionsPageWrapper:', err);
+    return { default: () => <div>Error loading Collections. Please refresh.</div> };
   })
 );
 
@@ -152,12 +161,26 @@ const AppRoutes = () => {
             </Suspense>
           </NotesErrorBoundary>
         } />
+        <Route path="/gamification" element={
+          <ErrorBoundary fallbackComponent="gamification" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading gamification rules..." />}>
+              <GamificationRulesPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
         <Route path="/read/:bookId" element={
           <ReaderErrorBoundary>
             <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
               <ReadBookWrapper />
             </Suspense>
           </ReaderErrorBoundary>
+        } />
+        <Route path="/collections" element={
+          <ErrorBoundary fallbackComponent="collections" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your collections..." />}>
+              <CollectionsPageWrapper />
+            </Suspense>
+          </ErrorBoundary>
         } />
       </Route>
 
@@ -186,6 +209,7 @@ const App = () => {
                 <ReadingSessionTimer />
                 <PerformanceMonitor />
                 <CacheMonitor />
+                <GamificationOnboarding />
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>

@@ -6,6 +6,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import GlobalSearch from './GlobalSearch';
 import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
+import './AppLayout.css';
 
 {import.meta.env.MODE === 'production' && window.location.hostname === 'localhost' && (
   <div style={{position:'fixed',bottom:8,left:8,fontSize:12,opacity:.7,background:'#000',color:'#fff',padding:'4px 8px',borderRadius:6}}>

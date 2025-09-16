@@ -2,9 +2,12 @@
 
 /* Page Container */
 .md3-notes-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Account for header height */
   background: rgb(var(--md-sys-color-background));
-  padding: var(--md-sys-spacing-4) var(--md-sys-spacing-3);
+  padding: 0 var(--md-sys-spacing-3) var(--md-sys-spacing-4) var(--md-sys-spacing-3); /* Remove top padding */
+  margin-top: 80px; /* Add top margin to clear navigation header */
+  position: relative;
+  z-index: 1; /* Ensure proper stacking below header */
 }
 
 .md3-notes-container {

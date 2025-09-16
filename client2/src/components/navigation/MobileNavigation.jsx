@@ -2,10 +2,10 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { MD3NavigationBar } from '../Material3';
 
 const NAV = [
-  { to: '/library/reading',     label: 'Reading',     icon: 'menu_book' },
-  { to: '/library/statistics',  label: 'Stats',       icon: 'query_stats' },
-  { to: '/library/collections', label: 'Collections', icon: 'collections_bookmark' },
-  { to: '/library/notes',       label: 'Notes',       icon: 'edit_note' },
+  { to: '/dashboard',     label: 'Dashboard',   icon: 'space_dashboard' },
+  { to: '/library',       label: 'Library',     icon: 'menu_book' },
+  { to: '/collections',   label: 'Collections', icon: 'collections_bookmark' },
+  { to: '/notes',         label: 'Notes',       icon: 'edit_note' },
 ];
 
 const MobileNavigation = () => {

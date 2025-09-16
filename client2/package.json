@@ -26,8 +26,14 @@
     "preview": "vite preview --port 5174",
     "lint": "eslint src --ext .js,.jsx",
     "typecheck": "echo \"(optional)\"",
-    "test:unit": "vitest",
-    "test:e2e": "playwright test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "pnpm run test:coverage && pnpm run test:e2e"
   },
   "engines": {
     "node": ">=20.16.0"

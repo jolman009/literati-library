@@ -3,8 +3,7 @@
 
 export const createDefaultCollections = (books = []) => {
   const genres = [...new Set(books.map(book => book.genre).filter(Boolean))];
-  const statuses = ['reading', 'completed', 'want_to_read'];
-  
+
   const collections = [
     {
       id: 'favorites',
@@ -19,10 +18,22 @@ export const createDefaultCollections = (books = []) => {
       id: 'currently-reading',
       name: 'Currently Reading',
       icon: '📖',
-      color: '#4CAF50', 
-      description: 'Books you are currently reading',
+      color: '#4CAF50',
+      description: 'Books you are currently reading (synced with Dashboard)',
       isDefault: true,
       books: books.filter(book => book.status === 'reading' || book.is_reading).map(book => book.id)
+    },
+    {
+      id: 'want-to-read',
+      name: 'Want to Read',
+      icon: '📋',
+      color: '#FF9800',
+      description: 'Books on your reading wishlist',
+      isDefault: true,
+      books: books.filter(book =>
+        book.status === 'want_to_read' ||
+        (!book.is_reading && !book.completed && !book.favorite)
+      ).map(book => book.id)
     },
     {
       id: 'completed',
@@ -58,6 +69,18 @@ export const loadCollectionsFromStorage = () => {
   } catch (error) {
     console.error('Error loading collections from storage:', error);
     return [];
+  }
+};
+
+// Migration function to clean up duplicate collections
+export const migrateDuplicateCollections = () => {
+  try {
+    // Clear any potentially duplicate collections from both storage keys
+    localStorage.removeItem('bookCollections'); // Old key
+    localStorage.removeItem('book_collections'); // Current key
+    console.log('✅ Collections storage cleared - duplicates removed');
+  } catch (error) {
+    console.error('Error during collection migration:', error);
   }
 };
 

@@ -1,236 +1,123 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { vi } from 'vitest';
+import React from 'react'
+import { render } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
+import { vi } from 'vitest'
 
-// Mock AuthContext for testing
-export const createMockAuthContext = (overrides = {}) => ({
-  user: null,
-  token: null,
-  loading: false,
-  error: null,
-  isAuthenticated: false,
-  register: vi.fn(),
-  login: vi.fn(),
-  logout: vi.fn(),
-  updateProfile: vi.fn(),
-  changePassword: vi.fn(),
-  requestPasswordReset: vi.fn(),
-  deleteAccount: vi.fn(),
-  refreshUser: vi.fn(),
-  clearError: vi.fn(),
-  hasRole: vi.fn(() => false),
-  makeApiCall: vi.fn(),
-  makeAuthenticatedApiCall: vi.fn(),
-  ...overrides
-});
+// Mock the contexts to avoid import issues during testing
+const MockAuthProvider = ({ children }) => {
+  return <div data-testid="mock-auth-provider">{children}</div>
+}
 
-// Mock GamificationContext for testing
-export const createMockGamificationContext = (overrides = {}) => ({
-  achievements: [],
-  goals: [],
-  stats: { totalBooks: 0, totalPages: 0, totalTime: 0 },
-  loading: false,
-  error: null,
-  refreshAchievements: vi.fn(),
-  createGoal: vi.fn(),
-  updateGoal: vi.fn(),
-  deleteGoal: vi.fn(),
-  ...overrides
-});
+const MockMaterial3ThemeProvider = ({ children }) => {
+  return <div data-testid="mock-theme-provider">{children}</div>
+}
 
-// Mock ReadingSessionContext for testing
-export const createMockReadingSessionContext = (overrides = {}) => ({
-  currentSession: null,
-  isActive: false,
-  totalTime: 0,
-  startSession: vi.fn(),
-  pauseSession: vi.fn(),
-  resumeSession: vi.fn(),
-  stopSession: vi.fn(),
-  ...overrides
-});
+const MockGamificationProvider = ({ children }) => {
+  return <div data-testid="mock-gamification-provider">{children}</div>
+}
 
-// Mock Material3ThemeContext for testing
-export const createMockMaterial3ThemeContext = (overrides = {}) => ({
-  theme: 'light',
-  setTheme: vi.fn(),
-  toggleTheme: vi.fn(),
-  ...overrides
-});
+const MockReadingSessionProvider = ({ children }) => {
+  return <div data-testid="mock-reading-provider">{children}</div>
+}
 
-// Test wrapper components
-export const TestAuthProvider = ({ children, authContext }) => {
-  // Mock the useAuth hook to return our test context
-  vi.mock('../contexts/AuthContext', () => ({
-    AuthProvider: ({ children }) => children,
-    useAuth: () => authContext || createMockAuthContext()
-  }));
-  
-  return children;
-};
 
-export const TestGamificationProvider = ({ children, gamificationContext }) => {
-  vi.mock('../contexts/GamificationContext', () => ({
-    GamificationProvider: ({ children }) => children,
-    useGamification: () => gamificationContext || createMockGamificationContext()
-  }));
-  
-  return children;
-};
-
-export const TestReadingSessionProvider = ({ children, readingSessionContext }) => {
-  vi.mock('../contexts/ReadingSessionContext', () => ({
-    ReadingSessionProvider: ({ children }) => children,
-    useReadingSession: () => readingSessionContext || createMockReadingSessionContext()
-  }));
-  
-  return children;
-};
-
-export const TestMaterial3ThemeProvider = ({ children, themeContext }) => {
-  vi.mock('../contexts/Material3ThemeContext', () => ({
-    Material3ThemeProvider: ({ children }) => children,
-    useMaterial3Theme: () => themeContext || createMockMaterial3ThemeContext()
-  }));
-  
-  return children;
-};
-
-// All-in-one test providers wrapper
-export const AllTestProviders = ({ 
-  children, 
-  authContext, 
-  gamificationContext, 
-  readingSessionContext,
-  themeContext,
-  initialRoutes = ['/']
-}) => {
+// All providers wrapper
+const AllProviders = ({ children }) => {
   return (
-    <MemoryRouter initialEntries={initialRoutes}>
-      <TestAuthProvider authContext={authContext}>
-        <TestGamificationProvider gamificationContext={gamificationContext}>
-          <TestReadingSessionProvider readingSessionContext={readingSessionContext}>
-            <TestMaterial3ThemeProvider themeContext={themeContext}>
+    <BrowserRouter>
+      <MockMaterial3ThemeProvider>
+        <MockAuthProvider>
+          <MockGamificationProvider>
+            <MockReadingSessionProvider>
               {children}
-            </TestMaterial3ThemeProvider>
-          </TestReadingSessionProvider>
-        </TestGamificationProvider>
-      </TestAuthProvider>
-    </MemoryRouter>
-  );
-};
+            </MockReadingSessionProvider>
+          </MockGamificationProvider>
+        </MockAuthProvider>
+      </MockMaterial3ThemeProvider>
+    </BrowserRouter>
+  )
+}
 
-// Custom render function with providers
-export const renderWithProviders = (ui, options = {}) => {
-  const {
-    authContext,
-    gamificationContext,
-    readingSessionContext,
-    themeContext,
-    initialRoutes,
-    ...renderOptions
-  } = options;
+// Custom render function
+const customRender = (ui, options = {}) => {
+  const { wrapper = AllProviders, ...renderOptions } = options
+  return render(ui, { wrapper, ...renderOptions })
+}
 
-  const Wrapper = ({ children }) => (
-    <AllTestProviders
-      authContext={authContext}
-      gamificationContext={gamificationContext}
-      readingSessionContext={readingSessionContext}
-      themeContext={themeContext}
-      initialRoutes={initialRoutes}
-    >
-      {children}
-    </AllTestProviders>
-  );
-
-  return render(ui, { wrapper: Wrapper, ...renderOptions });
-};
-
-// Custom render function with just Router (for simpler tests)
-export const renderWithRouter = (ui, { initialEntries = ['/'], ...options } = {}) => {
-  const Wrapper = ({ children }) => (
-    <MemoryRouter initialEntries={initialEntries}>
-      {children}
-    </MemoryRouter>
-  );
-
-  return render(ui, { wrapper: Wrapper, ...options });
-};
-
-// Mock localStorage for tests
-export const mockLocalStorage = () => {
-  const localStorageMock = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn()
-  };
-
-  Object.defineProperty(window, 'localStorage', {
-    value: localStorageMock,
-    writable: true
-  });
-
-  return localStorageMock;
-};
-
-// Mock fetch for API calls
-export const mockFetch = (mockResponse = {}, status = 200) => {
-  const mockFn = vi.fn(() =>
-    Promise.resolve({
-      ok: status >= 200 && status < 300,
-      status,
-      json: () => Promise.resolve(mockResponse),
-      text: () => Promise.resolve(JSON.stringify(mockResponse)),
-      headers: new Headers({ 'content-type': 'application/json' })
-    })
-  );
-
-  global.fetch = mockFn;
-  return mockFn;
-};
-
-// Utility to wait for async operations in tests
-export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0));
-
-// Common test scenarios
-export const TEST_USER = {
-  id: 'test-user-id',
+// Test data generators
+export const createMockUser = (overrides = {}) => ({
+  id: '1',
   email: 'test@example.com',
   name: 'Test User',
-  created_at: '2023-01-01T00:00:00Z'
-};
+  avatar: null,
+  created_at: new Date().toISOString(),
+  ...overrides
+})
 
-export const TEST_BOOK = {
-  id: 'test-book-id',
+export const createMockBook = (overrides = {}) => ({
+  id: '1',
   title: 'Test Book',
   author: 'Test Author',
-  file_path: '/test/path/book.pdf',
-  cover_image: '/test/path/cover.jpg',
-  created_at: '2023-01-01T00:00:00Z'
-};
+  cover_url: null,
+  file_url: null,
+  file_type: 'pdf',
+  user_id: '1',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  ...overrides
+})
 
-export const TEST_NOTE = {
-  id: 'test-note-id',
-  book_id: 'test-book-id',
-  content: 'This is a test note',
+export const createMockNote = (overrides = {}) => ({
+  id: '1',
+  content: 'Test note content',
   page_number: 1,
-  created_at: '2023-01-01T00:00:00Z'
-};
+  book_id: '1',
+  user_id: '1',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  ...overrides
+})
 
-// Test cleanup utility
-export const cleanupTest = () => {
-  vi.clearAllMocks();
-  vi.resetAllMocks();
-  
-  // Clear localStorage mock
-  if (window.localStorage) {
-    window.localStorage.clear();
+export const createMockReadingSession = (overrides = {}) => ({
+  id: '1',
+  book_id: '1',
+  user_id: '1',
+  start_time: new Date().toISOString(),
+  end_time: null,
+  duration: 0,
+  pages_read: 0,
+  created_at: new Date().toISOString(),
+  ...overrides
+})
+
+export const createMockAchievement = (overrides = {}) => ({
+  id: '1',
+  name: 'First Book',
+  description: 'Read your first book',
+  icon: '📚',
+  condition_type: 'books_read',
+  condition_value: 1,
+  points: 100,
+  unlocked: false,
+  unlocked_at: null,
+  ...overrides
+})
+
+// Mock API responses
+export const mockApiResponse = (data, status = 200) => ({
+  status,
+  data,
+  headers: {},
+  config: {}
+})
+
+export const mockApiError = (message = 'API Error', status = 500) => ({
+  response: {
+    status,
+    data: { error: message }
   }
-  
-  // Reset fetch mock
-  if (global.fetch && vi.isMockFunction(global.fetch)) {
-    global.fetch.mockClear();
-  }
-};
+})
+
+// Re-export everything from testing-library
+export * from '@testing-library/react'
+export { customRender as render }

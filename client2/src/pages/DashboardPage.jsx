@@ -9,7 +9,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
-import ReadingStatsOverview from '../components/dashboard/ReadingStatsOverview';
+import '../styles/dashboard-page.css';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
@@ -132,164 +132,64 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
   return (
-    <div style={{ 
-      marginBottom: '24px',
-      position: 'relative'
-    }}>
+    <div className="welcome-section">
       {/* Theme Toggle Button - Top Right */}
       <button
         onClick={toggleTheme}
-        style={{
-          position: 'absolute',
-          top: '16px',
-          right: '16px',
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          background: actualTheme === 'dark' ? '#fbbf24' : '#1e3a8a',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
-          transition: 'all 0.3s ease',
-          zIndex: 10,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-        }}
+        className="theme-toggle-button"
         title={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
       >
         {actualTheme === 'dark' ? '☀️' : '🌙'}
       </button>
 
-      <div style={{
-        background: actualTheme === 'dark' 
-          ? 'linear-gradient(135deg, #1e3a8a, #312e81)' 
-          : 'linear-gradient(135deg, #667eea, #764ba2)',
-        borderRadius: '16px',
-        padding: '24px 32px', // Reduced from 32px/40px
-        color: 'white',
-        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)'
-      }}>
-        <h1 style={{ 
-          fontSize: '28px', // Reduced from 32px
-          fontWeight: 'bold', 
-          marginBottom: '8px'
-        }}>
+      <div className="welcome-header">
+        <h1 className="welcome-title">
           {getMotivationalMessage()}
         </h1>
-        
-        <p style={{ 
-          fontSize: '16px', 
-          opacity: 0.9, 
-          marginBottom: '16px' // Reduced from 24px
-        }}>
+
+        <p className="welcome-subtitle">
           Welcome back, {user?.name || 'Reader'}! You're currently Level {stats?.level || 1}
           {checkInStreak > 0 && ` with a ${checkInStreak}-day check-in streak`}.
         </p>
 
         {/* Level Progress Bar */}
-        <div style={{ marginBottom: '20px' }}> {/* Reduced from 24px */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            marginBottom: '8px',
-            fontSize: '14px',
-            opacity: 0.9
-          }}>
+        <div className="level-progress-container">
+          <div className="level-progress-text">
             <span>Level {stats?.level || 1}</span>
             <span>{Math.round(levelProgress)}% to Level {(stats?.level || 1) + 1}</span>
           </div>
-          <div style={{
-            height: '8px',
-            background: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '4px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              width: `${levelProgress}%`,
-              height: '100%',
-              background: 'linear-gradient(90deg, #10b981, #059669)',
-              borderRadius: '4px',
-              transition: 'width 0.8s ease'
-            }}/>
+          <div className="level-progress-bar">
+            <div
+              className="level-progress-fill"
+              style={{ width: `${levelProgress}%` }}
+            />
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '12px', 
-          flexWrap: 'wrap'
-        }}>
-          <button 
+        <div className="quick-actions">
+          <button
             onClick={() => navigate('/library')}
-            style={{
-              padding: '10px 20px', // Reduced from 12px 24px
-              background: 'rgba(255, 255, 255, 0.25)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: '600',
-              fontSize: '14px',
-              cursor: 'pointer',
-              backdropFilter: 'blur(10px)',
-              transition: 'all 0.3s ease'
-            }}
+            className="action-button-primary"
           >
             📚 Continue Reading
           </button>
           
-          <button 
+          <button
             onClick={() => navigate('/upload')}
-            style={{
-              padding: '10px 20px',
-              background: 'rgba(255, 255, 255, 0.15)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '8px',
-              fontWeight: '600',
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
+            className="action-button-secondary"
           >
             ⬆️ Add Books
           </button>
 
-          <button 
+          <button
             onClick={handleDailyCheckIn}
             disabled={hasCheckedInToday}
-            style={{
-              padding: '10px 20px',
-              background: hasCheckedInToday 
-                ? 'rgba(255, 255, 255, 0.1)' 
-                : 'rgba(16, 185, 129, 0.2)',
-              color: hasCheckedInToday ? 'rgba(255, 255, 255, 0.6)' : 'white',
-              border: `1px solid ${hasCheckedInToday ? 'rgba(255, 255, 255, 0.2)' : 'rgba(16, 185, 129, 0.5)'}`,
-              borderRadius: '8px',
-              fontWeight: '600',
-              fontSize: '14px',
-              cursor: hasCheckedInToday ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease',
-              textDecoration: hasCheckedInToday ? 'line-through' : 'none',
-              position: 'relative'
-            }}
+            className="checkin-button"
           >
             {hasCheckedInToday ? '✓ Checked In' : '✅ Daily Check-in'}
             {checkInStreak > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                background: 'linear-gradient(135deg, #f59e0b, #ef4444)',
-                color: 'white',
-                borderRadius: '12px',
-                padding: '2px 8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-              }}>
+              <span className="checkin-streak-badge">
                 🔥 {checkInStreak}
               </span>
             )}
@@ -315,53 +215,35 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   }, [stats]);
 
   const statItems = [
-    { 
-      icon: '📚', 
-      value: stats?.booksRead || 0, 
-      label: 'Books Read',
-      color: actualTheme === 'dark' 
-        ? 'linear-gradient(135deg, #1e40af, #3730a3)'
-        : 'linear-gradient(135deg, #3b82f6, #6366f1)'
+    {
+      icon: '📚',
+      value: stats?.booksRead || 0,
+      label: 'Books Read'
     },
-    { 
-      icon: '📖', 
-      value: stats?.pagesRead || 0, 
-      label: 'Pages Read',
-      color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #7c3aed, #a21caf)'
-        : 'linear-gradient(135deg, #8b5cf6, #d946ef)'
+    {
+      icon: '📖',
+      value: stats?.pagesRead || 0,
+      label: 'Pages Read'
     },
-    { 
-      icon: '✅', 
-      value: displayStreak, 
-      label: 'Check-in Streak',
-      color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #059669, #10b981)'
-        : 'linear-gradient(135deg, #10b981, #059669)'
+    {
+      icon: '✅',
+      value: displayStreak,
+      label: 'Check-in Streak'
     },
-    { 
-      icon: '🔥', 
-      value: stats?.readingStreak || 0, 
-      label: 'Reading Streak',
-      color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #dc2626, #ea580c)'
-        : 'linear-gradient(135deg, #ef4444, #f97316)'
+    {
+      icon: '🔥',
+      value: stats?.readingStreak || 0,
+      label: 'Reading Streak'
     },
-    { 
-      icon: '⭐', 
-      value: stats?.totalPoints || 0, 
-      label: 'Total Points',
-      color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #ca8a04, #a16207)'
-        : 'linear-gradient(135deg, #eab308, #f59e0b)'
+    {
+      icon: '⭐',
+      value: stats?.totalPoints || 0,
+      label: 'Total Points'
     },
-    { 
-      icon: '📝', 
-      value: stats?.notesCreated || 0, 
-      label: 'Notes Created',
-      color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #059669, #0d9488)'
-        : 'linear-gradient(135deg, #10b981, #14b8a6)'
+    {
+      icon: '📝',
+      value: stats?.notesCreated || 0,
+      label: 'Notes Created'
     }
   ];
 
@@ -369,11 +251,11 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   return (
     <div className="stats-grid">
       {[...Array(6)].map((_, i) => (
-        <MD3Card key={i} variant="elevated" className="stat-card">
+        <div key={i} className="stat-card">
           <div className="loading-shimmer" style={{ height: '24px', marginBottom: '8px' }}></div>
           <div className="loading-shimmer" style={{ height: '32px', marginBottom: '4px' }}></div>
           <div className="loading-shimmer" style={{ height: '16px' }}></div>
-        </MD3Card>
+        </div>
       ))}
     </div>
   );
@@ -382,15 +264,14 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   return (
   <div className="stats-grid">
     {statItems.map((stat, index) => (
-      <MD3Card 
-        key={index} 
-        variant="elevated" 
+      <div
+        key={index}
         className={`stat-card ${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
       >
         <div className="stat-icon">{stat.icon}</div>
         <div className="stat-value">{stat.value}</div>
         <div className="stat-label">{stat.label}</div>
-      </MD3Card>
+      </div>
     ))}
   </div>
 );
@@ -399,8 +280,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 // Recent Achievements Component (kept but can be removed if needed)
 const RecentAchievements = () => {
   const { achievements } = useGamification();
-  const { actualTheme } = useMaterial3Theme();
-  
+
   const recentAchievements = useMemo(() => {
     if (!achievements || achievements.length === 0) return [];
     return achievements.slice(-3).reverse();
@@ -411,38 +291,15 @@ const RecentAchievements = () => {
   }
 
   return (
-    <div style={{ 
-      background: actualTheme === 'dark' ? '#1e293b' : 'white', 
-      borderRadius: '12px', 
-      padding: '24px', 
-      border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
-      marginBottom: '32px'
-    }}>
-      <h3 style={{ 
-        fontSize: '20px', 
-        fontWeight: 'bold', 
-        marginBottom: '16px', 
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-      }}>
+    <div className="section-card">
+      <h3 className="section-title">
         🏆 Recent Achievements
       </h3>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      <div className="achievements-grid">
         {recentAchievements.map((achievement, index) => (
-          <div 
+          <div
             key={index}
-            style={{
-              padding: '8px 16px',
-              background: actualTheme === 'dark'
-                ? 'linear-gradient(135deg, #312e81, #1e3a8a)'
-                : 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-              borderRadius: '20px',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: actualTheme === 'dark' ? 'white' : '#1f2937',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
+            className="achievement-tag"
           >
             <span>{achievement.icon || '🏅'}</span>
             <span>{achievement.name}</span>
@@ -455,7 +312,6 @@ const RecentAchievements = () => {
 
 // Currently Reading Section Component
 const CurrentlyReading = () => {
-  const { actualTheme } = useMaterial3Theme();
   const { activeSession } = useReadingSession(); // Listen to session changes
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
@@ -494,87 +350,34 @@ const CurrentlyReading = () => {
   if (currentlyReading.length === 0) return null;
   
   return (
-    <div style={{ 
-      background: actualTheme === 'dark' ? '#1e293b' : 'white', 
-      borderRadius: '12px', 
-      padding: '24px', 
-      border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
-      marginBottom: '32px'
-    }}>
-      <h3 style={{ 
-        fontSize: '20px', 
-        fontWeight: 'bold', 
-        marginBottom: '16px', 
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-      }}>
+    <div className="section-card">
+      <h3 className="section-title">
         📖 Currently Reading ({currentlyReading.length})
       </h3>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '16px' 
-      }}>
+      <div className="books-grid">
         {currentlyReading.slice(0, 4).map((book) => (
-          <div 
+          <div
             key={book.id}
             onClick={() => navigate(`/read/${book.id}`)}
-            style={{
-              padding: '12px',
-              background: actualTheme === 'dark' ? '#0f172a' : '#f8fafc',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
+            className="book-card"
           >
-            <div style={{ 
-              fontSize: '14px', 
-              fontWeight: '600',
-              color: actualTheme === 'dark' ? '#e2e8f0' : '#0f172a',
-              marginBottom: '8px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div className="book-title">
               {book.title}
             </div>
-            <div style={{ 
-              fontSize: '12px',
-              color: actualTheme === 'dark' ? '#cbd5e1' : '#334155',
-              fontWeight: '500',
-              marginBottom: '8px'
-            }}>
+            <div className="book-author">
               by {book.author}
             </div>
             {book.progress !== undefined && (
               <div>
-                <div style={{
-                  height: '4px',
-                  background: actualTheme === 'dark' ? '#334155' : '#e5e7eb',
-                  borderRadius: '2px',
-                  overflow: 'hidden',
-                  marginBottom: '4px'
-                }}>
-                  <div style={{
-                    width: `${book.progress || 0}%`,
-                    height: '100%',
-                    background: 'linear-gradient(90deg, #3b82f6, #2563eb)',
-                    borderRadius: '2px',
-                    transition: 'width 0.3s ease'
-                  }}/>
+                <div className="progress-bar-container">
+                  <div className="progress-bar">
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${book.progress || 0}%` }}
+                    />
+                  </div>
                 </div>
-                <div style={{
-                  fontSize: '11px',
-                  color: actualTheme === 'dark' ? '#64748b' : '#9ca3af'
-                }}>
+                <div className="progress-text">
                   {book.progress || 0}% complete
                 </div>
               </div>
@@ -585,16 +388,7 @@ const CurrentlyReading = () => {
       {currentlyReading.length > 4 && (
         <button
           onClick={() => navigate('/library')}
-          style={{
-            marginTop: '16px',
-            padding: '8px 16px',
-            background: 'transparent',
-            color: '#3b82f6',
-            border: 'none',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}
+          className="view-all-button"
         >
           View all {currentlyReading.length} books →
         </button>
@@ -605,7 +399,6 @@ const CurrentlyReading = () => {
 
 // Recently Added Books Component for Dashboard
 const RecentlyAdded = () => {
-  const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -651,76 +444,24 @@ const RecentlyAdded = () => {
   if (recentBooks.length === 0) return null;
   
   return (
-    <div style={{ 
-      background: actualTheme === 'dark' ? '#1e293b' : 'white', 
-      borderRadius: '12px', 
-      padding: '20px', 
-      border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
-      marginBottom: '32px'
-    }}>
-      <h3 style={{ 
-        fontSize: '18px', 
-        fontWeight: 'bold', 
-        marginBottom: '16px', 
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-      }}>
+    <div className="section-card-compact">
+      <h3 className="section-title-compact">
         ✨ Recently Added ({recentBooks.length})
       </h3>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-        gap: '12px' 
-      }}>
+      <div className="books-grid-compact">
         {recentBooks.map((book) => (
-          <div 
+          <div
             key={book.id}
             onClick={() => navigate('/library')}
-            style={{
-              padding: '10px',
-              background: actualTheme === 'dark' ? '#0f172a' : '#f8fafc',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
+            className="book-card-compact"
           >
-            <div style={{ 
-              fontSize: '13px', 
-              fontWeight: '600',
-              color: actualTheme === 'dark' ? '#e2e8f0' : '#0f172a',
-              marginBottom: '6px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div className="book-title-compact">
               {book.title}
             </div>
-            <div style={{ 
-              fontSize: '11px', 
-              color: actualTheme === 'dark' ? '#cbd5e1' : '#334155',
-              fontWeight: '500',
-              marginBottom: '8px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
+            <div className="book-author-compact">
               by {book.author}
             </div>
-            <div style={{ 
-              fontSize: '10px', 
-              color: actualTheme === 'dark' ? '#64748b' : '#9ca3af',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}>
+            <div className="book-date">
               📅 {new Date(book.created_at || book.dateAdded).toLocaleDateString()}
             </div>
           </div>
@@ -728,21 +469,10 @@ const RecentlyAdded = () => {
       </div>
       
       {/* View All Link */}
-      <div style={{ 
-        marginTop: '16px', 
-        textAlign: 'center' 
-      }}>
-        <button 
+      <div className="view-all-centered">
+        <button
           onClick={() => navigate('/library')}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#3b82f6',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            textDecoration: 'underline'
-          }}
+          className="view-all-link"
         >
           View all in Library →
         </button>
@@ -755,8 +485,8 @@ const RecentlyAdded = () => {
 const DashboardPage = () => {
   console.log('🔄 DashboardPage: Rendering');
   const { user } = useAuth();
-  const { actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
+  const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   const [checkInStreak, setCheckInStreak] = useState(0);
   const [books, setBooks] = useState([]);
@@ -795,40 +525,22 @@ const DashboardPage = () => {
   }, []);
 
   return (
-    <div style={{ 
-      background: actualTheme === 'dark' ? '#0f172a' : '#f8fafc',
-      minHeight: '100vh',
-      transition: 'background 0.3s ease'
-    }}>
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '24px'
-      }}>
+    <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
+      <div className="dashboard-content">
         {/* Welcome Section with Theme Toggle */}
         <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} />
 
       {/* Your Progress Section */}
-      <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ 
-          fontSize: '24px', 
-          fontWeight: 'bold', 
-          marginBottom: '16px', 
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-        }}>
+      <div className="progress-section">
+        <h2 className="section-header">
           📊 Your Progress
         </h2>
         <QuickStatsOverview checkInStreak={checkInStreak} />
       </div>
 
       {/* Literary Mentor Section */}
-      <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ 
-          fontSize: '24px', 
-          fontWeight: 'bold', 
-          marginBottom: '16px', 
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-        }}>
+      <div className="progress-section">
+        <h2 className="section-header">
           🎓 Your Literary Mentor
         </h2>
         <LiteraryMentorUI 
@@ -841,8 +553,6 @@ const DashboardPage = () => {
       {/* Currently Reading Section */}
       <CurrentlyReading />
 
-      {/* Reading Statistics Overview */}
-      <ReadingStatsOverview books={books} />
 
       {/* Recently Added Section */}
       <RecentlyAdded />
@@ -851,80 +561,24 @@ const DashboardPage = () => {
       <RecentAchievements />
 
       {/* Call to Action */}
-      <div style={{
-        background: actualTheme === 'dark'
-          ? 'linear-gradient(135deg, #1e293b, #334155)'
-          : 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
-        border: `1px solid ${actualTheme === 'dark' ? '#0ea5e9' : '#0ea5e9'}`,
-        borderRadius: '16px',
-        padding: '32px',
-        textAlign: 'center'
-      }}>
-        <h3 style={{ 
-          fontSize: '24px', 
-          fontWeight: 'bold', 
-          marginBottom: '8px', 
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#0f172a'
-        }}>
+      <div className="cta-section">
+        <h3 className="cta-title">
           🚀 Ready to Level Up?
         </h3>
-        <p style={{ 
-          fontSize: '16px', 
-          color: actualTheme === 'dark' ? '#94a3b8' : '#475569', 
-          marginBottom: '24px' 
-        }}>
+        <p className="cta-subtitle">
           Continue your reading journey and unlock amazing achievements!
         </p>
-        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button 
+        <div className="cta-buttons">
+          <button
             onClick={() => navigate('/library')}
-            style={{
-              padding: '12px 32px',
-              background: actualTheme === 'dark'
-                ? 'linear-gradient(135deg, #0ea5e9, #0284c7)'
-                : 'linear-gradient(135deg, #0ea5e9, #0284c7)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 15px rgba(14, 165, 233, 0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 6px 20px rgba(14, 165, 233, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 4px 15px rgba(14, 165, 233, 0.3)';
-            }}
+            className="cta-button-primary"
           >
             📚 Open Library
           </button>
           
-          <button 
+          <button
             onClick={() => navigate('/upload')}
-            style={{
-              padding: '12px 32px',
-              background: 'transparent',
-              color: actualTheme === 'dark' ? '#0ea5e9' : '#0ea5e9',
-              border: '2px solid #0ea5e9',
-              borderRadius: '8px',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = 'rgba(14, 165, 233, 0.1)';
-              e.target.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'transparent';
-              e.target.style.transform = 'translateY(0)';
-            }}
+            className="cta-button-secondary"
           >
             ⬆️ Upload Books
           </button>

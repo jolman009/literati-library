@@ -1,14 +1,16 @@
 /* LiteraryMentorUI.css - Styles for the Literary Mentor Interface */
 
 .literary-mentor-ui {
-  background: linear-gradient(135deg, 
-    rgba(var(--md-sys-color-primary), 0.05),
-    rgba(var(--md-sys-color-tertiary), 0.05)
+  background: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.08),
+    rgba(234, 88, 12, 0.08)
   );
-  border-radius: var(--md-sys-shape-corner-large);
-  padding: var(--md-sys-spacing-6);
-  box-shadow: var(--md-sys-elevation-level1);
+  border-radius: 16px;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-height: 500px;
+  backdrop-filter: blur(10px);
 }
 
 /* Header Section */
@@ -73,39 +75,61 @@
 .tab-button {
   display: flex;
   align-items: center;
-  gap: var(--md-sys-spacing-2);
-  padding: var(--md-sys-spacing-3) var(--md-sys-spacing-4);
+  gap: 8px;
+  padding: 12px 16px;
   background: transparent;
   border: none;
-  border-radius: var(--md-sys-shape-corner-medium);
-  color: rgb(var(--md-sys-color-on-surface-variant));
-  font-family: var(--md-sys-typescale-label-large-font-family);
-  font-size: var(--md-sys-typescale-label-large-font-size);
-  font-weight: var(--md-sys-typescale-label-large-font-weight);
+  border-radius: 8px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  transition: all 0.2s ease;
   position: relative;
 }
 
 .tab-button:hover {
-  background: rgba(var(--md-sys-color-primary), 0.08);
-  color: rgb(var(--md-sys-color-primary));
+  background: rgba(79, 70, 229, 0.12);
+  color: var(--md-sys-color-primary);
 }
 
 .tab-button.active {
-  color: rgb(var(--md-sys-color-primary));
-  background: rgba(var(--md-sys-color-primary), 0.12);
+  color: var(--md-sys-color-primary);
+  background: rgba(79, 70, 229, 0.16);
+  font-weight: 600;
 }
 
 .tab-button.active::after {
   content: '';
   position: absolute;
   bottom: -2px;
-  left: var(--md-sys-spacing-4);
-  right: var(--md-sys-spacing-4);
-  height: 2px;
-  background: rgb(var(--md-sys-color-primary));
-  border-radius: 1px;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+  background: var(--md-sys-color-primary);
+  border-radius: 2px;
+}
+
+/* Dark mode tab improvements */
+[data-theme="dark"] .tab-button,
+.dark .tab-button,
+.dashboard-container.dark .tab-button {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] .tab-button:hover,
+.dark .tab-button:hover,
+.dashboard-container.dark .tab-button:hover {
+  background: rgba(79, 70, 229, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .tab-button.active,
+.dark .tab-button.active,
+.dashboard-container.dark .tab-button.active {
+  color: #ffffff;
+  background: rgba(79, 70, 229, 0.3);
 }
 
 /* Insights Panel */
@@ -817,24 +841,43 @@
 }
 
 /* Dark Theme Adjustments */
-.theme-dark .literary-mentor-ui {
+[data-theme="dark"] .literary-mentor-ui,
+.dark .literary-mentor-ui,
+.dashboard-container.dark .literary-mentor-ui {
   background: linear-gradient(135deg,
-    rgba(var(--md-sys-color-primary), 0.08),
-    rgba(var(--md-sys-color-tertiary), 0.08)
+    rgba(79, 70, 229, 0.15),
+    rgba(234, 88, 12, 0.15)
   );
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.theme-dark .insight-card,
-.theme-dark .reading-stats,
-.theme-dark .discussion-history,
-.theme-dark .question-content,
-.theme-dark .answer-option {
-  background: rgba(var(--md-sys-color-surface), 0.3);
+[data-theme="dark"] .insight-card,
+.dark .insight-card,
+.dashboard-container.dark .insight-card,
+[data-theme="dark"] .reading-stats,
+.dark .reading-stats,
+.dashboard-container.dark .reading-stats,
+[data-theme="dark"] .discussion-history,
+.dark .discussion-history,
+.dashboard-container.dark .discussion-history,
+[data-theme="dark"] .question-content,
+.dark .question-content,
+.dashboard-container.dark .question-content,
+[data-theme="dark"] .answer-option,
+.dark .answer-option,
+.dashboard-container.dark .answer-option {
+  background: rgba(31, 41, 55, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.theme-dark .response-textarea:focus,
-.theme-dark .answer-textarea {
-  background: rgba(var(--md-sys-color-surface), 0.5);
+[data-theme="dark"] .response-textarea:focus,
+.dark .response-textarea:focus,
+.dashboard-container.dark .response-textarea:focus,
+[data-theme="dark"] .answer-textarea,
+.dark .answer-textarea,
+.dashboard-container.dark .answer-textarea {
+  background: rgba(31, 41, 55, 0.9);
+  border-color: rgba(79, 70, 229, 0.8);
 }
 
 /* API Configuration Modal */
@@ -901,24 +944,59 @@
   background: rgba(var(--md-sys-color-on-surface), 0.08);
 }
 
+/* Light Mode Hierarchy - Apply light gray/dark gray pattern */
+:root:not([data-theme="dark"]) .mentor-insights-panel,
+:root:not([data-theme="dark"]) .mentor-discussion-panel,
+:root:not([data-theme="dark"]) .mentor-quiz-panel {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
+  border: 1px solid #374151;
+  color: white;
+}
+
+/* Light mode stat items get darker background */
+:root:not([data-theme="dark"]) .stat-item {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
+  border: 1px solid #374151;
+  color: white;
+}
+
+/* Light mode text elements inside dark panels should be white */
+:root:not([data-theme="dark"]) .mentor-insights-panel .insights-header h3,
+:root:not([data-theme="dark"]) .mentor-discussion-panel .discussion-header h3,
+:root:not([data-theme="dark"]) .mentor-quiz-panel .quiz-header h3,
+:root:not([data-theme="dark"]) .stat-label,
+:root:not([data-theme="dark"]) .stat-value {
+  color: white;
+}
+
+/* Light mode insight cards and other nested elements maintain visibility */
+:root:not([data-theme="dark"]) .insight-card,
+:root:not([data-theme="dark"]) .reading-stats,
+:root:not([data-theme="dark"]) .discussion-history,
+:root:not([data-theme="dark"]) .question-content {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .literary-mentor-ui {
     padding: var(--md-sys-spacing-4);
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .prompts-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .quiz-actions {
     flex-direction: column;
   }
-  
+
   .retake-quiz, .new-quiz {
     width: 100%;
   }

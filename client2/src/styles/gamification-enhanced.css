@@ -1,0 +1,1017 @@
+/* ===============================================
+   ENHANCED GAMIFICATION PAGE STYLING
+   ===============================================
+   Provides improved dark mode hierarchy differentiation
+   while preserving the approved light mode design.
+   =============================================== */
+
+/* ===== ENHANCED DARK MODE TOKENS ===== */
+[data-theme="dark"] {
+  /* Enhanced surface hierarchy for better differentiation */
+  --gamification-background: #000913;
+  --gamification-surface-lowest: #0f1419;
+  --gamification-surface-low: #1a1f26;
+  --gamification-surface: #1e242b;
+  --gamification-surface-high: #232930;
+  --gamification-surface-highest: #2a3038;
+
+  /* Enhanced contrast colors for better readability */
+  --gamification-on-surface: #e8eaed;
+  --gamification-on-surface-variant: #c4c7c5;
+  --gamification-on-surface-variant-dim: #9aa0a6;
+
+  /* Enhanced primary colors for better visibility */
+  --gamification-primary: #8ab4f8;
+  --gamification-primary-bright: #aecbfa;
+  --gamification-primary-container: #1a73e8;
+  --gamification-on-primary-container: #d2e3fc;
+
+  /* Enhanced secondary colors */
+  --gamification-secondary: #81c995;
+  --gamification-secondary-bright: #a8dab5;
+  --gamification-secondary-container: #137333;
+  --gamification-on-secondary-container: #e6f4ea;
+
+  /* Enhanced tertiary colors */
+  --gamification-tertiary: #fab663;
+  --gamification-tertiary-bright: #fdd663;
+  --gamification-tertiary-container: #ea8600;
+  --gamification-on-tertiary-container: #fef7ff;
+
+  /* Enhanced outline colors for better definition */
+  --gamification-outline: #5f6368;
+  --gamification-outline-variant: #3c4043;
+
+  /* Enhanced shadow for depth */
+  --gamification-shadow: rgba(0, 0, 0, 0.3);
+  --gamification-elevation-shadow:
+    0px 1px 3px 0px rgba(0, 0, 0, 0.4),
+    0px 4px 8px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== LIGHT MODE TOKENS (unchanged) ===== */
+[data-theme="light"],
+:root {
+  --gamification-background: var(--md-sys-color-background);
+  --gamification-surface-lowest: var(--md-sys-color-surface-container-lowest);
+  --gamification-surface-low: var(--md-sys-color-surface-container-low);
+  --gamification-surface: var(--md-sys-color-surface);
+  --gamification-surface-high: var(--md-sys-color-surface-container-high);
+  --gamification-surface-highest: var(--md-sys-color-surface-container-highest);
+
+  --gamification-on-surface: var(--md-sys-color-on-surface);
+  --gamification-on-surface-variant: var(--md-sys-color-on-surface-variant);
+  --gamification-on-surface-variant-dim: var(--md-sys-color-on-surface-variant);
+
+  --gamification-primary: var(--md-sys-color-primary);
+  --gamification-primary-bright: var(--md-sys-color-primary);
+  --gamification-primary-container: var(--md-sys-color-primary-container);
+  --gamification-on-primary-container: var(--md-sys-color-on-primary-container);
+
+  --gamification-secondary: var(--md-sys-color-secondary);
+  --gamification-secondary-bright: var(--md-sys-color-secondary);
+  --gamification-secondary-container: var(--md-sys-color-secondary-container);
+  --gamification-on-secondary-container: var(--md-sys-color-on-secondary-container);
+
+  --gamification-tertiary: var(--md-sys-color-tertiary);
+  --gamification-tertiary-bright: var(--md-sys-color-tertiary);
+  --gamification-tertiary-container: var(--md-sys-color-tertiary-container);
+  --gamification-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+
+  --gamification-outline: var(--md-sys-color-outline);
+  --gamification-outline-variant: var(--md-sys-color-outline-variant);
+
+  --gamification-shadow: rgba(0, 0, 0, 0.15);
+  --gamification-elevation-shadow: var(--md-sys-elevation-level2);
+}
+
+/* ===== ENHANCED GAMIFICATION PAGE STYLES ===== */
+
+/* Enhanced page background for better hierarchy */
+.gamification-page {
+  background: var(--gamification-background);
+  min-height: 100vh;
+}
+
+/* Enhanced main content card styling */
+.gamification-content-card {
+  background: var(--gamification-surface);
+  border: 1px solid var(--gamification-outline-variant);
+  box-shadow: var(--gamification-elevation-shadow);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+/* Enhanced header section with canvas-like styling */
+.gamification-page-header {
+  background: linear-gradient(135deg, var(--gamification-primary-container), var(--gamification-secondary-container));
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px var(--gamification-shadow);
+  border: 2px solid var(--gamification-outline-variant);
+}
+
+.gamification-page-title {
+  color: var(--md-sys-color-on-primary-container) !important;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.gamification-page-subtitle {
+  color: var(--md-sys-color-on-primary-container) !important;
+  opacity: 0.9;
+}
+
+/* Enhanced section navigation with canvas styling */
+.gamification-nav-container {
+  background: linear-gradient(135deg, var(--gamification-surface-high), var(--gamification-surface-highest));
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 16px var(--gamification-shadow);
+  border: 1px solid var(--gamification-outline-variant);
+}
+
+.gamification-nav-button {
+  background: var(--gamification-surface-high);
+  color: var(--gamification-on-surface-variant);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-nav-button:hover {
+  background: var(--gamification-surface-highest);
+  color: var(--gamification-on-surface);
+  border-color: var(--gamification-outline);
+}
+
+.gamification-nav-button.active {
+  background: var(--gamification-primary);
+  color: white;
+  border-color: var(--gamification-primary);
+  box-shadow: 0px 2px 4px 0px var(--gamification-shadow);
+}
+
+/* Enhanced overview hero card */
+.gamification-hero-card {
+  background: linear-gradient(135deg, var(--gamification-primary) 0%, var(--gamification-secondary) 100%);
+  border: none;
+  box-shadow:
+    0px 4px 12px 0px var(--gamification-shadow),
+    0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced overview feature cards */
+.gamification-feature-card {
+  background: var(--gamification-surface-high);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-feature-card:hover {
+  background: var(--gamification-surface-highest);
+  border-color: var(--gamification-outline);
+  transform: translateY(-2px);
+  box-shadow: var(--gamification-elevation-shadow);
+}
+
+.gamification-feature-title {
+  color: var(--gamification-on-surface);
+  font-weight: 600;
+}
+
+.gamification-feature-description {
+  color: var(--gamification-on-surface-variant);
+}
+
+/* Enhanced section headers */
+.gamification-section-header {
+  color: var(--gamification-on-surface);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.gamification-section-subtitle {
+  color: var(--gamification-on-surface-variant);
+}
+
+/* Enhanced category cards */
+.gamification-category-card {
+  background: var(--gamification-surface-high);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-category-title {
+  color: var(--gamification-on-surface);
+  font-weight: 600;
+}
+
+/* Enhanced action/achievement items */
+.gamification-item {
+  background: var(--gamification-surface-highest);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-item:hover {
+  border-color: var(--gamification-outline);
+  transform: translateY(-1px);
+  box-shadow: 0px 2px 8px 0px var(--gamification-shadow);
+}
+
+.gamification-item-title {
+  color: var(--gamification-on-surface);
+  font-weight: 500;
+}
+
+.gamification-item-description {
+  color: var(--gamification-on-surface-variant);
+}
+
+/* Enhanced level cards with better hierarchy */
+.gamification-level-card {
+  background: var(--gamification-surface-high);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-level-card.current {
+  background: linear-gradient(135deg, var(--gamification-primary) 0%, var(--gamification-secondary) 100%);
+  border: 2px solid var(--gamification-primary-bright);
+  color: white;
+  box-shadow:
+    0px 4px 12px 0px var(--gamification-shadow),
+    0px 0px 0px 1px rgba(255, 255, 255, 0.1);
+}
+
+.gamification-level-card.completed {
+  background: var(--gamification-primary-container);
+  border-color: var(--gamification-primary);
+  color: var(--gamification-on-primary-container);
+}
+
+.gamification-level-card.locked {
+  background: var(--gamification-surface);
+  border-color: var(--gamification-outline-variant);
+  opacity: 0.6;
+}
+
+/* Enhanced tip cards */
+.gamification-tip-card {
+  background: linear-gradient(135deg,
+    rgba(var(--md-ref-palette-tertiary70), 0.15) 0%,
+    rgba(var(--md-ref-palette-primary70), 0.15) 100%);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .gamification-tip-card {
+  background: linear-gradient(135deg,
+    rgba(250, 182, 99, 0.15) 0%,
+    rgba(138, 180, 248, 0.15) 100%);
+  border-color: var(--gamification-outline);
+}
+
+.gamification-tip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--gamification-elevation-shadow);
+}
+
+.gamification-tip-title {
+  color: var(--gamification-on-surface);
+  font-weight: 600;
+}
+
+.gamification-tip-description {
+  color: var(--gamification-on-surface-variant);
+}
+
+.gamification-tip-points {
+  color: var(--gamification-primary-bright);
+  background: rgba(var(--md-ref-palette-primary70), 0.2);
+  border: 1px solid var(--gamification-primary);
+}
+
+[data-theme="dark"] .gamification-tip-points {
+  background: rgba(138, 180, 248, 0.2);
+  border-color: var(--gamification-primary);
+  color: var(--gamification-primary-bright);
+}
+
+/* Enhanced point badges */
+.gamification-point-badge {
+  background: rgba(var(--md-ref-palette-primary70), 0.15);
+  color: var(--gamification-primary-bright);
+  border: 1px solid var(--gamification-primary);
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+[data-theme="dark"] .gamification-point-badge {
+  background: rgba(138, 180, 248, 0.2);
+  color: var(--gamification-primary-bright);
+  border-color: var(--gamification-primary);
+}
+
+/* Enhanced achievement badges */
+.gamification-achievement-badge {
+  background: var(--gamification-surface-highest);
+  border: 1px solid var(--gamification-outline);
+  color: var(--gamification-on-surface-variant);
+}
+
+.gamification-achievement-badge.unlocked {
+  background: var(--gamification-primary-container);
+  border-color: var(--gamification-primary);
+  color: var(--gamification-on-primary-container);
+}
+
+/* Enhanced back button */
+.gamification-back-button {
+  background: var(--gamification-surface-high);
+  color: var(--gamification-on-surface);
+  border: 1px solid var(--gamification-outline-variant);
+  transition: all 0.2s ease;
+}
+
+.gamification-back-button:hover {
+  background: var(--gamification-surface-highest);
+  border-color: var(--gamification-outline);
+  box-shadow: 0px 2px 8px 0px var(--gamification-shadow);
+}
+
+/* Enhanced category color differentiation for dark mode */
+[data-theme="dark"] .gamification-category-reading {
+  border-left: 4px solid var(--gamification-primary-bright);
+}
+
+[data-theme="dark"] .gamification-category-library {
+  border-left: 4px solid var(--gamification-secondary-bright);
+}
+
+[data-theme="dark"] .gamification-category-notes {
+  border-left: 4px solid var(--gamification-tertiary-bright);
+}
+
+/* Enhanced scrollbar for dark mode */
+[data-theme="dark"] .gamification-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] .gamification-page ::-webkit-scrollbar-track {
+  background: var(--gamification-surface);
+}
+
+[data-theme="dark"] .gamification-page ::-webkit-scrollbar-thumb {
+  background: var(--gamification-outline);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .gamification-page ::-webkit-scrollbar-thumb:hover {
+  background: var(--gamification-on-surface-variant-dim);
+}
+
+/* Enhanced focus states for accessibility */
+.gamification-page button:focus-visible,
+.gamification-page a:focus-visible {
+  outline: 2px solid var(--gamification-primary-bright);
+  outline-offset: 2px;
+}
+
+/* Enhanced responsive behavior */
+@media (max-width: 768px) {
+  .gamification-page {
+    padding: 16px;
+  }
+
+  .gamification-content-card {
+    margin: 8px 0;
+  }
+
+  .gamification-nav-button {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+/* Enhanced print styles */
+@media print {
+  .gamification-page {
+    background: white;
+    color: black;
+  }
+
+  .gamification-content-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* ===============================================
+   REFACTORED CSS CLASSES FOR JSX COMPONENTS
+   ===============================================
+   Replacing inline styles with proper CSS classes
+   to follow project guidelines
+   =============================================== */
+
+/* Gamification Page Layout */
+.gamification-overview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.gamification-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.gamification-overview-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.gamification-stat-item {
+  text-align: center;
+}
+
+.gamification-stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+}
+
+.gamification-stat-label {
+  font-size: 14px;
+  opacity: 0.8;
+  color: white;
+}
+
+/* Section Headers */
+.gamification-section-header-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.gamification-section-main-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-section-main-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Category Cards */
+.gamification-category-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.gamification-action-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.gamification-action-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gamification-action-text h4 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-action-text p {
+  font-size: 14px;
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Levels Grid */
+.gamification-levels-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.gamification-level-card-content {
+  text-align: center;
+  position: relative;
+}
+
+.gamification-level-emoji {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.gamification-level-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.gamification-level-subtitle {
+  font-size: 14px;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.gamification-level-points-text {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+/* Achievement Layout */
+.gamification-achievement-category-container {
+  margin-bottom: 24px;
+}
+
+.gamification-achievement-category-header {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.gamification-achievement-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.gamification-achievement-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.gamification-achievement-icon {
+  font-size: 24px;
+}
+
+.gamification-achievement-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.gamification-achievement-info p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.gamification-achievement-points {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: right;
+  margin-top: 8px;
+}
+
+/* Tips Layout */
+.gamification-tips-container {
+  display: grid;
+  gap: 20px;
+}
+
+.gamification-tip-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.gamification-tip-emoji {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.gamification-tip-info {
+  flex: 1;
+}
+
+.gamification-tip-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.gamification-tip-info p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.gamification-tip-points-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* ===============================================
+   CRITICAL TEXT CONTRAST FIXES
+   ===============================================
+   Ensuring all text is visible in both themes
+   =============================================== */
+
+/* Global text fixes for gamification components */
+.gamification-category-title {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-feature-title {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-feature-description {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-item-title {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-item-description {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-level-title {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-level-subtitle {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-achievement-info h4 {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-achievement-info p {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-achievement-points {
+  color: var(--md-sys-color-primary) !important;
+}
+
+.gamification-tip-info h4 {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-tip-info p {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Ensure all card content has proper contrast */
+.gamification-content-card,
+.gamification-feature-card,
+.gamification-category-card,
+.gamification-item,
+.gamification-level-card,
+.gamification-tip-card {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+/* Point badges need proper contrast */
+.gamification-point-badge,
+.gamification-tip-points-badge {
+  color: var(--md-sys-color-on-primary-container) !important;
+  background: var(--md-sys-color-primary-container) !important;
+  border: 1px solid var(--md-sys-color-primary) !important;
+}
+
+/* ===============================================
+   ADDITIONAL CSS CLASSES FOR NEW JSX STRUCTURE
+   =============================================== */
+
+/* Page and section structure */
+.gamification-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: var(--md-sys-color-background) !important;
+  color: var(--md-sys-color-on-background) !important;
+  min-height: 100vh;
+}
+
+.gamification-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.gamification-page-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-page-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Navigation */
+.gamification-nav-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+}
+
+.gamification-nav-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  background: var(--md-sys-color-surface-container) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  transition: all 0.2s ease;
+}
+
+.gamification-nav-button:hover {
+  background: var(--md-sys-color-surface-container-high) !important;
+}
+
+.gamification-nav-button.active {
+  background: var(--md-sys-color-primary-container) !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+}
+
+/* Hero card */
+.gamification-hero-card {
+  padding: 32px;
+  color: white !important;
+  text-align: center;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary)) !important;
+}
+
+.gamification-hero-title {
+  margin: 0 0 16px 0;
+  font-size: 32px;
+  font-weight: bold;
+  color: white !important;
+}
+
+.gamification-hero-subtitle {
+  margin: 0 0 24px 0;
+  font-size: 18px;
+  opacity: 0.9;
+  color: white !important;
+}
+
+/* Feature cards */
+.gamification-feature-card {
+  padding: 24px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-feature-title {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-feature-description {
+  margin: 0 0 16px 0;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Section layouts */
+.gamification-points-section,
+.gamification-levels-section,
+.gamification-achievements-section,
+.gamification-tips-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.gamification-section-header-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.gamification-section-header {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-section-subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Category cards */
+.gamification-category-card {
+  padding: 24px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-category-title {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-actions-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.gamification-action-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--md-sys-color-surface-container-low) !important;
+  border-radius: 12px;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-action-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gamification-action-icon {
+  font-size: 20px;
+}
+
+.gamification-action-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-action-description {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-point-badge {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: var(--md-sys-color-on-primary-container) !important;
+  background: var(--md-sys-color-primary-container) !important;
+}
+
+/* Levels grid */
+.gamification-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+/* Achievement section */
+.gamification-achievement-category-card {
+  padding: 24px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-achievement-category-title {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--md-sys-color-primary) !important;
+}
+
+.gamification-achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.gamification-achievement-item {
+  padding: 16px;
+  background: var(--md-sys-color-surface-variant) !important;
+  border-radius: 12px;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-achievement-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.gamification-achievement-icon {
+  font-size: 24px;
+}
+
+.gamification-achievement-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-achievement-requirement {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+.gamification-achievement-points {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--md-sys-color-primary) !important;
+  text-align: right;
+}
+
+/* Tips section */
+.gamification-tips-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.gamification-tip-card {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(var(--md-sys-color-tertiary-rgb), 0.1) 0%, rgba(var(--md-sys-color-primary-rgb), 0.1) 100%) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+}
+
+.gamification-tip-content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.gamification-tip-icon {
+  font-size: 32px;
+}
+
+.gamification-tip-details {
+  flex: 1;
+}
+
+.gamification-tip-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+.gamification-tip-description {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant) !important;
+  line-height: 1.5;
+}
+
+.gamification-tip-points {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-sys-color-primary) !important;
+  background: rgba(var(--md-sys-color-primary-rgb), 0.1) !important;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+}
