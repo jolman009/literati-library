@@ -1,22 +1,21 @@
+import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, createMockAuthContext, cleanupTest, mockFetch } from '../test-utils';
+import { render, cleanupTest } from '../test-utils';
 import LibraryPage from '../pages/LibraryPage';
 
 // Mock external dependencies
-vi.mock('../../contexts/AuthContext', () => ({
+vi.mock('../contexts/AuthContext', () => ({
   useAuth: vi.fn()
 }));
 
 describe('LibraryPage Component', () => {
   beforeEach(() => {
     cleanupTest();
-    // Mock fetch for API calls
-    mockFetch({ books: [] });
   });
 
   test('renders without crashing when authenticated', () => {
-    renderWithProviders(<LibraryPage />);
+    render(<LibraryPage />);
     
     // Basic smoke test - ensure it renders without throwing errors
     const libraryElement = document.body;
@@ -24,7 +23,7 @@ describe('LibraryPage Component', () => {
   });
 
   test('renders library content', () => {
-    renderWithProviders(<LibraryPage />);
+    render(<LibraryPage />);
     
     // Verify the page renders some content
     const bodyText = document.body.textContent;
@@ -33,7 +32,7 @@ describe('LibraryPage Component', () => {
   });
 
   test('handles basic rendering states', () => {
-    renderWithProviders(<LibraryPage />);
+    render(<LibraryPage />);
     
     // Should render without crashing
     const libraryElement = document.body;

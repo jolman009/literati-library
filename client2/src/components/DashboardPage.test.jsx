@@ -1,14 +1,15 @@
+import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, createMockAuthContext, cleanupTest } from '../test-utils';
+import { render, cleanupTest } from '../test-utils';
 import DashboardPage from '../pages/DashboardPage';
 
 // Mock external dependencies
-vi.mock('../../contexts/AuthContext', () => ({
+vi.mock('../contexts/AuthContext', () => ({
   useAuth: vi.fn()
 }));
 
-vi.mock('../../contexts/GamificationContext', () => ({
+vi.mock('../contexts/GamificationContext', () => ({
   useGamification: () => ({
     achievements: [],
     goals: [],
@@ -18,7 +19,7 @@ vi.mock('../../contexts/GamificationContext', () => ({
   })
 }));
 
-vi.mock('../../contexts/ReadingSessionContext', () => ({
+vi.mock('../contexts/ReadingSessionContext', () => ({
   useReadingSession: () => ({
     currentSession: null,
     isActive: false,
@@ -32,7 +33,7 @@ describe('DashboardPage Component', () => {
   });
 
   test('renders without crashing when authenticated', () => {
-    renderWithProviders(<DashboardPage />);
+    render(<DashboardPage />);
     
     // Basic smoke test - ensure it renders without throwing errors
     const dashboardElement = document.body;
@@ -40,7 +41,7 @@ describe('DashboardPage Component', () => {
   });
 
   test('renders main dashboard content', () => {
-    renderWithProviders(<DashboardPage />);
+    render(<DashboardPage />);
     
     // Verify the page renders some content
     const bodyText = document.body.textContent;
@@ -49,7 +50,7 @@ describe('DashboardPage Component', () => {
   });
 
   test('handles basic rendering', () => {
-    renderWithProviders(<DashboardPage />);
+    render(<DashboardPage />);
     
     // Should render without crashing
     const dashboardElement = document.body;

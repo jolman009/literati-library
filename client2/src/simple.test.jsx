@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import React from 'react';
+import { describe, it, expect, vi } from 'vitest'
 
 describe('Basic Test Setup', () => {
   it('should run basic test', () => {
