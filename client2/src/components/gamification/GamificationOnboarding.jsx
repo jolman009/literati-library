@@ -172,7 +172,7 @@ const GamificationOnboarding = ({ onComplete, canSkip = true }) => {
               >
                 <span style={{ fontSize: '24px' }}>{achievement.icon}</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '16px', fontWeight: '500' }}>{achievement.name}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '500' }}>{achievement.title || achievement.name}</div>
                   <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
                     {achievement.desc}
                   </div>

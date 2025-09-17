@@ -93,6 +93,19 @@
   min-height: 400px;
 }
 
+/* Dark mode text fixes for MD3 dropzone */
+[data-theme="dark"] .md3-dropzone .md-title-large,
+.dark .md3-dropzone .md-title-large {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+[data-theme="dark"] .md3-dropzone .md-body-medium,
+.dark .md3-dropzone .md-body-medium,
+[data-theme="dark"] .md3-dropzone .on-surface-variant,
+.dark .md3-dropzone .on-surface-variant {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
 /* Dropzone */
 .md3-dropzone {
   border: 2px dashed rgb(var(--md-sys-color-outline));
@@ -102,6 +115,84 @@
   cursor: pointer;
   transition: all 0.3s ease;
   background: rgb(var(--md-sys-color-surface-variant), 0.3);
+}
+
+/* Light mode upload content card background */
+[data-theme="light"] .md3-upload-content,
+.light .md3-upload-content,
+:not([data-theme="dark"]):not(.dark) .md3-upload-content {
+  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%) !important;
+  border: 1px solid #9ca3af !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Light mode dropzone background fix */
+[data-theme="light"] .md3-dropzone,
+.light .md3-dropzone,
+:not([data-theme="dark"]):not(.dark) .md3-dropzone {
+  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%) !important;
+}
+
+/* Light mode select field text color fix */
+[data-theme="light"] .md3-select-field,
+.light .md3-select-field,
+[data-theme="light"] .md3-select-field *,
+.light .md3-select-field *,
+:not([data-theme="dark"]):not(.dark) .md3-select-field,
+:not([data-theme="dark"]):not(.dark) .md3-select-field * {
+  color: black !important;
+}
+
+/* Light mode text visibility fixes */
+[data-theme="light"] .md3-dropzone .md-title-large,
+.light .md3-dropzone .md-title-large,
+:not([data-theme="dark"]):not(.dark) .md3-dropzone .md-title-large {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+[data-theme="light"] .md3-dropzone .md-body-medium,
+.light .md3-dropzone .md-body-medium,
+[data-theme="light"] .md3-dropzone .on-surface-variant,
+.light .md3-dropzone .on-surface-variant,
+:not([data-theme="dark"]):not(.dark) .md3-dropzone .md-body-medium,
+:not([data-theme="dark"]):not(.dark) .md3-dropzone .on-surface-variant {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Dark mode dropzone background fix */
+[data-theme="dark"] .md3-dropzone,
+.dark .md3-dropzone {
+  background: var(--md-sys-color-surface-container) !important;
+  border-color: var(--md-sys-color-outline);
+}
+
+/* Dark mode form field fixes */
+[data-theme="dark"] .md3-select,
+.dark .md3-select {
+  background: var(--md-sys-color-surface-container) !important;
+  color: var(--md-sys-color-on-surface-container) !important;
+  border-color: var(--md-sys-color-outline) !important;
+}
+
+[data-theme="dark"] .md3-select-label,
+.dark .md3-select-label {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* Fix MD3TextField in dark mode */
+[data-theme="dark"] .md3-text-field,
+.dark .md3-text-field,
+[data-theme="dark"] .md3-text-field input,
+.dark .md3-text-field input,
+[data-theme="dark"] .md3-text-field textarea,
+.dark .md3-text-field textarea {
+  background: var(--md-sys-color-surface-container) !important;
+  color: var(--md-sys-color-on-surface-container) !important;
+}
+
+[data-theme="dark"] .md3-text-field label,
+.dark .md3-text-field label {
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 .md3-dropzone:hover {
@@ -225,12 +316,50 @@
   50% { transform: scale(1.2); }
 }
 
+/* Form Field Styling */
+.md3-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.md3-select-label {
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.md3-select {
+  width: 100%;
+  padding: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--md-sys-color-outline);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.md3-select:focus {
+  outline: none;
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+}
+
+.md3-select:hover {
+  border-color: var(--md-sys-color-on-surface);
+}
+
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
   .md3-dropzone {
     background: rgb(var(--md-sys-color-surface-variant), 0.1);
   }
-  
+
   .md3-dropzone:hover {
     background: rgb(var(--md-sys-color-primary-container), 0.2);
   }

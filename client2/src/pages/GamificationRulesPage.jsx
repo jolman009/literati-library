@@ -327,7 +327,7 @@ const GamificationRulesPage = () => {
                   <span className="gamification-achievement-icon">{achievement.icon}</span>
                   <div>
                     <div className="gamification-achievement-name">
-                      {achievement.name}
+                      {achievement.title || achievement.name}
                     </div>
                     <div className="gamification-achievement-requirement">
                       {achievement.requirement}

@@ -134,6 +134,14 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  background: var(--md-sys-color-surface-container);
+}
+
+/* Dark mode specific styling for upload area */
+[data-theme="dark"] .file-drop-zone,
+.dark .file-drop-zone {
+  background: var(--md-sys-color-surface-container) !important;
+  border-color: var(--md-sys-color-outline);
 }
 
 .file-drop-zone:hover {
@@ -200,7 +208,19 @@
 
 .upload-icon {
   font-size: 40px;
+  color: var(--md-sys-color-on-primary-container);
   transition: all 0.3s ease;
+}
+
+/* Dark mode icon color fixes */
+[data-theme="dark"] .upload-icon,
+.dark .upload-icon {
+  color: var(--md-sys-color-on-primary-container) !important;
+}
+
+[data-theme="dark"] .upload-icon-container,
+.dark .upload-icon-container {
+  background: var(--md-sys-color-primary-container) !important;
 }
 
 .file-drop-zone.drag-active .upload-icon {
@@ -229,6 +249,17 @@
   font-size: 14px;
   color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 24px;
+}
+
+/* Dark mode text color fixes */
+[data-theme="dark"] .upload-main-text,
+.dark .upload-main-text {
+  color: var(--md-sys-color-on-surface-container) !important;
+}
+
+[data-theme="dark"] .upload-helper-text,
+.dark .upload-helper-text {
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 /* Browse Button */

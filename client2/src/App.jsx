@@ -41,6 +41,7 @@ import AppLayout from './components/AppLayout';
 import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
 import GamificationOnboarding from './components/gamification/GamificationOnboarding';
+import CookieConsent from './components/legal/CookieConsent';
 
 // Import only critical auth pages directly
 import LandingPage from './pages/LandingPage';
@@ -85,6 +86,14 @@ const CollectionsPageWrapper = lazy(() =>
   import('./components/wrappers/CollectionsPageWrapper').catch(err => {
     console.error('Failed to load CollectionsPageWrapper:', err);
     return { default: () => <div>Error loading Collections. Please refresh.</div> };
+  })
+);
+
+// Legal pages
+const PrivacyPolicyPage = lazy(() =>
+  import('./pages/legal/PrivacyPolicyPage').catch(err => {
+    console.error('Failed to load PrivacyPolicyPage:', err);
+    return { default: () => <div>Error loading Privacy Policy. Please refresh.</div> };
   })
 );
 
@@ -184,6 +193,15 @@ const AppRoutes = () => {
         } />
       </Route>
 
+      {/* Legal pages - accessible without authentication */}
+      <Route path="/legal/privacy-policy" element={
+        <ErrorBoundary fallbackComponent="privacy-policy" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Privacy Policy..." />}>
+            <PrivacyPolicyPage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+
       <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />} />
     </Routes>
   );
@@ -210,6 +228,7 @@ const App = () => {
                 <PerformanceMonitor />
                 <CacheMonitor />
                 <GamificationOnboarding />
+                <CookieConsent />
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>

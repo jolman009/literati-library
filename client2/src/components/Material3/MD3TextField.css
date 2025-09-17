@@ -5,6 +5,27 @@
    Material Design 3 Text Input Specifications
    =============================================== */
 
+/* Dark mode overrides for text fields */
+[data-theme="dark"] .md3-text-field__container,
+.dark .md3-text-field__container {
+  background-color: var(--md-sys-color-surface-container) !important;
+}
+
+[data-theme="dark"] .md3-text-field__input,
+.dark .md3-text-field__input,
+[data-theme="dark"] .md3-text-field input,
+.dark .md3-text-field input,
+[data-theme="dark"] .md3-text-field textarea,
+.dark .md3-text-field textarea {
+  color: var(--md-sys-color-on-surface-container) !important;
+  background: transparent !important;
+}
+
+[data-theme="dark"] .md3-text-field__label,
+.dark .md3-text-field__label {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
 .md3-text-field {
   /* Base structure */
   position: relative;

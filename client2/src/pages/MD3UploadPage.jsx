@@ -261,28 +261,12 @@ const MD3UploadPage = () => {
                   fullWidth
                 />
                 
-                <div className="md3-select-field" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-                  <label className="md3-select-label" style={{
-                    fontSize: '12px',
-                    color: 'rgb(var(--md-sys-color-on-surface-variant))',
-                    fontWeight: '500',
-                    letterSpacing: '0.5px',
-                    textTransform: 'uppercase'
-                  }}>Genre</label>
+                <div className="md3-select-field">
+                  <label className="md3-select-label">Genre</label>
                   <select
                     value={formData.genre}
                     onChange={(e) => setFormData(prev => ({ ...prev, genre: e.target.value }))}
                     className="md3-select"
-                    style={{
-                      width: '100%',
-                      padding: '16px',
-                      borderRadius: '4px',
-                      border: '1px solid rgb(var(--md-sys-color-outline))',
-                      background: 'rgb(var(--md-sys-color-surface))',
-                      color: 'rgb(var(--md-sys-color-on-surface))',
-                      fontSize: '16px',
-                      fontFamily: 'inherit'
-                    }}
                   >
                     <option value="">Select genre</option>
                     <option value="Fiction">Fiction</option>
