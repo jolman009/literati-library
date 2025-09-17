@@ -251,7 +251,7 @@ const UploadPage = () => {
                     {dragActive ? 'Drop your book here!' : 'Choose or drag your book file'}
                   </h3>
                   <p className="upload-helper-text">
-                    Supports PDF and EPUB formats up to 50MB
+                    Supports PDF and EPUB book formats up to 50MB
                   </p>
                 </div>
 
