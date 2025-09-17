@@ -15,6 +15,128 @@ vi.mock('epubjs', () => ({
   Book: vi.fn()
 }))
 
+// Global context mocks that all tests can use
+vi.mock('./contexts/AuthContext', () => ({
+  AuthProvider: ({ children }) => children,
+  useAuth: () => ({
+    user: {
+      id: 'test-user-id',
+      email: 'test@example.com',
+      name: 'Test User'
+    },
+    token: 'test-token',
+    loading: false,
+    error: null,
+    isAuthenticated: true,
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    updateProfile: vi.fn(),
+    changePassword: vi.fn(),
+    requestPasswordReset: vi.fn(),
+    deleteAccount: vi.fn(),
+    refreshUser: vi.fn(),
+    clearError: vi.fn(),
+    hasRole: vi.fn(() => false),
+    makeApiCall: vi.fn(),
+    makeAuthenticatedApiCall: vi.fn()
+  })
+}))
+
+vi.mock('./contexts/GamificationContext', () => ({
+  GamificationProvider: ({ children }) => children,
+  useGamification: () => ({
+    stats: {
+      level: 1,
+      totalPoints: 0,
+      booksRead: 0,
+      streakDays: 0,
+      totalMinutesRead: 0,
+      goals: [],
+      achievements: []
+    },
+    loading: false,
+    error: null,
+    addPoints: vi.fn(),
+    updateReadingTime: vi.fn(),
+    completeGoal: vi.fn(),
+    getAchievements: vi.fn(),
+    clearError: vi.fn()
+  })
+}))
+
+vi.mock('./contexts/ReadingSessionContext', () => ({
+  ReadingSessionProvider: ({ children }) => children,
+  useReadingSession: () => ({
+    currentSession: null,
+    isReading: false,
+    stats: {
+      totalMinutesRead: 0,
+      booksCompleted: 0,
+      currentStreak: 0
+    },
+    startReading: vi.fn(),
+    pauseReading: vi.fn(),
+    stopReading: vi.fn(),
+    updateProgress: vi.fn(),
+    getStats: vi.fn(),
+    loading: false,
+    error: null
+  })
+}))
+
+vi.mock('./contexts/Material3ThemeContext', () => ({
+  Material3ThemeProvider: ({ children }) => children,
+  useMaterial3Theme: () => ({
+    theme: 'light',
+    isLight: true,
+    isDark: false,
+    actualTheme: 'light',
+    toggleTheme: vi.fn(),
+    setLightTheme: vi.fn(),
+    setDarkTheme: vi.fn(),
+    setSystemTheme: vi.fn(),
+    generateThemeFromImage: vi.fn(),
+    applyDynamicColors: vi.fn()
+  })
+}))
+
+// Mock React Router
+vi.mock('react-router-dom', () => ({
+  BrowserRouter: ({ children }) => children,
+  Routes: ({ children }) => children,
+  Route: ({ children }) => children,
+  Navigate: ({ children }) => children,
+  useNavigate: () => vi.fn(),
+  useLocation: () => ({ pathname: '/test' }),
+  useParams: () => ({}),
+  Link: ({ children, to, ...props }) => {
+    const React = require('react');
+    return React.createElement('a', { href: to, ...props }, children);
+  }
+}))
+
+// Mock Material3 components and hooks
+vi.mock('./components/Material3', () => ({
+  MD3SnackbarProvider: ({ children }) => children,
+  useSnackbar: () => ({
+    showSnackbar: vi.fn(),
+    hideSnackbar: vi.fn()
+  }),
+  MD3Button: ({ children, onClick, ...props }) => {
+    const React = require('react');
+    return React.createElement('button', { onClick, 'data-testid': 'md3-button', ...props }, children);
+  },
+  MD3Card: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('div', { 'data-testid': 'md3-card', ...props }, children);
+  },
+  MD3Input: ({ value, onChange, ...props }) => {
+    const React = require('react');
+    return React.createElement('input', { value, onChange, 'data-testid': 'md3-input', ...props });
+  }
+}))
+
 vi.mock('pdfjs-dist', () => ({
   getDocument: vi.fn(() => Promise.resolve({
     numPages: 1,
