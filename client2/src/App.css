@@ -427,3 +427,32 @@
       outline: none;
       resize: none; /* Prevent textarea from being resized independently */
     }
+
+/* ===============================================
+   CRITICAL UI FIXES - DEPLOYMENT ISSUES
+   =============================================== */
+
+/* Upload Page Text Visibility Fix - CRITICAL */
+[data-theme="light"] .upload-main-text,
+.light .upload-main-text,
+:root:not([data-theme="dark"]) .upload-main-text,
+.upload-main-text {
+  color: #1a202c !important; /* Absolute dark color for light mode */
+}
+
+[data-theme="dark"] .upload-main-text,
+.dark .upload-main-text {
+  color: var(--md-sys-color-on-surface-container) !important;
+}
+
+/* Navigation Text Overlay Fix - Remove problematic pseudo-elements */
+.md3-rail-destination::before,
+.md3-rail-destination::after {
+  z-index: -1 !important; /* Ensure pseudo-elements stay behind text */
+}
+
+.md3-rail-destination-label,
+.md3-rail-destination-icon {
+  position: relative;
+  z-index: 1 !important; /* Ensure text stays above pseudo-elements */
+}
