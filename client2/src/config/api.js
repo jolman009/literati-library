@@ -1,18 +1,18 @@
 // src/config/api.js - FIXED VERSION WITH NOTES SUPPORT
 import axios from 'axios';
 
-// Determine API URL based on current environment - HARDCODED
+// Determine API URL based on environment variables and build mode
 const getApiUrl = () => {
-  // If we're on localhost, use local API
+  // Always prefer environment variable if available
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  // Fallback to hostname detection for backwards compatibility
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return 'http://localhost:5000';
   }
-  // If we're on any production domain (Vercel, literati.pro, etc), use production API
-  if (window.location.hostname.includes('vercel.app') ||
-      window.location.hostname === 'www.literati.pro' ||
-      window.location.hostname === 'literati.pro') {
-    return 'https://library-server-m6gr.onrender.com';
-  }
+
   // Default to production API for any other domain
   return 'https://library-server-m6gr.onrender.com';
 };
