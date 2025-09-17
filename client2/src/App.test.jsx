@@ -135,8 +135,43 @@ vi.mock('./contexts/Material3ThemeContext', () => ({
   useMaterial3Theme: () => mockMaterial3ThemeContext
 }));
 
+// Mock Material3 components
 vi.mock('./components/Material3', () => ({
-  MD3SnackbarProvider: ({ children }) => children
+  MD3SnackbarProvider: ({ children }) => children,
+  MD3Button: ({ children, onClick, ...props }) => (
+    <button onClick={onClick} data-testid="md3-button" {...props}>
+      {children}
+    </button>
+  ),
+  MD3Card: ({ children, ...props }) => (
+    <div data-testid="md3-card" {...props}>
+      {children}
+    </div>
+  ),
+  MD3Input: ({ value, onChange, ...props }) => (
+    <input
+      value={value}
+      onChange={onChange}
+      data-testid="md3-input"
+      {...props}
+    />
+  ),
+  MD3Select: ({ value, onChange, children, ...props }) => (
+    <select
+      value={value}
+      onChange={onChange}
+      data-testid="md3-select"
+      {...props}
+    >
+      {children}
+    </select>
+  ),
+  MD3Progress: ({ ...props }) => (
+    <div data-testid="md3-progress" {...props} />
+  ),
+  MD3Spinner: ({ ...props }) => (
+    <div data-testid="md3-spinner" {...props} />
+  )
 }));
 
 // Mock the ReadingSessionTimer component
