@@ -38,7 +38,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://jjlxdsghmsemuparbfbh.supabase.co wss://jjlxdsghmsemuparbfbh.supabase.co https://api.openai.com https://library-server-m6gr.onrender.com;"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://jjlxdsghmsemuparbfbh.supabase.co wss://jjlxdsghmsemuparbfbh.supabase.co https://api.openai.com https://library-server-m6gr.onrender.com; frame-ancestors 'none';"
         }
       ]
     },
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "source": "/_next/static/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -85,7 +85,11 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/legal/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!api/|assets/|favicon\\.|robots\\.txt|manifest\\.|sw\\.).*)",
       "destination": "/index.html"
     }
   ],
