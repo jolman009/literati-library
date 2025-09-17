@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -70,8 +71,28 @@ vi.mock('./contexts/AuthContext', () => ({
 }));
 
 // Mock other context providers
+const mockGamificationContext = {
+  stats: {
+    level: 1,
+    totalPoints: 0,
+    booksRead: 0,
+    streakDays: 0,
+    totalMinutesRead: 0,
+    goals: [],
+    achievements: []
+  },
+  loading: false,
+  error: null,
+  addPoints: vi.fn(),
+  updateReadingTime: vi.fn(),
+  completeGoal: vi.fn(),
+  getAchievements: vi.fn(),
+  clearError: vi.fn()
+};
+
 vi.mock('./contexts/GamificationContext', () => ({
-  GamificationProvider: ({ children }) => children
+  GamificationProvider: ({ children }) => children,
+  useGamification: () => mockGamificationContext
 }));
 
 vi.mock('./contexts/ReadingSessionContext', () => ({

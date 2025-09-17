@@ -106,6 +106,7 @@ export const test = base.extend({
 
   // Mobile device fixture
   mobileContext: async ({ browser }, use) => {
+    const { devices } = await import('@playwright/test')
     const context = await browser.newContext({
       ...devices['iPhone 12'],
     })

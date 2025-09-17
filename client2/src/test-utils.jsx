@@ -118,6 +118,25 @@ export const mockApiError = (message = 'API Error', status = 500) => ({
   }
 })
 
+// Test cleanup function
+export const cleanupTest = () => {
+  // Clear all mocks
+  vi.clearAllMocks()
+
+  // Clear localStorage
+  localStorage.clear()
+
+  // Clear sessionStorage
+  sessionStorage.clear()
+
+  // Reset any global state if needed
+}
+
+// Wait for async operations in tests
+export const waitForLoad = (timeout = 100) => {
+  return new Promise(resolve => setTimeout(resolve, timeout))
+}
+
 // Re-export everything from testing-library
 export * from '@testing-library/react'
 export { customRender as render }

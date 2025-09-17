@@ -1,10 +1,11 @@
+import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { renderWithRouter, cleanupTest } from '../test-utils';
+import { render, cleanupTest } from '../test-utils';
 import LandingPage from '../pages/LandingPage';
 
 // Mock any external dependencies that might be problematic
-vi.mock('../../contexts/AuthContext', () => ({
+vi.mock('../contexts/AuthContext', () => ({
   useAuth: () => ({
     user: null,
     loading: false,
@@ -18,7 +19,7 @@ describe('LandingPage Component', () => {
   });
 
   test('renders without crashing', () => {
-    renderWithRouter(<LandingPage />);
+    render(<LandingPage />);
     
     // Basic smoke test - just ensure it renders without throwing errors
     const landingElement = document.body;
@@ -26,7 +27,7 @@ describe('LandingPage Component', () => {
   });
 
   test('renders main content elements', () => {
-    renderWithRouter(<LandingPage />);
+    render(<LandingPage />);
     
     // Look for any text content that typically appears on landing pages
     // This is a generic test that should pass regardless of specific content
