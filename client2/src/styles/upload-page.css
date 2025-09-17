@@ -251,6 +251,13 @@
   margin-bottom: 24px;
 }
 
+/* Light mode text visibility fix */
+[data-theme="light"] .upload-main-text,
+.light .upload-main-text,
+:root:not([data-theme="dark"]) .upload-main-text {
+  color: var(--md-sys-color-on-surface) !important;
+}
+
 /* Dark mode text color fixes */
 [data-theme="dark"] .upload-main-text,
 .dark .upload-main-text {
