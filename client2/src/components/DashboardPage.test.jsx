@@ -5,8 +5,32 @@ import { render, cleanupTest } from '../test-utils';
 import DashboardPage from '../pages/DashboardPage';
 
 // Mock external dependencies
+const mockAuthContext = {
+  user: {
+    id: 'test-user-id',
+    email: 'test@example.com',
+    name: 'Test User'
+  },
+  token: 'test-token',
+  loading: false,
+  error: null,
+  isAuthenticated: true,
+  register: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
+  updateProfile: vi.fn(),
+  changePassword: vi.fn(),
+  requestPasswordReset: vi.fn(),
+  deleteAccount: vi.fn(),
+  refreshUser: vi.fn(),
+  clearError: vi.fn(),
+  hasRole: vi.fn(() => false),
+  makeApiCall: vi.fn(),
+  makeAuthenticatedApiCall: vi.fn()
+};
+
 vi.mock('../contexts/AuthContext', () => ({
-  useAuth: vi.fn()
+  useAuth: () => mockAuthContext
 }));
 
 vi.mock('../contexts/GamificationContext', () => ({
