@@ -279,12 +279,42 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
 // Recent Achievements Component (kept but can be removed if needed)
 const RecentAchievements = () => {
-  const { achievements } = useGamification();
+  const { achievements, unlockedAchievements } = useGamification();
 
   const recentAchievements = useMemo(() => {
-    if (!achievements || achievements.length === 0) return [];
-    return achievements.slice(-3).reverse();
-  }, [achievements]);
+    if (!achievements || achievements.length === 0 || !unlockedAchievements) return [];
+
+    // Debug logging to understand the data structure
+    console.log('🔍 Recent Achievements Debug:', {
+      totalAchievements: achievements.length,
+      unlockedAchievements: unlockedAchievements,
+      firstAchievement: achievements[0],
+      achievementSample: achievements.slice(0, 2)
+    });
+
+    // Filter for only unlocked achievements and sort by unlock date (most recent first)
+    const unlockedAchievementsList = achievements
+      .filter(achievement => {
+        const isUnlocked = achievement.isUnlocked ||
+          unlockedAchievements.has(achievement.id) ||
+          (achievement.unlockedAt && new Date(achievement.unlockedAt) <= new Date());
+
+        console.log(`Achievement ${achievement.id || achievement.title}: unlocked = ${isUnlocked}`);
+        return isUnlocked;
+      })
+      .sort((a, b) => {
+        // Sort by unlock date if available, otherwise by order in array
+        if (a.unlockedAt && b.unlockedAt) {
+          return new Date(b.unlockedAt) - new Date(a.unlockedAt);
+        }
+        return 0;
+      });
+
+    console.log('🏆 Unlocked achievements found:', unlockedAchievementsList);
+
+    // Return the 3 most recent unlocked achievements
+    return unlockedAchievementsList.slice(0, 3);
+  }, [achievements, unlockedAchievements]);
 
   if (!achievements || achievements.length === 0) {
     return null;
@@ -296,15 +326,25 @@ const RecentAchievements = () => {
         🏆 Recent Achievements
       </h3>
       <div className="achievements-grid">
-        {recentAchievements.map((achievement, index) => (
-          <div
-            key={index}
-            className="achievement-tag"
-          >
-            <span>{achievement.icon || '🏅'}</span>
-            <span>{achievement.name}</span>
+        {recentAchievements.length > 0 ? (
+          recentAchievements.map((achievement, index) => (
+            <div
+              key={achievement.id || index}
+              className="achievement-tag"
+              title={achievement.description || achievement.title}
+            >
+              <span>{achievement.icon || '🏅'}</span>
+              <span>{achievement.title || achievement.name || 'Achievement'}</span>
+            </div>
+          ))
+        ) : (
+          <div className="achievement-placeholder">
+            <span style={{ fontSize: '2rem', opacity: 0.5 }}>🎯</span>
+            <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>
+              Complete actions to unlock achievements!
+            </span>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

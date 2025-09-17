@@ -344,7 +344,7 @@ const PointsLegend = () => {
                         fontWeight: '500',
                         color: 'rgb(var(--md-sys-color-on-surface))'
                       }}>
-                        {achievement.name}
+                        {achievement.title || achievement.name}
                       </div>
                       <div style={{
                         fontSize: '13px',
