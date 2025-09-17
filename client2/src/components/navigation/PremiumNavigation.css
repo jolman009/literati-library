@@ -147,6 +147,7 @@
   justify-content: center;
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1; /* Ensure icon stays above pseudo-elements */
 }
 
 .md3-rail-destination-icon .material-symbols-outlined {
@@ -184,6 +185,8 @@
   text-overflow: ellipsis;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: left center;
+  position: relative;
+  z-index: 1; /* Ensure text stays above pseudo-elements */
 }
 
 .md3-rail-destination:hover .md3-rail-destination-label {
@@ -257,20 +260,17 @@
   }
 }
 
-/* Enhanced MD3 Premium Hover Effects */
+/* Simplified MD3 Hover Effects - Fixed Z-Index Issues */
 .md3-rail-destination::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 28px;
-  background: linear-gradient(135deg,
-    var(--md-sys-color-primary),
-    var(--md-sys-color-tertiary)
-  );
+  background: var(--md-sys-color-surface-container-high);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
-  transform: scale(0.8);
+  z-index: -1; /* Ensure pseudo-elements stay behind text */
 }
 
 .md3-rail-destination::after {
@@ -279,24 +279,21 @@
   inset: 0;
   border-radius: 28px;
   background: radial-gradient(circle at center,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 70%
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 60%
   );
   opacity: 0;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
-  transform: scale(0.5);
+  z-index: -1; /* Ensure pseudo-elements stay behind text */
 }
 
 .md3-rail-destination:hover::before {
-  opacity: 0.12;
-  transform: scale(1);
+  opacity: 0.8;
 }
 
 .md3-rail-destination:hover::after {
-  opacity: 1;
-  transform: scale(1.2);
-  animation: ripple-pulse 2s ease-in-out infinite;
+  opacity: 0.6;
 }
 
 .md3-rail-destination:active::before {
