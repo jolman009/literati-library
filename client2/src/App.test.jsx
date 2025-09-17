@@ -95,12 +95,44 @@ vi.mock('./contexts/GamificationContext', () => ({
   useGamification: () => mockGamificationContext
 }));
 
+const mockReadingSessionContext = {
+  currentSession: null,
+  isReading: false,
+  stats: {
+    totalMinutesRead: 0,
+    booksCompleted: 0,
+    currentStreak: 0
+  },
+  startReading: vi.fn(),
+  pauseReading: vi.fn(),
+  stopReading: vi.fn(),
+  updateProgress: vi.fn(),
+  getStats: vi.fn(),
+  loading: false,
+  error: null
+};
+
 vi.mock('./contexts/ReadingSessionContext', () => ({
-  ReadingSessionProvider: ({ children }) => children
+  ReadingSessionProvider: ({ children }) => children,
+  useReadingSession: () => mockReadingSessionContext
 }));
 
+const mockMaterial3ThemeContext = {
+  theme: 'light',
+  isLight: true,
+  isDark: false,
+  actualTheme: 'light',
+  toggleTheme: vi.fn(),
+  setLightTheme: vi.fn(),
+  setDarkTheme: vi.fn(),
+  setSystemTheme: vi.fn(),
+  generateThemeFromImage: vi.fn(),
+  applyDynamicColors: vi.fn()
+};
+
 vi.mock('./contexts/Material3ThemeContext', () => ({
-  Material3ThemeProvider: ({ children }) => children
+  Material3ThemeProvider: ({ children }) => children,
+  useMaterial3Theme: () => mockMaterial3ThemeContext
 }));
 
 vi.mock('./components/Material3', () => ({
