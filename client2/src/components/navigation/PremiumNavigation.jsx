@@ -56,7 +56,6 @@ const PremiumNavigation = ({
               key={to}
               to={to}
               className={`md3-rail-destination ${isActive ? 'active' : ''}`}
-              title={collapsed ? label : undefined}
             >
               <div className="md3-rail-destination-icon">
                 <span className="material-symbols-outlined">
@@ -79,7 +78,6 @@ const PremiumNavigation = ({
         <button
           className="md3-rail-destination"
           onClick={handleLogout}
-          title={collapsed ? 'Logout' : undefined}
         >
           <div className="md3-rail-destination-icon">
             <span className="material-symbols-outlined">logout</span>
