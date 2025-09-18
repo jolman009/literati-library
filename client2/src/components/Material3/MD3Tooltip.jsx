@@ -1,5 +1,6 @@
 import React, { useId, useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import './MD3ToolTip.css';
 
 /** MD3 Tooltip — expressive, accessible */
 const PORTAL_ROOT = typeof document !== 'undefined'

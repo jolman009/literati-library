@@ -1,5 +1,6 @@
 // src/components/Material3/MD3Navigation.jsx
 import React, { memo, useState, useEffect } from 'react';
+import './MD3Tooltip.css'
 import { createPortal } from 'react-dom';
 import './MD3Navigation.css';
 
