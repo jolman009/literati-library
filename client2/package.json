@@ -2,7 +2,7 @@
   "name": "client2",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@8.15.6",
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.12.2",
