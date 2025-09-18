@@ -445,98 +445,109 @@
   color: var(--md-sys-color-on-surface-container) !important;
 }
 
-/* Navigation Text Overlay Fix - Comprehensive solution */
+/* NAVIGATION TOOLTIP FIX - NUCLEAR APPROACH */
 
-/* Remove problematic pseudo-elements and ensure proper z-index stacking */
+/* 1. COMPLETELY DISABLE ALL PSEUDO-ELEMENTS ON NAVIGATION */
 .md3-rail-destination::before,
-.md3-rail-destination::after {
-  z-index: -1 !important; /* Ensure pseudo-elements stay behind text */
-}
-
-.md3-rail-destination-label,
-.md3-rail-destination-icon {
-  position: relative;
-  z-index: 10 !important; /* Higher z-index to ensure text stays above all effects */
-}
-
-/* Prevent tooltips from appearing over navigation */
-.md3-navigation-rail .md3-tooltip,
-.md3-navigation-rail [role="tooltip"],
-.md3-navigation-rail *[title]:hover::after,
-.md3-navigation-rail *[title]:hover::before {
+.md3-rail-destination::after,
+.md3-rail-destination:hover::before,
+.md3-rail-destination:hover::after,
+.md3-rail-destination:active::before,
+.md3-rail-destination:active::after,
+.md3-rail-destination.active::before,
+.md3-rail-destination.active::after {
   display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 2. REMOVE ALL BROWSER TOOLTIPS FROM NAVIGATION */
+.md3-navigation-rail *[title],
+.premium-header *[title],
+.md3-top-app-bar *[title] {
+  position: relative !important;
+}
+
+.md3-navigation-rail *[title]:hover::after,
+.md3-navigation-rail *[title]:hover::before,
+.premium-header *[title]:hover::after,
+.premium-header *[title]:hover::before,
+.md3-top-app-bar *[title]:hover::after,
+.md3-top-app-bar *[title]:hover::before {
+  display: none !important;
+  content: none !important;
   visibility: hidden !important;
 }
 
-/* Fix any browser-native tooltips on navigation */
-.md3-rail-destination,
-.md3-rail-destination *,
-.md3-navigation-rail button,
-.md3-navigation-rail a {
-  position: relative;
-}
-
-.md3-rail-destination:hover,
-.md3-navigation-rail button:hover,
-.md3-navigation-rail a:hover {
-  overflow: visible !important;
-}
-
-/* Ensure navigation text has proper contrast and visibility */
-.md3-rail-destination-label {
-  color: var(--md-sys-color-on-surface) !important;
-  text-shadow: none !important;
-  background: transparent !important;
-  pointer-events: auto !important;
-}
-
-.md3-rail-destination-icon {
-  color: var(--md-sys-color-on-surface) !important;
-  pointer-events: auto !important;
-}
-
-/* Fix for Material Icons in navigation */
-.md3-rail-destination-icon .material-symbols-outlined {
-  position: relative;
-  z-index: 10 !important;
-  color: inherit !important;
-}
-
-/* Prevent any overlay effects during hover/focus */
-.md3-rail-destination:hover .md3-rail-destination-label,
-.md3-rail-destination:focus .md3-rail-destination-label,
-.md3-rail-destination:hover .md3-rail-destination-icon,
-.md3-rail-destination:focus .md3-rail-destination-icon {
-  z-index: 15 !important;
-  position: relative;
-  isolation: isolate;
-}
-
-/* Fix top navigation tooltip issues */
-.premium-header,
-.md3-top-app-bar {
-  position: relative;
-  z-index: var(--md-sys-z-index-fixed) !important;
-}
-
+/* 3. DISABLE ALL MD3 TOOLTIPS IN NAVIGATION AREAS */
+.md3-navigation-rail .md3-tooltip,
+.md3-navigation-rail [role="tooltip"],
 .premium-header .md3-tooltip,
-.md3-top-app-bar .md3-tooltip,
 .premium-header [role="tooltip"],
+.md3-top-app-bar .md3-tooltip,
 .md3-top-app-bar [role="tooltip"] {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
 }
 
-/* Remove any title attributes that cause browser tooltips */
-.md3-navigation-rail [title],
-.premium-header [title],
-.md3-top-app-bar [title] {
-  position: relative;
-}
-
-/* Ensure all navigation text is properly visible */
-.premium-header *,
-.md3-top-app-bar *,
-.md3-navigation-rail * {
+/* 4. FORCE NAVIGATION TEXT VISIBILITY WITH MAXIMUM SPECIFICITY */
+.md3-rail-destination .md3-rail-destination-label,
+.md3-rail-destination .md3-rail-destination-icon,
+.md3-rail-destination .md3-rail-destination-icon .material-symbols-outlined {
+  position: relative !important;
+  z-index: 999999 !important;
+  color: var(--md-sys-color-on-surface) !important;
+  background: transparent !important;
   text-shadow: none !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  isolation: isolate !important;
+}
+
+/* 5. FORCE HOVER STATES TO MAINTAIN TEXT VISIBILITY */
+.md3-rail-destination:hover .md3-rail-destination-label,
+.md3-rail-destination:focus .md3-rail-destination-label,
+.md3-rail-destination:active .md3-rail-destination-label,
+.md3-rail-destination:hover .md3-rail-destination-icon,
+.md3-rail-destination:focus .md3-rail-destination-icon,
+.md3-rail-destination:active .md3-rail-destination-icon {
+  position: relative !important;
+  z-index: 999999 !important;
+  color: var(--md-sys-color-on-surface) !important;
+  background: transparent !important;
+  text-shadow: none !important;
+  isolation: isolate !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 6. REMOVE ANY OVERLAYS OR BACKGROUNDS THAT COULD COVER TEXT */
+.md3-rail-destination:hover,
+.md3-rail-destination:focus,
+.md3-rail-destination:active {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* 7. ENSURE NO GLOBAL TOOLTIP STYLES AFFECT NAVIGATION */
+.md3-navigation-rail,
+.premium-header,
+.md3-top-app-bar {
+  position: relative !important;
+  z-index: var(--md-sys-z-index-fixed) !important;
+}
+
+/* 8. DISABLE ANY ANIMATION OR TRANSFORM THAT COULD HIDE TEXT */
+.md3-rail-destination *,
+.premium-header *,
+.md3-top-app-bar * {
+  transform: none !important;
+  animation: none !important;
+  transition: color 0.2s ease, background-color 0.2s ease !important;
 }
