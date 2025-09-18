@@ -445,7 +445,9 @@
   color: var(--md-sys-color-on-surface-container) !important;
 }
 
-/* Navigation Text Overlay Fix - Remove problematic pseudo-elements */
+/* Navigation Text Overlay Fix - Comprehensive solution */
+
+/* Remove problematic pseudo-elements and ensure proper z-index stacking */
 .md3-rail-destination::before,
 .md3-rail-destination::after {
   z-index: -1 !important; /* Ensure pseudo-elements stay behind text */
@@ -454,5 +456,87 @@
 .md3-rail-destination-label,
 .md3-rail-destination-icon {
   position: relative;
-  z-index: 1 !important; /* Ensure text stays above pseudo-elements */
+  z-index: 10 !important; /* Higher z-index to ensure text stays above all effects */
+}
+
+/* Prevent tooltips from appearing over navigation */
+.md3-navigation-rail .md3-tooltip,
+.md3-navigation-rail [role="tooltip"],
+.md3-navigation-rail *[title]:hover::after,
+.md3-navigation-rail *[title]:hover::before {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Fix any browser-native tooltips on navigation */
+.md3-rail-destination,
+.md3-rail-destination *,
+.md3-navigation-rail button,
+.md3-navigation-rail a {
+  position: relative;
+}
+
+.md3-rail-destination:hover,
+.md3-navigation-rail button:hover,
+.md3-navigation-rail a:hover {
+  overflow: visible !important;
+}
+
+/* Ensure navigation text has proper contrast and visibility */
+.md3-rail-destination-label {
+  color: var(--md-sys-color-on-surface) !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  pointer-events: auto !important;
+}
+
+.md3-rail-destination-icon {
+  color: var(--md-sys-color-on-surface) !important;
+  pointer-events: auto !important;
+}
+
+/* Fix for Material Icons in navigation */
+.md3-rail-destination-icon .material-symbols-outlined {
+  position: relative;
+  z-index: 10 !important;
+  color: inherit !important;
+}
+
+/* Prevent any overlay effects during hover/focus */
+.md3-rail-destination:hover .md3-rail-destination-label,
+.md3-rail-destination:focus .md3-rail-destination-label,
+.md3-rail-destination:hover .md3-rail-destination-icon,
+.md3-rail-destination:focus .md3-rail-destination-icon {
+  z-index: 15 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Fix top navigation tooltip issues */
+.premium-header,
+.md3-top-app-bar {
+  position: relative;
+  z-index: var(--md-sys-z-index-fixed) !important;
+}
+
+.premium-header .md3-tooltip,
+.md3-top-app-bar .md3-tooltip,
+.premium-header [role="tooltip"],
+.md3-top-app-bar [role="tooltip"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Remove any title attributes that cause browser tooltips */
+.md3-navigation-rail [title],
+.premium-header [title],
+.md3-top-app-bar [title] {
+  position: relative;
+}
+
+/* Ensure all navigation text is properly visible */
+.premium-header *,
+.md3-top-app-bar *,
+.md3-navigation-rail * {
+  text-shadow: none !important;
 }
