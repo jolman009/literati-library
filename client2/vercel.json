@@ -1,9 +1,18 @@
 {
-  "buildCommand": "pnpm run build",
-  "devCommand": "pnpm run dev",
-  "installCommand": "pnpm install",
-  "outputDirectory": "dist",
-  "framework": "vite",
+  "version": 2,
+  "builds": [
+    {
+     "src": "client2/package.json",
+     "use": "@vercel/static-build",
+     "config": { 
+        "installCommand": "pnpm install --frozen-lockfile",
+        "buildCommand": "pnpm run build",
+        "devCommand": "pnpm run dev",
+        "outputDirectory": "client2/dist",
+        "framework": "vite"
+     }
+    }
+  ],
   "env": {
     "VITE_APP_NAME": "Literati"
   },
