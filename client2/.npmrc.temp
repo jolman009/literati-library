@@ -1,0 +1,10 @@
+# Registry stability improvements for npm
+registry=https://registry.npmjs.org/
+fetch-retries=5
+fetch-retry-mintimeout=20000
+fetch-retry-maxtimeout=120000
+fetch-timeout=300000
+
+# Keep pnpm settings for local development
+auto-install-peers=true
+node-linker=hoisted
