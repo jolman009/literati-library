@@ -5,6 +5,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Client (React/Vite)
+## Current problem
+#   Current Build Setup Analysis
+
+  Here's the current package manager situation:
+
+  ★ Insight ─────────────────────────────────────
+  The project has a hybrid setup: locally you're using pnpm for development (as shown by the running pnpm preview
+  commands), but Vercel deployment is configured for npm. This mismatch is causing the deployment failures because
+  Vercel still detects pnpm artifacts and tries to use pnpm despite the npm configuration.
+  ─────────────────────────────────────────────────
+
+  Local Development:
+  - ✅ pnpm - You have pnpm installed and working
+  - ✅ npm - Also available as fallback
+  - 🔄 Currently running: pnpm run preview (3 instances)
+  - 📁 node_modules exists (installed with pnpm)
+
+  Vercel Deployment Configuration:
+  - 📝 vercel.json specifies: "cd client2 && npm install && npm run build"
+  - ❌ Problem: Vercel was still trying to use pnpm (as shown in error logs)
+  - ✅ Fixed: Removed client2/pnpm-workspace.yaml that was forcing pnpm detection
+
+  The Issue:
+  The Vercel error logs show Command "cd client2 && pnpm install" exited with 1, which means Vercel ignored our npm
+  configuration in vercel.json and detected the project as pnpm-based due to the workspace file.
+
+  
 ```bash
 # Navigate to client
 cd client2
