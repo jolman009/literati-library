@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A comprehensive digital library application with AI-powered features",
   "private": true,
+  "packageManager": "pnpm@8.15.6",
   "workspaces": [
     "client2",
     "server2"
