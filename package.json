@@ -42,7 +42,4 @@
     "progressive-web-app"
   ],
   "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
 }
