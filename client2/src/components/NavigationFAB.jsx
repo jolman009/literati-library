@@ -24,11 +24,9 @@ const NavigationFAB = ({ currentPage, onPageChange, quickStats = {} }) => {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => {
-                onPageChange(item.id);
-                setIsOpen(false);
-              }}
-              className={`fab-action ${currentPage === item.id ? 'fab-action--active' : ''}`}
+              onClick={() => setIsOpen(!isOpen)}
+              className={`fab-main ${isOpen ? 'fab-main--open' : ''}`}
+              aria-label={`Navigation - Currently: ${currentItem?.label || 'Library'}`}
             >
               <span className="fab-action-icon">{item.icon}</span>
               <span className="fab-action-label">{item.label}</span>

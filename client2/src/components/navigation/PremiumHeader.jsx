@@ -68,15 +68,13 @@ const PremiumHeader = ({
               }}
             />
           ) : (
-            <div 
-              className="md3-header-logo-fallback"
-              onClick={() => navigate('/dashboard')}
-              title="Literati"
-            >
-              <span className="material-symbols-outlined">auto_stories</span>
-            </div>
+            <>
+              <button onClick={() => navigate('/dashboard')} aria-label="Literati">
+                <span className="material-symbols-outlined">auto_stories</span>
+              </button>
+              <h1 className="md3-header-title">{resolvedTitle}</h1>
+            </>
           )}
-          <h1 className="md3-header-title">{resolvedTitle}</h1>
           {breadcrumbs && (
             <nav className="md3-header-breadcrumbs">
               {breadcrumbs}
@@ -135,7 +133,7 @@ const PremiumHeader = ({
           </button>
 
           {/* Notifications */}
-          <div style={{ position: 'relative' }}>
+          <div className="md3-header-icon-button">
             <button
               ref={notifBtnRef}
               className="md3-header-icon-button"
@@ -143,8 +141,9 @@ const PremiumHeader = ({
               aria-label="Notifications"
             >
               <span className="material-symbols-outlined">notifications</span>
-              <span className="md3-header-badge" />
+              <span className="md3-header-badge"></span>
             </button>
+            
             
             {notifMenuOpen && (
               <div className="md3-header-menu open">
