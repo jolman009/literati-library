@@ -36,7 +36,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://jjlxdsghmsemuparbfbh.supabase.co wss://jjlxdsghmsemuparbfbh.supabase.co https://api.openai.com https://library-server-m6gr.onrender.com; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://jjlxdsghmsemuparbfbh.supabase.co wss://jjlxdsghmsemuparbfbh.supabase.co https://api.openai.com https://library-server-m6gr.onrender.com; frame-ancestors 'none';"
         }
       ]
     },
@@ -73,6 +73,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/manifest.json",
+      "destination": "/manifest.json"
+    },
     {
       "source": "/legal/(.*)",
       "destination": "/index.html"
