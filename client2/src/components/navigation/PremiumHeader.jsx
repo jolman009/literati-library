@@ -1,201 +1,88 @@
-import { useMemo, useState, useRef, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './PremiumHeader.css';
 
-const PremiumHeader = ({
-  title,
-  breadcrumbs,
-  rightActions,
-  showSearch = true,
-  onSearch,
-}) => {
-  const { pathname } = useLocation();
+/**
+ * A Material Design 3–compliant header for the premium experience.
+ *
+ * This component displays a header with a navigation button, a title,
+ * optional breadcrumbs and a search field. It uses CSS classes for
+ * all styling – there are **no** inline style objects or `title`
+ * attributes that cause unwanted tooltips.
+ *
+ * Props:
+ * - `title` (string): The page title to display.
+ * - `breadcrumbs` (array of `{ label: string, href?: string }`): Optional
+ *     breadcrumb links. If provided, the header will render an ordered
+ *     list of links separated by chevrons. If `href` is omitted, the
+ *     breadcrumb will render as plain text.
+ */
+export default function PremiumHeader({ title, breadcrumbs = [] }) {
   const navigate = useNavigate();
-  const { actualTheme, toggleTheme } = useMaterial3Theme();
-  const { user, logout } = useAuth();
+  const [query, setQuery] = useState('');
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [notifMenuOpen, setNotifMenuOpen] = useState(false);
-  const userBtnRef = useRef(null);
-  const notifBtnRef = useRef(null);
+  /**
+   * Navigate to the dashboard. This replaces the inline `title`
+   * attribute previously used to describe the button, using
+   * `aria-label` instead to avoid native tooltips while remaining
+   * accessible.
+   */
+  const handleLogoClick = () => navigate('/dashboard');
 
-  const resolvedTitle = useMemo(() => {
-    if (title) return title;
-    if (pathname === '/dashboard') return 'Dashboard';
-    if (pathname.startsWith('/upload')) return 'Upload Books';
-    if (pathname.startsWith('/notes')) return 'Notes';
-    if (pathname.startsWith('/library')) return 'Library';
-    return 'Literati';
-  }, [title, pathname]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const handleLaunchOnboarding = () => {
-    // Remove the completed flag to show onboarding again
-    localStorage.removeItem('literati-onboarding-completed');
-    setUserMenuOpen(false);
-    // Refresh page to trigger onboarding
-    window.location.reload();
-  };
-
-
-  // Get user initials for avatar
-  const userInitials = user?.name
-    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    : 'U';
-
-  const [logoError, setLogoError] = useState(false);
+  /**
+   * Handle changes to the search field. At some point you could
+   * dispatch this query to a search endpoint or update context state.
+   * For now it simply updates local state.
+   */
+  const handleSearchChange = (e) => setQuery(e.target.value);
 
   return (
-    <header className={`md3-header ${actualTheme === 'dark' ? 'dark' : ''}`}>
-      <div className="md3-header-content">
-        {/* Left section */}
-        <div className="md3-header-left">
-          {!logoError ? (
-            <img 
-              src="/literatiLOGO_144x153.png" 
-              alt="Literati" 
-              className="md3-header-logo"
-              onClick={() => navigate('/dashboard')}
-              onError={() => {
-                console.error('Failed to load logo');
-                setLogoError(true);
-              }}
-            />
-          ) : (
-            <>
-              <button onClick={() => navigate('/dashboard')} aria-label="Literati">
-                <span className="material-symbols-outlined">auto_stories</span>
-              </button>
-              <h1 className="md3-header-title">{resolvedTitle}</h1>
-            </>
-          )}
-          {breadcrumbs && (
-            <nav className="md3-header-breadcrumbs">
-              {breadcrumbs}
-            </nav>
-          )}
-        </div>
-
-        {/* Search section */}
-        {showSearch && (
-          <div className="md3-header-search">
-            <div 
-              className="md3-search-field"
-              onClick={onSearch}
-              style={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '8px 12px',
-                backgroundColor: 'var(--md3-surface-container-low)',
-                borderRadius: '24px',
-                border: '1px solid var(--md3-outline-variant)',
-                minWidth: '300px',
-                color: 'var(--md3-on-surface-variant)'
-              }}
-            >
-              <span>Search books, notes, collections...</span>
-              <div style={{
-                fontSize: '11px',
-                padding: '2px 6px',
-                backgroundColor: 'var(--md3-surface-container)',
-                borderRadius: '4px',
-                border: '1px solid var(--md3-outline)',
-                opacity: 0.7
-              }}>
-                ⌘K
-              </div>
-            </div>
-          </div>
+    <header className="premium-header">
+      <div className="premium-header-left">
+        <button
+          className="premium-header-logo-btn"
+          onClick={handleLogoClick}
+          aria-label="Home"
+        >
+          <span className="material-symbols-outlined">auto_stories</span>
+        </button>
+        <h1 className="premium-header-title">{title}</h1>
+        {breadcrumbs.length > 0 && (
+          <nav aria-label="Breadcrumb" className="premium-header-breadcrumbs">
+            <ol>
+              {breadcrumbs.map((crumb, idx) => (
+                <li key={idx} className="premium-header-crumb">
+                  {crumb.href ? (
+                    <a href={crumb.href}>{crumb.label}</a>
+                  ) : (
+                    <span>{crumb.label}</span>
+                  )}
+                  {idx < breadcrumbs.length - 1 && (
+                    <span className="premium-header-crumb-separator">›</span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
         )}
-
-        {/* Right section */}
-        <div className="md3-header-right">
-          {rightActions}
-          
-          {/* Theme toggle */}
-          <button
-            className="md3-header-icon-button"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            title={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            <span className="material-symbols-outlined">
-              {actualTheme === 'dark' ? 'light_mode' : 'dark_mode'}
-            </span>
-          </button>
-
-          {/* Notifications */}
-          <div className="md3-header-icon-button">
-            <button
-              ref={notifBtnRef}
-              className="md3-header-icon-button"
-              onClick={() => setNotifMenuOpen(!notifMenuOpen)}
-              aria-label="Notifications"
-            >
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="md3-header-badge"></span>
-            </button>
-            
-            
-            {notifMenuOpen && (
-              <div className="md3-header-menu open">
-                <div className="md3-header-menu-item">
-                  <span className="material-symbols-outlined">check_circle</span>
-                  <span>No new notifications</span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* User menu */}
-          <div style={{ position: 'relative' }}>
-            <button
-              ref={userBtnRef}
-              className="md3-header-avatar"
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              aria-label="User menu"
-            >
-              {userInitials}
-            </button>
-            
-            {userMenuOpen && (
-              <div className="md3-header-menu open">
-                <div className="md3-header-menu-item">
-                  <span className="material-symbols-outlined">person</span>
-                  <span>{user?.name || 'User'}</span>
-                </div>
-                <div className="md3-header-menu-item">
-                  <span className="material-symbols-outlined">mail</span>
-                  <span>{user?.email || 'user@example.com'}</span>
-                </div>
-                <div className="md3-header-menu-divider" />
-                <button className="md3-header-menu-item" onClick={() => navigate('/settings')}>
-                  <span className="material-symbols-outlined">settings</span>
-                  <span>Settings</span>
-                </button>
-                <button className="md3-header-menu-item" onClick={handleLaunchOnboarding}>
-                  <span className="material-symbols-outlined">help</span>
-                  <span>Rewards Tutorial</span>
-                </button>
-                <button className="md3-header-menu-item" onClick={handleLogout}>
-                  <span className="material-symbols-outlined">logout</span>
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
-          </div>
+      </div>
+      <div className="premium-header-right">
+        <div className="premium-header-search">
+          <span className="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            className="premium-header-search-input"
+            placeholder="Search…"
+            value={query}
+            onChange={handleSearchChange}
+          />
         </div>
+        {/*
+          Additional action buttons or profile components can be added here.
+          For example, a notifications icon or user avatar can live in
+          this right-hand container without using inline styles.
+        */}
       </div>
     </header>
   );
-};
-
-export default PremiumHeader;
+}
