@@ -3,17 +3,28 @@ import axios from 'axios';
 
 // Determine API URL based on environment variables and build mode
 const getApiUrl = () => {
+  // Debug logging for production troubleshooting
+  console.log('🔧 API URL Detection:', {
+    'VITE_API_BASE_URL': import.meta.env.VITE_API_BASE_URL,
+    'hostname': window.location.hostname,
+    'env.MODE': import.meta.env.MODE,
+    'env.PROD': import.meta.env.PROD
+  });
+
   // Always prefer environment variable if available
   if (import.meta.env.VITE_API_BASE_URL) {
+    console.log('✅ Using VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
     return import.meta.env.VITE_API_BASE_URL;
   }
 
   // Fallback to hostname detection for backwards compatibility
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('🏠 Using localhost API');
     return 'http://localhost:5000';
   }
 
   // Default to production API for any other domain
+  console.log('🌐 Using production API fallback');
   return 'https://library-server-m6gr.onrender.com';
 };
 
