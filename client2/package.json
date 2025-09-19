@@ -35,9 +35,6 @@
     "test:e2e:debug": "playwright test --debug",
     "test:all": "pnpm run test:coverage && pnpm run test:e2e"
   },
-  "engines": {
-    "node": ">=20.16.0"
-  },
   "browserslist": {
     "production": [
       ">0.2%",

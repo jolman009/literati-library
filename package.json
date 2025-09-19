@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A comprehensive digital library application with AI-powered features",
   "private": true,
-  "packageManager": "pnpm@10.12.4",
   "workspaces": [
     "client2",
     "server2"
@@ -31,11 +30,6 @@
     "install:test-deps": "cd client2 && pnpm install && cd ../server2 && pnpm install && cd ../ai-service && pip install -r requirements-test.txt",
     "clean": "pnpm run --recursive clean && rm -rf node_modules",
     "setup": "pnpm run install:all && pnpm run install:test-deps"
-  },
-  "engines": {
-    "node": ">=20.16.0",
-    "pnpm": ">=10.12.0",
-    "python": ">=3.11.0"
   },
   "keywords": [
     "digital-library",
