@@ -205,11 +205,12 @@ describe('MD3Button', () => {
       fireEvent.keyDown(document.body, { key: 'Tab' })
       button.focus()
 
-      await waitFor(() => {
-        expect(button).toHaveStyle({
-          outline: '2px solid #6750a4',
-          outlineOffset: '2px'
-        })
+      // Test for the custom focus ring element
+      const focusRing = button.querySelector('.md3-focus-ring')
+      expect(focusRing).toBeInTheDocument()
+      expect(focusRing).toHaveStyle({
+        position: 'absolute',
+        boxShadow: '0 0 0 2px rgba(103,80,164,.35)'
       })
     })
 
