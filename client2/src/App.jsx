@@ -9,13 +9,16 @@ import CacheMonitor from './components/CacheMonitor';
 
 // Import enhanced UX components
 import { LoadingSpinner, PageTransition, NetworkStatus } from './components/ui/LoadingStates';
-import ErrorBoundary, { 
-  LibraryErrorBoundary, 
-  ReaderErrorBoundary, 
-  UploadErrorBoundary, 
-  NotesErrorBoundary 
+import ErrorBoundary, {
+  LibraryErrorBoundary,
+  ReaderErrorBoundary,
+  UploadErrorBoundary,
+  NotesErrorBoundary
 } from './components/ui/ErrorBoundary';
 import { useNetworkStatus } from './hooks/useNetworkStatus';
+
+// PWA Components
+import { InstallPrompt, OfflineIndicator, UpdateNotification } from './components/PWA';
 
 // Import performance testing for development
 if (process.env.NODE_ENV === 'development') {
@@ -229,6 +232,10 @@ const App = () => {
                 <CacheMonitor />
                 <GamificationOnboarding />
                 <CookieConsent />
+
+                {/* PWA Components */}
+                <OfflineIndicator />
+                <InstallPrompt />
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>

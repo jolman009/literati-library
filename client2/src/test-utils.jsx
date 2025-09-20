@@ -118,6 +118,51 @@ export const mockApiError = (message = 'API Error', status = 500) => ({
   }
 })
 
+// AuthContext specific mock functions
+export const createMockApiResponse = (data, status = 200) => ({
+  ok: status >= 200 && status < 300,
+  status,
+  headers: new Headers({ 'content-type': 'application/json' }),
+  json: () => Promise.resolve(data),
+  text: () => Promise.resolve(JSON.stringify(data))
+})
+
+export const createMockApiError = (message = 'API Error', status = 500) => {
+  const error = new Error(message)
+  error.status = status
+  return error
+}
+
+// Mock fetch function
+export const mockFetch = (response) => {
+  global.fetch = vi.fn(() => Promise.resolve(response))
+  return global.fetch
+}
+
+// Mock Supabase client
+export const createMockSupabaseClient = () => ({
+  auth: {
+    signUp: vi.fn(),
+    signInWithPassword: vi.fn(),
+    signOut: vi.fn(),
+    getUser: vi.fn(),
+    onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } }))
+  },
+  from: vi.fn(() => ({
+    select: vi.fn(() => Promise.resolve({ data: [], error: null })),
+    insert: vi.fn(() => Promise.resolve({ data: [], error: null })),
+    update: vi.fn(() => Promise.resolve({ data: [], error: null })),
+    delete: vi.fn(() => Promise.resolve({ data: [], error: null }))
+  })),
+  storage: {
+    from: vi.fn(() => ({
+      upload: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      download: vi.fn(() => Promise.resolve({ data: new Blob(), error: null })),
+      remove: vi.fn(() => Promise.resolve({ data: [], error: null }))
+    }))
+  }
+})
+
 // Test cleanup function
 export const cleanupTest = () => {
   // Clear all mocks

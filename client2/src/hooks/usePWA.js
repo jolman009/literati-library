@@ -81,6 +81,32 @@ export const usePWA = () => {
     }
   }, [notification.supported]);
 
+  const showNotification = useCallback((title, options = {}) => {
+    if (notification.permission !== 'granted') {
+      return false;
+    }
+
+    try {
+      const notificationOptions = {
+        icon: '/icon-192x192.png',
+        badge: '/icon-96x96.png',
+        ...options
+      };
+
+      const n = new Notification(title, notificationOptions);
+
+      // Auto-close after 5 seconds if not clicked
+      setTimeout(() => {
+        if (n) n.close();
+      }, 5000);
+
+      return true;
+    } catch (error) {
+      console.error('Failed to show notification:', error);
+      return false;
+    }
+  }, [notification.permission]);
+
   return {
     isInstalled,
     canInstall: !!installPrompt,
@@ -89,6 +115,7 @@ export const usePWA = () => {
     notification,
     installPWA,
     requestNotificationPermission,
+    showNotification,
     setBadge,
     clearBadge
   };

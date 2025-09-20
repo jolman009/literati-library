@@ -1,6 +1,9 @@
 import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act, waitFor, render } from '@testing-library/react'
+
+// Import the actual AuthContext without global mocks interfering
+vi.unmock('./AuthContext')
 import { AuthProvider, useAuth } from './AuthContext'
 import {
   cleanupTest,
@@ -57,8 +60,12 @@ describe('AuthContext', () => {
     const mockToken = 'existing-token'
     const mockUser = { id: '123', email: 'test@example.com' }
 
-    mockLocalStorage.getItem.mockReturnValue(mockToken)
-    mockFetch(createMockApiResponse({ user: mockUser }))
+    // Mock localStorage to return both token and user
+    mockLocalStorage.getItem.mockImplementation((key) => {
+      if (key === 'literati_token') return mockToken
+      if (key === 'literati_user') return JSON.stringify(mockUser)
+      return null
+    })
 
     const { result } = renderAuthHook()
 
@@ -88,12 +95,12 @@ describe('AuthContext', () => {
     expect(result.current.isAuthenticated).toBe(true)
     expect(result.current.error).toBeNull()
 
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('token', mockResponse.token)
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('literati_token', mockResponse.token)
   })
 
   test('handles login failure', async () => {
     const errorMessage = 'Invalid credentials'
-    global.fetch = vi.fn(() => Promise.reject(createMockApiError(errorMessage, 401)))
+    global.fetch = vi.fn(() => Promise.resolve(createMockApiResponse({ error: errorMessage }, 401)))
 
     const { result } = renderAuthHook()
 
@@ -128,7 +135,7 @@ describe('AuthContext', () => {
 
   test('handles registration failure', async () => {
     const errorMessage = 'Email already exists'
-    global.fetch = vi.fn(() => Promise.reject(createMockApiError(errorMessage, 409)))
+    global.fetch = vi.fn(() => Promise.resolve(createMockApiResponse({ error: errorMessage }, 409)))
 
     const { result } = renderAuthHook()
 
@@ -160,7 +167,7 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull()
     expect(result.current.token).toBeNull()
     expect(result.current.isAuthenticated).toBe(false)
-    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('token')
+    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
   })
 
   test('clears error when clearError is called', async () => {
@@ -188,10 +195,15 @@ describe('AuthContext', () => {
     const newToken = 'refreshed-token'
     const mockUser = { id: '123', email: 'test@example.com' }
 
-    mockLocalStorage.getItem.mockReturnValue(mockToken)
+    // Mock localStorage to return both token and user initially
+    mockLocalStorage.getItem.mockImplementation((key) => {
+      if (key === 'literati_token') return mockToken
+      if (key === 'literati_user') return JSON.stringify(mockUser)
+      return null
+    })
 
-    // Mock refresh endpoint
-    mockFetch(createMockApiResponse({ token: newToken, user: mockUser }))
+    // Mock the profile endpoint to return refreshed user data (not a new token)
+    mockFetch(createMockApiResponse(mockUser))
 
     const { result } = renderAuthHook()
 
@@ -199,25 +211,38 @@ describe('AuthContext', () => {
       await result.current.refreshUser()
     })
 
-    expect(result.current.token).toBe(newToken)
+    expect(result.current.token).toBe(mockToken) // Token stays the same
     expect(result.current.user).toEqual(mockUser)
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('token', newToken)
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('literati_user', JSON.stringify(mockUser))
   })
 
   test('handles token expiration', async () => {
     const expiredToken = 'expired-token'
-    mockLocalStorage.getItem.mockReturnValue(expiredToken)
+    const mockUser = { id: '123', email: 'test@example.com' }
+
+    // Mock localStorage to have token and user initially
+    mockLocalStorage.getItem.mockImplementation((key) => {
+      if (key === 'literati_token') return expiredToken
+      if (key === 'literati_user') return JSON.stringify(mockUser)
+      return null
+    })
 
     // Mock API call that returns 401 (token expired)
-    global.fetch = vi.fn(() => Promise.reject(createMockApiError('Token expired', 401)))
+    global.fetch = vi.fn(() => Promise.resolve(createMockApiResponse({ error: 'Token expired' }, 401)))
 
     const { result } = renderAuthHook()
+
+    // Load initial state
+    await act(async () => {
+      // Trigger an API call that will fail with 401
+      await result.current.refreshUser()
+    })
 
     await waitFor(() => {
       expect(result.current.token).toBeNull()
       expect(result.current.user).toBeNull()
       expect(result.current.isAuthenticated).toBe(false)
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('token')
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
     })
   })
 
@@ -225,16 +250,19 @@ describe('AuthContext', () => {
     const mockToken = 'test-token'
     const mockUser = { id: '123', email: 'test@example.com' }
 
-    mockLocalStorage.getItem.mockReturnValue(mockToken)
-    mockFetch(createMockApiResponse({ user: mockUser }))
+    // First login to get authenticated state
+    mockFetch(createMockApiResponse({ user: mockUser, token: mockToken }))
 
     const { result } = renderAuthHook()
 
-    await waitFor(() => {
-      expect(result.current.isAuthenticated).toBe(true)
+    await act(async () => {
+      await result.current.login('test@example.com', 'password')
     })
 
-    // Test API call
+    // Verify authenticated state
+    expect(result.current.isAuthenticated).toBe(true)
+
+    // Test API call with authorization header
     const testData = { message: 'success' }
     mockFetch(createMockApiResponse(testData))
 
@@ -252,16 +280,20 @@ describe('AuthContext', () => {
     )
   })
 
-  test('hasRole checks user roles correctly', () => {
+  test('hasRole checks user roles correctly', async () => {
+    const mockUser = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+      roles: ['user', 'premium']
+    }
+    mockFetch(createMockApiResponse({ user: mockUser, token: 'test-token' }))
+
     const { result } = renderAuthHook()
 
-    // Set user with roles
-    act(() => {
-      result.current.user = {
-        id: '123',
-        email: 'test@example.com',
-        roles: ['user', 'premium']
-      }
+    // Log in user with roles
+    await act(async () => {
+      await result.current.login('test@example.com', 'password')
     })
 
     expect(result.current.hasRole('user')).toBe(true)
@@ -301,9 +333,9 @@ describe('AuthContext', () => {
       await result.current.login('test@example.com', 'password')
     })
 
-    // Update profile
-    const updatedUser = { ...mockUser, name: 'New Name' }
-    mockFetch(createMockApiResponse({ user: updatedUser }))
+    // Update profile - the API should return the updated data
+    const updatedUser = { name: 'New Name' }
+    mockFetch(createMockApiResponse(updatedUser))
 
     await act(async () => {
       await result.current.updateProfile({ name: 'New Name' })
@@ -333,7 +365,7 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull()
     expect(result.current.token).toBeNull()
     expect(result.current.isAuthenticated).toBe(false)
-    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('token')
+    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
   })
 
   test('throws error when useAuth is used outside AuthProvider', () => {
@@ -341,8 +373,14 @@ describe('AuthContext', () => {
     const originalError = console.error
     console.error = vi.fn()
 
+    // Create a component that tries to use useAuth outside provider
+    const TestComponent = () => {
+      useAuth()
+      return null
+    }
+
     expect(() => {
-      renderHook(() => useAuth())
+      render(<TestComponent />)
     }).toThrow('useAuth must be used within an AuthProvider')
 
     console.error = originalError
