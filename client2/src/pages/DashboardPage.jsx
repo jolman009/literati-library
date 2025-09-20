@@ -546,19 +546,10 @@ const DashboardPage = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API.BASE_URL}/books`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          const booksArray = Array.isArray(data.books) ? data.books : [];
-          setBooks(booksArray);
-        }
+        const response = await API.get('/books');
+        const data = response.data;
+        const booksArray = Array.isArray(data.books) ? data.books : [];
+        setBooks(booksArray);
       } catch (error) {
         console.error('Error loading books for dashboard:', error);
         setBooks([]); // Fallback to empty array
