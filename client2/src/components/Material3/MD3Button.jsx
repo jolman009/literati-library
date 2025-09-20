@@ -55,6 +55,7 @@ const MD3Button = React.forwardRef(({
   size='medium',
   density='default',
   icon,
+  leadingIcon,
   trailingIcon,
   disabled=false,
   loading=false,
@@ -89,8 +90,8 @@ const MD3Button = React.forwardRef(({
     boxShadow:v.shadow || 'none',
     textDecoration:'none',
     width: fullWidth ? '100%' : undefined,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.6 : 1,
+    cursor: (disabled || loading) ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.38 : 1,
     userSelect:'none',
     fontWeight:600,
     fontSize:s.font,
@@ -107,8 +108,13 @@ const MD3Button = React.forwardRef(({
   };
 
   const handleKeyDown = (e) => {
-    if ((e.key === 'Enter' || e.key === ' ') && href) {
-      e.currentTarget.click();
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (props.onClick && !disabled && !loading) {
+        props.onClick(e);
+      } else if (href) {
+        e.currentTarget.click();
+      }
     }
   };
 
@@ -117,24 +123,24 @@ const MD3Button = React.forwardRef(({
       ref={(node) => { rippleRef.current = node; if (typeof ref === 'function') ref(node); else if (ref) ref.current = node; }}
       className={`md3-button md3-button--${variant} md3-button--${size} ${className}`}
       style={baseStyle}
-      disabled={href ? undefined : disabled}
-      aria-disabled={href ? disabled : undefined}
+      disabled={href ? undefined : (disabled || loading)}
+      aria-disabled={href ? (disabled || loading) : undefined}
       aria-label={ariaLabel}
       href={href}
       target={target}
       rel={rel}
       onPointerDown={disabled || loading ? undefined : onPointerDown}
-      onKeyDown={href ? handleKeyDown : undefined}
-      {...props}
+      onKeyDown={handleKeyDown}
+      {...(loading || disabled ? {...props, onClick: undefined} : props)}
     >
       <span aria-hidden className="md3-focus-ring" style={focusRing} />
       {loading ? (
-        <span aria-hidden style={{
+        <span aria-hidden className="loading-spinner" style={{
           width:s.icon, height:s.icon, border:'2px solid currentColor', borderTopColor:'transparent',
           borderRadius:'50%', animation:'spin 1s linear infinite'
         }}/>
-      ) : icon ? (
-        <span className="md3-button__icon" style={{ fontSize:s.icon, lineHeight:1, display:'inline-grid', placeItems:'center' }}>{icon}</span>
+      ) : (icon || leadingIcon) ? (
+        <span className="md3-button__icon" style={{ fontSize:s.icon, lineHeight:1, display:'inline-grid', placeItems:'center' }}>{icon || leadingIcon}</span>
       ) : null}
 
       <span className="md3-button__label" style={{ whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
@@ -155,10 +161,9 @@ export default MD3Button;
 
 // helpers
 function adjustPadding(pad, adj) {
-  // "12px 20px" => reduce both by adj, but never below 6/10
+  // "12px 20px" => reduce vertical by adj, keep horizontal
   const [py, px] = pad.split(' ').map(v => parseInt(v));
   const clamp = (v, min) => Math.max(v, min);
   const py2 = clamp(py + adj, 6);
-  const px2 = clamp(px + adj, 10);
-  return `${py2}px ${px2}px`;
+  return `${py2}px ${px}px`;
 }

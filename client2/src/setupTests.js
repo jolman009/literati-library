@@ -182,6 +182,55 @@ const sessionStorageMock = {
 }
 global.sessionStorage = sessionStorageMock
 
+// Mock axios
+vi.mock('axios', () => ({
+  default: {
+    create: vi.fn(() => ({
+      get: vi.fn(() => Promise.resolve({ data: [] })),
+      post: vi.fn(() => Promise.resolve({ data: {} })),
+      put: vi.fn(() => Promise.resolve({ data: {} })),
+      delete: vi.fn(() => Promise.resolve({ data: {} })),
+      interceptors: {
+        request: { use: vi.fn() },
+        response: { use: vi.fn() }
+      }
+    })),
+    get: vi.fn(() => Promise.resolve({ data: [] })),
+    post: vi.fn(() => Promise.resolve({ data: {} })),
+    put: vi.fn(() => Promise.resolve({ data: {} })),
+    delete: vi.fn(() => Promise.resolve({ data: {} }))
+  }
+}))
+
+// Mock indexedDB
+global.indexedDB = {
+  open: vi.fn(() => Promise.resolve({
+    result: {
+      transaction: vi.fn(() => ({
+        objectStore: vi.fn(() => ({
+          get: vi.fn(() => Promise.resolve()),
+          put: vi.fn(() => Promise.resolve()),
+          delete: vi.fn(() => Promise.resolve()),
+          clear: vi.fn(() => Promise.resolve())
+        }))
+      }))
+    }
+  })),
+  deleteDatabase: vi.fn(() => Promise.resolve())
+}
+
+// Mock fetch API
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve([]),
+    text: () => Promise.resolve(''),
+    headers: new Headers(),
+    clone: vi.fn()
+  })
+)
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
