@@ -36,6 +36,9 @@ const API = axios.create({
   },
 });
 
+// Add BASE_URL property for backward compatibility
+API.BASE_URL = getApiUrl();
+
 // Add request interceptor to include auth token
 API.interceptors.request.use(
   (config) => {

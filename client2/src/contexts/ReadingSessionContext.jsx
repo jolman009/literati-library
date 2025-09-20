@@ -81,21 +81,10 @@ export const ReadingSessionProvider = ({ children }) => {
       };
       // Update book's is_reading status in database
       try {
-        const response = await fetch(`${API.BASE_URL}/books/${book.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            is_reading: true,
-            last_opened: new Date().toISOString()
-          }),
+        await API.patch(`/books/${book.id}`, {
+          is_reading: true,
+          last_opened: new Date().toISOString()
         });
-
-        if (!response.ok) {
-          console.warn('Failed to update book is_reading status:', await response.text());
-        }
       } catch (error) {
         console.warn('Failed to update book reading status:', error);
       }
@@ -185,21 +174,10 @@ export const ReadingSessionProvider = ({ children }) => {
       const durationMinutes = Math.floor((endTime - startTime) / 60000);
       // Update book's is_reading status in database
       try {
-        const response = await fetch(`${API.BASE_URL}/books/${activeSession.book.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            is_reading: false,
-            last_opened: new Date().toISOString()
-          }),
+        await API.patch(`/books/${activeSession.book.id}`, {
+          is_reading: false,
+          last_opened: new Date().toISOString()
         });
-
-        if (!response.ok) {
-          console.warn('Failed to update book is_reading status on stop:', await response.text());
-        }
       } catch (error) {
         console.warn('Failed to update book reading status on stop:', error);
       }
