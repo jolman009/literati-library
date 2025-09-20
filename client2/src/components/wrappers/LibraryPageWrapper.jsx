@@ -1,6 +1,7 @@
 // src/components/wrappers/LibraryPageWrapper.jsx - COMPLETE VERSION WITH ALL FEATURES
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { useAuth } from '../../contexts/AuthContext';
 import { Material3ThemeProvider, useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { MD3SnackbarProvider } from '../Material3';
@@ -70,6 +71,9 @@ const useSafeSnackbar = () => {
         };
       `;
       
+      // Sanitize the message to prevent XSS
+      const sanitizedMessage = DOMPurify.sanitize(options.message);
+
       notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 8px;">
           <span>${
@@ -77,7 +81,7 @@ const useSafeSnackbar = () => {
             options.variant === 'success' ? '✅' :
             options.variant === 'warning' ? '⚠️' : 'ℹ️'
           }</span>
-          <span>${options.message}</span>
+          <span>${sanitizedMessage}</span>
         </div>
       `;
       

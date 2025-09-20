@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import NavigationFAB from '../components/NavigationFAB';
 import '../components/NavigationFAB.css';
 // EnhancedBookCard imported for direct usage in featured book sections
@@ -61,6 +62,9 @@ const useSafeSnackbar = () => {
         animation: slideIn 0.3s ease;
       `;
       
+      // Sanitize the message to prevent XSS
+      const sanitizedMessage = DOMPurify.sanitize(options.message);
+
       notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 8px;">
           <span>${
@@ -68,7 +72,7 @@ const useSafeSnackbar = () => {
             options.variant === 'success' ? '✅' :
             options.variant === 'warning' ? '⚠️' : 'ℹ️'
           }</span>
-          <span>${options.message}</span>
+          <span>${sanitizedMessage}</span>
         </div>
       `;
       

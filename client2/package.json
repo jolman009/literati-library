@@ -6,6 +6,7 @@
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
+    "dompurify": "^3.2.7",
     "epubjs": "^0.3.93",
     "lucide-react": "^0.525.0",
     "pdfjs-dist": "5.3.93",

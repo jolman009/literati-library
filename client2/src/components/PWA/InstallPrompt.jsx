@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { usePWA } from '../../hooks/usePWA';
 
 const InstallPrompt = () => {
   const { canInstall, installPWA, isInstalled } = usePWA();
+  const [isDismissed, setIsDismissed] = useState(false);
 
-  if (!canInstall || isInstalled) return null;
+  if (!canInstall || isInstalled || isDismissed) return null;
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white rounded-lg shadow-xl p-4 border border-gray-200 z-50">
@@ -25,7 +26,7 @@ const InstallPrompt = () => {
               Install
             </button>
             <button
-              onClick={() => {/* Add dismiss logic */}}
+              onClick={() => setIsDismissed(true)}
               className="px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors text-sm"
             >
               Not now
