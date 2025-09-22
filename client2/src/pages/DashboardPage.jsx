@@ -356,35 +356,105 @@ const CurrentlyReading = () => {
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchCurrentlyReading = async () => {
       try {
         const token = localStorage.getItem('literati_token');
-        if (!token) return;
-        
-        const response = await fetch('http://localhost:5000/books', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          // Extract books array from response object (API returns {books: Array})
-          const booksArray = Array.isArray(data.books) ? data.books : [];
-          const readingBooks = booksArray.filter(book => book.is_reading);
-          setCurrentlyReading(readingBooks);
+        if (!token) {
+          setLoading(false);
+          return;
         }
+
+        // Use the API config for consistency
+        const response = await API.get('/books');
+        const data = response.data;
+
+        // Handle both array and object responses
+        const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+
+        // Filter for currently reading books
+        const readingBooks = booksArray.filter(book => book.is_reading);
+
+        // Also check localStorage for active reading session to ensure sync
+        const savedSession = localStorage.getItem('active_reading_session');
+        if (savedSession) {
+          try {
+            const sessionData = JSON.parse(savedSession);
+            const activeBookId = sessionData?.book?.id;
+
+            // Ensure the active book is marked as reading if it exists
+            if (activeBookId && !readingBooks.find(book => book.id === activeBookId)) {
+              const activeBook = booksArray.find(book => book.id === activeBookId);
+              if (activeBook) {
+                readingBooks.push({ ...activeBook, is_reading: true });
+              }
+            }
+          } catch (sessionError) {
+            console.log('Session data parsing error:', sessionError);
+          }
+        }
+
+        setCurrentlyReading(readingBooks);
       } catch (error) {
         console.error('Failed to fetch currently reading books:', error);
+        setCurrentlyReading([]);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchCurrentlyReading();
   }, [activeSession]); // Refresh when active session changes
+
+  // Also listen for storage events to sync across tabs
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'active_reading_session') {
+        // Re-fetch data when reading session changes in another tab
+        const fetchCurrentlyReading = async () => {
+          try {
+            const token = localStorage.getItem('literati_token');
+            if (!token) {
+              setLoading(false);
+              return;
+            }
+
+            const response = await API.get('/books');
+            const data = response.data;
+            const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+            const readingBooks = booksArray.filter(book => book.is_reading);
+
+            const savedSession = localStorage.getItem('active_reading_session');
+            if (savedSession) {
+              try {
+                const sessionData = JSON.parse(savedSession);
+                const activeBookId = sessionData?.book?.id;
+                if (activeBookId && !readingBooks.find(book => book.id === activeBookId)) {
+                  const activeBook = booksArray.find(book => book.id === activeBookId);
+                  if (activeBook) {
+                    readingBooks.push({ ...activeBook, is_reading: true });
+                  }
+                }
+              } catch (sessionError) {
+                console.log('Session data parsing error:', sessionError);
+              }
+            }
+
+            setCurrentlyReading(readingBooks);
+          } catch (error) {
+            console.error('Failed to fetch currently reading books:', error);
+            setCurrentlyReading([]);
+          }
+        };
+
+        fetchCurrentlyReading();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
   
   if (loading) return <div className="section-card"><h3>Loading currently reading...</h3></div>;
 
@@ -444,43 +514,69 @@ const RecentlyAdded = () => {
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    const fetchRecentBooks = async () => {
-      try {
-        const token = localStorage.getItem('literati_token');
-        if (!token) return;
-        
-        const response = await fetch('http://localhost:5000/books', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          // Extract books array from response object (API returns {books: Array})
-          const booksArray = Array.isArray(data.books) ? data.books : [];
-          // Get recently added books (filter by created_at or dateAdded)
-          const recentlyAdded = booksArray
-            .filter(book => book.created_at || book.dateAdded)
-            .sort((a, b) => {
-              const dateA = new Date(a.created_at || a.dateAdded || 0);
-              const dateB = new Date(b.created_at || b.dateAdded || 0);
-              return dateB - dateA;
-            })
-            .slice(0, 3); // Show only 3 books for dashboard
-          setRecentBooks(recentlyAdded);
-        }
-      } catch (error) {
-        console.error('Failed to fetch recent books:', error);
-      } finally {
+
+  const fetchRecentBooks = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('literati_token');
+      if (!token) {
         setLoading(false);
+        return;
+      }
+
+      // Use the API config for consistency
+      const response = await API.get('/books');
+      const data = response.data;
+
+      // Handle both array and object responses
+      const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+
+      // Get recently added books (filter by created_at or dateAdded)
+      const recentlyAdded = booksArray
+        .filter(book => book.created_at || book.dateAdded || book.upload_date)
+        .sort((a, b) => {
+          const dateA = new Date(a.created_at || a.dateAdded || a.upload_date || 0);
+          const dateB = new Date(b.created_at || b.dateAdded || b.upload_date || 0);
+          return dateB - dateA;
+        })
+        .slice(0, 3); // Show only 3 books for dashboard
+
+      setRecentBooks(recentlyAdded);
+    } catch (error) {
+      console.error('Failed to fetch recent books:', error);
+      setRecentBooks([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRecentBooks();
+  }, [fetchRecentBooks]);
+
+  // Listen for storage events to sync when new books are added
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'books_updated' || e.key === 'book_uploaded') {
+        // Re-fetch when books are updated
+        fetchRecentBooks();
       }
     };
-    
-    fetchRecentBooks();
-  }, []);
+
+    // Listen for custom events from other parts of the app
+    const handleBookUpdate = () => {
+      fetchRecentBooks();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('bookUploaded', handleBookUpdate);
+    window.addEventListener('bookUpdated', handleBookUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('bookUploaded', handleBookUpdate);
+      window.removeEventListener('bookUpdated', handleBookUpdate);
+    };
+  }, [fetchRecentBooks]);
   
   if (loading) return <div className="section-card-compact"><h3>Loading recent books...</h3></div>;
 

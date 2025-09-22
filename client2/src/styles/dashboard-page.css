@@ -31,6 +31,19 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* Dark mode elevated background for welcome section */
+[data-theme="dark"] .welcome-section {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-container) 0%,
+    var(--md-sys-color-surface-container-high) 50%,
+    var(--md-sys-color-surface-container) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
 /* Light mode darker background for welcome header */
 :root:not([data-theme="dark"]) .welcome-header {
   background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
@@ -50,6 +63,19 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* Dark mode elevated background for progress section */
+[data-theme="dark"] .progress-section {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-container-low) 0%,
+    var(--md-sys-color-surface-container) 50%,
+    var(--md-sys-color-surface-container-low) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
 /* Light mode darker background for stat cards */
 :root:not([data-theme="dark"]) .stat-card,
 :root:not([data-theme="dark"]) .progress-section .stats-grid .stat-card {
@@ -63,6 +89,19 @@
 :root:not([data-theme="dark"]) .stat-label,
 :root:not([data-theme="dark"]) .stat-icon {
   color: white !important;
+}
+
+/* Dark mode section cards */
+[data-theme="dark"] .section-card,
+[data-theme="dark"] .section-card-compact {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-container-low) 0%,
+    var(--md-sys-color-surface-container) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .theme-toggle-button {
