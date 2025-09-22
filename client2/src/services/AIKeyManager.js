@@ -201,7 +201,7 @@ class AIKeyManager {
     try {
       // Note: Anthropic doesn't have a simple validation endpoint
       // This is a basic format check - real validation happens on first use
-      return apiKey.startsWith('sk-ant-') && apiKey.length > 40;
+      return apiKey.startsWith('sk-ant-api') && apiKey.length > 95;
     } catch (error) {
       return false;
     }
@@ -336,6 +336,41 @@ class AIKeyManager {
    */
   hasAnyProvider() {
     return this.getConfiguredProviders().length > 0;
+  }
+
+  /**
+   * Debug method to inspect stored key data
+   */
+  debugKeyData(provider) {
+    try {
+      const stored = localStorage.getItem(`ai_key_${provider}`);
+      console.log(`Debug ${provider} localStorage:`, stored);
+
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        console.log(`Debug ${provider} parsed:`, parsed);
+        return parsed;
+      }
+      return null;
+    } catch (error) {
+      console.error(`Debug ${provider} failed:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Clean corrupted key data for a provider
+   */
+  cleanCorruptedData(provider) {
+    try {
+      localStorage.removeItem(`ai_key_${provider}`);
+      this.keys.delete(provider);
+      console.log(`Cleaned corrupted data for ${provider}`);
+      return true;
+    } catch (error) {
+      console.error(`Failed to clean ${provider}:`, error);
+      return false;
+    }
   }
 }
 

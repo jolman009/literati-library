@@ -209,7 +209,7 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
           <div className="configured-key-info">
             <p className="key-prefix">Key: {status.keyPrefix}...</p>
             <p className="key-date">
-              Added: {new Date(status.createdAt).toLocaleDateString()}
+              Added: {status.createdAt ? new Date(status.createdAt).toLocaleDateString() : 'Unknown date'}
             </p>
             {status.lastUsed && (
               <p className="key-usage">
@@ -366,6 +366,47 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
               <h5>Debug Information</h5>
               <p>Configured providers: {configuredProviders.length}</p>
               <p>Primary provider: {AIKeyManager.getPrimaryProvider() || 'None'}</p>
+              <button
+                onClick={() => {
+                  console.log('=== DEBUG: Anthropic Key Data ===');
+                  AIKeyManager.debugKeyData('anthropic');
+                  console.log('=== END DEBUG ===');
+                }}
+                className="debug-button"
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '12px',
+                  background: 'var(--md-sys-color-tertiary-container)',
+                  color: 'var(--md-sys-color-on-tertiary-container)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  marginTop: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                Debug Anthropic Data
+              </button>
+              <button
+                onClick={() => {
+                  AIKeyManager.cleanCorruptedData('anthropic');
+                  loadConfiguredKeys();
+                  if (onKeysUpdated) onKeysUpdated();
+                }}
+                className="clean-button"
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '12px',
+                  background: 'var(--md-sys-color-error-container)',
+                  color: 'var(--md-sys-color-on-error-container)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  marginTop: '4px',
+                  marginLeft: '8px',
+                  cursor: 'pointer'
+                }}
+              >
+                Clean Anthropic Data
+              </button>
             </div>
           </div>
         )}
