@@ -812,19 +812,30 @@ Keep your response concise (2-3 sentences) and conversational.`;
               ×
             </button>
           </div>
-          <div style={{ padding: '20px' }}>
-            <p>API Configuration component will be loaded here.</p>
-            <p>For now, you can manually add your key by opening browser console and running:</p>
-            <code style={{ display: 'block', padding: '10px', background: '#f5f5f5', margin: '10px 0' }}>
-              // Add your Anthropic key<br/>
-              localStorage.setItem('ai_key_anthropic', JSON.stringify({`{`}<br/>
-              &nbsp;&nbsp;encrypted: btoa('your-api-key-here'),<br/>
-              &nbsp;&nbsp;provider: 'anthropic',<br/>
-              &nbsp;&nbsp;createdAt: new Date().toISOString(),<br/>
-              &nbsp;&nbsp;metadata: {`{`} keyPrefix: 'sk-ant-' {`}`}<br/>
-              {`}`}));
-            </code>
-            <button onClick={() => setShowApiConfig(false)}>Close</button>
+          <APIKeyConfiguration
+            onKeysUpdated={() => {
+              checkApiKeys();
+              if (onKeysUpdated) onKeysUpdated();
+            }}
+            showTitle={false}
+          />
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <button
+              onClick={() => setShowApiConfig(false)}
+              className="close-modal-button"
+              style={{
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'var(--md-sys-color-surface-container)',
+                color: 'var(--md-sys-color-on-surface)',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>

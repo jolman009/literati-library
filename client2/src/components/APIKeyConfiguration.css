@@ -477,12 +477,117 @@
 }
 
 /* Dark Theme Adjustments */
+.theme-dark .api-key-configuration {
+  background: var(--md-sys-color-surface-container);
+  border-color: var(--md-sys-color-outline);
+}
+
+.theme-dark .config-header h2 {
+  color: var(--md-sys-color-on-surface);
+}
+
+.theme-dark .config-header p {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.theme-dark .security-notice {
+  background: var(--md-sys-color-secondary-container);
+  border-left-color: var(--md-sys-color-secondary);
+}
+
+.theme-dark .notice-content p {
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.theme-dark .provider-tabs {
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.theme-dark .provider-tab {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.theme-dark .provider-tab:hover {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.theme-dark .provider-tab.active {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.theme-dark .provider-info h4 {
+  color: var(--md-sys-color-on-surface);
+}
+
+.theme-dark .provider-description {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.theme-dark .key-format {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
 .theme-dark .provider-key-form.configured {
   background: var(--md-sys-color-primary-container);
 }
 
+.theme-dark .status-text {
+  color: var(--md-sys-color-on-surface);
+}
+
+.theme-dark .configured-key-info p {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
 .theme-dark .key-input {
   background: var(--md-sys-color-surface-container);
+  border-color: var(--md-sys-color-outline);
+  color: var(--md-sys-color-on-surface);
+}
+
+.theme-dark .key-input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.7;
+}
+
+.theme-dark .save-key-button {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.theme-dark .save-key-button:hover:not(:disabled) {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.theme-dark .remove-key-button {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+.theme-dark .validation-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+.theme-dark .validation-success {
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.theme-dark .get-key-link {
+  color: var(--md-sys-color-primary);
+}
+
+.theme-dark .get-key-link:hover {
+  color: var(--md-sys-color-primary-container);
+}
+
+.theme-dark .key-format code {
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Responsive Design */
