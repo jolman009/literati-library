@@ -21,7 +21,7 @@ class AIKeyManager {
   static KEY_PATTERNS = {
     [AIKeyManager.PROVIDERS.GEMINI]: /^AIza[0-9A-Za-z-_]{35}$/,
     [AIKeyManager.PROVIDERS.OPENAI]: /^sk-[A-Za-z0-9]{32,}$/,
-    [AIKeyManager.PROVIDERS.ANTHROPIC]: /^sk-ant-[A-Za-z0-9-]{32,}$/,
+    [AIKeyManager.PROVIDERS.ANTHROPIC]: /^sk-ant-api\d{2}-[A-Za-z0-9_-]{95,}$/,
     [AIKeyManager.PROVIDERS.COHERE]: /^[A-Za-z0-9]{40}$/
   };
 
@@ -346,4 +346,6 @@ if (typeof window !== 'undefined') {
   window.AIKeyManager = aiKeyManagerInstance;
 }
 
+// Export both the instance and the class for flexibility
 export default aiKeyManagerInstance;
+export { AIKeyManager };
