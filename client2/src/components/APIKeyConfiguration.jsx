@@ -12,7 +12,7 @@ import {
   Shield,
   Info
 } from 'lucide-react';
-import AIKeyManager from '../services/AIKeyManager';
+import AIKeyManager, { AIKeyManager as AIKeyManagerClass } from '../services/AIKeyManager';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import './APIKeyConfiguration.css';
 
@@ -298,7 +298,7 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
       </div>
 
       <div className="provider-tabs">
-        {Object.values(AIKeyManager.PROVIDERS).map(provider => (
+        {Object.values(AIKeyManagerClass.PROVIDERS).map(provider => (
           <button
             key={provider}
             className={`provider-tab ${activeProvider === provider ? 'active' : ''}`}
