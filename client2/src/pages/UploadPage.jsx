@@ -123,6 +123,15 @@ const UploadPage = () => {
       const uploadedBook = response.data;
       console.log('📚 Book uploaded successfully:', uploadedBook);
 
+      // Trigger events to notify other components (Dashboard, Collections, etc.)
+      window.dispatchEvent(new CustomEvent('bookUploaded', {
+        detail: { book: uploadedBook }
+      }));
+
+      // Set localStorage flag for cross-tab communication
+      localStorage.setItem('book_uploaded', Date.now().toString());
+      localStorage.setItem('books_updated', Date.now().toString());
+
       setIsUploading(false);
       setUploadStep('complete');
       setMessage(`"${uploadedBook.title}" uploaded successfully!`);

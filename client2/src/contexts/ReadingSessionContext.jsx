@@ -85,8 +85,19 @@ export const ReadingSessionProvider = ({ children }) => {
           is_reading: true,
           last_opened: new Date().toISOString()
         });
+
+        // Trigger a custom event to notify other components
+        window.dispatchEvent(new CustomEvent('bookUpdated', {
+          detail: { bookId: book.id, action: 'start_reading' }
+        }));
+
+        // Also set localStorage flag for cross-tab communication
+        localStorage.setItem('books_updated', Date.now().toString());
+
+        console.log('✅ Book reading status updated successfully');
       } catch (error) {
-        console.warn('Failed to update book reading status:', error);
+        console.warn('❌ Failed to update book reading status:', error);
+        // Don't fail the session start if the API call fails
       }
 
       // Track to gamification system

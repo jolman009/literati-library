@@ -16,7 +16,7 @@ const NotesSubpage = React.lazy(() => import('./subpages/NotesSubpage'));
 // Import dashboard components
 import WelcomeWidget from '../components/WelcomeWidget';
 import EnhancedBookCard from '../components/EnhancedBookCard';
-import { BookCoverManager, BatchCoverProcessor } from '../components/BookCoverManager';
+import { BookCoverManager } from '../components/BookCoverManager';
 import FloatingTimer from '../components/FloatingTimer';
 import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 
@@ -373,10 +373,6 @@ const LibraryPage = () => {
           );
         })()}
 
-        {/* Batch Cover Processor - Only show on library page with books */}
-        {currentPage === 'library' && books.length > 0 && (
-          <BatchCoverProcessor onComplete={fetchBooks} />
-        )}
 
         {currentPage === 'library' && (
           <div className="md3-library-controls">
