@@ -524,6 +524,36 @@
   min-height: 100vh;
   background: var(--md-sys-color-surface);
   overflow: visible;
+  /* Base margins will be overridden by responsive rules */
+}
+
+/* UPDATED: MD3-compliant responsive layout rules */
+@media (min-width: 769px) {
+  .content-area {
+    margin-left: 280px; /* Default space for expanded navigation rail */
+    margin-bottom: 0;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* When navigation is collapsed */
+  .premium-app-layout.nav-collapsed .content-area {
+    margin-left: 80px;
+  }
+
+  /* Ensure desktop navigation rail is visible */
+  .md3-navigation-rail {
+    display: flex;
+  }
+
+  /* Hide mobile-only elements on desktop */
+  .mobile-only {
+    display: none;
+  }
+
+  /* Hide mobile navigation on desktop */
+  .md3-navigation-bar {
+    display: none;
+  }
 }
 
 .page-content {
@@ -651,38 +681,93 @@
   .desktop-layout {
     flex-direction: column;
   }
-  
+
   .premium-navigation {
     display: none;
   }
-  
+
   .library-filters-section {
     display: none;
   }
-  
+
   .mobile-navigation {
     display: flex;
   }
-  
+
   .premium-header-content {
     padding: 12px 16px;
   }
 
   .page-content {
     padding-top: 16px; /* Adjust for mobile header */
-    padding-bottom: 80px; /* Account for mobile navigation */
+    padding-bottom: 100px; /* Extra padding for FAB and navigation */
+    min-height: calc(100vh - 64px - 80px); /* Account for header and mobile nav */
   }
 
   .page-title {
     font-size: 20px;
   }
-  
+
   .user-info {
     display: none;
   }
-  
+
   .user-dropdown {
     width: 240px;
+  }
+
+  /* Content area mobile adjustments */
+  .content-area {
+    margin-left: 0;
+    margin-bottom: 80px; /* Space for mobile navigation */
+  }
+
+  /* Show mobile-only elements */
+  .mobile-only {
+    display: block;
+  }
+
+  /* Ensure mobile navigation is visible and properly positioned */
+  .md3-navigation-bar {
+    display: flex;
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background-color: var(--md-sys-color-surface-container);
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+
+  /* Force mobile navigation items to be visible */
+  .md3-navigation-bar .md3-navigation-bar__destinations {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  /* Mobile navigation item styling */
+  .md3-navigation-item--bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    color: var(--md-sys-color-on-surface-variant);
+    text-decoration: none;
+  }
+
+  .md3-navigation-item--bar.md3-navigation-item--selected {
+    color: var(--md-sys-color-primary);
+  }
+
+  /* Hide desktop navigation rail on mobile */
+  .md3-navigation-rail {
+    display: none;
   }
 }
 

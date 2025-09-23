@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import PremiumNavigation from './navigation/PremiumNavigation';
 import MobileNavigation from './navigation/MobileNavigation';
@@ -8,7 +9,6 @@ import GlobalSearch from './GlobalSearch';
 import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
-import '../styles/app-layout.css';
 
 {import.meta.env.MODE === 'production' && window.location.hostname === 'localhost' && (
   <div style={{position:'fixed',bottom:8,left:8,fontSize:12,opacity:.7,background:'#000',color:'#fff',padding:'4px 8px',borderRadius:6}}>
@@ -20,13 +20,14 @@ const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
   const { pathname } = useLocation();
   const { isOpen, openSearch, closeSearch, navigateToResult } = useGlobalSearch();
+  const [navCollapsed, setNavCollapsed] = useState(false);
 
   const inReader = /^\/read\/[^/]+$/.test(pathname);
 
   return (
-    <div className={`premium-app-layout ${actualTheme === 'dark' ? 'dark' : ''}`}>
+    <div className={`premium-app-layout ${actualTheme === 'dark' ? 'dark' : ''} ${navCollapsed ? 'nav-collapsed' : 'nav-expanded'}`}>
       <div className="desktop-layout">
-        {!inReader && <PremiumNavigation />}
+        {!inReader && <PremiumNavigation onCollapseChange={setNavCollapsed} />}
         <div className="content-area">
           {!inReader && <PremiumHeader onSearch={openSearch} />}
           <main className="page-content">

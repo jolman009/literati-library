@@ -9,12 +9,19 @@ const PremiumNavigation = ({
   pendingUploads = 0,
   isAdmin = false,
   defaultCollapsed = false,
+  onCollapseChange,
 }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { actualTheme } = useMaterial3Theme();
   const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
+  const handleCollapseToggle = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    onCollapseChange?.(newCollapsed);
+  };
 
   const navigationItems = [
     { to: '/dashboard', label: 'Dashboard', icon: 'space_dashboard' },
@@ -36,7 +43,7 @@ const PremiumNavigation = ({
       <div className="md3-rail-header">
         <button
           className="md3-icon-button"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={handleCollapseToggle}
           aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
         >
           <span className="material-symbols-outlined">menu</span>
