@@ -199,8 +199,8 @@
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
+/* Responsive adjustments for mobile screens */
+@media (max-width: 768px) {
   .navigation-fab {
     bottom: 100px; /* Account for bottom navigation */
     right: 16px;
@@ -214,5 +214,18 @@
   .fab-action {
     padding: 12px;
     font-size: 13px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .navigation-fab {
+    bottom: 95px;
+    right: 12px;
+  }
+
+  .fab-actions {
+    min-width: 160px;
+    right: -4px;
   }
 }

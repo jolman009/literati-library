@@ -8,6 +8,7 @@ import './pdfjs-setup';
 // Global styles (order matters)
 import './styles/md3-unified-colors.css';  // MD3 color system foundation
 import './styles/md3-components.css';       // All dashboard, navigation, gamification components
+import './components/Material3/MD3Navigation.css'; // MD3 Navigation components
 import './styles/library-md3.css';         // Library-specific styles
 import './styles/performance-optimized.css';
 import './index.css';

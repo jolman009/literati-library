@@ -53,14 +53,53 @@
     margin-left: 0;
     margin-bottom: 80px; /* Space for mobile navigation */
   }
-  
+
   .page-content {
     min-height: calc(100vh - 64px - 80px); /* Account for header and mobile nav */
+    padding-bottom: 100px; /* Extra padding for FAB and navigation */
   }
-  
+
   /* Show mobile-only elements */
   .mobile-only {
     display: block !important;
+  }
+
+  /* Ensure mobile navigation is visible */
+  .md3-navigation-bar {
+    display: flex !important;
+    z-index: 1000 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 80px !important;
+    background-color: var(--md-sys-color-surface-container) !important;
+    border-top: 1px solid var(--md-sys-color-outline-variant) !important;
+    box-shadow: var(--md-sys-elevation-level2) !important;
+  }
+
+  /* Force mobile navigation items to be visible */
+  .md3-navigation-bar .md3-navigation-bar__destinations {
+    display: flex !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+  }
+
+  /* Mobile navigation item styling */
+  .md3-navigation-item--bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 64px !important;
+    color: var(--md-sys-color-on-surface-variant) !important;
+    text-decoration: none !important;
+  }
+
+  .md3-navigation-item--bar.md3-navigation-item--selected {
+    color: var(--md-sys-color-primary) !important;
   }
 }
 
@@ -69,8 +108,13 @@
   display: none;
 }
 
+/* Hide mobile navigation on desktop */
 @media (min-width: 769px) {
   .mobile-only {
+    display: none !important;
+  }
+
+  .md3-navigation-bar {
     display: none !important;
   }
 }

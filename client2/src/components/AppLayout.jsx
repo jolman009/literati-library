@@ -34,6 +34,8 @@ const AppLayout = () => {
           </main>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation - MD3 Navigation Bar */}
       {!inReader && <MobileNavigation />}
 
       {/* Mobile Navigation FAB - Only show on mobile */}
@@ -50,8 +52,8 @@ const AppLayout = () => {
         onNavigateToResult={navigateToResult}
       />
 
-      {/* Mobile Search FAB - Only show on mobile */}
-      <div className="mobile-only">
+      {/* Mobile Search FAB - Position at bottom-left */}
+      <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
         <GlobalSearchFAB position="bottom-left" />
       </div>
     </div>
