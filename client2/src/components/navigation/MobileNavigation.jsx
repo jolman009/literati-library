@@ -1,43 +1,49 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { MD3NavigationBar } from '../Material3';
-
-const NAV = [
-  { to: '/dashboard',     label: 'Home',        icon: 'home' },
-  { to: '/library',       label: 'Library',     icon: 'menu_book' },
-  { to: '/gamification',  label: 'Progress',    icon: 'emoji_events' },
-];
 
 const MobileNavigation = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const destinations = [
+    {
+      key: 'dashboard',
+      icon: <span className="material-symbols-outlined">home</span>,
+      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>,
+      label: 'Home'
+    },
+    {
+      key: 'library',
+      icon: <span className="material-symbols-outlined">menu_book</span>,
+      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>,
+      label: 'Library'
+    },
+    {
+      key: 'gamification',
+      icon: <span className="material-symbols-outlined">emoji_events</span>,
+      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>,
+      label: 'Progress'
+    },
+  ];
+
+  const currentDestination = pathname.slice(1) || 'dashboard'; // Remove leading slash
+  const selectedIndex = destinations.findIndex(dest =>
+    pathname === `/${dest.key}` || pathname.startsWith(`/${dest.key}/`)
+  );
+
+  const handleDestinationSelect = (index, destination) => {
+    navigate(`/${destination.key}`);
+  };
 
   return (
-    <nav className="sticky bottom-0">
-      <MD3NavigationBar>
-        <ul className="flex items-center justify-between gap-1 px-2 py-2 w-full">
-          {NAV.map(({ to, label, icon }) => {
-            const active = pathname === to || pathname.startsWith(to + '/');
-            return (
-              <li key={to} className="flex-1">
-                <NavLink
-                  to={to}
-                  aria-label={label}
-                  className={[
-                    'flex flex-col items-center justify-center h-12 min-w-16 rounded-xl px-2',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-                    active
-                      ? 'bg-secondary-container text-on-secondary-container'
-                      : 'text-on-surface-variant hover:bg-surface-variant/60'
-                  ].join(' ')}
-                >
-                  <span className="material-symbols-outlined text-base" aria-hidden="true">{icon}</span>
-                  <span className="text-[11px] mt-0.5">{label}</span>
-                </NavLink>
-              </li>
-            );
-          })}
-        </ul>
-      </MD3NavigationBar>
-    </nav>
+    <div className="mobile-only">
+      <MD3NavigationBar
+        destinations={destinations}
+        selectedIndex={selectedIndex}
+        onDestinationSelect={handleDestinationSelect}
+        className="fixed bottom-0 left-0 right-0 z-50"
+      />
+    </div>
   );
 };
 
