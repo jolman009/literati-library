@@ -85,10 +85,17 @@
 }
 
 /* Ensure all stat card text is white in light mode */
-:root:not([data-theme="dark"]) .stat-value,
-:root:not([data-theme="dark"]) .stat-label,
-:root:not([data-theme="dark"]) .stat-icon {
+:root:not([data-theme="dark"]) .stat-card .stat-value,
+:root:not([data-theme="dark"]) .stat-card .stat-label,
+:root:not([data-theme="dark"]) .stat-card .stat-icon {
   color: white !important;
+}
+
+/* Dark mode stat card text visibility fix */
+[data-theme="dark"] .stat-card .stat-value,
+[data-theme="dark"] .stat-card .stat-label,
+[data-theme="dark"] .stat-card .stat-icon {
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Dark mode section cards */
