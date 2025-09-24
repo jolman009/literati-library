@@ -20,9 +20,10 @@ const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
   const { pathname } = useLocation();
   const { isOpen, openSearch, closeSearch, navigateToResult } = useGlobalSearch();
-  const [navCollapsed, setNavCollapsed] = useState(false);
+  const [navCollapsed, setNavCollapsed] = useState(false); // false = expanded = 280px
 
   const inReader = /^\/read\/[^/]+$/.test(pathname);
+
 
   return (
     <div className={`premium-app-layout ${actualTheme === 'dark' ? 'dark' : ''} ${navCollapsed ? 'nav-collapsed' : 'nav-expanded'}`}>
