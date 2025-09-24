@@ -35,6 +35,7 @@
   min-height: 100vh;
   position: relative;
   z-index: 1;
+  gap: 0; /* Ensure no gaps in flex layout */
 }
 
 /* ============================================================================
@@ -530,14 +531,21 @@
 /* UPDATED: MD3-compliant responsive layout rules */
 @media (min-width: 769px) {
   .content-area {
-    margin-left: 280px; /* Default space for expanded navigation rail */
+    margin-left: 80px; /* Start with collapsed space */
     margin-bottom: 0;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* When navigation is expanded (default state) */
+  .premium-app-layout.nav-expanded .content-area {
+    margin-left: 280px !important;
+    padding-left: 0 !important;
+    border-left: none !important;
+  }
+
   /* When navigation is collapsed */
   .premium-app-layout.nav-collapsed .content-area {
-    margin-left: 80px;
+    margin-left: 80px !important;
   }
 
   /* Ensure desktop navigation rail is visible */
