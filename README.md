@@ -4,7 +4,7 @@ A modern, full-stack digital library application built with React, Express.js, a
 
 ## 🏗️ Architecture
 
-This monorepo contains three main services:
+This unified monorepo contains four main services managed with a single CI/CD pipeline:
 
 ### 🎨 Client (client2/)
 - **Stack**: React 19 + Vite + Tailwind CSS + Material Design 3
@@ -20,6 +20,11 @@ This monorepo contains three main services:
 - **Stack**: FastAPI + Google Gemini API
 - **Features**: AI-powered note summarization
 - **Port**: 8000
+
+### 📱 Android App (android/)
+- **Stack**: Android (Java/Kotlin) + Material Design
+- **Features**: Mobile reading app, offline sync, touch-optimized interface
+- **Build**: Gradle build system
 
 ## 🚀 Quick Start
 
