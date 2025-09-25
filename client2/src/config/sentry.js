@@ -100,7 +100,9 @@ export const reportError = (error, context = {}) => {
 
 // Performance monitoring helpers
 export const startTransaction = (name, operation = 'navigation') => {
-  return Sentry.startTransaction({ name, op: operation });
+  return Sentry.startSpan({ name, op: operation }, (span) => {
+    return span;
+  });
 };
 
 export const addBreadcrumb = (message, category = 'user-action', level = 'info') => {
