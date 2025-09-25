@@ -267,10 +267,7 @@ const EnhancedCollectionsPage = ({
         interactive
         className="collection-card"
         style={{
-          background: `linear-gradient(135deg, ${collection.color}15, ${collection.color}05)`,
-          border: `2px solid ${collection.color}20`,
-          position: 'relative',
-          overflow: 'hidden'
+          '--collection-color': collection.color
         }}
         onDragOver={handleDragOver}
         onDrop={(e) => {
@@ -289,13 +286,7 @@ const EnhancedCollectionsPage = ({
         }}
       >
         {/* Collection header */}
-        <div
-          className="collection-card-header"
-          style={{
-            background: `linear-gradient(135deg, ${collection.color}25, ${collection.color}10)`,
-            borderBottom: `1px solid ${collection.color}20`
-          }}
-        >
+        <div className="collection-card-header">
           <div className="collection-card-header-top">
             <div className="collection-card-info">
               <span className="collection-card-icon">{collection.icon}</span>
@@ -320,9 +311,6 @@ const EnhancedCollectionsPage = ({
                   }}
                   disabled={operationLoading}
                   className="collection-card-batch-button"
-                  style={{
-                    backgroundColor: collection.color
-                  }}
                 >
                   + Add {selectedBooks.size}
                 </MD3Button>
@@ -336,7 +324,6 @@ const EnhancedCollectionsPage = ({
                     setEditingCollection(collection);
                   }}
                   className="collection-card-edit-button"
-                  style={{ color: collection.color }}
                 >
                   ⚙️
                 </MD3Button>
@@ -348,11 +335,7 @@ const EnhancedCollectionsPage = ({
             <MD3Chip
               label={`${collectionBooks.length} books`}
               size="small"
-              style={{
-                backgroundColor: `${collection.color}20`,
-                color: collection.color,
-                border: `1px solid ${collection.color}30`
-              }}
+              className="collection-card-chip"
             />
             
             {collectionBooks.length > 0 && (
@@ -381,12 +364,7 @@ const EnhancedCollectionsPage = ({
                       className="collection-book-cover"
                     />
                   ) : (
-                    <div
-                      className="collection-book-placeholder"
-                      style={{
-                        backgroundColor: collection.color
-                      }}
-                    >
+                    <div className="collection-book-placeholder">
                       {book.title.slice(0, 10)}...
                     </div>
                   )}
@@ -394,13 +372,7 @@ const EnhancedCollectionsPage = ({
               ))}
               
               {collectionBooks.length > 8 && (
-                <div
-                  className="collection-book-more"
-                  style={{
-                    backgroundColor: `${collection.color}20`,
-                    color: collection.color
-                  }}
-                >
+                <div className="collection-book-more">
                   +{collectionBooks.length - 8}
                 </div>
               )}
