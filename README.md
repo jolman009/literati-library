@@ -36,8 +36,8 @@ This unified monorepo contains four main services managed with a single CI/CD pi
 
 ### 1. Clone and Install Dependencies
 ```bash
-git clone https://github.com/yourusername/literati-digital-library.git
-cd my-library-app-2
+git clone https://github.com/jolman009/literati-library.git
+cd literati-library
 
 # Install root dependencies
 pnpm install
