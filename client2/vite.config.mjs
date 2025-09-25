@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { sentryVitePlugin } from '@sentry/vite-plugin'
 import path from 'path'
 
 export default defineConfig({
@@ -95,27 +94,6 @@ export default defineConfig({
         ]
       : []),
 
-    // Sentry plugin for source maps and releases (production only)
-    ...(process.env.NODE_ENV === 'production' && process.env.VITE_SENTRY_DSN
-      ? [
-          sentryVitePlugin({
-            org: process.env.SENTRY_ORG,
-            project: process.env.SENTRY_PROJECT,
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-            release: {
-              name: process.env.VITE_APP_VERSION || `${Date.now()}`,
-              uploadLegacySourcemaps: {
-                paths: ['./dist'],
-                ignore: ['node_modules'],
-              },
-            },
-            sourcemaps: {
-              assets: './dist/**',
-              ignore: ['node_modules'],
-            },
-          }),
-        ]
-      : []),
   ],
 
   build: {

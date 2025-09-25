@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';``
 import { BrowserRouter } from 'react-router-dom';
 
-// Initialize Sentry (must be first)
-import { initializeSentry, SentryErrorBoundary } from './config/sentry';
-initializeSentry();
+// Removed Sentry initialization
 
 // 1) Configure PDF.js worker first (must come before any <Document/> usage)
 import './pdfjs-setup';
@@ -53,22 +51,16 @@ if (import.meta.env.DEV) {
   window.__LITERATI_DEBUG__ = true;
 }
 
-// Create custom Sentry error boundary with fallback UI
-const SentryFallback = ({ error, resetError }) => (
+// Standard error boundary fallback (no Sentry)
+const ErrorFallback = ({ error, resetError }) => (
   <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface">
     <div className="w-full max-w-md p-8 rounded-3xl shadow-elevation-3 bg-surface border border-outline-variant text-center">
       <span className="material-symbols-outlined text-6xl text-error">error</span>
       <h1 className="text-2xl font-semibold mt-4">Oops! Something went wrong.</h1>
       <p className="text-on-surface-variant mb-4">
-        We've been notified about this issue. Please try refreshing the page.
+        Please try refreshing the page.
       </p>
       <div className="flex gap-2 justify-center">
-        <button
-          onClick={resetError}
-          className="px-6 py-2 rounded-full bg-primary-container text-on-primary-container hover:bg-primary-container/80 transition-all duration-200 shadow-elevation-1"
-        >
-          Try Again
-        </button>
         <button
           onClick={() => window.location.reload()}
           className="px-6 py-2 rounded-full bg-primary text-on-primary hover:bg-primary/80 transition-all duration-200 shadow-elevation-1"
@@ -80,16 +72,10 @@ const SentryFallback = ({ error, resetError }) => (
   </div>
 );
 
-// Create the App component wrapped with Sentry error boundary
-const AppWithSentry = SentryErrorBoundary(App, {
-  fallback: SentryFallback,
-  showDialog: true,
-});
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   // Add <React.StrictMode> later if you want double-effect checks
   <BrowserRouter>
-    <AppWithSentry />
+    <App />
   </BrowserRouter>
 );
 /* CI/CD Pipeline Test - Wed, Sep 24, 2025 10:38:07 PM */

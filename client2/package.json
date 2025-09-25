@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@sentry/react": "^10.15.0",
-    "@sentry/vite-plugin": "^4.3.0",
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
@@ -12,7 +10,6 @@
     "epubjs": "^0.3.93",
     "lucide-react": "^0.525.0",
     "pdfjs-dist": "5.3.93",
-    "prop-types": "^15.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-dropzone": "^14.3.8",
@@ -96,8 +93,7 @@
   },
   "pnpm": {
     "overrides": {
-      "pdfjs-dist": "5.3.93",
-      "react-is": "^18.3.1"
+      "pdfjs-dist": "5.3.93"
     }
   }
 }
