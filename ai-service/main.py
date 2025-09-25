@@ -1,12 +1,17 @@
 # main.py
 import os
+from dotenv import load_dotenv
+
+# Load environment variables first
+load_dotenv()
+
+# Initialize Sentry (must be first)
+from config.sentry_config import initialize_sentry, SentryTransaction, add_breadcrumb, report_error
+initialize_sentry()
+
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from dotenv import load_dotenv
-
-# Load environment variables from a .env file
-load_dotenv()
 
 # Configure the Gemini API with your key
 # Make sure you have a GOOGLE_API_KEY in your .env file
@@ -50,16 +55,47 @@ async def summarize_note(note: Note):
     if not note.text:
         raise HTTPException(status_code=400, detail="Text to summarize cannot be empty.")
 
-    try:
-        # The prompt for the AI
-        prompt = f"Please provide a concise, one-paragraph summary of the following note:\n\n---\n{note.text}\n---"
-        
-        # Call the Gemini API
-        response = model.generate_content(prompt)
-        
-        # Return the generated summary
-        return {"summary": response.text}
-        
-    except Exception as e:
-        print(f"An error occurred during summarization: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to generate summary. Error: {str(e)}")
+    # Use Sentry transaction for performance monitoring
+    with SentryTransaction("summarize_note", "ai.summarization"):
+        try:
+            # Add breadcrumb for tracking
+            add_breadcrumb(
+                message="Starting note summarization",
+                data={
+                    "text_length": len(note.text),
+                    "truncated_text": note.text[:100] + "..." if len(note.text) > 100 else note.text
+                }
+            )
+
+            # The prompt for the AI
+            prompt = f"Please provide a concise, one-paragraph summary of the following note:\n\n---\n{note.text}\n---"
+
+            # Call the Gemini API with transaction monitoring
+            with SentryTransaction("gemini_api_call", "ai.external_api"):
+                response = model.generate_content(prompt)
+
+            add_breadcrumb(
+                message="Summary generated successfully",
+                data={
+                    "summary_length": len(response.text) if response.text else 0
+                }
+            )
+
+            # Return the generated summary
+            return {"summary": response.text}
+
+        except Exception as e:
+            # Report error to Sentry with context
+            report_error(e, {
+                "tags": {
+                    "service": "ai-summarization",
+                    "endpoint": "summarize_note"
+                },
+                "extra": {
+                    "input_length": len(note.text),
+                    "model": "gemini-2.0-flash"
+                }
+            })
+
+            print(f"An error occurred during summarization: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to generate summary. Error: {str(e)}")
