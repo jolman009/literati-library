@@ -72,6 +72,62 @@
   pointer-events: none;
 }
 
+/* Header Section */
+.collections-header {
+  background: linear-gradient(135deg, #6750A4, #7C4DFF);
+  color: white;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.collections-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.collections-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.collections-header p {
+  margin: 0 0 24px 0;
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+.collections-search-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.collections-search-field {
+  min-width: 300px;
+  background-color: rgba(255,255,255,0.1) !important;
+  border-radius: 12px !important;
+  color: white !important;
+}
+
+.collections-header-button {
+  background-color: rgba(255,255,255,0.2) !important;
+  color: white !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.collections-header-button.batch-mode-active {
+  background-color: rgba(255,255,255,0.2) !important;
+  border-color: rgba(255,255,255,0.5) !important;
+}
+
 /* Search and Filter Section */
 .collections-search-section {
   background: linear-gradient(135deg, #6750A4, #7C4DFF);
@@ -316,6 +372,710 @@
   .collections-skeleton {
     background: linear-gradient(90deg, #2D2A32 25%, #3D3A42 50%, #2D2A32 75%);
   }
+}
+
+/* Main Content Layout */
+.collections-main-content {
+  padding: 0 24px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.collections-content-wrapper {
+  display: flex;
+  gap: 24px;
+}
+
+.collections-grid-container {
+  flex: 2;
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Collection Card Content Areas */
+.collection-card-header {
+  padding: 20px;
+  border-bottom: 1px solid transparent;
+}
+
+.collection-card-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.collection-card-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.collection-card-icon {
+  font-size: 28px;
+}
+
+.collection-card-title {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1C1B1F;
+}
+
+.collection-card-description {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #49454F;
+  opacity: 0.8;
+}
+
+.collection-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.collection-card-batch-button {
+  background-color: #6750A4 !important;
+  color: white !important;
+  font-size: 12px !important;
+}
+
+.collection-card-edit-button {
+  color: #6750A4 !important;
+}
+
+.collection-card-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.collection-card-updated {
+  font-size: 0.75rem;
+  color: #49454F;
+  opacity: 0.7;
+}
+
+/* Collection Book Preview */
+.collection-book-preview-area {
+  padding: 16px;
+}
+
+.collection-book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.collection-book-item {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.collection-book-item:nth-child(even) {
+  transform: translateY(8px);
+}
+
+.collection-book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collection-book-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  padding: 4px;
+}
+
+.collection-book-more {
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.collection-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #49454F;
+  opacity: 0.6;
+}
+
+.collection-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.collection-empty-text {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Operation Loading Overlay */
+.operation-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 12px;
+}
+
+.operation-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.operation-loading-text {
+  font-size: 0.8rem;
+  color: #49454F;
+  font-weight: 500;
+}
+
+/* Empty Collections State */
+.empty-collections-container {
+  text-align: center;
+  padding: 64px 24px;
+  color: #49454F;
+}
+
+.empty-collections-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-collections-title {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+}
+
+.empty-collections-description {
+  margin: 0 0 24px 0;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* Book Library Sidebar */
+.book-library-sidebar {
+  flex: 1;
+  min-width: 300px;
+}
+
+.book-library-card {
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.book-library-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.book-library-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.book-library-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.875rem;
+}
+
+.book-library-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+  padding: 4px;
+}
+
+.draggable-book {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.draggable-book:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.draggable-book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.draggable-book-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #6750A4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  text-align: center;
+  padding: 4px;
+  font-weight: 500;
+}
+
+.book-library-empty {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.book-library-empty-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.book-library-empty-text {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Batch Mode Book Selection Panel */
+.batch-mode-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 400px;
+  max-height: 70vh;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.batch-mode-header {
+  padding: 20px;
+}
+
+.batch-mode-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.batch-mode-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.batch-mode-close {
+  min-width: auto !important;
+  padding: 4px 8px !important;
+}
+
+.batch-mode-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+}
+
+.batch-mode-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.batch-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+}
+
+.batch-mode-book {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.batch-mode-book.selected {
+  border-color: #6750A4;
+  transform: scale(1.05);
+}
+
+.batch-mode-book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.batch-mode-book-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #6750A4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  text-align: center;
+  padding: 4px;
+}
+
+.batch-mode-book-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #6750A4;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Batch Mode Bottom Panel */
+.batch-mode-bottom-panel {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 24px;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.batch-mode-bottom-panel.loading {
+  background-color: rgba(103, 80, 164, 0.8);
+}
+
+.batch-mode-bottom-panel.normal {
+  background-color: #6750A4;
+}
+
+.batch-mode-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.batch-mode-normal-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.batch-mode-select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: rgba(255,255,255,0.2);
+  color: white;
+  cursor: pointer;
+}
+
+.batch-mode-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.batch-mode-select option {
+  color: #333;
+}
+
+.batch-mode-cancel {
+  color: white !important;
+  min-width: auto !important;
+  padding: 8px !important;
+}
+
+.batch-mode-cancel.disabled {
+  opacity: 0.5 !important;
+}
+
+/* Loading State */
+.collections-loading-container {
+  padding: 32px;
+  text-align: center;
+}
+
+.collections-loading-text {
+  margin-top: 16px;
+  color: #49454F;
+}
+
+/* Floating Action Button */
+.collections-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #6750A4 !important;
+}
+
+/* Dialog Content Styles */
+.dialog-content {
+  padding: 20px;
+}
+
+.dialog-collection-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.dialog-collection-icon {
+  font-size: 32px;
+}
+
+.dialog-collection-details h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.dialog-collection-details p {
+  margin: 0;
+  color: #49454F;
+  font-size: 0.9rem;
+}
+
+.dialog-collection-count {
+  margin: 4px 0 0 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.dialog-books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dialog-book-item {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.dialog-book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dialog-book-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px;
+}
+
+.dialog-book-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-empty-state {
+  text-align: center;
+  padding: 32px;
+  color: #6b7280;
+}
+
+.dialog-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.dialog-actions-split {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.dialog-actions-right {
+  display: flex;
+  gap: 12px;
+}
+
+.dialog-delete-button {
+  color: #F44336 !important;
+}
+
+.dialog-edit-button {
+  color: #6750A4 !important;
+}
+
+/* Create/Edit Collection Form */
+.collection-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.collection-form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #49454F;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.icon-picker-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-picker-item {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #E7E0EC;
+  border-radius: 12px;
+  background-color: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-picker-item.selected {
+  border-color: #6750A4;
+  background-color: #6750A420;
+}
+
+.color-picker-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-picker-item {
+  width: 32px;
+  height: 32px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-picker-item.selected {
+  border-color: #1C1B1F;
+}
+
+.collection-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.collection-create-button {
+  position: relative;
+  min-width: 140px;
+}
+
+.collection-create-loading {
+  display: flex;
+  align-items: center;
+}
+
+.collection-create-spinner {
+  margin-right: 8px;
+  color: white;
 }
 
 /* Focus Management */
