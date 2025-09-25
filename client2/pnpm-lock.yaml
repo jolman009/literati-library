@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  pdfjs-dist: 5.3.93
+  react-is: ^18.3.1
+
 importers:
 
   .:
@@ -3248,11 +3252,8 @@ packages:
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
-  react-is@16.13.1:
-    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
-
-  react-is@17.0.2:
-    resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
+  react-is@18.3.1:
+    resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
   react-pdf@10.1.0:
     resolution: {integrity: sha512-iUI1YqWgwwZcsXjrehTp3Yi8nT/bvTaWULaRMMyJWvoqqSlopk4LQQ9GDqUnDtX3gzT2glrqrLbjIPl56a+Q3w==}
@@ -6696,7 +6697,7 @@ snapshots:
 
   hoist-non-react-statics@3.3.2:
     dependencies:
-      react-is: 16.13.1
+      react-is: 18.3.1
 
   html-encoding-sniffer@4.0.0:
     dependencies:
@@ -7410,7 +7411,7 @@ snapshots:
     dependencies:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
-      react-is: 17.0.2
+      react-is: 18.3.1
 
   process-nextick-args@2.0.1: {}
 
@@ -7420,7 +7421,7 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
-      react-is: 16.13.1
+      react-is: 18.3.1
 
   proto-list@1.2.4: {}
 
@@ -7444,9 +7445,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.1.1
 
-  react-is@16.13.1: {}
-
-  react-is@17.0.2: {}
+  react-is@18.3.1: {}
 
   react-pdf@10.1.0(@types/react@18.3.24)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
