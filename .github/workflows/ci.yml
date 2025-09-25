@@ -56,10 +56,10 @@ jobs:
       - name: Build Application
         run: pnpm run build
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_AI_SERVICE_URL: ${{ secrets.VITE_AI_SERVICE_URL }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5000' }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder_key' }}
+          VITE_AI_SERVICE_URL: ${{ secrets.VITE_AI_SERVICE_URL || 'http://localhost:8000' }}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -124,8 +124,8 @@ jobs:
         env:
           CI: true
           NODE_ENV: test
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY || 'placeholder_key' }}
           JWT_SECRET: test_jwt_secret_32_characters_long
 
       - name: Security Audit
