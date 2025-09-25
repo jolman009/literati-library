@@ -1,31 +1,28 @@
 // src/config/api.js - FIXED VERSION WITH NOTES SUPPORT
 import axios from 'axios';
 
-// Determine API URL based on environment variables and build mode
+// Determine API URL based on environment variables only
 const getApiUrl = () => {
-  // Debug logging for production troubleshooting
-  console.log('🔧 API URL Detection:', {
-    'VITE_API_BASE_URL': import.meta.env.VITE_API_BASE_URL,
-    'hostname': window.location.hostname,
-    'env.MODE': import.meta.env.MODE,
-    'env.PROD': import.meta.env.PROD
-  });
+  // Always use environment variable - no hostname detection
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-  // Always prefer environment variable if available
-  if (import.meta.env.VITE_API_BASE_URL) {
-    console.log('✅ Using VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
-    return import.meta.env.VITE_API_BASE_URL;
+  if (!apiUrl) {
+    throw new Error(
+      'VITE_API_BASE_URL environment variable is required. ' +
+      'Please set it in your .env file or deployment configuration.'
+    );
   }
 
-  // Fallback to hostname detection for backwards compatibility
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    console.log('🏠 Using localhost API');
-    return 'http://localhost:5000';
+  // Debug logging (only in development)
+  if (import.meta.env.DEV) {
+    console.log('🔧 API Configuration:', {
+      'VITE_API_BASE_URL': apiUrl,
+      'env.MODE': import.meta.env.MODE,
+      'env.DEV': import.meta.env.DEV
+    });
   }
 
-  // Default to production API for any other domain
-  console.log('🌐 Using production API fallback');
-  return 'https://library-server-m6gr.onrender.com';
+  return apiUrl;
 };
 
 // Create axios instance with base configuration

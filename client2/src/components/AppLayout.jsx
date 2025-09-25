@@ -10,12 +10,6 @@ import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
 
-{import.meta.env.MODE === 'production' && window.location.hostname === 'localhost' && (
-  <div style={{position:'fixed',bottom:8,left:8,fontSize:12,opacity:.7,background:'#000',color:'#fff',padding:'4px 8px',borderRadius:6}}>
-    preview mode (SW disabled)
-  </div>
-)}
-
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
   const { pathname } = useLocation();
@@ -58,6 +52,13 @@ const AppLayout = () => {
       <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
         <GlobalSearchFAB position="bottom-left" />
       </div>
+
+      {/* Debug indicator - shows when service worker is disabled */}
+      {import.meta.env.VITE_ENABLE_SERVICE_WORKER === 'false' && (
+        <div style={{position:'fixed',bottom:8,left:8,fontSize:12,opacity:.7,background:'#000',color:'#fff',padding:'4px 8px',borderRadius:6}}>
+          SW disabled
+        </div>
+      )}
     </div>
   );
 };

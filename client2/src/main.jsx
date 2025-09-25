@@ -26,8 +26,12 @@ import { registerSW } from 'virtual:pwa-register';
 // One-time token cleanup
 clearExpiredToken();
 
-// Register SW only in production to avoid stale caches / 404s in dev
-if (import.meta.env.PROD && window.location.hostname !== 'localhost') {
+// Register SW based on environment mode only (no hostname detection)
+// Use VITE_ENABLE_SERVICE_WORKER to control SW registration in production
+const shouldRegisterSW = import.meta.env.PROD &&
+  (import.meta.env.VITE_ENABLE_SERVICE_WORKER !== 'false');
+
+if (shouldRegisterSW) {
   registerSW({
     immediate: true,
     // onNeedRefresh() { /* show refresh UI */ },
@@ -86,3 +90,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </ErrorBoundary>
 );
+/* CI/CD Pipeline Test - Wed, Sep 24, 2025 10:38:07 PM */
