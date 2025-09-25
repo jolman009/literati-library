@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
 
 const SENTRY_CONFIG = {
   development: {
@@ -35,14 +34,9 @@ export const initializeSentry = () => {
       new Sentry.Integrations.Http({ tracing: true }),
       // enable Express.js middleware tracing
       new Sentry.Integrations.Express({ app: null }), // app will be provided later
-      // Add profiling integration for performance monitoring
-      new ProfilingIntegration(),
     ],
     // Performance Monitoring
     tracesSampleRate: environment === 'production' ? 0.1 : 1.0, // Lower sampling in production
-
-    // Profiling - for CPU and memory performance insights
-    profilesSampleRate: environment === 'production' ? 0.01 : 0.1, // Very low in production
 
     // Release tracking
     release: process.env.APP_VERSION || 'unknown',
@@ -108,14 +102,17 @@ export const initializeSentry = () => {
 // Express.js middleware setup
 export const setupSentryMiddleware = (app) => {
   // Add request handler before routes
-  app.use(Sentry.Handlers.requestHandler());
+  app.use(Sentry.Handlers?.requestHandler?.() || ((req, res, next) => next()));
 
   // Add tracing handler before routes
-  app.use(Sentry.Handlers.tracingHandler());
+  app.use(Sentry.Handlers?.tracingHandler?.() || ((req, res, next) => next()));
 };
 
 // Express.js error handler (must be added AFTER all routes)
-export const sentryErrorHandler = Sentry.Handlers.errorHandler();
+export const sentryErrorHandler = Sentry.Handlers?.errorHandler?.() || ((error, req, res, next) => {
+  console.error('Error:', error.message);
+  next(error);
+});
 
 // Manual error reporting
 export const reportError = (error, context = {}) => {
