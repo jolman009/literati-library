@@ -35,11 +35,15 @@ const shouldRegisterSW = import.meta.env.PROD &&
   (import.meta.env.VITE_ENABLE_SERVICE_WORKER !== 'false');
 
 if (shouldRegisterSW) {
-  registerSW({
-    immediate: true,
-    // onNeedRefresh() { /* show refresh UI */ },
-    // onOfflineReady() { /* toast "ready to work offline" */ },
-  });
+  try {
+    registerSW({
+      immediate: true,
+      // onNeedRefresh() { /* show refresh UI */ },
+      // onOfflineReady() { /* toast "ready to work offline" */ },
+    });
+  } catch (error) {
+    console.log('[PWA] Service Worker registration failed:', error);
+  }
 }
 
 
