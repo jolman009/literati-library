@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@sentry/react": "^10.15.0",
+    "@sentry/vite-plugin": "^4.3.0",
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
