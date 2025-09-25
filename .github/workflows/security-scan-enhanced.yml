@@ -1,0 +1,358 @@
+# Enhanced Security Scanning Pipeline
+# Comprehensive security analysis for production readiness
+
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scans daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      full_scan:
+        description: 'Run full comprehensive scan'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  dependency-audit:
+    name: 🔍 Dependency Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      # Client Security Audit
+      - name: 📦 Install Client Dependencies
+        working-directory: ./client2
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔒 Client Dependency Audit
+        working-directory: ./client2
+        run: |
+          echo "🔍 Running client dependency audit..."
+          pnpm audit --audit-level high --json > client-audit.json || true
+
+          # Parse and display critical/high vulnerabilities
+          node -e "
+            const audit = JSON.parse(require('fs').readFileSync('client-audit.json'));
+            if (audit.vulnerabilities) {
+              const critical = Object.values(audit.vulnerabilities).filter(v => v.severity === 'critical').length;
+              const high = Object.values(audit.vulnerabilities).filter(v => v.severity === 'high').length;
+              console.log('📊 Critical vulnerabilities:', critical);
+              console.log('📊 High vulnerabilities:', high);
+              if (critical > 0) {
+                console.log('❌ Critical vulnerabilities found!');
+                process.exit(1);
+              }
+            }
+          "
+
+      # Server Security Audit
+      - name: 📦 Install Server Dependencies
+        working-directory: ./server2
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔒 Server Dependency Audit
+        working-directory: ./server2
+        run: |
+          echo "🔍 Running server dependency audit..."
+          pnpm audit --audit-level high --json > server-audit.json || true
+
+          # Parse and display critical/high vulnerabilities
+          node -e "
+            const audit = JSON.parse(require('fs').readFileSync('server-audit.json'));
+            if (audit.vulnerabilities) {
+              const critical = Object.values(audit.vulnerabilities).filter(v => v.severity === 'critical').length;
+              const high = Object.values(audit.vulnerabilities).filter(v => v.severity === 'high').length;
+              console.log('📊 Critical vulnerabilities:', critical);
+              console.log('📊 High vulnerabilities:', high);
+              if (critical > 0) {
+                console.log('❌ Critical vulnerabilities found!');
+                process.exit(1);
+              }
+            }
+          "
+
+      # AI Service Security Audit
+      - name: 🐍 Setup Python for AI Service
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 🔒 AI Service Security Check
+        working-directory: ./ai-service
+        run: |
+          pip install safety bandit
+
+          echo "🔍 Running Python dependency security check..."
+          safety check -r requirements.txt || echo "⚠️ Python security issues found"
+
+          echo "🔍 Running Python code security analysis..."
+          bandit -r . -f json -o bandit-report.json || echo "⚠️ Python code security issues found"
+
+  code-security-scan:
+    name: 🛡️ Code Security Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # CodeQL Analysis
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, python
+          queries: security-extended,security-and-quality
+
+      - name: 🔍 Autobuild CodeQL
+        uses: github/codeql-action/autobuild@v3
+
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+
+      # Semgrep Security Analysis
+      - name: 🔍 Semgrep Security Scan
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/owasp-top-ten
+            p/javascript
+            p/typescript
+            p/python
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+  secret-scanning:
+    name: 🔐 Secret Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 TruffleHog Secret Detection
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+      - name: 🔍 GitLeaks Secret Detection
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  container-security:
+    name: 🐳 Container Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.inputs.full_scan == 'true' || github.event_name == 'schedule'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build images for scanning
+      - name: 🏗️ Build Client Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client2
+          file: ./client2/Dockerfile
+          tags: literati-client:scan
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 🏗️ Build Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server2
+          file: ./server2/Dockerfile
+          tags: literati-server:scan
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Trivy Container Scanning
+      - name: 🔍 Trivy Client Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: literati-client:scan
+          format: 'sarif'
+          output: 'client-trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: 🔍 Trivy Server Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: literati-server:scan
+          format: 'sarif'
+          output: 'server-trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      # Upload scan results
+      - name: 📤 Upload Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: '.'
+
+  infrastructure-security:
+    name: 🏗️ Infrastructure Security
+    runs-on: ubuntu-latest
+    if: github.event.inputs.full_scan == 'true' || github.event_name == 'schedule'
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      # Checkov Infrastructure Analysis
+      - name: 🔍 Checkov Infrastructure Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          quiet: true
+          soft_fail: true
+          framework: dockerfile,github_actions,secrets
+          output_format: sarif
+          output_file_path: checkov-report.sarif
+
+      - name: 📤 Upload Checkov Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: checkov-report.sarif
+
+      # Docker Compose Security
+      - name: 🔍 Docker Compose Security Check
+        run: |
+          if [ -f docker-compose.yml ]; then
+            echo "🔍 Analyzing Docker Compose configuration..."
+
+            # Check for security issues in docker-compose
+            docker run --rm -v "$(pwd)":/app \
+              clair/clair:latest \
+              clairctl analyze /app/docker-compose.yml || true
+          fi
+
+  security-report:
+    name: 📋 Security Report
+    runs-on: ubuntu-latest
+    needs: [dependency-audit, code-security-scan, secret-scanning, container-security, infrastructure-security]
+    if: always()
+
+    steps:
+      - name: 📊 Generate Security Summary
+        run: |
+          echo "# 🛡️ Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Scan Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "## 📈 Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Audit | ${{ needs.dependency-audit.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Security | ${{ needs.code-security-scan.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Detection | ${{ needs.secret-scanning.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Container Security | ${{ needs.container-security.result == 'success' && '✅' || needs.container-security.result == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Infrastructure | ${{ needs.infrastructure-security.result == 'success' && '✅' || needs.infrastructure-security.result == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📢 Security Alert (on failure)
+        if: needs.dependency-audit.result == 'failure' || needs.code-security-scan.result == 'failure' || needs.secret-scanning.result == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Security Scan Alert - ' + new Date().toISOString().split('T')[0],
+              body: '**Critical security issues detected in latest scan.**\n\n' +
+                    'Please review the security scan results and address any critical vulnerabilities immediately.\n\n' +
+                    '**Scan Details:**\n' +
+                    '- Commit: ' + context.sha + '\n' +
+                    '- Branch: ' + context.ref + '\n' +
+                    '- Workflow: [' + context.runNumber + '](' + context.payload.repository.html_url + '/actions/runs/' + context.runId + ')\n\n' +
+                    '**Next Steps:**\n' +
+                    '1. Review detailed scan results in the workflow logs\n' +
+                    '2. Address critical and high severity vulnerabilities\n' +
+                    '3. Update dependencies and rerun security scans\n' +
+                    '4. Consider implementing additional security measures',
+              labels: ['security', 'critical', 'needs-attention']
+            });
+
+  compliance-check:
+    name: ✅ Compliance Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: ✅ GDPR Compliance Check
+        run: |
+          echo "🔍 Checking GDPR compliance..."
+
+          # Check for privacy policy
+          if [ -f "client2/public/privacy-policy.html" ] || [ -f "legal/privacy-policy.md" ]; then
+            echo "✅ Privacy policy found"
+          else
+            echo "❌ Privacy policy missing"
+            exit 1
+          fi
+
+          # Check for cookie consent
+          if grep -r "cookie" client2/src/ || grep -r "consent" client2/src/; then
+            echo "✅ Cookie consent implementation found"
+          else
+            echo "⚠️ Cookie consent implementation not found"
+          fi
+
+      - name: ✅ Security Headers Check
+        run: |
+          echo "🔍 Checking security headers configuration..."
+
+          if [ -f "vercel.json" ]; then
+            if grep -q "X-Content-Type-Options" vercel.json; then
+              echo "✅ Security headers configured"
+            else
+              echo "❌ Security headers missing"
+              exit 1
+            fi
+          fi

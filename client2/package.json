@@ -24,7 +24,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
+    "build:production": "vite build --mode production",
     "preview": "vite preview --port 5174",
+    "preview:staging": "vite build --mode staging && vite preview --port 5174",
+    "preview:production": "vite build --mode production && vite preview --port 5174",
     "lint": "eslint src --ext .js,.jsx",
     "typecheck": "echo \"(optional)\"",
     "test": "vitest run",
