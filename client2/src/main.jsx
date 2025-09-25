@@ -76,12 +76,16 @@ const SentryFallback = ({ error, resetError }) => (
   </div>
 );
 
+// Create the App component wrapped with Sentry error boundary
+const AppWithSentry = SentryErrorBoundary(App, {
+  fallback: SentryFallback,
+  showDialog: true,
+});
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   // Add <React.StrictMode> later if you want double-effect checks
-  <SentryErrorBoundary fallback={SentryFallback} showDialog>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </SentryErrorBoundary>
+  <BrowserRouter>
+    <AppWithSentry />
+  </BrowserRouter>
 );
 /* CI/CD Pipeline Test - Wed, Sep 24, 2025 10:38:07 PM */

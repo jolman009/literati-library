@@ -531,14 +531,14 @@
 /* UPDATED: MD3-compliant responsive layout rules */
 @media (min-width: 769px) {
   .content-area {
-    margin-left: 80px; /* Start with collapsed space */
+    /* margin-left: 80px; /* Start with collapsed space */
     margin-bottom: 0;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* When navigation is expanded (default state) */
   .premium-app-layout.nav-expanded .content-area {
-    margin-left: 280px !important;
+    /* margin-left: 280px !important; */
     padding-left: 0 !important;
     border-left: none !important;
   }
