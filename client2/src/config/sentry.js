@@ -98,11 +98,19 @@ export const reportError = (error, context = {}) => {
   });
 };
 
-// Performance monitoring helpers
+// Performance monitoring helpers - simplified for compatibility
 export const startTransaction = (name, operation = 'navigation') => {
-  return Sentry.startSpan({ name, op: operation }, (span) => {
-    return span;
-  });
+  // Use modern Sentry API or fallback gracefully
+  if (typeof Sentry.startSpan === 'function') {
+    return Sentry.startSpan({ name, op: operation }, (span) => span);
+  }
+  // Fallback: return a no-op object
+  return {
+    setStatus: () => {},
+    finish: () => {},
+    setTag: () => {},
+    setData: () => {}
+  };
 };
 
 export const addBreadcrumb = (message, category = 'user-action', level = 'info') => {
