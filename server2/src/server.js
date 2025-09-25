@@ -1,0 +1,431 @@
+// src/server.js
+import 'dotenv/config';
+
+// Initialize Sentry first (must be before other imports)
+import { initializeSentry, setupSentryMiddleware, sentryErrorHandler } from './config/sentry.js';
+initializeSentry();
+
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import { authenticateToken } from './middlewares/auth.js';
+import { authenticateTokenEnhanced, generateTokens, verifyRefreshToken } from './middlewares/enhancedAuth.js';
+import { securitySuite } from './middleware/security.js';
+import { validationSuite } from './middleware/validation.js';
+import { advancedSecuritySuite } from './middlewares/advancedSecurity.js';
+import { initializeSecurity, getSecurityStatus } from './config/securityConfig.js';
+import { createHTTPSServer, configureCloudHTTPS } from './config/httpsConfig.js';
+import secureAuthRouter from './routes/secureAuth.js';
+import { booksRouter } from './routes/books.js';
+import { coversRouter } from './routes/covers.js';
+import coversEnhancedRouter from './routes/coversEnhanced.js';
+import { uploadCover } from './services/covers.js';
+import { supabase } from './config/supabaseClient.js';
+const supabaseAdmin = supabase; // Using service role key, so it has admin privileges
+
+import { notesRouter } from './routes/notes.js';
+import { readingRouter, registerLegacyReadingEndpoints } from './routes/reading.js';
+import { gamificationRouter } from './routes/gamification.js';
+import { aiRouter } from './routes/ai.js';
+import { performanceRouter } from './routes/performance.js';
+import { monitoringRouter } from './routes/monitoring.js';
+import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
+import { monitor } from './services/monitoring.js';
+
+// ----- ESM __dirname shim -----
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ----- Initialize Security Configuration -----
+let securityConfig;
+try {
+  securityConfig = initializeSecurity();
+  console.log('🔒 Security configuration loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load security configuration:', error.message);
+  process.exit(1);
+}
+
+// ----- App -----
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// ----- Cloud Platform HTTPS Configuration -----
+if (process.env.NODE_ENV === 'production') {
+  configureCloudHTTPS(app);
+}
+
+// ----- Trust Proxy (for accurate IP addresses behind reverse proxy) -----
+app.set('trust proxy', 1);
+
+// ----- Cookie Parser (must be early) -----
+app.use(cookieParser());
+
+// ----- Sentry Request Handling (must be early) -----
+setupSentryMiddleware(app);
+
+// ----- Security Headers (must be first) -----
+app.use(securitySuite.headers);
+
+// ----- Request Logging -----
+app.use(securitySuite.logging);
+
+// ----- Security Utilities -----
+app.use(securitySuite.utils.addRequestId);
+app.use(securitySuite.utils.sanitizeHeaders);
+
+// ----- Advanced Security Middleware -----
+app.use(advancedSecuritySuite.sanitization.deep);
+app.use(advancedSecuritySuite.sanitization.sqlInjection);
+app.use(advancedSecuritySuite.sanitization.noSQLInjection);
+app.use(advancedSecuritySuite.monitoring.suspicious);
+
+// ----- Additional Security -----
+app.use(mongoSanitize()); // Remove any keys that start with '$' or contain '.'
+app.use((req, res, next) => {
+  // XSS protection for string fields
+  if (req.body) {
+    Object.keys(req.body).forEach(key => {
+      if (typeof req.body[key] === 'string') {
+        req.body[key] = xss(req.body[key]);
+      }
+    });
+  }
+  next();
+});
+
+// ----- Rate Limiting & Slow Down -----
+app.use(advancedSecuritySuite.rateLimit.adaptive);
+app.use(securitySuite.slowDown);
+
+// ----- CORS (must be before routes) -----
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) return callback(null, true);
+
+    // Allow all localhost ports for development
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+
+    // Allow production domains from environment variable
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+      : [
+          'https://www.literati.pro',
+          'https://literati.pro',
+          'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app'
+        ];
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Deny all other origins
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin','X-Requested-With','Content-Type','Accept','Authorization'],
+}));
+
+// ----- Request monitoring middleware -----
+app.use(monitor.requestMonitoringMiddleware());
+
+// ----- Body parsing middleware (must be before routes) -----
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// ----- Protected Routes with specific rate limiting -----
+app.use('/api/auth', securitySuite.rateLimit.auth);
+app.use('/notes', notesRouter(authenticateTokenEnhanced));
+app.use('/reading', readingRouter(authenticateTokenEnhanced));
+app.use('/api/gamification', securitySuite.rateLimit.gamification);
+app.use('/gamification', gamificationRouter(authenticateTokenEnhanced));
+
+// Optional: preserve your older client that calls POST /api/reading-session
+registerLegacyReadingEndpoints(app, authenticateTokenEnhanced);
+
+
+
+// Static (OK in ESM with shim)
+app.use('/static', express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public')));
+
+// ----- Multer (memory) -----
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const ok = ['application/pdf','application/epub+zip','application/epub'].includes(file.mimetype);
+    return ok ? cb(null, true) : cb(new Error('Only PDF and EPUB files are allowed'), false);
+  },
+});
+
+// ----- Health -----
+const handleHealthCheck = (req, res) => {
+  res.json({
+    status: 'online',
+    message: 'Literati API Server is running',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    uptime: process.uptime(),
+  });
+};
+
+app.get('/', handleHealthCheck);
+app.get('/health', handleHealthCheck);
+app.head('/', (_req, res) => res.sendStatus(200));
+app.head('/health', (_req, res) => res.sendStatus(200));
+
+// ----- Enhanced Authentication Routes -----
+app.use('/auth/secure', secureAuthRouter);
+
+// ----- API Routers (namespaced) -----
+app.use('/books', booksRouter(authenticateTokenEnhanced));
+app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
+app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
+app.use('/covers', coversRouter(authenticateTokenEnhanced));
+app.use('/covers-enhanced', coversEnhancedRouter);
+app.use('/ai', aiRouter(authenticateTokenEnhanced));
+
+// ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
+app.post('/auth/register', async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
+    if (!email || !password || !name) return res.status(400).json({ error: 'Email, password, and name are required' });
+
+    // exists?
+    const { data: existingUser } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+    if (existingUser) return res.status(400).json({ error: 'User already exists' });
+
+    // hash + create
+    const { default: bcrypt } = await import('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .insert({ email, password: hashedPassword, name, created_at: new Date().toISOString() })
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: 'Failed to create user' });
+
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    await supabaseAdmin.from('user_stats').insert({
+      user_id: user.id, total_points: 0, level: 1, books_read: 0, pages_read: 0,
+      total_reading_time: 0, reading_streak: 0, notes_created: 0, highlights_created: 0, books_completed: 0
+    });
+
+    res.status(201).json({ message: 'User created successfully', token: accessToken, refreshToken, user: { id: user.id, email: user.email, name: user.name } });
+  } catch (e) {
+    console.error('Registration error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/auth/login', async (req, res) => {
+  try {
+    const { default: bcrypt } = await import('bcryptjs');
+
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
+
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+    if (error || !user) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    res.json({ message: 'Login successful', token: accessToken, refreshToken, user: { id: user.id, email: user.email, name: user.name, avatar: user.avatar } });
+  } catch (e) {
+    console.error('Login error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/auth/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({ error: 'Refresh token required' });
+    }
+
+    // Verify refresh token using the proper enhanced auth function
+    const decoded = verifyRefreshToken(refreshToken);
+
+    // Get user from database
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('id, email, name, avatar')
+      .eq('id', decoded.id)
+      .single();
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid refresh token' });
+    }
+
+    // Generate new tokens using the proper enhanced auth function
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
+
+    res.json({
+      message: 'Tokens refreshed successfully',
+      token: accessToken,
+      refreshToken: newRefreshToken,
+      user
+    });
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(401).json({ error: 'Invalid refresh token' });
+  }
+});
+
+app.get('/auth/profile', authenticateToken, async (req, res) => {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, email, name, avatar, created_at')
+      .eq('id', req.user.id)
+      .single();
+    if (error) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (e) {
+    console.error('Profile fetch error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ----- Book cover upload with enhanced security -----
+app.post('/books/:id/cover',
+  authenticateTokenEnhanced,
+  securitySuite.rateLimit.upload,
+  advancedSecuritySuite.fileUpload.secure,
+  upload.single('file'),
+  validationSuite.files.upload,
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: 'No file uploaded',
+          code: 'NO_FILE',
+          requestId: req.requestId
+        });
+      }
+
+      const { publicUrl } = await uploadCover(
+        req.user.id,
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype
+      );
+
+      const { error } = await supabase
+        .from('books')
+        .update({ cover_url: publicUrl })
+        .eq('id', req.params.id)
+        .eq('user_id', req.user.id); // Ensure user owns the book
+
+      if (error) {
+        console.error('Cover update error:', error);
+        return res.status(500).json({
+          error: 'Failed to update book cover',
+          code: 'UPDATE_FAILED',
+          requestId: req.requestId
+        });
+      }
+
+      // Log successful upload
+      console.log(`Cover uploaded successfully for book ${req.params.id} by user ${req.user.id} from IP: ${req.ip}`);
+
+      res.json({
+        message: 'Cover uploaded successfully',
+        cover_url: publicUrl
+      });
+
+    } catch (err) {
+      console.error('Cover upload error:', err);
+      res.status(500).json({
+        error: 'Cover upload failed',
+        code: 'UPLOAD_ERROR',
+        requestId: req.requestId
+      });
+    }
+  }
+);
+
+// ----- Health Check and Security Status Endpoints -----
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()),
+    version: process.env.npm_package_version || '1.0.0',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+app.get('/security-status', (req, res) => {
+  const status = getSecurityStatus();
+  res.status(200).json(status);
+});
+
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+// ----- Sentry Error Handler (must be before other error handlers) -----
+app.use(sentryErrorHandler);
+
+// ----- Security Error Handler -----
+app.use(securitySuite.errorHandler);
+
+// ----- Enhanced Global Error Handler -----
+app.use(globalErrorHandler);
+
+app.use('*', (req, res) => {
+  console.log(`❌ 404 - ${req.method} ${req.originalUrl}`);
+  res.status(404).json({
+    error: 'Endpoint not found',
+    path: req.originalUrl,
+    method: req.method,
+    requestId: req.requestId
+  });
+});
+
+// ----- Start Server with HTTPS Support -----
+const serverConfig = createHTTPSServer(app, {
+  port: PORT,
+  httpsPort: process.env.HTTPS_PORT || 5443
+});
+
+serverConfig.start().then((result) => {
+  console.log('✅ Server startup complete');
+  console.log(`🔗 Protocol: ${result.protocol}`);
+  if (result.httpsServer) {
+    console.log(`🔒 HTTPS: https://localhost:${result.port}`);
+    console.log(`📡 HTTP Redirect: http://localhost:${result.httpPort}`);
+  } else {
+    console.log(`📡 Server: ${result.protocol}://localhost:${result.port}`);
+  }
+}).catch((error) => {
+  console.error('❌ Failed to start server:', error.message);
+  process.exit(1);
+});

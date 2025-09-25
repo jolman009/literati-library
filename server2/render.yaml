@@ -1,0 +1,77 @@
+services:
+  # Express Server for Literati
+  - type: web
+    name: literati-server
+    runtime: node
+    plan: starter
+    buildCommand: pnpm install
+    startCommand: pnpm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SUPABASE_URL
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: SUPABASE_URL
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: SUPABASE_SERVICE_ROLE_KEY
+      - key: JWT_SECRET
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: JWT_SECRET
+      - key: JWT_REFRESH_SECRET
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: JWT_REFRESH_SECRET
+      - key: ALLOWED_ORIGINS
+        value: https://literati.pro,https://www.literati.pro,https://your-app.vercel.app
+      - key: MAX_FILE_SIZE
+        value: 50MB
+      - key: UPLOAD_TIMEOUT
+        value: 300000
+    autoDeploy: true
+    branch: main
+
+  # AI Service (FastAPI)
+  - type: web
+    name: literati-ai
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    rootDir: ai-service
+    healthCheckPath: /health
+    envVars:
+      - key: GOOGLE_API_KEY
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: GOOGLE_API_KEY
+      - key: ENVIRONMENT
+        value: production
+    autoDeploy: true
+    branch: main
+
+# Environment Variable Groups (configure these in Render dashboard)
+envVarGroups:
+  - name: production-secrets
+    envVars:
+      - key: SUPABASE_URL
+        # Set in Render dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        # Set in Render dashboard
+      - key: JWT_SECRET
+        # Set in Render dashboard (generate with: openssl rand -base64 32)
+      - key: JWT_REFRESH_SECRET
+        # Set in Render dashboard (different from JWT_SECRET)
+      - key: GOOGLE_API_KEY
+        # Set in Render dashboard
