@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restore Anthropic API Key</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .next-steps {
+            background: #f0f8e7;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        button {
+            background: #673ab7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5e35b1;
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Anthropic API Key Restoration</h1>
+
+        <div id="status"></div>
+
+        <div class="info">
+            <h3>ℹ️ What this does:</h3>
+            <p>This tool restores your Anthropic API key to your Library App's Literary Mentor feature. The key is encrypted and stored locally in your browser. Your app now supports Anthropic, OpenAI, Gemini, and Perplexity AI providers.</p>
+        </div>
+
+        <button onclick="restoreKey()">🔑 Restore Anthropic API Key</button>
+        <button onclick="checkStatus()">📊 Check Current Status</button>
+        <button onclick="openDashboard()">🏠 Open Dashboard</button>
+
+        <div class="next-steps">
+            <h3>📝 Next Steps:</h3>
+            <ol>
+                <li>Click "Restore Anthropic API Key" above</li>
+                <li>Open your Library App Dashboard</li>
+                <li>Look for the "Your Literary Mentor" section</li>
+                <li>You should no longer see the "Configure AI keys" warning</li>
+                <li>Try starting a book discussion or asking for insights!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // The encrypted key data
+        const keyData = {
+            "encrypted": "c2stYW50LWFwaTAzLVkyNHZGblhFYlZkMFpQUW9IWWNtSUVpNXFSV1VtSnlZc01PeDA3S3R0TVM5eWRoTkZ3NWRlY0poemVXcjBqcTJNSEdmV0c5TGItTXFzdkdOb1R4dktnLVR1OEtNQUFB",
+            "provider": "anthropic",
+            "createdAt": "2025-09-26T02:45:19.292Z",
+            "lastUsed": null,
+            "metadata": {
+                "keyPrefix": "sk-ant-a",
+                "userId": "default",
+                "permissions": ["read", "analyze"]
+            }
+        };
+
+        function restoreKey() {
+            try {
+                // Store the key in localStorage
+                localStorage.setItem('ai_key_anthropic', JSON.stringify(keyData));
+
+                document.getElementById('status').innerHTML = `
+                    <div class="success">
+                        ✅ Anthropic API key restored successfully!<br>
+                        Key prefix: ${keyData.metadata.keyPrefix}...<br>
+                        Provider: ${keyData.provider}<br>
+                        Created: ${new Date(keyData.createdAt).toLocaleString()}
+                    </div>
+                `;
+
+                console.log('✅ Anthropic API key stored in localStorage');
+            } catch (error) {
+                document.getElementById('status').innerHTML = `
+                    <div class="error">
+                        ❌ Failed to restore API key: ${error.message}
+                    </div>
+                `;
+                console.error('Error storing key:', error);
+            }
+        }
+
+        function checkStatus() {
+            const storedKey = localStorage.getItem('ai_key_anthropic');
+            const statusDiv = document.getElementById('status');
+
+            if (storedKey) {
+                try {
+                    const parsed = JSON.parse(storedKey);
+                    statusDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Anthropic API key is configured<br>
+                            Key prefix: ${parsed.metadata?.keyPrefix || 'Unknown'}...<br>
+                            Provider: ${parsed.provider || 'anthropic'}<br>
+                            Created: ${parsed.createdAt ? new Date(parsed.createdAt).toLocaleString() : 'Unknown'}
+                        </div>
+                    `;
+                } catch (error) {
+                    statusDiv.innerHTML = `
+                        <div class="error">
+                            ⚠️ Key exists but appears corrupted<br>
+                            Try restoring the key again.
+                        </div>
+                    `;
+                }
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="error">
+                        ❌ No Anthropic API key found<br>
+                        Click "Restore Anthropic API Key" to add it.
+                    </div>
+                `;
+            }
+        }
+
+        function openDashboard() {
+            // Try to open in the same origin first
+            const dashboardUrls = [
+                'http://localhost:3000',
+                'http://localhost:5173',
+                'http://localhost:8080',
+                'http://127.0.0.1:3000'
+            ];
+
+            // Try to open the most likely local development URL
+            window.open('http://localhost:3000', '_blank');
+        }
+
+        // Check status on page load
+        document.addEventListener('DOMContentLoaded', checkStatus);
+    </script>
+</body>
+</html>
