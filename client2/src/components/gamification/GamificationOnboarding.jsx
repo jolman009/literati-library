@@ -18,6 +18,17 @@ const GamificationOnboarding = ({ onComplete, canSkip = true }) => {
     }
   }, []);
 
+  // Listen for custom events to show tutorial
+  useEffect(() => {
+    const handleShowTutorial = () => {
+      setCurrentStep(0);
+      setIsVisible(true);
+    };
+
+    window.addEventListener('showTutorial', handleShowTutorial);
+    return () => window.removeEventListener('showTutorial', handleShowTutorial);
+  }, []);
+
   const onboardingSteps = [
     {
       title: "Welcome to Literati Rewards! 🎮",
