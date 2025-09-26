@@ -192,6 +192,17 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                     <span className="material-symbols-outlined">help</span>
                     Help
                   </button>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      // Dispatch custom event to show tutorial
+                      window.dispatchEvent(new CustomEvent('showTutorial'));
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    <span className="material-symbols-outlined">school</span>
+                    Tutorial
+                  </button>
                   <div className="dropdown-divider"></div>
                   <button
                     className="dropdown-item logout-item"

@@ -128,6 +128,21 @@ const UserMenu = ({ user, onLogout }) => {
               <span>About Literati</span>
             </button>
 
+            <button
+              className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-on-surface hover:bg-surface-container-high transition-colors duration-short2"
+              role="menuitem"
+              onClick={() => {
+                // Dispatch custom event to show tutorial
+                window.dispatchEvent(new CustomEvent('showTutorial'));
+                setIsOpen(false);
+              }}
+            >
+              <span className="material-symbols-outlined text-xl">
+                school
+              </span>
+              <span>Tutorial</span>
+            </button>
+
             <div className="border-t border-outline-variant my-2"></div>
 
             <button
