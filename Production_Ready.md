@@ -174,7 +174,7 @@
     GEMINI: 'gemini',        // Google Gemini
     OPENAI: 'openai',        // OpenAI GPT
     ANTHROPIC: 'anthropic',  // Claude
-    COHERE: 'cohere'         // Cohere
+    PERPLEXITY: 'perplexity' // Perplexity
   }
 
   3. Key Validation Patterns:
@@ -182,7 +182,7 @@
   - Gemini: AIza[0-9A-Za-z-_]{35}
   - OpenAI: sk-[A-Za-z0-9]{32,}
   - Anthropic: sk-ant-[A-Za-z0-9-]{32,}
-  - Cohere: [A-Za-z0-9]{40}
+  - Perplexity: pplx-[A-Za-z0-9]{32,}
 
   How to Use the Configuration
 
@@ -270,7 +270,7 @@
   - Gemini: Use Google AI Studio to generate keys
   - OpenAI: Create keys in OpenAI platform dashboard
   - Anthropic: Get Claude API keys from Anthropic console
-  - Cohere: Generate keys from Cohere platform
+  - Perplexity: Generate keys from Perplexity platform
 
   The configuration system is designed to be secure, user-friendly, and flexible, supporting multiple AI providers
   while maintaining strong security practices for API key management.
