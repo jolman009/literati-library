@@ -59,17 +59,17 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
     const anthropicKey = localStorage.getItem('ai_key_anthropic');
     const openaiKey = localStorage.getItem('ai_key_openai');
     const geminiKey = localStorage.getItem('ai_key_gemini');
-    const cohereKey = localStorage.getItem('ai_key_cohere');
-    
-    const hasKeys = !!(anthropicKey || openaiKey || geminiKey || cohereKey);
+    const perplexityKey = localStorage.getItem('ai_key_perplexity');
+
+    const hasKeys = !!(anthropicKey || openaiKey || geminiKey || perplexityKey);
     setHasApiKeys(hasKeys);
-    
+
     console.log('API Keys check:', {
       hasKeys,
       anthropic: !!anthropicKey,
       openai: !!openaiKey,
       gemini: !!geminiKey,
-      cohere: !!cohereKey
+      perplexity: !!perplexityKey
     });
   };
 
