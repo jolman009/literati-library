@@ -1,8 +1,11 @@
 // src/services/bookStorageService.js
+import environmentConfig from '../config/environment.js';
+
 class BookStorageService {
   constructor() {
     this.cache = new Map();
     this.indexedDB = null;
+    this.config = environmentConfig;
     this.initIndexedDB();
   }
 
@@ -10,7 +13,7 @@ class BookStorageService {
   async initIndexedDB() {
     try {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('literati-books', 2);
+        const request = indexedDB.open(this.config.storage.indexedDbName, this.config.storage.indexedDbVersion);
         
         request.onerror = () => reject(request.error);
         request.onsuccess = () => {
@@ -51,15 +54,16 @@ class BookStorageService {
     }
   }
 
-  // Get API base URL - HARDCODED
+  // Get API base URL from centralized configuration
   getApiBaseUrl() {
-    return 'http://localhost:5000'; // HARDCODED - ignoring env vars
+    return this.config.apiUrl;
   }
 
-  // Get authentication token
+  // Get authentication token using centralized configuration
   getAuthToken() {
     try {
-      return localStorage.getItem('token') || sessionStorage.getItem('token');
+      const tokenKey = this.config.getTokenKey();
+      return localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey);
     } catch (error) {
       console.error('Failed to get auth token:', error);
       return null;
@@ -79,8 +83,7 @@ class BookStorageService {
 
     const defaultOptions = {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        ...this.config.getAuthHeaders(token),
         ...options.headers
       }
     };
@@ -111,8 +114,9 @@ class BookStorageService {
   // Handle authentication errors
   handleAuthError() {
     try {
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
+      const tokenKey = this.config.getTokenKey();
+      localStorage.removeItem(tokenKey);
+      sessionStorage.removeItem(tokenKey);
       localStorage.removeItem('user');
       // Redirect to login
       window.location.href = '/login';

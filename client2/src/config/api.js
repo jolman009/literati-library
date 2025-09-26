@@ -1,50 +1,27 @@
-// src/config/api.js - FIXED VERSION WITH NOTES SUPPORT
+// src/config/api.js - UNIFIED WITH CENTRALIZED CONFIGURATION
 import axios from 'axios';
-
-// Determine API URL based on environment variables only
-const getApiUrl = () => {
-  // Always use environment variable - no hostname detection
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
-
-  if (!apiUrl) {
-    throw new Error(
-      'VITE_API_BASE_URL environment variable is required. ' +
-      'Please set it in your .env file or deployment configuration.'
-    );
-  }
-
-  // Debug logging (only in development)
-  if (import.meta.env.DEV) {
-    console.log('🔧 API Configuration:', {
-      'VITE_API_BASE_URL': apiUrl,
-      'env.MODE': import.meta.env.MODE,
-      'env.DEV': import.meta.env.DEV
-    });
-  }
-
-  return apiUrl;
-};
+import environmentConfig from './environment.js';
 
 // Create axios instance with base configuration
 const API = axios.create({
-  baseURL: getApiUrl(),
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: environmentConfig.apiUrl,
+  timeout: environmentConfig.apiTimeout,
+  headers: environmentConfig.getDefaultHeaders(),
 });
 
 // Add BASE_URL property for backward compatibility
-API.BASE_URL = getApiUrl();
+API.BASE_URL = environmentConfig.apiUrl;
 
 // Add request interceptor to include auth token
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('literati_token');
-    
+    const token = localStorage.getItem(environmentConfig.getTokenKey()) ||
+                 sessionStorage.getItem(environmentConfig.getTokenKey());
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   (error) => {
