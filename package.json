@@ -12,13 +12,13 @@
     "test:ai-service": "cd ai-service && python -m pytest --cov=src --cov-report=term-missing",
     "test:e2e": "cd client2 && pnpm run test:e2e",
     "test:watch": "pnpm run --parallel --recursive test:watch",
-    "dev": "pnpm run --parallel dev:client dev:server dev:ai-service",
+    "dev": "concurrently \"pnpm run dev:client\" \"pnpm run dev:server\" \"pnpm run dev:ai-service\"",
     "dev:client": "cd client2 && pnpm run dev",
     "dev:server": "cd server2 && pnpm run dev",
     "dev:ai-service": "cd ai-service && python -m uvicorn main:app --reload --port 8000",
     "build": "pnpm run build:client",
     "build:client": "cd client2 && pnpm run build",
-    "start": "pnpm run --parallel start:client start:server start:ai-service",
+    "start": "concurrently \"pnpm run start:client\" \"pnpm run start:server\" \"pnpm run start:ai-service\"",
     "start:client": "cd client2 && pnpm run preview",
     "start:server": "cd server2 && pnpm run start",
     "start:ai-service": "cd ai-service && python -m uvicorn main:app --port 8000",
@@ -42,5 +42,8 @@
     "overrides": {
       "pdfjs-dist": "5.3.93"
     }
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
