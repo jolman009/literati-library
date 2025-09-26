@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@sentry/integrations": "^7.114.0",
+    "@sentry/react": "^10.15.0",
+    "@sentry/tracing": "^7.120.4",
     "@supabase/supabase-js": "^2.55.0",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
