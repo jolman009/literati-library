@@ -1,5 +1,7 @@
 // src/routes/ai.js - AI Reading Companion API Routes
 import express from 'express';
+import aiService from '../services/aiService.js';
+import serverCrashReporting from '../services/crashReporting.js';
 
 export function aiRouter(authenticateToken) {
   const router = express.Router();
@@ -13,9 +15,8 @@ export function aiRouter(authenticateToken) {
         return res.status(400).json({ error: 'Text too short for analysis' });
       }
 
-      // For now, we'll provide intelligent fallback analysis
-      // Later we can integrate with actual AI services like OpenAI or Google Gemini
-      const analysis = await analyzeTextFallback(text, context);
+      // Use real AI service for text analysis
+      const analysis = await aiService.analyzeText(text, context);
       
       res.json(analysis);
     } catch (error) {
@@ -29,7 +30,7 @@ export function aiRouter(authenticateToken) {
     try {
       const { text, userProfile, bookContext } = req.body;
       
-      const suggestions = await generateAnnotationsFallback(text, userProfile, bookContext);
+      const suggestions = await aiService.suggestAnnotations(text, userProfile, bookContext);
       
       res.json(suggestions);
     } catch (error) {
@@ -43,7 +44,7 @@ export function aiRouter(authenticateToken) {
     try {
       const { bookId, sessionData, userProfile } = req.body;
       
-      const insights = await generateReadingInsightsFallback(sessionData, userProfile);
+      const insights = await aiService.generateReadingInsights(sessionData, userProfile);
       
       res.json(insights);
     } catch (error) {
@@ -57,7 +58,7 @@ export function aiRouter(authenticateToken) {
     try {
       const { text, context, userLevel } = req.body;
       
-      const help = await generateContextualHelpFallback(text, context, userLevel);
+      const help = await aiService.generateContextualHelp(text, context, userLevel);
       
       res.json(help);
     } catch (error) {
@@ -71,7 +72,7 @@ export function aiRouter(authenticateToken) {
     try {
       const { currentBook, readingHistory, readingSpeed, noteComplexity, currentMood, achievements, timeAvailable } = req.body;
       
-      const recommendations = await generateBookRecommendationsFallback(req.body);
+      const recommendations = await aiService.generateBookRecommendations(req.body);
       res.json(recommendations);
     } catch (error) {
       console.error('Book recommendations error:', error);
@@ -123,7 +124,7 @@ export function aiRouter(authenticateToken) {
     try {
       const { originalNote, bookContext, suggestedConnections, vocabularyEnhancements } = req.body;
       
-      const enhancement = await enhanceNoteFallback(originalNote, bookContext);
+      const enhancement = await aiService.enhanceNote(originalNote, bookContext);
       res.json(enhancement);
     } catch (error) {
       console.error('Note enhancement error:', error);
@@ -201,6 +202,32 @@ export function aiRouter(authenticateToken) {
     } catch (error) {
       console.error('Profile update error:', error);
       res.status(500).json({ error: 'Profile update failed' });
+    }
+  });
+
+  // AI service health check and status
+  router.get('/status', authenticateToken, async (req, res) => {
+    try {
+      const status = aiService.getStatus();
+      res.json({
+        ...status,
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+      });
+    } catch (error) {
+      console.error('AI status error:', error);
+      res.status(500).json({ error: 'Failed to get AI service status' });
+    }
+  });
+
+  // Clear AI service cache (admin endpoint)
+  router.post('/clear-cache', authenticateToken, async (req, res) => {
+    try {
+      aiService.clearCache();
+      res.json({ success: true, message: 'AI cache cleared' });
+    } catch (error) {
+      console.error('Cache clear error:', error);
+      res.status(500).json({ error: 'Failed to clear cache' });
     }
   });
 

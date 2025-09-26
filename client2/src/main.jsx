@@ -1,8 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';``
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-// Removed Sentry initialization
+// Initialize Sentry crash reporting
+import { initializeSentry } from './services/sentry.js';
+initializeSentry();
 
 // 1) Configure PDF.js worker first (must come before any <Document/> usage)
 import './pdfjs-setup';

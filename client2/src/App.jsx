@@ -20,6 +20,9 @@ import { useNetworkStatus } from './hooks/useNetworkStatus';
 // PWA Components
 import { InstallPrompt, OfflineIndicator, UpdateNotification } from './components/PWA';
 
+// Sentry testing (development only)
+import SentryTestButton from './components/SentryTestButton.jsx';
+
 // Import performance testing for development
 if (process.env.NODE_ENV === 'development') {
   import('./utils/performanceTest');
@@ -236,6 +239,9 @@ const App = () => {
                 {/* PWA Components */}
                 <OfflineIndicator />
                 <InstallPrompt />
+
+                {/* Sentry Test Button (Development Only) */}
+                <SentryTestButton />
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>
