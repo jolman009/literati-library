@@ -1,0 +1,4 @@
+packages:
+  - 'client2'
+  - 'server2'
+  - 'ai-service'

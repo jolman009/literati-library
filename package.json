@@ -4,10 +4,6 @@
   "description": "A comprehensive digital library application with AI-powered features",
   "private": true,
   "packageManager": "pnpm@8.15.6",
-  "workspaces": [
-    "client2",
-    "server2"
-  ],
   "scripts": {
     "test": "pnpm run test:all",
     "test:all": "pnpm run test:client && pnpm run test:server && pnpm run test:ai-service",
@@ -41,5 +37,10 @@
     "supabase",
     "progressive-web-app"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "pnpm": {
+    "overrides": {
+      "pdfjs-dist": "5.3.93"
+    }
+  }
 }

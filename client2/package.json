@@ -93,10 +93,5 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-win32-x64-msvc": "^4.44.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "pdfjs-dist": "5.3.93"
-    }
   }
 }
