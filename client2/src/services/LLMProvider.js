@@ -21,10 +21,10 @@ class LLMProvider {
 
     // Provider preferences by task type
     const taskPreferences = {
-      'analysis': ['anthropic', 'openai', 'gemini', 'cohere'],
-      'creative': ['openai', 'anthropic', 'gemini', 'cohere'],
-      'factual': ['gemini', 'openai', 'anthropic', 'cohere'],
-      'general': ['gemini', 'openai', 'anthropic', 'cohere']
+      'analysis': ['anthropic', 'openai', 'gemini', 'perplexity'],
+      'creative': ['openai', 'anthropic', 'gemini', 'perplexity'],
+      'factual': ['perplexity', 'gemini', 'openai', 'anthropic'],
+      'general': ['gemini', 'openai', 'anthropic', 'perplexity']
     };
 
     const preferred = taskPreferences[taskType] || taskPreferences['general'];
@@ -88,8 +88,8 @@ class LLMProvider {
           return await this.callOpenAI(prompt, { maxTokens, temperature, systemPrompt });
         case AIKeyManager.PROVIDERS.ANTHROPIC:
           return await this.callAnthropic(prompt, { maxTokens, temperature, systemPrompt });
-        case AIKeyManager.PROVIDERS.COHERE:
-          return await this.callCohere(prompt, { maxTokens, temperature, systemPrompt });
+        case AIKeyManager.PROVIDERS.PERPLEXITY:
+          return await this.callPerplexity(prompt, { maxTokens, temperature, systemPrompt });
         default:
           throw new Error(`Unsupported provider: ${provider}`);
       }
@@ -252,20 +252,26 @@ class LLMProvider {
   }
 
   /**
-   * Cohere API integration
+   * Perplexity API integration
    */
-  async callCohere(prompt, options) {
-    const apiKey = AIKeyManager.getKey(AIKeyManager.PROVIDERS.COHERE);
-    
+  async callPerplexity(prompt, options) {
+    const apiKey = AIKeyManager.getKey(AIKeyManager.PROVIDERS.PERPLEXITY);
+
+    const messages = [];
+    if (options.systemPrompt) {
+      messages.push({ role: 'system', content: options.systemPrompt });
+    }
+    messages.push({ role: 'user', content: prompt });
+
     const requestBody = {
-      model: 'command-light',  // Fast and cost-effective
-      prompt: options.systemPrompt ? `${options.systemPrompt}\n\n${prompt}` : prompt,
+      model: 'llama-3.1-sonar-small-128k-online',  // Online model for search-enhanced responses
+      messages: messages,
       max_tokens: options.maxTokens,
       temperature: options.temperature,
-      truncate: 'END'
+      stream: false
     };
 
-    const response = await fetch('https://api.cohere.ai/v1/generate', {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -276,19 +282,19 @@ class LLMProvider {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(`Cohere API error: ${error.message || response.statusText}`);
+      throw new Error(`Perplexity API error: ${error.message || response.statusText}`);
     }
 
     const data = await response.json();
 
     return {
-      text: data.generations[0].text.trim(),
-      provider: 'cohere',
-      model: 'command-light',
+      text: data.choices[0].message.content.trim(),
+      provider: 'perplexity',
+      model: 'llama-3.1-sonar-small-128k-online',
       usage: {
-        promptTokens: 0,  // Cohere doesn't provide token counts in this format
-        completionTokens: 0,
-        totalTokens: 0
+        promptTokens: data.usage?.prompt_tokens || 0,
+        completionTokens: data.usage?.completion_tokens || 0,
+        totalTokens: data.usage?.total_tokens || 0
       }
     };
   }

@@ -157,11 +157,11 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
         keyFormat: 'sk-ant-[32+ characters]',
         getKeyUrl: 'https://console.anthropic.com/account/keys'
       },
-      cohere: {
-        name: 'Cohere',
-        description: 'Language understanding and generation',
-        keyFormat: '[40 characters]',
-        getKeyUrl: 'https://dashboard.cohere.ai/api-keys'
+      perplexity: {
+        name: 'Perplexity',
+        description: 'Search-enhanced AI reasoning',
+        keyFormat: 'pplx-[32+ characters]',
+        getKeyUrl: 'https://www.perplexity.ai/settings/api'
       }
     };
 

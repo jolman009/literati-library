@@ -13,7 +13,7 @@ class AIKeyManager {
     GEMINI: 'gemini',
     OPENAI: 'openai',
     ANTHROPIC: 'anthropic',
-    COHERE: 'cohere'
+    PERPLEXITY: 'perplexity'
   };
 
   // ===== KEY VALIDATION PATTERNS =====
@@ -22,7 +22,7 @@ class AIKeyManager {
     [AIKeyManager.PROVIDERS.GEMINI]: /^AIza[0-9A-Za-z-_]{35}$/,
     [AIKeyManager.PROVIDERS.OPENAI]: /^sk-[A-Za-z0-9]{32,}$/,
     [AIKeyManager.PROVIDERS.ANTHROPIC]: /^sk-ant-api\d{2}-[A-Za-z0-9_-]{95,}$/,
-    [AIKeyManager.PROVIDERS.COHERE]: /^[A-Za-z0-9]{40}$/
+    [AIKeyManager.PROVIDERS.PERPLEXITY]: /^pplx-[A-Za-z0-9]{32,}$/
   };
 
   // ===== SECURE KEY STORAGE =====
@@ -154,8 +154,8 @@ class AIKeyManager {
           return await this.testOpenAIKey(apiKey);
         case AIKeyManager.PROVIDERS.ANTHROPIC:
           return await this.testAnthropicKey(apiKey);
-        case AIKeyManager.PROVIDERS.COHERE:
-          return await this.testCohereKey(apiKey);
+        case AIKeyManager.PROVIDERS.PERPLEXITY:
+          return await this.testPerplexityKey(apiKey);
         default:
           return false;
       }
@@ -208,17 +208,23 @@ class AIKeyManager {
   }
 
   /**
-   * Test Cohere API key
+   * Test Perplexity API key
    */
-  async testCohereKey(apiKey) {
+  async testPerplexityKey(apiKey) {
     try {
-      const response = await fetch('https://api.cohere.ai/v1/models', {
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-small-128k-online',
+          messages: [{ role: 'user', content: 'test' }],
+          max_tokens: 1
+        })
       });
-      return response.ok;
+      return response.ok || response.status === 400; // 400 might indicate valid auth but bad request
     } catch (error) {
       return false;
     }
@@ -268,7 +274,7 @@ class AIKeyManager {
           'Content-Type': 'application/json',
           'anthropic-version': '2023-06-01'
         };
-      case AIKeyManager.PROVIDERS.COHERE:
+      case AIKeyManager.PROVIDERS.PERPLEXITY:
         return {
           'Authorization': `Bearer ${key}`,
           'Content-Type': 'application/json'

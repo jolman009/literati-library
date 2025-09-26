@@ -304,35 +304,7 @@
   pointer-events: none;
 }
 
-/* Header Section */
-.collections-header {
-  background: linear-gradient(135deg, #6750A4, #7C4DFF);
-  color: white;
-  padding: 32px 24px;
-  margin-bottom: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-.collections-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.collections-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 2.5rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.collections-header p {
-  margin: 0 0 24px 0;
-  font-size: 1.125rem;
-  opacity: 0.9;
-}
+/* Removed duplicate header styles - using MD3-compliant version above */
 
 .collections-search-controls {
   display: flex;
@@ -348,17 +320,7 @@
   color: white !important;
 }
 
-.collections-header-button {
-  background-color: rgba(255,255,255,0.2) !important;
-  color: white !important;
-  border: 1px solid rgba(255,255,255,0.3) !important;
-  backdrop-filter: blur(10px) !important;
-}
-
-.collections-header-button.batch-mode-active {
-  background-color: rgba(255,255,255,0.2) !important;
-  border-color: rgba(255,255,255,0.5) !important;
-}
+/* Removed duplicate button styles - using MD3-compliant version above */
 
 /* Search and Filter Section */
 .collections-search-section {
