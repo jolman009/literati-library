@@ -168,3 +168,4 @@ workbox-*.js.map
 # Bundle analyzer
 stats.html
 bundle-analyzer-report.html
+.env*.local
