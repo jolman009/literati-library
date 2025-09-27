@@ -4,8 +4,8 @@ services:
     name: literati-server
     runtime: node
     plan: starter
-    buildCommand: pnpm install
-    startCommand: pnpm start
+    buildCommand: npm install
+    startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
