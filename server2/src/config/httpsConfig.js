@@ -48,11 +48,18 @@ export const createHTTPSServer = (app, options = {}) => {
     port,
     protocol: 'http',
     start: () => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         server.listen(port, () => {
           console.log(`🚀 HTTP Server running on http://localhost:${port}`);
           console.log('⚠️  For production, ensure HTTPS is configured');
           resolve({ server, port, protocol: 'http' });
+        });
+
+        server.on('error', (error) => {
+          if (error.code === 'EADDRINUSE') {
+            console.error(`❌ Port ${port} is already in use. Please free the port or use a different one.`);
+          }
+          reject(error);
         });
       });
     }

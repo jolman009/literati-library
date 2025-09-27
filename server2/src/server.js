@@ -1,6 +1,17 @@
 // src/server.js
 import 'dotenv/config';
 
+// Add global error handlers for debugging
+process.on('uncaughtException', (error) => {
+  console.error('🚨 Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
 // Initialize Sentry first (must be before other imports)
 import { initializeSentry, setupSentryMiddleware, sentryErrorHandler } from './config/sentry.js';
 initializeSentry();
