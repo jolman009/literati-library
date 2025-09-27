@@ -46,7 +46,10 @@ class ApplicationMonitor {
       }
     };
 
-    this.startMonitoring();
+    // Only start monitoring in production or if explicitly enabled
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_MONITORING === 'true') {
+      this.startMonitoring();
+    }
   }
 
   /**

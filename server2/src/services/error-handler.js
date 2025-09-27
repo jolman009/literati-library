@@ -44,7 +44,10 @@ class ErrorHandlingService {
     };
 
     this.setupLogger();
-    this.setupMetrics();
+    // Only setup metrics in production or if explicitly enabled
+    if (process.env.NODE_ENV === 'production' || process.env.ENABLE_MONITORING === 'true') {
+      this.setupMetrics();
+    }
   }
 
   /**
