@@ -1,7 +1,8 @@
 import os
 import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlAlchemyIntegration
+# Temporarily comment out SQLAlchemy integration due to import issue
+# from sentry_sdk.integrations.sqlalchemy import SqlAlchemyIntegration
 
 SENTRY_CONFIG = {
     "development": {
@@ -35,8 +36,8 @@ def initialize_sentry():
         integrations=[
             # FastAPI integration for web requests
             FastApiIntegration(auto_enable=True),
-            # SQLAlchemy integration if using database
-            SqlAlchemyIntegration(),
+            # SQLAlchemy integration if using database (temporarily disabled)
+            # SqlAlchemyIntegration(),
         ],
         # Performance monitoring
         traces_sample_rate=0.1 if environment == "production" else 1.0,
