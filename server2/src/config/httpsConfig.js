@@ -36,6 +36,25 @@ export const createHTTPSServer = (app, options = {}) => {
 
   // Production HTTPS with real certificates
   if (process.env.NODE_ENV === 'production') {
+    // Check if running on cloud platform (Render, Vercel, etc.)
+    if (process.env.USE_CLOUD_HTTPS === 'true' || process.env.RENDER || process.env.VERCEL) {
+      console.log('🏭 Cloud platform detected - using HTTP with proxy SSL termination');
+      const server = http.createServer(app);
+      return {
+        server,
+        port,
+        protocol: 'http',
+        start: () => {
+          return new Promise((resolve) => {
+            server.listen(port, () => {
+              console.log(`✅ HTTP server running on port ${port} (cloud platform)`);
+              resolve({ server, port, protocol: 'http' });
+            });
+          });
+        }
+      };
+    }
+
     return createProductionHTTPS(app, { port, httpsPort, keyPath, certPath });
   }
 

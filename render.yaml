@@ -23,6 +23,11 @@ services:
           type: envVarGroup
           name: production-secrets
           envVarKey: SUPABASE_SERVICE_ROLE_KEY
+      - key: SUPABASE_SERVICE_KEY
+        fromService:
+          type: envVarGroup
+          name: production-secrets
+          envVarKey: SUPABASE_SERVICE_KEY
       - key: JWT_SECRET
         fromService:
           type: envVarGroup
@@ -39,6 +44,8 @@ services:
         value: 50MB
       - key: UPLOAD_TIMEOUT
         value: 300000
+      - key: USE_CLOUD_HTTPS
+        value: true
     autoDeploy: true
     branch: main
 
@@ -70,6 +77,8 @@ envVarGroups:
         # Set in Render dashboard
       - key: SUPABASE_SERVICE_ROLE_KEY
         # Set in Render dashboard
+      - key: SUPABASE_SERVICE_KEY
+        # Set in Render dashboard (same value as SUPABASE_SERVICE_ROLE_KEY)
       - key: JWT_SECRET
         # Set in Render dashboard (generate with: openssl rand -base64 32)
       - key: JWT_REFRESH_SECRET
