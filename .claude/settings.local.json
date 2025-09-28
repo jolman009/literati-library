@@ -15,7 +15,8 @@
       "Bash(pnpm dev:*)",
       "Bash(pnpm build:*)",
       "WebFetch(domain:library-server-m6gr.onrender.com)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(vercel:*)"
     ],
     "deny": [],
     "ask": []
