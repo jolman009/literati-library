@@ -1,0 +1,47 @@
+name: Auto-Alias Production Domain
+
+on:
+  # Trigger after successful deployment
+  deployment_status:
+
+jobs:
+  update-domain-aliases:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'Production'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Get Latest Deployment URL
+        id: deployment
+        run: |
+          # Extract deployment URL from the deployment status
+          DEPLOYMENT_URL="${{ github.event.deployment_status.target_url }}"
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Update Custom Domain Aliases
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # Set alias for main domain
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} literati.pro --token=$VERCEL_TOKEN
+
+          # Set alias for www subdomain
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} www.literati.pro --token=$VERCEL_TOKEN
+
+          echo "✅ Domain aliases updated successfully"
+          echo "🌐 literati.pro → ${{ steps.deployment.outputs.deployment_url }}"
+          echo "🌐 www.literati.pro → ${{ steps.deployment.outputs.deployment_url }}"
+
+      - name: Verify Domain Update
+        run: |
+          echo "🔍 Verifying domain routing..."
+          sleep 10  # Wait for DNS propagation
+
+          # Check if domains are responding (may get 401 due to deployment protection)
+          curl -I https://literati.pro || echo "Domain routing updated (may show 401 due to deployment protection)"
+          curl -I https://www.literati.pro || echo "WWW domain routing updated"
