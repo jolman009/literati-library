@@ -1,0 +1,5 @@
+# Force Vercel to use current project settings
+# Ignore any cached build configurations
+.vercel/
+node_modules/
+pnpm-lock.yaml
