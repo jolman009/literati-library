@@ -248,6 +248,7 @@ jobs:
         run: pnpm run build:production
 
       - name: 🚀 Deploy to Vercel (Production)
+        id: vercel-deploy
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -256,6 +257,26 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./client2
           vercel-args: '--prod'
+
+      - name: 🌐 Update Custom Domain Aliases
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "🔗 Updating domain aliases to point to latest deployment..."
+          echo "📍 Deployment URL: ${{ steps.vercel-deploy.outputs.preview-url }}"
+
+          # Install Vercel CLI
+          npm install --global vercel@latest
+
+          # Set alias for main domain
+          vercel alias set ${{ steps.vercel-deploy.outputs.preview-url }} literati.pro --token=$VERCEL_TOKEN
+
+          # Set alias for www subdomain
+          vercel alias set ${{ steps.vercel-deploy.outputs.preview-url }} www.literati.pro --token=$VERCEL_TOKEN
+
+          echo "✅ Domain aliases updated successfully"
+          echo "🌐 literati.pro → ${{ steps.vercel-deploy.outputs.preview-url }}"
+          echo "🌐 www.literati.pro → ${{ steps.vercel-deploy.outputs.preview-url }}"
 
       - name: 🔍 Production Health Check
         run: |
