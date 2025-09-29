@@ -17,7 +17,8 @@
       "WebFetch(domain:library-server-m6gr.onrender.com)",
       "Bash(rm:*)",
       "Bash(vercel:*)",
-      "Bash(npx vercel alias:*)"
+      "Bash(npx vercel alias:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
