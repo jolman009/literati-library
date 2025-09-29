@@ -144,7 +144,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin','X-Requested-With','Content-Type','Accept','Authorization'],
+  allowedHeaders: ['Origin','X-Requested-With','Content-Type','Accept','Authorization','X-Environment','X-App-Version'],
 }));
 
 // ----- Request monitoring middleware -----
