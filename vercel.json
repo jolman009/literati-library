@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build:production",
-  "outputDirectory": "dist",
+  "buildCommand": "cd client2 && npm install && npm run build:production",
+  "outputDirectory": "client2/dist",
   "framework": "vite",
   "env": {
     "VITE_APP_NAME": "Literati"
