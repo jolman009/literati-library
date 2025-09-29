@@ -21,7 +21,7 @@ import { useNetworkStatus } from './hooks/useNetworkStatus';
 import { InstallPrompt, OfflineIndicator, UpdateNotification } from './components/PWA';
 
 // Sentry testing (development only)
-import SentryTestButton from './components/SentryTestButton.jsx';
+// import SentryTestButton from './components/SentryTestButton.jsx';
 
 // Import performance testing for development
 if (process.env.NODE_ENV === 'development') {
@@ -241,7 +241,7 @@ const App = () => {
                 <InstallPrompt />
 
                 {/* Sentry Test Button (Development Only) */}
-                <SentryTestButton />
+                {/* <SentryTestButton /> */}
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>
