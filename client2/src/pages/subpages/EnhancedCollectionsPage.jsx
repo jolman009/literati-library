@@ -416,8 +416,8 @@ const EnhancedCollectionsPage = ({
 
   return (
     <MD3Surface className={`enhanced-collections-page ${className}`}>
-      {/* Header Section */}
-      <div className="collections-header">
+      {/* Header Section - Following MD3 Style Guide */}
+      <div className="collections-header-section">
         <div className="collections-header-content">
           <h1>
             📚 Collections
