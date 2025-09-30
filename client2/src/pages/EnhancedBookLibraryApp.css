@@ -93,7 +93,7 @@
 }
 
 .main-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg) var(--spacing-lg);
   min-height: calc(100vh - 120px);
@@ -115,7 +115,7 @@
 }
 
 .nav-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
   display: flex;

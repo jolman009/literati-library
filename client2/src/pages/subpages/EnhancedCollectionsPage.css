@@ -7,28 +7,33 @@
 }
 
 /* ============================================================================
-   MD3-COMPLIANT HEADER SECTION
+   MD3-COMPLIANT HEADER SECTION - FOLLOWING STYLE GUIDE
    ============================================================================ */
 
-.collections-header {
-  padding: 24px 32px;
-  margin-bottom: 24px;
-  background: var(--md-sys-color-surface);
-  border-radius: 16px;
-  box-shadow: var(--md-sys-elevation-level1);
+.collections-header-section {
+  margin-bottom: var(--spacing-xl, 32px);
+  padding: var(--spacing-xl, 32px) var(--spacing-lg, 24px);
+  background: rgb(var(--md-sys-color-surface-container, 248, 248, 248));
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.collections-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .collections-header-content h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: var(--md-sys-color-on-surface);
+  font-size: var(--text-3xl, 1.875rem);
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm, 8px) 0;
+  color: rgb(var(--md-sys-color-on-surface, 28, 28, 28));
 }
 
 .collections-header-content p {
-  font-size: 1rem;
-  margin: 0 0 16px 0;
-  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--text-base, 1rem);
+  margin: 0 0 var(--spacing-md, 16px) 0;
+  color: rgb(var(--md-sys-color-on-surface-variant, 115, 115, 115));
   opacity: 0.8;
 }
 
