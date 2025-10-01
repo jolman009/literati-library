@@ -686,6 +686,13 @@
 /* Collection Book Preview */
 .collection-book-preview-area {
   padding: 16px;
+  background: rgb(var(--md-sys-color-surface-container-lowest, 255, 255, 255));
+}
+
+/* Dark mode support for preview area */
+[data-theme="dark"] .collection-book-preview-area,
+.dark .collection-book-preview-area {
+  background: rgb(var(--md-sys-color-surface-container-low, 28, 27, 31));
 }
 
 .collection-book-grid {
@@ -740,8 +747,13 @@
 .collection-empty-state {
   text-align: center;
   padding: 32px 16px;
-  color: #49454F;
-  opacity: 0.6;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+}
+
+/* Dark mode support for empty state */
+[data-theme="dark"] .collection-empty-state,
+.dark .collection-empty-state {
+  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
 }
 
 .collection-empty-icon {
