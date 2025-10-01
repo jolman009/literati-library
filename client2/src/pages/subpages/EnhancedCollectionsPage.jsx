@@ -494,32 +494,12 @@ const EnhancedCollectionsPage = ({
           {/* Draggable Book Library */}
           {!batchMode && (
             <div className="book-library-sidebar">
-              <MD3Card
-                className="book-library-card"
-                style={{
-                  background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
-                }}
-              >
-                <div
-                  className="book-library-header"
-                  style={{
-                    borderBottom: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-                  }}
-                >
-                  <h3
-                    className="book-library-title"
-                    style={{
-                      color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                    }}
-                  >
+              <MD3Card className="book-library-card">
+                <div className="book-library-header">
+                  <h3 className="book-library-title">
                     📚 Select Books
                   </h3>
-                  <p
-                    className="book-library-subtitle"
-                    style={{
-                      color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-                    }}
-                  >
+                  <p className="book-library-subtitle">
                     Drag books to collections
                   </p>
                 </div>
@@ -547,14 +527,9 @@ const EnhancedCollectionsPage = ({
                     </div>
                   ))}
                 </div>
-                
+
                 {books.length === 0 && (
-                  <div
-                    className="book-library-empty"
-                    style={{
-                      color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-                    }}
-                  >
+                  <div className="book-library-empty">
                     <div className="book-library-empty-icon">📚</div>
                     <p className="book-library-empty-text">No books available</p>
                   </div>
@@ -567,26 +542,10 @@ const EnhancedCollectionsPage = ({
 
       {/* Batch Mode Book Selection Panel */}
       {batchMode && (
-        <div
-          className="batch-mode-panel"
-          style={{
-            background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
-            border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-          }}
-        >
-          <div
-            className="batch-mode-header"
-            style={{
-              borderBottom: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-            }}
-          >
+        <div className="batch-mode-panel">
+          <div className="batch-mode-header">
             <div className="batch-mode-header-row">
-              <h3
-                className="batch-mode-title"
-                style={{
-                  color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                }}
-              >
+              <h3 className="batch-mode-title">
                 Select Books ({selectedBooks.size})
               </h3>
               <MD3Button
@@ -601,12 +560,7 @@ const EnhancedCollectionsPage = ({
                 ✕
               </MD3Button>
             </div>
-            <p
-              className="batch-mode-subtitle"
-              style={{
-                color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-              }}
-            >
+            <p className="batch-mode-subtitle">
               Select books, then use Add buttons on collections
             </p>
           </div>
@@ -658,7 +612,7 @@ const EnhancedCollectionsPage = ({
         >
           {operationLoading ? (
             <div className="batch-mode-loading-content">
-              <MD3Progress variant="circular" size={20} style={{ color: 'white' }} />
+              <MD3Progress variant="circular" size={20} />
               <span>Adding books...</span>
             </div>
           ) : (
@@ -674,14 +628,10 @@ const EnhancedCollectionsPage = ({
                 }}
                 disabled={operationLoading || selectedBooks.size === 0}
                 className="batch-mode-select"
-                style={{
-                  opacity: operationLoading ? 0.5 : 1,
-                  cursor: operationLoading ? 'not-allowed' : 'pointer'
-                }}
               >
                 <option value="">Add to Collection...</option>
                 {collections.map(collection => (
-                  <option key={collection.id} value={collection.id} style={{ color: '#333' }}>
+                  <option key={collection.id} value={collection.id}>
                     {collection.icon} {collection.name}
                   </option>
                 ))}
