@@ -30,11 +30,12 @@ const PremiumNavigation = ({
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
+    { to: null, label: 'Logout', icon: 'logout', isLogout: true },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -55,9 +56,29 @@ const PremiumNavigation = ({
 
       {/* Navigation items */}
       <div className="md3-rail-destinations">
-        {navigationItems.map(({ to, label, icon, badge }) => {
+        {navigationItems.map(({ to, label, icon, badge, isLogout }) => {
+          // Handle logout as a button instead of link
+          if (isLogout) {
+            return (
+              <button
+                key="logout"
+                className="md3-rail-destination md3-rail-destination-logout"
+                onClick={handleLogout}
+              >
+                <div className="md3-rail-destination-icon">
+                  <span className="material-symbols-outlined">
+                    {icon}
+                  </span>
+                </div>
+                {!collapsed && (
+                  <span className="md3-rail-destination-label">{label}</span>
+                )}
+              </button>
+            );
+          }
+
           const isActive = pathname === to || pathname.startsWith(to + '/');
-          
+
           return (
             <NavLink
               key={to}
@@ -80,20 +101,6 @@ const PremiumNavigation = ({
         })}
       </div>
 
-      {/* Bottom section */}
-      <div className="md3-rail-footer">
-        <button
-          className="md3-rail-destination"
-          onClick={handleLogout}
-        >
-          <div className="md3-rail-destination-icon">
-            <span className="material-symbols-outlined">logout</span>
-          </div>
-          {!collapsed && (
-            <span className="md3-rail-destination-label">Logout</span>
-          )}
-        </button>
-      </div>
     </nav>
   );
 };
