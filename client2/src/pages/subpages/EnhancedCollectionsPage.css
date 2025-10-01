@@ -1,9 +1,21 @@
 /* Enhanced Collections Page Styles */
 
 .enhanced-collections-page {
-  background: linear-gradient(135deg, #FFFBFE 0%, #F7F2FA 100%);
+  /* Removed: Full-width gradient background - inherit from AppLayout instead */
+  /* background: linear-gradient(135deg, #FFFBFE 0%, #F7F2FA 100%); */
   min-height: 100vh;
   position: relative;
+}
+
+/* ============================================================================
+   PAGE CONTENT WRAPPER - FOLLOWING MD3 STYLE GUIDE
+   Constrains all content to 1200px max-width like Dashboard
+   ============================================================================ */
+
+.collections-page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg, 24px);
 }
 
 /* ============================================================================
@@ -13,24 +25,35 @@
 .collections-header-section {
   margin-bottom: var(--spacing-xl, 32px);
   padding: var(--spacing-xl, 32px) var(--spacing-lg, 24px);
-  background: rgb(var(--md-sys-color-surface-container, 248, 248, 248));
   border-radius: var(--radius-lg, 16px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* LIGHT MODE: Visible card with gradient background */
+  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
+  border: 1px solid #9ca3af;
 }
 
-.collections-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
+/* DARK MODE: Elevated background for header section */
+[data-theme="dark"] .collections-header-section,
+.dark .collections-header-section {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-container) 0%,
+    var(--md-sys-color-surface-container-high) 50%,
+    var(--md-sys-color-surface-container) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-.collections-header-content h1 {
+.collections-header-section h1 {
   font-size: var(--text-3xl, 1.875rem);
   font-weight: 700;
   margin: 0 0 var(--spacing-sm, 8px) 0;
   color: rgb(var(--md-sys-color-on-surface, 28, 28, 28));
 }
 
-.collections-header-content p {
+.collections-header-section p {
   font-size: var(--text-base, 1rem);
   margin: 0 0 var(--spacing-md, 16px) 0;
   color: rgb(var(--md-sys-color-on-surface-variant, 115, 115, 115));
@@ -63,14 +86,12 @@
    ============================================================================ */
 
 .collections-main-content {
-  padding: 0 24px 24px 24px;
+  padding: 0;
 }
 
 .collections-content-wrapper {
   display: flex;
   gap: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .collections-grid-container {
@@ -553,21 +574,22 @@
   }
 }
 
-/* Dark Theme Support */
+/* Dark Theme Support - UPDATED to not override page background */
 @media (prefers-color-scheme: dark) {
-  .enhanced-collections-page {
+  /* Removed: Page background override - inherit from AppLayout */
+  /* .enhanced-collections-page {
     background: linear-gradient(135deg, #1C1B1F 0%, #2D2A32 100%);
-  }
-  
+  } */
+
   .collections-search-section {
     background: linear-gradient(135deg, #4A4458, #5A4E6B);
   }
-  
+
   .collection-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   .collections-skeleton {
     background: linear-gradient(90deg, #2D2A32 25%, #3D3A42 50%, #2D2A32 75%);
   }
