@@ -22,7 +22,7 @@ import './PremiumHeader.css';
 export default function PremiumHeader({ title, breadcrumbs = [] }) {
   const navigate = useNavigate();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [query, setQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -66,6 +66,15 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  /**
+   * Handle logout - clears HttpOnly cookies and navigates to login
+   */
+  const handleLogout = async () => {
+    setUserMenuOpen(false);
+    await logout();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -206,11 +215,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   <div className="dropdown-divider"></div>
                   <button
                     className="dropdown-item logout-item"
-                    onClick={() => {
-                      // Handle logout
-                      navigate('/login');
-                      setUserMenuOpen(false);
-                    }}
+                    onClick={handleLogout}
                   >
                     <span className="material-symbols-outlined">logout</span>
                     Sign Out

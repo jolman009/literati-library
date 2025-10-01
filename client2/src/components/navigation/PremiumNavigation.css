@@ -104,6 +104,7 @@
 .md3-rail-destination:nth-child(4) { animation-delay: 0.4s; }
 .md3-rail-destination:nth-child(5) { animation-delay: 0.5s; }
 .md3-rail-destination:nth-child(6) { animation-delay: 0.6s; }
+.md3-rail-destination:nth-child(7) { animation-delay: 0.7s; }
 
 @keyframes railItemEntrance {
   from {
@@ -213,6 +214,43 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Logout button with distinctive styling */
+.md3-rail-destination-logout {
+  margin-top: 8px;
+  color: var(--md-sys-color-error);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  padding-top: 12px;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.md3-rail-destination-logout:hover {
+  background: rgba(var(--md-sys-color-error-rgb, 179, 38, 30), 0.08);
+  color: var(--md-sys-color-error);
+}
+
+.md3-rail-destination-logout .md3-rail-destination-label {
+  color: var(--md-sys-color-error);
+}
+
+.md3-rail-destination-logout:hover .md3-rail-destination-label {
+  font-weight: 700;
+}
+
+/* Light mode logout styling */
+:root:not([data-theme="dark"]) .md3-rail-destination-logout {
+  color: #dc2626;
+}
+
+:root:not([data-theme="dark"]) .md3-rail-destination-logout:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+:root:not([data-theme="dark"]) .md3-rail-destination-logout .md3-rail-destination-label {
+  color: #dc2626;
 }
 
 /* Footer section */
