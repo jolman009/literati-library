@@ -29,6 +29,7 @@ if (process.env.NODE_ENV === 'development') {
   import('./utils/integrationTest');
   import('./utils/browserCompatibilityTest');
   import('./utils/mobileResponsivenessTest');
+  import('./utils/authTestUtils'); // Auth testing utilities
 }
 import './styles/md3-unified-colors.css';
 import './styles/md3-components.css';
