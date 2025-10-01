@@ -54,10 +54,12 @@
   border-radius: 2px;
   border: var(--_outline-width) solid rgb(var(--_unselected-outline-color));
   background-color: rgb(var(--_unselected-container-color));
-  transition: 
+  transition:
     border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .md3-checkbox__box--checked {
