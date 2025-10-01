@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import {
-  MD3Card,
   MD3Button,
   MD3TextField,
   MD3Chip,
@@ -260,10 +259,8 @@ const EnhancedCollectionsPage = ({
     const collectionBooks = getBooksForCollection(collection);
     
     return (
-      <MD3Card
+      <div
         key={collection.id}
-        variant="elevated"
-        interactive
         className="collection-card"
         style={{
           '--collection-color': collection.color
@@ -400,7 +397,7 @@ const EnhancedCollectionsPage = ({
             </div>
           </div>
         )}
-      </MD3Card>
+      </div>
     );
   };
 
@@ -493,7 +490,7 @@ const EnhancedCollectionsPage = ({
           {/* Draggable Book Library */}
           {!batchMode && (
             <div className="book-library-sidebar">
-              <MD3Card className="book-library-card">
+              <div className="book-library-card">
                 <div className="book-library-header">
                   <h3 className="book-library-title">
                     📚 Select Books
@@ -533,7 +530,7 @@ const EnhancedCollectionsPage = ({
                     <p className="book-library-empty-text">No books available</p>
                   </div>
                 )}
-              </MD3Card>
+              </div>
             </div>
           )}
         </div>
