@@ -7,7 +7,6 @@ import {
   MD3TextField,
   MD3Chip,
   MD3Dialog,
-  MD3Surface,
   MD3Progress,
   MD3FloatingActionButton
 } from '../../components/Material3';
@@ -407,15 +406,15 @@ const EnhancedCollectionsPage = ({
 
   if (loading) {
     return (
-      <MD3Surface className={`${className} collections-loading-container`}>
+      <div className={`${className} collections-loading-container`}>
         <MD3Progress variant="circular" />
         <p className="collections-loading-text">Loading your collections...</p>
-      </MD3Surface>
+      </div>
     );
   }
 
   return (
-    <MD3Surface className={`enhanced-collections-page ${className}`}>
+    <div className={`enhanced-collections-page ${className}`}>
       {/* Collections Content Wrapper - Constrains all content to 1200px */}
       <div className="collections-page-content">
         {/* Header Section - Following MD3 Style Guide */}
@@ -607,7 +606,7 @@ const EnhancedCollectionsPage = ({
 
       {/* Batch Mode Panel */}
       {batchMode && (
-        <MD3Surface
+        <div
           className={`batch-mode-bottom-panel ${operationLoading ? 'loading' : 'normal'}`}
         >
           {operationLoading ? (
@@ -650,7 +649,7 @@ const EnhancedCollectionsPage = ({
               </MD3Button>
             </div>
           )}
-        </MD3Surface>
+        </div>
       )}
 
 
@@ -940,7 +939,7 @@ const EnhancedCollectionsPage = ({
         </div>
       </MD3Dialog>
       </div> {/* Close collections-page-content */}
-    </MD3Surface>
+    </div>
   );
 };
 
