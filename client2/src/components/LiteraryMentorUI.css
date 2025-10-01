@@ -866,7 +866,7 @@
 [data-theme="dark"] .answer-option,
 .dark .answer-option,
 .dashboard-container.dark .answer-option {
-  background: rgba(31, 41, 55, 0.8);
+  background: rgb(var(--md-sys-color-surface-container-high));
   border-color: rgba(255, 255, 255, 0.2);
 }
 

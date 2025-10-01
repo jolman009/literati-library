@@ -19,10 +19,16 @@ const MobileNavigation = () => {
       label: 'Library'
     },
     {
-      key: 'gamification',
-      icon: <span className="material-symbols-outlined">emoji_events</span>,
-      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>,
-      label: 'Progress'
+      key: 'notes',
+      icon: <span className="material-symbols-outlined">note</span>,
+      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>note</span>,
+      label: 'Notes'
+    },
+    {
+      key: 'upload',
+      icon: <span className="material-symbols-outlined">upload_file</span>,
+      selectedIcon: <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>upload_file</span>,
+      label: 'Upload'
     },
   ];
 
