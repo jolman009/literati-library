@@ -7,6 +7,8 @@ import environmentConfig from '../config/environment.js';
  */
 export function initializeSentry() {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
+  const devEnabled = import.meta.env.VITE_SENTRY_DEV_ENABLED;
+  const crashReporting = import.meta.env.VITE_ENABLE_CRASH_REPORTING;
 
   // Skip if no DSN provided
   if (!dsn) {
