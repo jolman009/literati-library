@@ -92,6 +92,14 @@ Fixed `.env.development` conflict where empty `VITE_SENTRY_DSN=` was overriding 
 **Commits:**
 - `3f38144`: Backend Sentry v10+ compatibility fix
 - `f0cef97`: Frontend Sentry v10+ compatibility fix
+- `1aee32e`: Vercel configuration sync fix
+
+**Vercel Configuration (Updated):**
+- Install Command: `cd client2 && npm install --legacy-peer-deps`
+- Build Command: `cd client2 && npm run build:production`
+- Framework: Vite
+- Output Directory: `client2/dist`
+- Node Version: 22.x
 
 **Documentation:** See [docs/SENTRY_SETUP.md](docs/SENTRY_SETUP.md) for complete setup instructions
 
