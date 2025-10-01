@@ -267,20 +267,48 @@ const SignUpPage = () => {
             required
           />
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-            <MD3Checkbox
-              checked={acceptedTos}
-              onChange={(e) => setAcceptedTos(e.target.checked)}
-              disabled={isLoading}
-            />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',  // Changed from flex-start to center
+            gap: '12px',
+            marginTop: '4px',
+            marginBottom: '4px'
+          }}>
+            <div
+              onClick={() => !isLoading && setAcceptedTos(!acceptedTos)}
+              style={{
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <MD3Checkbox
+                checked={acceptedTos}
+                onChange={(e) => setAcceptedTos(e.target.checked)}
+                disabled={isLoading}
+              />
+            </div>
             <span style={{
               fontSize: '14px',
               color: actualTheme === 'dark' ? '#e2e8f0' : '#374151',
-              lineHeight: '1.4'
+              lineHeight: '1.5'
             }}>
               I agree to the{' '}
-              <a href="#" style={{ color: '#6750a4', textDecoration: 'none' }}>Terms of Service</a> and{' '}
-              <a href="#" style={{ color: '#6750a4', textDecoration: 'none' }}>Privacy Policy</a>.
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{ color: '#6750a4', textDecoration: 'none' }}
+              >
+                Terms of Service
+              </a>
+              {' '}and{' '}
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{ color: '#6750a4', textDecoration: 'none' }}
+              >
+                Privacy Policy
+              </a>.
             </span>
           </div>
 
