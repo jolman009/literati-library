@@ -29,12 +29,9 @@ export const initializeSentry = () => {
   Sentry.init({
     dsn: config.dsn,
     environment: config.environment,
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-      // enable Express.js middleware tracing
-      new Sentry.Integrations.Express({ app: null }), // app will be provided later
-    ],
+    // Sentry v10+ automatically includes Http and Express integrations by default
+    // No need to manually configure integrations - they're auto-enabled
+
     // Performance Monitoring
     tracesSampleRate: environment === 'production' ? 0.1 : 1.0, // Lower sampling in production
 
