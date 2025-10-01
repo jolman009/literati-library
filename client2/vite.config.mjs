@@ -223,8 +223,9 @@ export default defineConfig({
   },
 
   server: {
+    host: '127.0.0.1',  // Use IPv4 localhost instead of :: (IPv6) to avoid Windows permission issues
     port: 3000,
-    strictPort: true,  // fail if 3000 is busy (helps avoid multiple dev servers)
+    strictPort: false,  // auto-increment if 3000 is busy
     open: true,
   },
 
