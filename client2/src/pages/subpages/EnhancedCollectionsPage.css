@@ -16,6 +16,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--spacing-lg, 24px);
+  background: var(--md-sys-color-background);  /* Matches Library and Notes pages - auto-adapts to dark mode */
 }
 
 /* ============================================================================
