@@ -6,35 +6,20 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import environmentConfig from '../config/environment.js';
 
 /**
- * Storage keys (single source of truth)
+ * Storage keys (single source of truth) - Using centralized config
+ * NOTE: Tokens are now stored in HttpOnly cookies for security.
+ * Only user data is kept in localStorage for quick access.
  */
-const TOKEN_KEY = 'literati_token';
 const USER_KEY = 'literati_user';
 
 /**
- * Resolve API base URL from Vite envs with safe fallbacks.
- * Priority:
- *  1) VITE_API_BASE_URL
- *  2) Hostname-based heuristics (optional fallback)
- *  3) http://localhost:5000
+ * Use centralized environment configuration for API URL
+ * This ensures consistency across the application and proper environment handling
  */
-function resolveApiBaseUrl() {
-  const envUrl = import.meta.env?.VITE_API_BASE_URL?.trim();
-  if (envUrl) return envUrl;
-
-  const host = (typeof window !== 'undefined' && window.location?.hostname) || '';
-  if (/literati\.pro$/i.test(host) || /vercel\.app$/i.test(host)) {
-    // If envs were forgotten in production, fall back to your hosted API
-    return 'https://library-server-m6gr.onrender.com';
-  }
-
-  // Dev fallback
-  return 'http://localhost:5000';
-}
-
-const API_URL = resolveApiBaseUrl();
+const API_URL = environmentConfig.apiUrl;
 
 /**
  * Context
@@ -50,9 +35,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   // State
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true); // gate initial render
   const [error, setError] = useState(null);
+
+  // Note: We no longer store token in state since it's in HttpOnly cookies
+  // The browser automatically includes it in requests via credentials: 'include'
 
   // Debug (dev only)
   if (import.meta.env.DEV) {
@@ -62,7 +49,8 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Core fetch wrapper.
-   * Automatically sets JSON headers and Authorization if token available.
+   * Now uses HttpOnly cookies for authentication.
+   * No need to manually attach Authorization header - cookies are sent automatically.
    * Throws on non-2xx with parsed message where possible.
    */
   const makeApiCall = useCallback(
@@ -73,16 +61,11 @@ export const AuthProvider = ({ children }) => {
         ...(options.headers || {}),
       };
 
-      // Attach token if we have one and caller didn’t override it
-      if (token && !headers.Authorization) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
       const config = {
         method: options.method || 'GET',
         headers,
         body: options.body,
-        credentials: options.credentials || 'include', // adjust if you don’t use cookies at all
+        credentials: 'include', // CRITICAL: Send cookies with every request
         signal: options.signal,
       };
 
@@ -119,18 +102,19 @@ export const AuthProvider = ({ children }) => {
 
       return data;
     },
-    [token]
+    [] // No dependencies - cookies handled automatically
   );
 
   /**
    * Attempt to refresh the token using the refresh endpoint
+   * Uses HttpOnly cookies - refresh token is automatically sent by browser
    */
   const attemptTokenRefresh = useCallback(async () => {
     try {
-      console.log('🔄 Attempting token refresh...');
+      console.log('🔄 Attempting token refresh via cookies...');
       const response = await fetch(`${API_URL}/auth/refresh`, {
         method: 'POST',
-        credentials: 'include', // Include cookies for refresh token
+        credentials: 'include', // Include HttpOnly cookies (refresh token)
         headers: {
           'Content-Type': 'application/json',
         },
@@ -138,28 +122,29 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.token) {
-          console.log('✅ Token refresh successful');
-          setToken(data.token);
-          localStorage.setItem(TOKEN_KEY, data.token);
-          if (data.user) {
-            setUser(data.user);
-            localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-          }
-          return data.token;
+        console.log('✅ Token refresh successful - new cookies set automatically');
+
+        // Update user data if provided
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         }
+
+        // Return true to indicate success (no need to return token - it's in cookies)
+        return true;
       }
 
       console.warn('❌ Token refresh failed');
-      return null;
+      return false;
     } catch (err) {
       console.warn('❌ Token refresh error:', err);
-      return null;
+      return false;
     }
   }, []);
 
   /**
    * Wrap protected calls to handle token expiry centrally.
+   * Automatically refreshes tokens using HttpOnly cookies.
    */
   const makeAuthenticatedApiCall = useCallback(
     async (endpoint, options = {}) => {
@@ -177,26 +162,17 @@ export const AuthProvider = ({ children }) => {
         if (expired) {
           console.warn('🔄 Token expired/invalid → attempting refresh');
 
-          // Try to refresh the token first
-          const newToken = await attemptTokenRefresh();
+          // Try to refresh the token via cookies
+          const refreshSuccess = await attemptTokenRefresh();
 
-          if (newToken) {
-            // Retry the original request with the new token
-            console.log('🔄 Retrying original request with new token');
-            const retryOptions = {
-              ...options,
-              headers: {
-                ...options.headers,
-                'Authorization': `Bearer ${newToken}`,
-              },
-            };
-            return await makeApiCall(endpoint, retryOptions);
+          if (refreshSuccess) {
+            // Retry the original request - new cookies are automatically included
+            console.log('🔄 Retrying original request with refreshed cookies');
+            return await makeApiCall(endpoint, options);
           } else {
             // Refresh failed, log out
             console.warn('❌ Token refresh failed → logging out');
-            localStorage.removeItem(TOKEN_KEY);
             localStorage.removeItem(USER_KEY);
-            setToken(null);
             setUser(null);
             throw new Error('Your session has expired. Please log in again.');
           }
@@ -208,21 +184,19 @@ export const AuthProvider = ({ children }) => {
   );
 
   /**
-   * Bootstrap: load existing auth state from localStorage
-   * Avoid aggressive verify on mount; let protected calls verify naturally.
+   * Bootstrap: load existing user data from localStorage
+   * Tokens are in HttpOnly cookies, so we only need to restore user info.
+   * If cookies are present, the user is logged in; if not, first API call will fail.
    */
   useEffect(() => {
     try {
-      const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
 
-      if (storedToken && storedUser) {
+      if (storedUser) {
         try {
           setUser(JSON.parse(storedUser));
-          setToken(storedToken);
         } catch {
           // corrupted storage → clear
-          localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);
         }
       }
@@ -233,12 +207,11 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Optional explicit verification (call when you need it)
+   * Now uses cookie-based authentication automatically
    */
   const verifyToken = useCallback(
-    async (tokenToVerify) => {
-      const data = await makeApiCall('/auth/profile', {
-        headers: { Authorization: `Bearer ${tokenToVerify}` },
-      });
+    async () => {
+      const data = await makeApiCall('/auth/profile');
       return data;
     },
     [makeApiCall]
@@ -257,11 +230,12 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password, name }),
         });
 
-        localStorage.setItem(TOKEN_KEY, data.token);
+        // Tokens are set as HttpOnly cookies by the server
+        // We only need to store user data in localStorage
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-        setToken(data.token);
         setUser(data.user);
 
+        console.log('✅ Registration successful - using HttpOnly cookie authentication');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -283,11 +257,12 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password }),
         });
 
-        localStorage.setItem(TOKEN_KEY, data.token);
+        // Tokens are set as HttpOnly cookies by the server
+        // We only need to store user data in localStorage
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-        setToken(data.token);
         setUser(data.user);
 
+        console.log('✅ Login successful - using HttpOnly cookie authentication');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -299,13 +274,22 @@ export const AuthProvider = ({ children }) => {
     [makeApiCall]
   );
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    setToken(null);
-    setUser(null);
-    setError(null);
-  }, []);
+  const logout = useCallback(async () => {
+    try {
+      // Call backend to clear HttpOnly cookies
+      await makeApiCall('/auth/logout', {
+        method: 'POST',
+      });
+      console.log('✅ Logout successful - cookies cleared on server');
+    } catch (err) {
+      console.warn('⚠️ Logout API call failed, clearing local state anyway:', err);
+    } finally {
+      // Always clear local state, even if API call fails
+      localStorage.removeItem(USER_KEY);
+      setUser(null);
+      setError(null);
+    }
+  }, [makeApiCall]);
 
   const updateProfile = useCallback(
     async (updates) => {
@@ -382,32 +366,31 @@ export const AuthProvider = ({ children }) => {
 
   const refreshUser = useCallback(
     async () => {
-      if (!token) return { success: false, error: 'No token available' };
       try {
-        const data = await verifyToken(token);
+        const data = await verifyToken();
         const updated = { ...(user || {}), ...data };
         setUser(updated);
         localStorage.setItem(USER_KEY, JSON.stringify(updated));
         return { success: true, user: updated };
       } catch (err) {
         // On failure, log out to clear bad state
-        logout();
+        await logout();
         return { success: false, error: err.message };
       }
     },
-    [token, user, verifyToken, logout]
+    [user, verifyToken, logout]
   );
 
   const hasRole = useCallback((role) => Boolean(user?.roles?.includes(role)), [user]);
   const clearError = useCallback(() => setError(null), []);
 
-  const isAuthenticated = useMemo(() => Boolean(user && token), [user, token]);
+  // User is authenticated if we have user data (cookies handle the actual auth)
+  const isAuthenticated = useMemo(() => Boolean(user), [user]);
 
   const value = useMemo(
     () => ({
       // state
       user,
-      token,
       loading,
       error,
       isAuthenticated,
@@ -430,7 +413,6 @@ export const AuthProvider = ({ children }) => {
     }),
     [
       user,
-      token,
       loading,
       error,
       isAuthenticated,

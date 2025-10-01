@@ -26,10 +26,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { authenticateToken } from './middlewares/auth.js';
-import { authenticateTokenEnhanced, generateTokens, verifyRefreshToken } from './middlewares/enhancedAuth.js';
+import {
+  authenticateTokenEnhanced,
+  generateTokens,
+  verifyRefreshToken,
+  ACCESS_COOKIE_OPTIONS,
+  REFRESH_COOKIE_OPTIONS,
+  validateCookieEnvironment
+} from './middlewares/enhancedAuth.js';
 import { securitySuite } from './middleware/security.js';
 import { validationSuite } from './middleware/validation.js';
 import { advancedSecuritySuite } from './middlewares/advancedSecurity.js';
+import { rateLimitSuite, slowDownSuite } from './middlewares/rateLimitConfig.js';
 import { initializeSecurity, getSecurityStatus } from './config/securityConfig.js';
 import { createHTTPSServer, configureCloudHTTPS } from './config/httpsConfig.js';
 import secureAuthRouter from './routes/secureAuth.js';
@@ -58,6 +66,9 @@ let securityConfig;
 try {
   securityConfig = initializeSecurity();
   console.log('🔒 Security configuration loaded successfully');
+
+  // Validate cookie environment for production readiness
+  validateCookieEnvironment();
 } catch (error) {
   console.error('❌ Failed to load security configuration:', error.message);
   process.exit(1);
@@ -111,9 +122,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// ----- Rate Limiting & Slow Down -----
-app.use(advancedSecuritySuite.rateLimit.adaptive);
-app.use(securitySuite.slowDown);
+// ----- Rate Limiting & Slow Down (Production-Ready) -----
+// General rate limiting for all endpoints
+app.use(rateLimitSuite.general);
+// General slow down to prevent abuse
+app.use(slowDownSuite.general);
 
 // ----- CORS (must be before routes) -----
 app.use(cors({
@@ -155,11 +168,14 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ----- Protected Routes with specific rate limiting -----
-app.use('/api/auth', securitySuite.rateLimit.auth);
+// Authentication endpoints with strict rate limiting + slow down
+app.use('/api/auth', rateLimitSuite.auth, slowDownSuite.auth);
+// Other protected routes
 app.use('/notes', notesRouter(authenticateTokenEnhanced));
 app.use('/reading', readingRouter(authenticateTokenEnhanced));
-app.use('/api/gamification', securitySuite.rateLimit.gamification);
-app.use('/gamification', gamificationRouter(authenticateTokenEnhanced));
+// Gamification endpoints with specialized rate limiting
+app.use('/api/gamification', rateLimitSuite.gamification);
+app.use('/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
 
 // Optional: preserve your older client that calls POST /api/reading-session
 registerLegacyReadingEndpoints(app, authenticateTokenEnhanced);
@@ -239,7 +255,19 @@ app.post('/auth/register', async (req, res) => {
       total_reading_time: 0, reading_streak: 0, notes_created: 0, highlights_created: 0, books_completed: 0
     });
 
-    res.status(201).json({ message: 'User created successfully', token: accessToken, refreshToken, user: { id: user.id, email: user.email, name: user.name } });
+    // Set tokens as HttpOnly cookies (production-ready security)
+    res.cookie('accessToken', accessToken, ACCESS_COOKIE_OPTIONS);
+    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+
+    // Also return tokens in response body for backward compatibility
+    // TODO: Remove token/refreshToken from response once frontend migrates to cookies
+    res.status(201).json({
+      message: 'User created successfully',
+      token: accessToken,  // Deprecated - use cookies instead
+      refreshToken,  // Deprecated - use cookies instead
+      user: { id: user.id, email: user.email, name: user.name },
+      cookieAuth: true  // Flag to indicate cookies are being used
+    });
   } catch (e) {
     console.error('Registration error:', e);
     res.status(500).json({ error: 'Internal server error' });
@@ -265,7 +293,19 @@ app.post('/auth/login', async (req, res) => {
 
     const { accessToken, refreshToken } = generateTokens(user);
 
-    res.json({ message: 'Login successful', token: accessToken, refreshToken, user: { id: user.id, email: user.email, name: user.name, avatar: user.avatar } });
+    // Set tokens as HttpOnly cookies (production-ready security)
+    res.cookie('accessToken', accessToken, ACCESS_COOKIE_OPTIONS);
+    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+
+    // Also return tokens in response body for backward compatibility
+    // TODO: Remove token/refreshToken from response once frontend migrates to cookies
+    res.json({
+      message: 'Login successful',
+      token: accessToken,  // Deprecated - use cookies instead
+      refreshToken,  // Deprecated - use cookies instead
+      user: { id: user.id, email: user.email, name: user.name, avatar: user.avatar },
+      cookieAuth: true  // Flag to indicate cookies are being used
+    });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ error: 'Internal server error' });
@@ -274,7 +314,8 @@ app.post('/auth/login', async (req, res) => {
 
 app.post('/auth/refresh', async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+    // Try to get refresh token from cookie first (preferred), then fall back to body (deprecated)
+    const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
     if (!refreshToken) {
       return res.status(401).json({ error: 'Refresh token required' });
@@ -297,15 +338,49 @@ app.post('/auth/refresh', async (req, res) => {
     // Generate new tokens using the proper enhanced auth function
     const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
 
+    // Set new tokens as HttpOnly cookies (production-ready security)
+    res.cookie('accessToken', accessToken, ACCESS_COOKIE_OPTIONS);
+    res.cookie('refreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
+
+    // Also return tokens in response body for backward compatibility
+    // TODO: Remove token/refreshToken from response once frontend migrates to cookies
     res.json({
       message: 'Tokens refreshed successfully',
-      token: accessToken,
-      refreshToken: newRefreshToken,
-      user
+      token: accessToken,  // Deprecated - use cookies instead
+      refreshToken: newRefreshToken,  // Deprecated - use cookies instead
+      user,
+      cookieAuth: true  // Flag to indicate cookies are being used
     });
   } catch (error) {
     console.error('Token refresh error:', error);
     res.status(401).json({ error: 'Invalid refresh token' });
+  }
+});
+
+app.post('/auth/logout', (req, res) => {
+  try {
+    // Clear both access and refresh token cookies
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/'
+    });
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/auth'
+    });
+
+    res.json({
+      message: 'Logout successful',
+      cookiesCleared: true
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -327,7 +402,7 @@ app.get('/auth/profile', authenticateToken, async (req, res) => {
 // ----- Book cover upload with enhanced security -----
 app.post('/books/:id/cover',
   authenticateTokenEnhanced,
-  securitySuite.rateLimit.upload,
+  rateLimitSuite.upload,  // Updated to use new rate limit config
   advancedSecuritySuite.fileUpload.secure,
   upload.single('file'),
   validationSuite.files.upload,
