@@ -416,9 +416,10 @@ const EnhancedCollectionsPage = ({
 
   return (
     <MD3Surface className={`enhanced-collections-page ${className}`}>
-      {/* Header Section - Following MD3 Style Guide */}
-      <div className="collections-header-section">
-        <div className="collections-header-content">
+      {/* Collections Content Wrapper - Constrains all content to 1200px */}
+      <div className="collections-page-content">
+        {/* Header Section - Following MD3 Style Guide */}
+        <div className="collections-header-section">
           <h1>
             📚 Collections
           </h1>
@@ -455,10 +456,9 @@ const EnhancedCollectionsPage = ({
             </MD3Button>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area */}
-      <div className="collections-main-content">
+        {/* Main Content Area */}
+        <div className="collections-main-content">
         <div className="collections-content-wrapper">
           {/* Collections Grid */}
           <div className="collections-grid-container">
@@ -989,6 +989,7 @@ const EnhancedCollectionsPage = ({
           </div>
         </div>
       </MD3Dialog>
+      </div> {/* Close collections-page-content */}
     </MD3Surface>
   );
 };
