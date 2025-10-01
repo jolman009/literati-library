@@ -1,7 +1,8 @@
 {
-  "buildCommand": "cd client2 && npm install --legacy-peer-deps && npm run build:production",
   "outputDirectory": "client2/dist",
   "framework": "vite",
+  "installCommand": "cd client2 && npm install --legacy-peer-deps",
+  "buildCommand": "cd client2 && npm run build:production",
   "env": {
     "VITE_APP_NAME": "Literati"
   },
