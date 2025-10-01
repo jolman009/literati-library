@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Initialize Sentry crash reporting
 import { initializeSentry } from './services/sentry.jsx';
+import * as Sentry from '@sentry/react';
 initializeSentry();
 
 // 1) Configure PDF.js worker first (must come before any <Document/> usage)
@@ -76,8 +77,17 @@ const ErrorFallback = ({ error, resetError }) => (
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // Add <React.StrictMode> later if you want double-effect checks
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <Sentry.ErrorBoundary
+    fallback={ErrorFallback}
+    showDialog={false}
+    beforeCapture={(scope) => {
+      scope.setTag('boundary', 'root');
+      scope.setLevel('error');
+    }}
+  >
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Sentry.ErrorBoundary>
 );
 /* CI/CD Pipeline Test - Wed, Sep 24, 2025 10:38:07 PM */
