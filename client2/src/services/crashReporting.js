@@ -1,6 +1,5 @@
 // src/services/crashReporting.js - Crash Reporting with Sentry Integration
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 import environmentConfig from '../config/environment.js';
 
 class CrashReportingService {
@@ -37,10 +36,10 @@ class CrashReportingService {
         release: `${this.config.app.name}@${this.config.app.version}`,
         debug: this.config.isDevelopment,
 
-        // Integrations
+        // Integrations - Sentry v10+ includes BrowserTracing automatically
         integrations: [
-          new BrowserTracing(),
-          new Sentry.Replay({
+          Sentry.browserTracingIntegration(),
+          Sentry.replayIntegration({
             maskAllText: false,
             blockAllMedia: false,
             maskAllInputs: false,
