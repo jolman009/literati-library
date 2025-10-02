@@ -109,14 +109,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Critical path - Core React (always needed)
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-core';
-          }
-        // ErrorBoundary must load with React
-          if (id.includes('ErrorBoundary')) {
-          return 'react-core';
-          }
           // Navigation - React Router (needed for SPA)
           if (id.includes('node_modules/react-router-dom') || id.includes('node_modules/react-router')) {
             return 'react-router';
