@@ -7,6 +7,7 @@ const API = axios.create({
   baseURL: environmentConfig.apiUrl,
   timeout: environmentConfig.apiTimeout,
   headers: environmentConfig.getDefaultHeaders(),
+  withCredentials: true, // Send cookies with all requests
 });
 
 // Add BASE_URL property for backward compatibility
@@ -15,13 +16,8 @@ API.BASE_URL = environmentConfig.apiUrl;
 // Add request interceptor to include auth token
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(environmentConfig.getTokenKey()) ||
-                 sessionStorage.getItem(environmentConfig.getTokenKey());
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
+    // Cookies are sent automatically via withCredentials
+    // No need to manually add Authorization header
     return config;
   },
   (error) => {
