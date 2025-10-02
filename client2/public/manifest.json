@@ -1,0 +1,119 @@
+{
+  "name": "Literati - Your Digital Bookshelf",
+  "short_name": "Literati",
+  "description": "A progressive web app for managing your digital library with reading tracking and annotations",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff7fe",
+  "theme_color": "#6750a4",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["books", "education", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon-96x96.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-launchericon-96-96.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "/literatiLOGO_144x153.png",
+      "type": "image/png",
+      "sizes": "144x153",
+      "purpose": "any"
+    },
+    {
+      "src": "/literatiLOGO.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/literati512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Library",
+      "short_name": "Library",
+      "description": "Browse your book collection",
+      "url": "/library",
+      "icons": [
+        {
+          "src": "/literatiLOGO.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Upload Book",
+      "short_name": "Upload",
+      "description": "Add a new book to your library",
+      "url": "/upload",
+      "icons": [
+        {
+          "src": "/literatiLOGO.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your reading dashboard",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/literatiLOGO.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/SplashScreen.scale-100.png",
+      "sizes": "620x300",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Literati Splash Screen"
+    },
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Literati Dashboard"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Literati Mobile View"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}
