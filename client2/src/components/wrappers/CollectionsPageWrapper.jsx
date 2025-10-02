@@ -51,7 +51,7 @@ const CollectionsPageContent = () => {
   const [serverStatus, setServerStatus] = useState('checking');
 
   // Hooks
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Safe gamification integration
@@ -63,13 +63,13 @@ const CollectionsPageContent = () => {
   };
 
   useEffect(() => {
-    if (user && token) {
+    if (user) {
       fetchBooks();
     } else {
       setError('Please log in to view your collections');
       setLoading(false);
     }
-  }, [user, token]);
+  }, [user]);
 
   // Fetch books data - same source as Dashboard
   const fetchBooks = async () => {
@@ -79,14 +79,14 @@ const CollectionsPageContent = () => {
 
     try {
       // Check if user is authenticated first
-      if (!user || !token) {
+      if (!user) {
         throw new Error('Please log in to view your collections');
       }
 
       console.log('🔍 Fetching books for collections page...');
       console.log('🔍 API base URL:', API.defaults.baseURL);
       console.log('🔍 Making request to:', `${API.defaults.baseURL}/books`);
-      console.log('🔍 User authenticated:', !!user, 'Token present:', !!token);
+      console.log('🔍 User authenticated:', !!user);
 
       const response = await API.get('/books', { timeout: 30000 });
 
