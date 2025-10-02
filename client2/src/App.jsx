@@ -57,7 +57,8 @@ import MD3Login from './pages/MD3Login';
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-const LibraryPage = lazy(() => import('./pages/LibraryPage'));
+// TEMPORARY: Import LibraryPage directly to debug loading issue
+import LibraryPage from './pages/LibraryPage';
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 
 // Lazy load secondary pages with error handling
@@ -158,9 +159,7 @@ const AppRoutes = () => {
         } />
         <Route path="/library" element={
           <LibraryErrorBoundary>
-            <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
-              <LibraryPage />
-            </Suspense>
+            <LibraryPage />
           </LibraryErrorBoundary>
         } />
         <Route path="/upload" element={
