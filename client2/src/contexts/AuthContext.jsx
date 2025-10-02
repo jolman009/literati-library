@@ -257,12 +257,17 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password }),
         });
 
-        // Tokens are set as HttpOnly cookies by the server
-        // We only need to store user data in localStorage
+        // Store token in localStorage for Authorization header (cross-domain support)
+        // Server also sets HttpOnly cookies as fallback
+        if (data.token) {
+          localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+        }
+
+        // Store user data
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
-        console.log('✅ Login successful - using HttpOnly cookie authentication');
+        console.log('✅ Login successful - token stored in localStorage');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -286,6 +291,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       // Always clear local state, even if API call fails
       localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(environmentConfig.getTokenKey());
       setUser(null);
       setError(null);
     }
