@@ -16,8 +16,15 @@ API.BASE_URL = environmentConfig.apiUrl;
 // Add request interceptor to include auth token
 API.interceptors.request.use(
   (config) => {
-    // Cookies are sent automatically via withCredentials
-    // No need to manually add Authorization header
+    // Get token from localStorage or sessionStorage
+    const token = localStorage.getItem(environmentConfig.getTokenKey()) ||
+                  sessionStorage.getItem(environmentConfig.getTokenKey());
+
+    // Add Authorization header if token exists
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
   (error) => {
