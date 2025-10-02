@@ -22,7 +22,7 @@ import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 
 const LibraryPage = () => {
   const { actualTheme } = useMaterial3Theme();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { 
     startReadingSession, 
     stopReadingSession,
@@ -60,10 +60,10 @@ const LibraryPage = () => {
   };
 
   useEffect(() => {
-    if (user && token) {
+    if (user) {
       fetchBooks();
     }
-  }, [user, token, activeSession]); // Also refresh when active session changes
+  }, [user]); // Fetch books when user is available
 
   // Handle navigation from global search
   useEffect(() => {
