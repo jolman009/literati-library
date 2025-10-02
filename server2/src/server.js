@@ -172,7 +172,8 @@ app.use(cors({
     'Authorization',
     'X-Requested-With',
     'X-Environment',  // Custom header for environment tracking
-    'X-Client-Version'  // Additional custom header support
+    'X-Client-Version',  // Additional custom header support
+    'X-App-Version'  // Application version tracking
   ]
 }));
 
