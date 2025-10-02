@@ -95,6 +95,10 @@ setupSentryMiddleware(app);
 // ----- Security Headers (must be first) -----
 app.use(securitySuite.headers);
 
+// ----- Body Parser (must be before sanitization) -----
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 // ----- Request Logging -----
 app.use(securitySuite.logging);
 
