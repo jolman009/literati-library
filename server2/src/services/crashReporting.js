@@ -27,19 +27,10 @@ class ServerCrashReporting {
         release: `literati-server@${appVersion}`,
         debug: environment === 'development',
 
-        // Integrations
-        integrations: [
-          nodeProfilingIntegration(),
-          new Sentry.Integrations.Http({ tracing: true }),
-          new Sentry.Integrations.Express({ app: null }),
-          new Sentry.Integrations.Postgres(),
-          new Sentry.Integrations.OnUncaughtException({
-            exitEvenIfOtherHandlersAreRegistered: false
-          }),
-          new Sentry.Integrations.OnUnhandledRejection({
-            mode: 'warn'
-          })
-        ],
+       // Integrations
+integrations: [
+  nodeProfilingIntegration(),
+],
 
         // Performance monitoring
         tracesSampleRate: environment === 'production' ? 0.1 : 1.0,
