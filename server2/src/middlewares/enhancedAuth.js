@@ -15,11 +15,13 @@ const REFRESH_TOKEN_EXPIRY = '7d';
 
 // Enhanced secure cookie configuration
 export const COOKIE_OPTIONS = {
-  httpOnly: true, // Prevents XSS attacks by making cookies inaccessible to JavaScript
-  secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-  sameSite: 'none', // Prevents CSRF attacks
-  path: '/', // Cookie available for entire domain
-  domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined // Restrict to specific domain in production
+  httpOnly: true, 
+  secure: process.env.NODE_ENV === 'production', 
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // ✅ CRITICAL FIX
+  path: '/',
+  domain: process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN 
+    ? process.env.COOKIE_DOMAIN 
+    : undefined
 };
 
 // Separate cookie options for access and refresh tokens
