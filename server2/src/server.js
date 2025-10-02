@@ -167,7 +167,13 @@ app.use(cors({
   },
   credentials: true, // ✅ CRITICAL - allows cookies
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'X-Environment',  // Custom header for environment tracking
+    'X-Client-Version'  // Additional custom header support
+  ]
 }));
 
 // ----- Protected Routes with specific rate limiting -----
