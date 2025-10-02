@@ -141,31 +141,30 @@ app.use(cors({
 
     // Allow production domains from environment variable
     const allowedOrigins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-      : [
-          'https://www.literati.pro',
-          'https://literati.pro',
-          'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app'
-        ];
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : [];
 
-    if (allowedOrigins.includes(origin)) {
+    // ✅ ADD YOUR VERCEL DOMAIN HERE
+    const defaultAllowedOrigins = [
+      'https://literati.pro',
+      'https://www.literati.pro',
+      'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app', // Replace with actual Vercel URL
+      'https://your-app-git-main.vercel.app' // Preview deployments
+    ];
+
+    const allAllowed = [...new Set([...allowedOrigins, ...defaultAllowedOrigins])];
+
+    if (allAllowed.includes(origin)) {
       return callback(null, true);
     }
 
-    // Deny all other origins
+    console.warn(`❌ CORS blocked origin: ${origin}`);
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true,
+  credentials: true, // ✅ CRITICAL - allows cookies
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin','X-Requested-With','Content-Type','Accept','Authorization','X-Environment','X-App-Version'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
-
-// ----- Request monitoring middleware -----
-app.use(monitor.requestMonitoringMiddleware());
-
-// ----- Body parsing middleware (must be before routes) -----
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ----- Protected Routes with specific rate limiting -----
 // Authentication endpoints with strict rate limiting + slow down
