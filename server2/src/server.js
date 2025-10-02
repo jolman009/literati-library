@@ -214,6 +214,7 @@ const handleHealthCheck = (req, res) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     uptime: process.uptime(),
+    corsFixed: true  // Deployment verification flag
   });
 };
 
@@ -467,18 +468,7 @@ app.post('/books/:id/cover',
   }
 );
 
-// ----- Health Check and Security Status Endpoints -----
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: Math.floor(process.uptime()),
-    version: process.env.npm_package_version || '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    corsFixed: true  // Deployment verification flag
-  });
-});
-
+// ----- Security Status Endpoint -----
 app.get('/security-status', (req, res) => {
   const status = getSecurityStatus();
   res.status(200).json(status);
