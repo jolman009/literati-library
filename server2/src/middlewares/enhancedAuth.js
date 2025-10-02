@@ -17,7 +17,7 @@ const REFRESH_TOKEN_EXPIRY = '7d';
 export const COOKIE_OPTIONS = {
   httpOnly: true, // Prevents XSS attacks by making cookies inaccessible to JavaScript
   secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-  sameSite: 'strict', // Prevents CSRF attacks
+  sameSite: 'none', // Prevents CSRF attacks
   path: '/', // Cookie available for entire domain
   domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined // Restrict to specific domain in production
 };
