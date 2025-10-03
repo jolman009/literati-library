@@ -1,6 +1,6 @@
 # Terms of Service for Literati
 
-**Last Updated: [DATE]**
+**Last Updated: October 3, 2025**
 
 ## Agreement to Terms
 
@@ -148,7 +148,7 @@ You agree to indemnify and hold us harmless from any claims, damages, or expense
 ## Dispute Resolution
 
 ### Governing Law
-These Terms are governed by the laws of [YOUR-JURISDICTION], without regard to conflict of law principles.
+These Terms are governed by the laws of the State of Texas, United States, without regard to conflict of law principles.
 
 ### Dispute Resolution Process
 1. **Informal Resolution**: Contact us first to attempt informal resolution
@@ -157,7 +157,7 @@ These Terms are governed by the laws of [YOUR-JURISDICTION], without regard to c
 4. **Class Action Waiver**: You waive the right to participate in class action lawsuits (where permitted)
 
 ### Jurisdiction
-Any legal actions must be brought in the courts of [YOUR-JURISDICTION].
+Any legal actions must be brought in the courts of Cameron County, Texas.
 
 ## DMCA Copyright Policy
 
@@ -170,8 +170,8 @@ If you believe content on our Service infringes your copyright:
 4. **Authorization**: Include authorization to act on behalf of the copyright owner
 
 ### DMCA Agent Contact
-**Email**: [DMCA-EMAIL]
-**Address**: [DMCA-ADDRESS]
+**Email**: info@literati.pro
+**Address**: 628 Montreal Court, Brownsville, Texas 78526
 
 ### Counter-Notification
 If you believe your content was wrongly removed, you may file a counter-notification with the required DMCA information.
@@ -254,12 +254,12 @@ You may not assign these Terms. We may assign our rights and obligations without
 ### Contact Information
 For questions about these Terms, contact us at:
 
-**Email**: [YOUR-EMAIL]
-**Address**: [YOUR-ADDRESS]
-**Support**: [SUPPORT-EMAIL]
+**Email**: info@literati.pro
+**Address**: 628 Montreal Court, Brownsville, Texas 78526
+**Support**: info@literati.pro
 
 ---
 
-*These Terms of Service are effective as of [DATE] and were last updated on [DATE].*
+*These Terms of Service are effective as of October 3, 2025 and were last updated on October 3, 2025.*
 
 **By using Literati, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
