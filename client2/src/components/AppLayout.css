@@ -524,20 +524,20 @@
   min-height: 100vh;
   background: var(--md-sys-color-surface);
   overflow: visible;
-  /* Base margins will be overridden by responsive rules */
 }
+
 
 /* UPDATED: MD3-compliant responsive layout rules */
 @media (min-width: 769px) {
   .content-area {
-    /* margin-left: 80px; /* Start with collapsed space */
+    margin-left: 280px; /* Default expanded navigation width */
     margin-bottom: 0;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* When navigation is expanded (default state) */
   .premium-app-layout.nav-expanded .content-area {
-    /* margin-left: 280px !important; */
+    margin-left: 280px !important;
     padding-left: 0 !important;
     border-left: none !important;
   }
@@ -548,12 +548,12 @@
   }
 
   /* Ensure desktop navigation rail is visible */
-  .md3-navigation-rail {
-    display: flex;
+ .md3-navigation-rail {
+    display: flex !important;
   }
 
   /* Hide mobile-only elements on desktop */
-.mobile-only {
+  .mobile-only {
     display: none !important;
   }
 
@@ -566,14 +566,14 @@
 .page-content {
   flex: 1;
   padding: 16px;
-  padding-top: 24px; /* Add space below sticky header - UPDATED */
+  padding-top: 24px;
   overflow: visible;
   background: var(--md-sys-color-surface);
   min-height: 0;
 }
 
 /* ============================================================================
-   MOBILE NAVIGATION
+   MOBILE NAVIGATION - CRITICAL FIXES
    ============================================================================ */
 
 .mobile-navigation {
@@ -715,7 +715,7 @@
     font-size: 20px;
   }
 
-  .user-info {
+ .user-info {
     display: none;
   }
 
@@ -751,7 +751,7 @@
   }
 
 
-  /* Force mobile navigation items to be visible */
+/* CRITICAL: Force navigation destinations to display */
   .md3-navigation-bar .md3-navigation-bar__destinations {
     display: flex !important;
     width: 100%;
@@ -760,7 +760,7 @@
     justify-content: space-around;
     padding: 0 8px;
   }
-  
+
   /* Ensure navigation items are visible */
   .md3-navigation-bar .md3-navigation-item {
     display: flex !important;
@@ -771,7 +771,7 @@
     height: 100%;
   }
 
-    /* CRITICAL: Navigation FAB positioning */
+  /* CRITICAL: Navigation FAB positioning */
   .navigation-fab {
     display: block !important;
     position: fixed !important;
@@ -837,6 +837,7 @@
    EXTRA SMALL SCREENS (< 480px)
    ============================================================================ */
 
+
 @media (max-width: 480px) {
   .page-content {
     padding: 12px;
@@ -852,7 +853,6 @@
     height: 72px;
   }
 }
-
 
 /* ============================================================================
    DARK MODE SUPPORT
