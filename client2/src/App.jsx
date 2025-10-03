@@ -42,6 +42,7 @@ import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { GamificationProvider } from './contexts/GamificationContext';
+import './styles/dashboard-dark-mode-fix.css';
 
 // Material3 imports - adjust paths as needed
 import { Material3ThemeProvider } from './contexts/Material3ThemeContext';

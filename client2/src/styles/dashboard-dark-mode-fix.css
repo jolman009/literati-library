@@ -1,0 +1,208 @@
+/* ============================================================================
+   DASHBOARD DARK MODE TEXT FIXES
+   ============================================================================ */
+
+/* CRITICAL FIX: Currently Reading Section - Dark Mode Text Visibility */
+[data-theme="dark"] .currently-reading-section,
+.dark .currently-reading-section,
+.premium-app-layout.dark .currently-reading-section {
+  background: linear-gradient(135deg,
+    rgb(var(--md-sys-color-surface-container-low)),
+    rgb(var(--md-sys-color-surface-container))
+  );
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+}
+
+/* Section heading text - ensure high contrast in dark mode */
+[data-theme="dark"] .currently-reading-section h3,
+.dark .currently-reading-section h3,
+.premium-app-layout.dark .currently-reading-section h3 {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+/* Book card in Currently Reading - Dark Mode */
+[data-theme="dark"] .currently-reading-section .book-card,
+[data-theme="dark"] .currently-reading-section .book-card-compact,
+.dark .currently-reading-section .book-card,
+.dark .currently-reading-section .book-card-compact,
+.premium-app-layout.dark .currently-reading-section .book-card,
+.premium-app-layout.dark .currently-reading-section .book-card-compact {
+  background: rgb(var(--md-sys-color-surface-container-high));
+  border: 1px solid rgb(var(--md-sys-color-outline));
+}
+
+/* Book title - Dark Mode HIGH CONTRAST FIX */
+[data-theme="dark"] .currently-reading-section .book-title,
+[data-theme="dark"] .currently-reading-section .book-title-compact,
+.dark .currently-reading-section .book-title,
+.dark .currently-reading-section .book-title-compact,
+.premium-app-layout.dark .currently-reading-section .book-title,
+.premium-app-layout.dark .currently-reading-section .book-title-compact {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+  font-weight: 600;
+}
+
+/* Book author - Dark Mode HIGH CONTRAST FIX */
+[data-theme="dark"] .currently-reading-section .book-author,
+[data-theme="dark"] .currently-reading-section .book-author-compact,
+.dark .currently-reading-section .book-author,
+.dark .currently-reading-section .book-author-compact,
+.premium-app-layout.dark .currently-reading-section .book-author,
+.premium-app-layout.dark .currently-reading-section .book-author-compact {
+  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+}
+
+/* Progress text - Dark Mode FIX */
+[data-theme="dark"] .currently-reading-section .progress-text,
+[data-theme="dark"] .currently-reading-section .book-progress,
+.dark .currently-reading-section .progress-text,
+.dark .currently-reading-section .book-progress,
+.premium-app-layout.dark .currently-reading-section .progress-text,
+.premium-app-layout.dark .currently-reading-section .book-progress {
+  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+}
+
+/* ============================================================================
+   INLINE STYLE OVERRIDES FOR DASHBOARDPAGE.JSX
+   ============================================================================ */
+
+/* Fix for inline styled elements in DashboardPage */
+[data-theme="dark"] div[style*="fontSize: '14px'"],
+[data-theme="dark"] div[style*="fontSize: '12px'"],
+.dark div[style*="fontSize: '14px'"],
+.dark div[style*="fontSize: '12px'"],
+.premium-app-layout.dark div[style*="fontSize: '14px'"],
+.premium-app-layout.dark div[style*="fontSize: '12px'"] {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+/* Specific fix for book metadata in Currently Reading */
+[data-theme="dark"] [style*="color: '#cbd5e1'"],
+[data-theme="dark"] [style*="color: '#334155'"],
+[data-theme="dark"] [style*="color: '#94a3b8'"],
+.dark [style*="color: '#cbd5e1'"],
+.dark [style*="color: '#334155'"],
+.dark [style*="color: '#94a3b8'"],
+.premium-app-layout.dark [style*="color: '#cbd5e1'"],
+.premium-app-layout.dark [style*="color: '#334155'"],
+.premium-app-layout.dark [style*="color: '#94a3b8'"] {
+  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+}
+
+/* Fix for book title text specifically */
+[data-theme="dark"] [style*="color: '#e2e8f0'"],
+[data-theme="dark"] [style*="color: '#0f172a'"],
+.dark [style*="color: '#e2e8f0'"],
+.dark [style*="color: '#0f172a'"],
+.premium-app-layout.dark [style*="color: '#e2e8f0'"],
+.premium-app-layout.dark [style*="color: '#0f172a'"] {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+/* ============================================================================
+   GENERAL DARK MODE TEXT IMPROVEMENTS
+   ============================================================================ */
+
+/* Stat cards in dark mode */
+[data-theme="dark"] .stat-card .stat-value,
+[data-theme="dark"] .stat-card .stat-label,
+[data-theme="dark"] .stat-card .stat-icon,
+.dark .stat-card .stat-value,
+.dark .stat-card .stat-label,
+.dark .stat-card .stat-icon,
+.premium-app-layout.dark .stat-card .stat-value,
+.premium-app-layout.dark .stat-card .stat-label,
+.premium-app-layout.dark .stat-card .stat-icon {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+/* Section cards in dark mode */
+[data-theme="dark"] .section-card,
+[data-theme="dark"] .section-card-compact,
+.dark .section-card,
+.dark .section-card-compact,
+.premium-app-layout.dark .section-card,
+.premium-app-layout.dark .section-card-compact {
+  background: linear-gradient(135deg,
+    rgb(var(--md-sys-color-surface-container-low)),
+    rgb(var(--md-sys-color-surface-container))
+  );
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Section titles in dark mode */
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .section-title-compact,
+.dark .section-title,
+.dark .section-title-compact,
+.premium-app-layout.dark .section-title,
+.premium-app-layout.dark .section-title-compact {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+/* Recently Added section fixes */
+[data-theme="dark"] .recently-added-section,
+.dark .recently-added-section,
+.premium-app-layout.dark .recently-added-section {
+  background: linear-gradient(135deg,
+    rgb(var(--md-sys-color-surface-container-low)),
+    rgb(var(--md-sys-color-surface-container))
+  );
+}
+
+/* Progress section in dark mode */
+[data-theme="dark"] .progress-section,
+.dark .progress-section,
+.premium-app-layout.dark .progress-section {
+  background: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.15),
+    rgba(5, 150, 105, 0.15)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* CTA section in dark mode */
+[data-theme="dark"] .cta-section,
+.dark .cta-section,
+.premium-app-layout.dark .cta-section {
+  background: linear-gradient(135deg,
+    rgb(var(--md-sys-color-surface-container)),
+    rgb(var(--md-sys-color-surface-container-high))
+  );
+  border: 1px solid rgb(var(--md-sys-color-primary));
+}
+
+[data-theme="dark"] .cta-title,
+.dark .cta-title,
+.premium-app-layout.dark .cta-title {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+[data-theme="dark"] .cta-subtitle,
+.dark .cta-subtitle,
+.premium-app-layout.dark .cta-subtitle {
+  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+}
+
+/* ============================================================================
+   MOBILE RESPONSIVE DARK MODE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .currently-reading-section,
+  .dark .currently-reading-section,
+  .premium-app-layout.dark .currently-reading-section {
+    padding: 16px;
+  }
+
+  [data-theme="dark"] .book-card,
+  [data-theme="dark"] .book-card-compact,
+  .dark .book-card,
+  .dark .book-card-compact,
+  .premium-app-layout.dark .book-card,
+  .premium-app-layout.dark .book-card-compact {
+    padding: 12px;
+  }
+}

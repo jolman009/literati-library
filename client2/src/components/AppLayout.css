@@ -5,9 +5,10 @@
    ============================================================================ */
 
 .premium-app-layout {
+  display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  position: relative;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
 }
 
 /* Dark mode support for main app background */
@@ -32,10 +33,8 @@
 
 .desktop-layout {
   display: flex;
+  width: 100%;
   min-height: 100vh;
-  position: relative;
-  z-index: 1;
-  gap: 0; /* Ensure no gaps in flex layout */
 }
 
 /* ============================================================================
@@ -554,13 +553,13 @@
   }
 
   /* Hide mobile-only elements on desktop */
-  .mobile-only {
-    display: none;
+.mobile-only {
+    display: none !important;
   }
 
   /* Hide mobile navigation on desktop */
   .md3-navigation-bar {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -623,7 +622,7 @@
 
 @media (max-width: 1024px) {
   .premium-navigation {
-    width: 240px;
+    display: none;
   }
 
   .premium-header-content {
@@ -684,14 +683,13 @@
     transform: translateY(0);
   }
 }
-
 @media (max-width: 768px) {
   .desktop-layout {
     flex-direction: column;
   }
 
   .premium-navigation {
-    display: none;
+    display: none !important;
   }
 
   .library-filters-section {
@@ -707,9 +705,10 @@
   }
 
   .page-content {
-    padding-top: 16px; /* Adjust for mobile header */
-    padding-bottom: 100px; /* Extra padding for FAB and navigation */
-    min-height: calc(100vh - 64px - 80px); /* Account for header and mobile nav */
+    padding: 16px;
+    padding-top: 16px;
+    padding-bottom: 120px; /* Space for FAB + navigation */
+    min-height: calc(100vh - 64px - 80px);
   }
 
   .page-title {
@@ -726,37 +725,66 @@
 
   /* Content area mobile adjustments */
   .content-area {
-    margin-left: 0;
+    margin-left: 0 !important;
     margin-bottom: 80px; /* Space for mobile navigation */
   }
 
-  /* Show mobile-only elements */
+  /* CRITICAL: Show mobile-only elements */
   .mobile-only {
-    display: block;
+    display: block !important;
   }
 
-  /* Ensure mobile navigation is visible and properly positioned */
+  /* CRITICAL: Ensure MD3 Navigation Bar is visible */
   .md3-navigation-bar {
-    display: flex;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     z-index: 1000;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     height: 80px;
-    background-color: var(--md-sys-color-surface-container);
-    border-top: 1px solid var(--md-sys-color-outline-variant);
-    box-shadow: var(--md-sys-elevation-level2);
+    background-color: rgb(var(--md-sys-color-surface-container));
+    border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   }
+
 
   /* Force mobile navigation items to be visible */
   .md3-navigation-bar .md3-navigation-bar__destinations {
-    display: flex;
+    display: flex !important;
     width: 100%;
     height: 100%;
     align-items: center;
     justify-content: space-around;
+    padding: 0 8px;
   }
+  
+  /* Ensure navigation items are visible */
+  .md3-navigation-bar .md3-navigation-item {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: 100%;
+  }
+
+    /* CRITICAL: Navigation FAB positioning */
+  .navigation-fab {
+    display: block !important;
+    position: fixed !important;
+    bottom: 100px !important; /* Above bottom navigation */
+    right: 16px !important;
+    z-index: 1001 !important;
+  }
+
+  /* CRITICAL: Global Search FAB positioning */
+  div.mobile-only[style*="position: fixed"] {
+    bottom: 100px !important;
+  }
+}
 
   /* Mobile navigation item styling */
   .md3-navigation-item--bar {
@@ -777,7 +805,6 @@
   .md3-navigation-rail {
     display: none;
   }
-}
 
 /* ============================================================================
    ANIMATIONS
@@ -805,18 +832,49 @@
   }
 }
 
+
+/* ============================================================================
+   EXTRA SMALL SCREENS (< 480px)
+   ============================================================================ */
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 12px;
+    padding-bottom: 120px;
+  }
+
+  .navigation-fab {
+    bottom: 95px !important;
+    right: 12px !important;
+  }
+
+  .md3-navigation-bar {
+    height: 72px;
+  }
+}
+
+
 /* ============================================================================
    DARK MODE SUPPORT
    ============================================================================ */
 
-@media (prefers-color-scheme: dark) {
-  .premium-app-layout {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  }
-  
-  .premium-navigation {
-    background: linear-gradient(180deg, 
-      rgba(30, 41, 59, 0.95) 0%, 
+.premium-app-layout.dark .mobile-navigation {
+  background: rgba(18, 18, 18, 0.95);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.premium-app-layout.dark .mobile-nav-item {
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+.premium-app-layout.dark .mobile-nav-item.active {
+  background: linear-gradient(135deg, rgba(103, 80, 164, 0.2), rgba(79, 70, 229, 0.2));
+  color: rgb(var(--md-sys-color-primary));
+}
+
+.premium-navigation {
+  background: linear-gradient(180deg, 
+    rgba(30, 41, 59, 0.95) 0%, 
       rgba(15, 23, 42, 0.9) 100%
     );
     border-right-color: rgba(255, 255, 255, 0.1);
@@ -847,8 +905,6 @@
   .page-subtitle {
     color: #94a3b8;
   }
-}
-
 
 .dropdown-about {
   padding: 20px;
