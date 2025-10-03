@@ -1,0 +1,534 @@
+/* mobile-fixes.css - Comprehensive Mobile Overflow Prevention */
+/* MUST be imported FIRST in your App.jsx or index.jsx */
+/* Prevents horizontal scrolling on ALL elements */
+
+/* ================================================
+   CRITICAL: GLOBAL BOX-SIZING
+   ================================================ */
+
+/* Force proper box-sizing globally */
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+/* ================================================
+   ROOT & BODY CONSTRAINTS
+   ================================================ */
+
+html {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+}
+
+#root,
+#app,
+.app,
+.App {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+}
+
+/* ================================================
+   PREVENT ALL OVERFLOW
+   ================================================ */
+
+/* Constrain all elements to viewport width */
+div,
+section,
+article,
+main,
+header,
+footer,
+nav,
+aside {
+  max-width: 100vw !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+}
+
+/* Prevent specific elements from causing overflow */
+img,
+video,
+iframe,
+embed,
+object,
+svg,
+canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* ================================================
+   TEXT & CONTENT WRAPPING
+   ================================================ */
+
+/* Ensure all text wraps properly */
+p,
+span,
+a,
+li,
+td,
+th,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+div {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+}
+
+/* Handle long URLs and code */
+a,
+code,
+pre {
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  word-break: break-all !important;
+}
+
+/* ================================================
+   GRID & FLEXBOX FIXES
+   ================================================ */
+
+/* Make all grids responsive */
+[class*="grid"],
+[class*="Grid"],
+.grid,
+.Grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)) !important;
+}
+
+/* Ensure flexbox doesn't overflow */
+[class*="flex"],
+[class*="Flex"],
+.flex,
+.Flex {
+  flex-wrap: wrap !important;
+  max-width: 100% !important;
+}
+
+/* ================================================
+   CONTAINER & WRAPPER FIXES
+   ================================================ */
+
+/* Constrain all containers */
+.container,
+.Container,
+[class*="container"],
+[class*="Container"] {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+  padding-left: max(16px, env(safe-area-inset-left)) !important;
+  padding-right: max(16px, env(safe-area-inset-right)) !important;
+}
+
+/* Constrain all wrappers */
+.wrapper,
+.Wrapper,
+[class*="wrapper"],
+[class*="Wrapper"] {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* ================================================
+   NAVIGATION FIXES
+   ================================================ */
+
+/* Fix navigation bars */
+nav,
+.nav,
+.Nav,
+[class*="nav"],
+[class*="Nav"],
+[class*="navigation"],
+[class*="Navigation"] {
+  max-width: 100vw !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Fix navigation items */
+nav ul,
+nav ol,
+.nav ul,
+.nav ol {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  max-width: 100% !important;
+}
+
+/* ================================================
+   CARD & MODAL FIXES
+   ================================================ */
+
+/* Constrain all cards */
+[class*="card"],
+[class*="Card"],
+.card,
+.Card {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Constrain all modals */
+[class*="modal"],
+[class*="Modal"],
+[class*="dialog"],
+[class*="Dialog"],
+.modal,
+.Modal,
+.dialog,
+.Dialog {
+  max-width: calc(100vw - 40px) !important;
+  overflow-x: hidden !important;
+}
+
+/* ================================================
+   TABLE FIXES
+   ================================================ */
+
+/* Make tables responsive */
+table {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  display: block !important;
+  border-collapse: collapse !important;
+}
+
+/* Table wrapper */
+.table-wrapper,
+[class*="table-wrapper"],
+[class*="tableWrapper"] {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* ================================================
+   FORM FIXES
+   ================================================ */
+
+/* Constrain all forms */
+form {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Ensure inputs don't overflow */
+input,
+textarea,
+select,
+button {
+  max-width: 100% !important;
+}
+
+/* Input groups */
+[class*="input-group"],
+[class*="inputGroup"],
+[class*="form-group"],
+[class*="formGroup"] {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* ================================================
+   MOBILE BREAKPOINTS
+   ================================================ */
+
+@media (max-width: 767px) {
+  /* Force single column layouts on mobile */
+  [class*="col-"],
+  [class*="Col-"],
+  .row > div,
+  .Row > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  /* Reduce padding on mobile */
+  .container,
+  .Container,
+  [class*="container"],
+  [class*="Container"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Stack flex items */
+  [class*="flex"],
+  [class*="Flex"],
+  .flex,
+  .Flex {
+    flex-direction: column !important;
+  }
+
+  /* Full width buttons on mobile */
+  button,
+  .button,
+  .Button,
+  [class*="button"],
+  [class*="Button"],
+  .btn,
+  .Btn,
+  [class*="btn"],
+  [class*="Btn"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Adjust font sizes for mobile */
+  h1 {
+    font-size: 28px !important;
+  }
+
+  h2 {
+    font-size: 24px !important;
+  }
+
+  h3 {
+    font-size: 20px !important;
+  }
+
+  h4 {
+    font-size: 18px !important;
+  }
+
+  h5,
+  h6 {
+    font-size: 16px !important;
+  }
+
+  /* Reduce excessive padding */
+  [class*="padding"],
+  [class*="Padding"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Reduce excessive margins */
+  [class*="margin"],
+  [class*="Margin"] {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+}
+
+/* ================================================
+   EXTRA SMALL DEVICES (iPhone SE, etc.)
+   ================================================ */
+
+@media (max-width: 374px) {
+  /* Tighter constraints for very small screens */
+  .container,
+  .Container,
+  [class*="container"],
+  [class*="Container"] {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Smaller font sizes */
+  body {
+    font-size: 14px !important;
+  }
+
+  h1 {
+    font-size: 24px !important;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  h3 {
+    font-size: 18px !important;
+  }
+}
+
+/* ================================================
+   SAFE AREA SUPPORT (Notched Devices)
+   ================================================ */
+
+/* Support for iPhone X+ notches and home indicators */
+@supports (padding: env(safe-area-inset-left)) {
+  body {
+    padding-left: env(safe-area-inset-left) !important;
+    padding-right: env(safe-area-inset-right) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  /* Fixed elements need safe area padding */
+  [style*="position: fixed"],
+  .fixed,
+  .Fixed {
+    padding-left: max(16px, env(safe-area-inset-left)) !important;
+    padding-right: max(16px, env(safe-area-inset-right)) !important;
+  }
+}
+
+/* ================================================
+   SPECIFIC COMPONENT FIXES
+   ================================================ */
+
+/* Fix Material Design Cards */
+.md3-card,
+.MD3Card,
+[class*="md3-card"],
+[class*="MD3Card"] {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix Material Design Buttons */
+.md3-button,
+.MD3Button,
+[class*="md3-button"],
+[class*="MD3Button"] {
+  max-width: 100% !important;
+}
+
+/* Fix gamification components */
+[class*="gamification"],
+[class*="Gamification"] {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Fix landing page components */
+[class*="landing"],
+[class*="Landing"],
+[class*="hero"],
+[class*="Hero"] {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* ================================================
+   SCROLLBAR STYLING FOR OVERFLOW CONTAINERS
+   ================================================ */
+
+/* Thin scrollbars for horizontal scroll containers */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+*::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ================================================
+   PRINT FIXES
+   ================================================ */
+
+@media print {
+  /* Remove overflow constraints for printing */
+  html,
+  body,
+  * {
+    overflow: visible !important;
+    max-width: none !important;
+  }
+}
+
+/* ================================================
+   LANDSCAPE ORIENTATION (Mobile)
+   ================================================ */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  /* Adjust for landscape mode on mobile */
+  .container,
+  .Container {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
+
+/* ================================================
+   DEBUGGING (Uncomment to find overflow culprits)
+   ================================================ */
+
+/*
+* {
+  outline: 1px solid red !important;
+}
+
+*:hover {
+  outline: 2px solid blue !important;
+}
+
+[style*="width"] {
+  background: rgba(255, 0, 0, 0.1) !important;
+}
+*/
+
+/* ================================================
+   ACCESSIBILITY
+   ================================================ */
+
+/* Ensure touch targets are big enough */
+@media (max-width: 767px) {
+  a,
+  button,
+  input[type="button"],
+  input[type="submit"],
+  [role="button"],
+  [onclick] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+}
+
+/* ================================================
+   PERFORMANCE OPTIMIZATIONS
+   ================================================ */
+
+/* Use GPU acceleration for transforms */
+* {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth scrolling where overflow is allowed */
+* {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* End of mobile-fixes.css */

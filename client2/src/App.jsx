@@ -7,6 +7,9 @@ import { initWebVitals } from './utils/webVitals';
 import PerformanceMonitor from './components/PerformanceMonitor';
 import CacheMonitor from './components/CacheMonitor';
 
+// ⚠️ CRITICAL: Import mobile-fixes FIRST! ⚠️
+import './styles/mobile-fixes.css';
+
 // Import enhanced UX components
 import { LoadingSpinner, PageTransition, NetworkStatus } from './components/ui/LoadingStates';
 import ErrorBoundary, {
@@ -51,7 +54,7 @@ import GamificationOnboarding from './components/gamification/GamificationOnboar
 import CookieConsent from './components/legal/CookieConsent';
 
 // Import only critical auth pages directly
-import LandingPage from './pages/LandingPage';
+import NewLandingPage from './pages/NewLandingPage';
 import MD3Login from './pages/MD3Login';
 
 // Lazy load all other pages for better performance
@@ -139,7 +142,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <NewLandingPage />} />
       <Route path="/signup" element={
         <ErrorBoundary fallbackComponent="signup" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Loading sign up..." />}>

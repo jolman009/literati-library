@@ -1,0 +1,616 @@
+/* GamificationOnboarding.css - Material Design 3 Compliant Styles */
+/* Replaces inline styles in GamificationOnboarding.jsx */
+/* Fixes white-on-white text visibility issues */
+
+/* ================================================
+   OVERLAY & BACKDROP
+   ================================================ */
+
+.gamification-onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ================================================
+   MAIN CARD CONTAINER
+   ================================================ */
+
+.gamification-onboarding-card {
+  background: rgb(var(--md-sys-color-surface-container));
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgb(var(--md-sys-color-outline-variant));
+  position: relative;
+  animation: slideUp 0.3s ease;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================================================
+   CLOSE BUTTON
+   ================================================ */
+
+.gamification-onboarding-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgb(var(--md-sys-color-on-surface));
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.gamification-onboarding-close:hover {
+  background: rgb(var(--md-sys-color-surface-variant));
+}
+
+.gamification-onboarding-close:active {
+  transform: scale(0.95);
+}
+
+.gamification-onboarding-close:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+}
+
+/* ================================================
+   PROGRESS INDICATORS
+   ================================================ */
+
+.gamification-onboarding-progress {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.gamification-onboarding-progress-dot {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(var(--md-sys-color-outline-variant));
+  transition: background 0.3s ease;
+}
+
+.gamification-onboarding-progress-dot.active {
+  background: rgb(var(--md-sys-color-primary));
+}
+
+/* ================================================
+   STEP CONTENT CONTAINER
+   ================================================ */
+
+.gamification-onboarding-content {
+  margin-bottom: 32px;
+  min-height: 300px;
+}
+
+.gamification-onboarding-title {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  color: rgb(var(--md-sys-color-on-surface));
+  line-height: 1.3;
+}
+
+.gamification-onboarding-subtitle {
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  text-align: center;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: 1.5;
+}
+
+/* ================================================
+   STEP-SPECIFIC LAYOUTS
+   ================================================ */
+
+/* Overview Step */
+.gamification-overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gamification-feature-item {
+  display: flex;
+  align-items: start;
+  gap: 16px;
+  padding: 16px;
+  background: rgb(var(--md-sys-color-surface-container-high));
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.gamification-feature-item:hover {
+  background: rgb(var(--md-sys-color-surface-container-highest));
+  transform: translateX(4px);
+}
+
+.gamification-feature-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--md-sys-color-primary-container));
+  color: rgb(var(--md-sys-color-on-primary-container));
+  border-radius: 12px;
+  flex-shrink: 0;
+  font-size: 24px;
+}
+
+.gamification-feature-text h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+.gamification-feature-text p {
+  margin: 0;
+  font-size: 14px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: 1.4;
+}
+
+/* Levels Step */
+.gamification-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.gamification-level-card {
+  background: rgb(var(--md-sys-color-surface-container-high));
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.gamification-level-card:hover {
+  border-color: rgb(var(--md-sys-color-primary));
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gamification-level-emoji {
+  font-size: 40px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.gamification-level-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+.gamification-level-subtitle {
+  font-size: 14px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  margin-bottom: 8px;
+}
+
+.gamification-level-points {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  opacity: 0.8;
+}
+
+/* Points Step */
+.gamification-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gamification-point-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: rgb(var(--md-sys-color-surface-container-high));
+  border-radius: 12px;
+  border-left: 4px solid rgb(var(--md-sys-color-primary));
+  transition: all 0.2s ease;
+}
+
+.gamification-point-item:hover {
+  background: rgb(var(--md-sys-color-surface-container-highest));
+  transform: translateX(4px);
+}
+
+.gamification-point-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+.gamification-point-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--md-sys-color-primary));
+  padding: 4px 12px;
+  background: rgb(var(--md-sys-color-primary-container));
+  border-radius: 12px;
+}
+
+/* Achievements Step */
+.gamification-achievements-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gamification-achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgb(var(--md-sys-color-surface-container-high));
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.gamification-achievement-card:hover {
+  border-color: rgb(var(--md-sys-color-tertiary));
+  transform: scale(1.02);
+}
+
+.gamification-achievement-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: rgb(var(--md-sys-color-tertiary-container));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gamification-achievement-content h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
+.gamification-achievement-content p {
+  margin: 0;
+  font-size: 14px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: 1.4;
+}
+
+/* Get Started Step */
+.gamification-get-started-container {
+  text-align: center;
+}
+
+.gamification-celebration-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  display: block;
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.gamification-get-started-text {
+  font-size: 16px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.gamification-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.gamification-tip-item {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 12px;
+  background: rgb(var(--md-sys-color-secondary-container));
+  color: rgb(var(--md-sys-color-on-secondary-container));
+  border-radius: 8px;
+}
+
+.gamification-tip-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.gamification-tip-text {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ================================================
+   NAVIGATION CONTROLS
+   ================================================ */
+
+.gamification-onboarding-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.gamification-nav-left,
+.gamification-nav-right {
+  display: flex;
+  gap: 8px;
+}
+
+.gamification-step-counter {
+  font-size: 14px;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+  font-weight: 500;
+}
+
+/* Button overrides for navigation */
+.gamification-onboarding-navigation .md3-button {
+  min-height: 40px;
+  padding: 0 20px;
+}
+
+/* ================================================
+   MOBILE RESPONSIVE
+   ================================================ */
+
+@media (max-width: 640px) {
+  .gamification-onboarding-card {
+    padding: 24px 20px;
+    max-height: 95vh;
+  }
+
+  .gamification-onboarding-title {
+    font-size: 20px;
+  }
+
+  .gamification-onboarding-subtitle {
+    font-size: 14px;
+  }
+
+  .gamification-levels-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gamification-feature-item {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .gamification-achievement-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .gamification-onboarding-navigation {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .gamification-nav-left,
+  .gamification-nav-right {
+    width: 100%;
+  }
+
+  .gamification-nav-right {
+    flex-direction: column;
+  }
+
+  .gamification-onboarding-navigation .md3-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gamification-celebration-icon {
+    font-size: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gamification-onboarding-overlay {
+    padding: 10px;
+  }
+
+  .gamification-onboarding-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .gamification-onboarding-content {
+    min-height: 250px;
+  }
+}
+
+/* ================================================
+   DARK MODE SUPPORT
+   ================================================ */
+
+@media (prefers-color-scheme: dark) {
+  .gamification-onboarding-overlay {
+    background: rgba(0, 0, 0, 0.90);
+  }
+
+  .gamification-onboarding-card {
+    background: rgb(var(--md-sys-color-surface-container-high));
+  }
+
+  .gamification-feature-item,
+  .gamification-level-card,
+  .gamification-point-item,
+  .gamification-achievement-card {
+    background: rgb(var(--md-sys-color-surface-container-highest));
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY
+   ================================================ */
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .gamification-onboarding-card {
+    border: 2px solid rgb(var(--md-sys-color-outline));
+  }
+
+  .gamification-feature-item,
+  .gamification-level-card,
+  .gamification-point-item,
+  .gamification-achievement-card {
+    border: 1px solid rgb(var(--md-sys-color-outline));
+  }
+
+  .gamification-onboarding-title,
+  .gamification-feature-text h4,
+  .gamification-level-title,
+  .gamification-point-label,
+  .gamification-achievement-content h4 {
+    font-weight: 700;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .gamification-onboarding-overlay,
+  .gamification-onboarding-card,
+  .gamification-feature-item,
+  .gamification-level-card,
+  .gamification-point-item,
+  .gamification-achievement-card,
+  .gamification-celebration-icon {
+    animation: none;
+    transition: none;
+  }
+
+  .gamification-feature-item:hover,
+  .gamification-level-card:hover,
+  .gamification-point-item:hover,
+  .gamification-achievement-card:hover {
+    transform: none;
+  }
+}
+
+/* Focus visible states */
+.gamification-feature-item:focus-visible,
+.gamification-level-card:focus-visible,
+.gamification-point-item:focus-visible,
+.gamification-achievement-card:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
+}
+
+/* ================================================
+   SCROLLBAR STYLING
+   ================================================ */
+
+.gamification-onboarding-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gamification-onboarding-card::-webkit-scrollbar-track {
+  background: rgb(var(--md-sys-color-surface-variant));
+  border-radius: 4px;
+}
+
+.gamification-onboarding-card::-webkit-scrollbar-thumb {
+  background: rgb(var(--md-sys-color-outline-variant));
+  border-radius: 4px;
+}
+
+.gamification-onboarding-card::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--md-sys-color-outline));
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  .gamification-onboarding-overlay {
+    position: relative;
+    background: white;
+    padding: 0;
+  }
+
+  .gamification-onboarding-card {
+    box-shadow: none;
+    max-height: none;
+    page-break-inside: avoid;
+  }
+
+  .gamification-onboarding-close,
+  .gamification-onboarding-navigation {
+    display: none;
+  }
+}
+
+/* End of GamificationOnboarding.css */
