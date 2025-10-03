@@ -1,6 +1,6 @@
 # Privacy Policy for Literati
 
-**Last Updated: [DATE]**
+**Last Updated: October 3, 2025**
 
 ## Introduction
 
@@ -122,7 +122,7 @@ Depending on your location, you may have the following rights:
 - **Non-Discrimination**: No discrimination for exercising privacy rights
 
 ### How to Exercise Your Rights
-To exercise these rights, contact us at: **[YOUR-EMAIL]**
+To exercise these rights, contact us at: **info@literati.pro**
 
 We will respond to your request within 30 days (or as required by applicable law).
 
@@ -177,9 +177,9 @@ Your continued use of the Service after changes constitutes acceptance of the up
 
 If you have questions, concerns, or requests regarding this Privacy Policy, please contact us:
 
-**Email**: [YOUR-EMAIL]
-**Address**: [YOUR-ADDRESS]
-**Data Protection Officer**: [DPO-EMAIL] (if applicable)
+**Email**: info@literati.pro
+**Address**: 628 Montreal Court, Brownsville, Texas 78526
+**Data Protection Officer**: info@literati.pro
 
 ## Legal Basis for Processing (GDPR)
 
@@ -191,4 +191,4 @@ For EU residents, our legal basis for processing includes:
 
 ---
 
-*This Privacy Policy is effective as of [DATE] and was last updated on [DATE].*
+*This Privacy Policy is effective as of October 3, 2025 and was last updated on October 3, 2025.*
