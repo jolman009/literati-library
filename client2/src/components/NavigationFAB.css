@@ -1,17 +1,22 @@
+/* ============================================================================
+   NAVIGATION FAB - MATERIAL DESIGN 3
+   ============================================================================ */
+
 .navigation-fab {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 1000;
+  z-index: 1001; /* Above bottom navigation */
 }
 
-/* Mobile-only visibility */
+/* Desktop: Hide FAB */
 @media (min-width: 769px) {
   .navigation-fab {
-    display: none;
+    display: none !important;
   }
 }
 
+/* Overlay when FAB menu is open */
 .fab-overlay {
   position: fixed;
   top: 0;
@@ -20,22 +25,24 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: -1;
+  backdrop-filter: blur(4px);
 }
 
+/* Main FAB button */
 .fab-main {
   width: 56px;
   height: 56px;
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: var(--md-sys-shape-corner-large, 16px);
   border: none;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: rgb(var(--md-sys-color-primary-container));
+  color: rgb(var(--md-sys-color-on-primary-container));
   font-size: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--md-sys-elevation-level3);
-  transition: all 0.3s var(--md-motion-easing-standard, ease);
+  box-shadow: var(--md-sys-elevation-level3, 0 4px 8px rgba(0, 0, 0, 0.15));
+  transition: all 0.3s var(--md-motion-easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
   position: relative;
   overflow: hidden;
 }
@@ -44,7 +51,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--md-sys-color-on-primary-container);
+  background: rgb(var(--md-sys-color-on-primary-container));
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -62,15 +69,17 @@
 }
 
 .fab-main:hover {
-  box-shadow: var(--md-sys-elevation-level4);
+  box-shadow: var(--md-sys-elevation-level4, 0 6px 12px rgba(0, 0, 0, 0.2));
+  transform: scale(1.05);
 }
 
 .fab-main--open {
-  background: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
+  background: rgb(var(--md-sys-color-tertiary-container));
+  color: rgb(var(--md-sys-color-on-tertiary-container));
   transform: rotate(45deg);
 }
 
+/* FAB actions menu */
 .fab-actions {
   position: absolute;
   bottom: 70px;
@@ -87,25 +96,25 @@
   gap: 12px;
   padding: 16px;
   border: none;
-  border-radius: var(--md-sys-shape-corner-large);
-  background: var(--md-sys-color-surface-container-high);
-  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  background: rgb(var(--md-sys-color-surface-container-high));
+  color: rgb(var(--md-sys-color-on-surface));
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  box-shadow: var(--md-sys-elevation-level2);
+  box-shadow: var(--md-sys-elevation-level2, 0 2px 4px rgba(0, 0, 0, 0.1));
   white-space: nowrap;
-  transition: all 0.3s var(--md-motion-easing-standard, ease);
+  transition: all 0.3s var(--md-motion-easing-standard, cubic-bezier(0.4, 0, 0.2, 1));
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
 }
 
 .fab-action::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--action-color, var(--md-sys-color-primary));
+  background: var(--action-color, rgb(var(--md-sys-color-primary)));
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -120,29 +129,29 @@
 
 .fab-action:hover {
   transform: translateY(-2px);
-  box-shadow: var(--md-sys-elevation-level3);
-  border-color: var(--action-color, var(--md-sys-color-primary));
+  box-shadow: var(--md-sys-elevation-level3, 0 4px 8px rgba(0, 0, 0, 0.15));
+  border-color: var(--action-color, rgb(var(--md-sys-color-primary)));
 }
 
 .fab-action--active {
-  background: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-  border-color: var(--md-sys-color-secondary);
+  background: rgb(var(--md-sys-color-secondary-container));
+  color: rgb(var(--md-sys-color-on-secondary-container));
+  border-color: rgb(var(--md-sys-color-secondary));
 }
 
 .fab-action--logout {
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-  border-color: var(--md-sys-color-error);
+  background: rgb(var(--md-sys-color-error-container));
+  color: rgb(var(--md-sys-color-on-error-container));
+  border-color: rgb(var(--md-sys-color-error));
 }
 
 .fab-action--logout::before {
-  background: var(--md-sys-color-error);
+  background: rgb(var(--md-sys-color-error));
 }
 
 .fab-action-icon {
   font-size: 20px;
-  color: var(--action-color, var(--md-sys-color-primary));
+  color: var(--action-color, rgb(var(--md-sys-color-primary)));
   z-index: 1;
   position: relative;
 }
@@ -155,10 +164,10 @@
 }
 
 .fab-action-count {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: rgb(var(--md-sys-color-primary-container));
+  color: rgb(var(--md-sys-color-on-primary-container));
   padding: 4px 8px;
-  border-radius: var(--md-sys-shape-corner-extra-small);
+  border-radius: var(--md-sys-shape-corner-extra-small, 4px);
   font-size: 12px;
   font-weight: 600;
   margin-left: auto;
@@ -169,23 +178,23 @@
 }
 
 .fab-action--active .fab-action-count {
-  background: var(--md-sys-color-secondary);
-  color: var(--md-sys-color-on-secondary);
+  background: rgb(var(--md-sys-color-secondary));
+  color: rgb(var(--md-sys-color-on-secondary));
 }
 
 .fab-action--logout .fab-action-icon {
-  color: var(--md-sys-color-error);
+  color: rgb(var(--md-sys-color-error));
 }
 
 .fab-divider {
   height: 1px;
-  background: var(--md-sys-color-outline-variant);
+  background: rgb(var(--md-sys-color-outline-variant));
   margin: 4px 0;
 }
 
 /* Animation for FAB menu */
 .fab-actions {
-  animation: slideInUp 0.3s var(--md-motion-easing-emphasized-decelerate, ease-out);
+  animation: slideInUp 0.3s var(--md-motion-easing-emphasized-decelerate, cubic-bezier(0.05, 0.7, 0.1, 1));
 }
 
 @keyframes slideInUp {
@@ -199,11 +208,17 @@
   }
 }
 
-/* Responsive adjustments for mobile screens */
+/* ============================================================================
+   MOBILE RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+/* Standard mobile screens */
 @media (max-width: 768px) {
   .navigation-fab {
-    bottom: 100px; /* Account for bottom navigation */
-    right: 16px;
+    display: block !important; /* Force display on mobile */
+    bottom: 100px !important; /* Position above bottom navigation */
+    right: 16px !important;
+    z-index: 1001;
   }
 
   .fab-actions {
@@ -217,15 +232,76 @@
   }
 }
 
-/* Extra small screens */
+/* Small mobile screens */
 @media (max-width: 480px) {
   .navigation-fab {
-    bottom: 95px;
-    right: 12px;
+    bottom: 95px !important;
+    right: 12px !important;
+  }
+
+  .fab-main {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
   }
 
   .fab-actions {
     min-width: 160px;
     right: -4px;
+    bottom: 60px;
   }
+
+  .fab-action {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .fab-action-icon {
+    font-size: 18px;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+[data-theme="dark"] .fab-main,
+.dark .fab-main,
+.premium-app-layout.dark .fab-main {
+  background: rgb(var(--md-sys-color-primary-container));
+  color: rgb(var(--md-sys-color-on-primary-container));
+}
+
+[data-theme="dark"] .fab-action,
+.dark .fab-action,
+.premium-app-layout.dark .fab-action {
+  background: rgb(var(--md-sys-color-surface-container-high));
+  color: rgb(var(--md-sys-color-on-surface));
+  border-color: rgb(var(--md-sys-color-outline));
+}
+
+[data-theme="dark"] .fab-overlay,
+.dark .fab-overlay,
+.premium-app-layout.dark .fab-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-main,
+  .fab-action,
+  .fab-actions {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Focus visible states for keyboard navigation */
+.fab-main:focus-visible,
+.fab-action:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline-offset: 2px;
 }
