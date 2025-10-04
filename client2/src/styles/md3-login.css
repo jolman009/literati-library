@@ -1,87 +1,54 @@
-/* MD3 Login Page - Simple and Clean */
+/* Simple centered login page */
 
-/* Page container */
 .md3-login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
   background: var(--md-sys-color-surface);
 }
 
-/* Content wrapper inside card - constrains width */
-.md3-login-content {
-  max-width: 280px;
-  margin: 0 auto;
-}
-
-/* Logo */
-.md3-login-logo {
-  display: block;
+.md3-login-box {
   width: 100%;
-  max-width: 120px;
+  max-width: 360px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.md3-login-logo {
+  width: 120px;
   height: auto;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 2rem;
+  display: block;
 }
 
-/* Headers */
 .md3-login-title {
-  color: var(--md-sys-color-on-surface);
-  font-size: 1.75rem;
-  font-weight: 500;
-  text-align: center;
-  margin: 0 0 0.5rem 0;
-}
-
-.md3-login-subtitle {
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: 400;
-  text-align: center;
+  color: var(--md-sys-color-on-surface);
   margin: 0 0 2rem 0;
 }
 
-/* Form */
 .md3-login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.md3-login-form > * {
-  width: 100%;
-}
-
-/* Alerts */
-.md3-login-alert {
-  padding: 0.75rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+.md3-login-divider {
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 1.5rem 0;
   font-size: 0.875rem;
 }
 
-.md3-login-alert--error {
-  background-color: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-  border: 1px solid var(--md-sys-color-error);
-}
-
-.md3-login-alert--success {
-  background-color: var(--md-sys-color-tertiary-container);
-  color: var(--md-sys-color-on-tertiary-container);
-  border: 1px solid var(--md-sys-color-tertiary);
-}
-
-/* Checkbox */
-.md3-login-remember {
+.md3-login-social {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-/* Links */
 .md3-login-link {
   color: var(--md-sys-color-primary);
   text-decoration: none;
@@ -90,84 +57,4 @@
 
 .md3-login-link:hover {
   text-decoration: underline;
-}
-
-/* Divider */
-.md3-login-divider {
-  position: relative;
-  text-align: center;
-  margin: 1.5rem 0;
-}
-
-.md3-login-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--md-sys-color-outline-variant);
-}
-
-.md3-login-divider span {
-  position: relative;
-  background: var(--md-sys-color-surface-container-low);
-  padding: 0 1rem;
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 0.875rem;
-}
-
-/* Social buttons */
-.md3-login-social {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.md3-login-social > button {
-  width: 100%;
-}
-
-/* Signup text */
-.md3-login-signup {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.875rem;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-/* Theme toggle */
-.md3-login-theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  gap: 0.5rem;
-  background: var(--md-sys-color-surface-container);
-  border-radius: 12px;
-  padding: 0.25rem;
-  border: 1px solid var(--md-sys-color-outline-variant);
-}
-
-.md3-login-theme-toggle button {
-  padding: 0.5rem;
-  border: none;
-  background: transparent;
-  color: var(--md-sys-color-on-surface);
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.md3-login-theme-toggle button:hover {
-  background: var(--md-sys-color-surface-container-high);
-}
-
-.md3-login-theme-toggle button.active {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-}
-
-/* Utilities */
-.text-center {
-  text-align: center;
 }
