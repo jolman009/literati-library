@@ -151,7 +151,7 @@ const MD3Login = () => {
             disabled={submitting}
             required
             autoFocus
-            style={{ width: '100%' }}
+            className="md3-login-input"
           />
 
           <MD3TextField
@@ -163,7 +163,7 @@ const MD3Login = () => {
             helperText={passwordErrorMessage}
             disabled={submitting}
             required
-            style={{ width: '100%' }}
+            className="md3-login-input"
           />
 
           <div className="md3-login-checkbox-wrapper">
@@ -181,7 +181,7 @@ const MD3Login = () => {
             type="submit"
             variant="filled"
             disabled={submitting}
-            style={{ width: '100%' }}
+            className="md3-login-button"
           >
             {submitting ? 'Signing in...' : 'Sign in'}
           </MD3Button>
@@ -206,7 +206,7 @@ const MD3Login = () => {
             onClick={() => console.log('TODO: Sign in with Google')}
             variant="outlined"
             disabled={submitting}
-            style={{ width: '100%' }}
+            className="md3-login-button"
           >
             Sign in with Google
           </MD3Button>
@@ -215,7 +215,7 @@ const MD3Login = () => {
             onClick={() => console.log('TODO: Sign in with Facebook')}
             variant="outlined"
             disabled={submitting}
-            style={{ width: '100%' }}
+            className="md3-login-button"
           >
             Sign in with Facebook
           </MD3Button>
