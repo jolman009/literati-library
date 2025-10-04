@@ -6,7 +6,13 @@ on:
 
 jobs:
   update-domain-aliases:
-    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'Production'
+    if: >
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment_status.environment &&
+      contains(
+        fromJSON('["production","Production"]'),
+        github.event.deployment_status.environment
+      )
     runs-on: ubuntu-latest
 
     steps:
