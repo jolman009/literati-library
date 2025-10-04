@@ -625,7 +625,13 @@
     display: none;
   }
 
-  .content-area {
+  .md3-navigation-rail {
+    display: none !important;
+  }
+
+  .content-area,
+  .premium-app-layout.nav-expanded .content-area,
+  .premium-app-layout.nav-collapsed .content-area {
     margin-left: 0 !important;
   }
 
