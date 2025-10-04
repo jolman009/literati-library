@@ -109,6 +109,13 @@ const PrivacyPolicyPage = lazy(() =>
   })
 );
 
+const TermsOfServicePage = lazy(() =>
+  import('./pages/legal/TermsOfServicePage').catch(err => {
+    console.error('Failed to load TermsOfServicePage:', err);
+    return { default: () => <div>Error loading Terms of Service. Please refresh.</div> };
+  })
+);
+
 // Enhanced Loading Component (now using imported component)
 const AppLoadingSpinner = ({ message = "Loading Literati..." }) => (
   <LoadingSpinner message={message} size="large" variant="primary" />
@@ -208,6 +215,14 @@ const AppRoutes = () => {
         <ErrorBoundary fallbackComponent="privacy-policy" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Loading Privacy Policy..." />}>
             <PrivacyPolicyPage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+
+      <Route path="/legal/terms-of-service" element={
+        <ErrorBoundary fallbackComponent="terms-of-service" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Terms of Service..." />}>
+            <TermsOfServicePage />
           </Suspense>
         </ErrorBoundary>
       } />

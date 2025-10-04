@@ -294,21 +294,23 @@ const SignUpPage = () => {
               lineHeight: '1.5'
             }}>
               I agree to the{' '}
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
+              <Link
+                to="/legal/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{ color: '#6750a4', textDecoration: 'none' }}
               >
                 Terms of Service
-              </a>
+              </Link>
               {' '}and{' '}
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
+              <Link
+                to="/legal/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{ color: '#6750a4', textDecoration: 'none' }}
               >
                 Privacy Policy
-              </a>.
+              </Link>.
             </span>
           </div>
 

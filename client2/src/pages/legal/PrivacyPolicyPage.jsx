@@ -109,7 +109,7 @@ const PrivacyPolicyPage = () => {
 
             <h3 className="md-title-large">How to Exercise Your Rights</h3>
             <p className="md-body-medium">
-              To exercise these rights, contact us at: <strong>support@literati.app</strong>
+              To exercise these rights, contact us at: <strong>info@literati.pro</strong>
             </p>
             <p className="md-body-medium">
               We will respond to your request within 30 days (or as required by applicable law).
@@ -146,8 +146,8 @@ const PrivacyPolicyPage = () => {
               If you have questions, concerns, or requests regarding this Privacy Policy, please contact us:
             </p>
             <div className="legal-contact">
-              <p><strong>Email:</strong> privacy@literati.app</p>
-              <p><strong>Support:</strong> support@literati.app</p>
+              <p><strong>Email:</strong> info@literati.pro</p>
+              <p><strong>Data Protection Officer:</strong> info@literati.pro</p>
             </div>
           </section>
         </div>
