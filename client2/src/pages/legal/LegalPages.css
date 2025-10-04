@@ -7,6 +7,67 @@
   background: var(--md-sys-color-surface);
 }
 
+/* Table of Contents Styles */
+.legal-table-of-contents {
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--md-sys-shape-corner-medium);
+  padding: 20px;
+  margin-bottom: 32px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.legal-table-of-contents h3 {
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 16px 0;
+  font-family: var(--md-sys-typescale-title-medium-font-family-name);
+  font-size: var(--md-sys-typescale-title-medium-font-size);
+  font-weight: var(--md-sys-typescale-title-medium-font-weight);
+}
+
+.legal-table-of-contents ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legal-table-of-contents li {
+  margin-bottom: 8px;
+}
+
+.legal-toc-link {
+  background: none;
+  border: none;
+  color: var(--md-sys-color-primary);
+  cursor: pointer;
+  font-family: var(--md-sys-typescale-body-medium-font-family-name);
+  font-size: var(--md-sys-typescale-body-medium-font-size);
+  font-weight: var(--md-sys-typescale-body-medium-font-weight);
+  padding: 4px 8px;
+  text-align: left;
+  width: 100%;
+  transition: all 0.2s ease;
+  border-radius: var(--md-sys-shape-corner-small);
+}
+
+.legal-toc-link:hover {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.legal-toc-link:focus {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* Version info styling */
+.legal-version {
+  color: var(--md-sys-color-outline);
+  margin: 4px 0 0 0;
+  font-family: var(--md-sys-typescale-body-small-font-family-name);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+}
+
 @media (min-width: 768px) {
   .legal-page-container {
     padding: 32px 24px;
@@ -71,10 +132,16 @@
 
 .legal-section {
   margin-bottom: 40px;
+  scroll-margin-top: 24px; /* Offset for smooth scrolling */
 }
 
 .legal-section:last-child {
   margin-bottom: 0;
+}
+
+/* Smooth scroll behavior for the entire page */
+html {
+  scroll-behavior: smooth;
 }
 
 .legal-section h2 {
@@ -313,6 +380,11 @@
     border-bottom: 2px solid #000;
   }
 
+  /* Hide table of contents in print */
+  .legal-table-of-contents {
+    display: none;
+  }
+
   .legal-section h2 {
     border-bottom: 1px solid #000;
     page-break-after: avoid;
@@ -327,5 +399,27 @@
   .legal-warning {
     border: 1px solid #000;
     background: none;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  .legal-toc-link {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .legal-toc-link:focus {
+    outline-width: 3px;
+  }
+  
+  .legal-table-of-contents {
+    border-width: 2px;
   }
 }
