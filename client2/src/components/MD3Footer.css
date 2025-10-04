@@ -1,0 +1,281 @@
+/* MD3 Footer Component Styles - Material Design 3 */
+
+.md3-footer {
+  background: var(--md-sys-color-surface-container);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin-top: auto;
+  width: 100%;
+}
+
+.md3-footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Brand Section */
+.md3-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md3-footer-logo {
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+  font-family: var(--md-sys-typescale-title-medium-font-family-name);
+  font-size: var(--md-sys-typescale-title-medium-font-size);
+  font-weight: var(--md-sys-typescale-title-medium-font-weight);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+
+.md3-footer-tagline {
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  font-family: var(--md-sys-typescale-body-small-font-family-name);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+}
+
+/* Links Section */
+.md3-footer-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+}
+
+.md3-footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.md3-footer-column-title {
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+  font-family: var(--md-sys-typescale-title-small-font-family-name);
+  font-size: var(--md-sys-typescale-title-small-font-size);
+  font-weight: var(--md-sys-typescale-title-small-font-weight);
+  line-height: var(--md-sys-typescale-title-small-line-height);
+  letter-spacing: var(--md-sys-typescale-title-small-tracking);
+}
+
+.md3-footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.md3-footer-link {
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  font-family: var(--md-sys-typescale-label-large-font-family-name);
+  font-size: var(--md-sys-typescale-label-large-font-size);
+  font-weight: var(--md-sys-typescale-label-large-font-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  transition: color 0.2s ease;
+  width: fit-content;
+  position: relative;
+}
+
+.md3-footer-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--md-sys-color-primary);
+  transition: width 0.3s ease;
+}
+
+.md3-footer-link:hover {
+  color: var(--md-sys-color-primary);
+}
+
+.md3-footer-link:hover::after {
+  width: 100%;
+}
+
+.md3-footer-link:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+/* Button variant for cookie preferences */
+.md3-footer-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* Bottom Bar */
+.md3-footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.md3-footer-bottom-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.md3-footer-copyright {
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  font-family: var(--md-sys-typescale-body-small-font-family-name);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+}
+
+.md3-footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.md3-footer-location,
+.md3-footer-separator,
+.md3-footer-email {
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.md3-footer-email {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.md3-footer-email:hover {
+  color: var(--md-sys-color-primary-container);
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .md3-footer-bottom-content {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+@media (max-width: 767px) {
+  .md3-footer-container {
+    padding: 32px 16px 16px;
+    gap: 32px;
+  }
+
+  .md3-footer-links {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .md3-footer-column {
+    gap: 12px;
+  }
+
+  .md3-footer-nav {
+    gap: 8px;
+  }
+
+  .md3-footer-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .md3-footer-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .md3-footer-container {
+    padding: 24px 16px 16px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .md3-footer {
+    border-top-width: 2px;
+  }
+
+  .md3-footer-bottom {
+    border-top-width: 2px;
+  }
+
+  .md3-footer-link:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .md3-footer-link,
+  .md3-footer-link::after,
+  .md3-footer-email {
+    transition: none;
+  }
+}
+
+/* Dark Theme Adjustments */
+@media (prefers-color-scheme: dark) {
+  .md3-footer {
+    background: var(--md-sys-color-surface-container-low);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .md3-footer {
+    border-top: 1px solid #000;
+    background: #fff;
+  }
+
+  .md3-footer-link::after {
+    display: none;
+  }
+
+  .md3-footer-button {
+    display: none;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.md3-footer-link:focus,
+.md3-footer-button:focus,
+.md3-footer-email:focus {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+/* Sticky Footer Support */
+.md3-footer-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.md3-footer-content {
+  flex: 1;
+}
