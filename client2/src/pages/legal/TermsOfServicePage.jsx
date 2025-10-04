@@ -1,10 +1,12 @@
 import React from 'react';
 import { MD3Card } from '../../components/Material3';
+import LegalPageLayout from './LegalPageLayout';
 import './LegalPages.css';
 
 const TermsOfServicePage = () => {
   return (
-    <div className="legal-page-container">
+    <LegalPageLayout>
+      <div className="legal-page-container">
       <div className="legal-page-header">
         <h1 className="md-display-small">Terms of Service</h1>
         <p className="md-body-large legal-subtitle">
@@ -211,6 +213,7 @@ const TermsOfServicePage = () => {
         </div>
       </MD3Card>
     </div>
+    </LegalPageLayout>
   );
 };
 
