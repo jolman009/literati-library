@@ -4,6 +4,7 @@ import { MD3Card, MD3TextField, MD3Button, MD3Checkbox } from '../components/Mat
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import '../styles/md3-login.css';
 
 const MD3Login = () => {
   const navigate = useNavigate();
@@ -81,54 +82,25 @@ const MD3Login = () => {
   };
 
   const ThemeToggle = () => (
-    <div style={{
-      position: 'fixed',
-      top: '1rem',
-      right: '1rem',
-      display: 'flex',
-      gap: '8px',
-      background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
-      borderRadius: '12px',
-      padding: '4px',
-      border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    }}>
+    <div className="md3-login-theme-toggle">
       <button
         onClick={() => setTheme('light')}
-        style={{
-          padding: '8px',
-          borderRadius: '8px',
-          border: 'none',
-          background: actualTheme === 'light' ? '#6750a4' : 'transparent',
-          color: actualTheme === 'light' ? '#ffffff' : actualTheme === 'dark' ? '#f1f5f9' : '#374151',
-          cursor: 'pointer'
-        }}
+        className={`md3-login-theme-button ${actualTheme === 'light' ? 'active' : ''}`}
+        aria-label="Light theme"
       >
         <Sun size={16} />
       </button>
       <button
         onClick={() => setTheme('dark')}
-        style={{
-          padding: '8px',
-          borderRadius: '8px',
-          border: 'none',
-          background: actualTheme === 'dark' ? '#6750a4' : 'transparent',
-          color: actualTheme === 'dark' ? '#ffffff' : '#374151',
-          cursor: 'pointer'
-        }}
+        className={`md3-login-theme-button ${actualTheme === 'dark' ? 'active' : ''}`}
+        aria-label="Dark theme"
       >
         <Moon size={16} />
       </button>
       <button
         onClick={() => setTheme('system')}
-        style={{
-          padding: '8px',
-          borderRadius: '8px',
-          border: 'none',
-          background: 'transparent',
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#374151',
-          cursor: 'pointer'
-        }}
+        className="md3-login-theme-button"
+        aria-label="System theme"
       >
         <Monitor size={16} />
       </button>
@@ -136,91 +108,39 @@ const MD3Login = () => {
   );
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem',
-      background: actualTheme === 'dark' 
-        ? 'radial-gradient(ellipse at center, #1e293b 0%, #0f172a 100%)'
-        : 'radial-gradient(ellipse at center, #f8fafc 0%, #ffffff 100%)'
-    }}>
+    <div className="md3-login-container" data-theme={actualTheme}>
       <ThemeToggle />
-      
-      <MD3Card style={{
-        width: '100%',
-        maxWidth: '400px',
-        padding: '32px',
-        background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
-      }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
-          <img 
-            src="/literatiLOGO.png" 
-            alt="Literati" 
-            style={{ 
-              height: '80px', 
-              width: 'auto',
-              marginBottom: '16px',
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-            }}
+
+      <MD3Card className="md3-login-card">
+        <div className="md3-login-header">
+          <img
+            src="/literatiLOGO.png"
+            alt="Literati"
+            className="md3-login-logo"
           />
-          <h1 style={{
-            fontSize: '2rem',
-            fontWeight: '500',
-            color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-            marginBottom: '8px',
-            textAlign: 'center'
-          }}>
+          <h1 className="md3-login-title">
             Welcome to Literati
           </h1>
-          <h2 style={{
-            fontSize: '1.25rem',
-            fontWeight: '400',
-            color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280',
-            margin: 0,
-            textAlign: 'center'
-          }}>
+          <h2 className="md3-login-subtitle">
             Sign in to continue
           </h2>
         </div>
 
         {/* Error Alert */}
         {formError && (
-          <div style={{
-            padding: '12px',
-            marginBottom: '16px',
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '8px',
-            color: '#dc2626',
-            fontSize: '14px'
-          }}>
+          <div className="md3-login-error-alert" role="alert">
             {formError}
           </div>
         )}
 
         {/* Success Alert */}
         {successMessage && (
-          <div style={{
-            padding: '12px',
-            marginBottom: '16px',
-            backgroundColor: '#f0fdf4',
-            border: '1px solid #bbf7d0',
-            borderRadius: '8px',
-            color: '#16a34a',
-            fontSize: '14px'
-          }}>
+          <div className="md3-login-success-alert" role="alert">
             {successMessage}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} className="md3-login-form">
           <MD3TextField
             label="Email"
             type="email"
@@ -231,6 +151,7 @@ const MD3Login = () => {
             disabled={submitting}
             required
             autoFocus
+            style={{ width: '100%' }}
           />
 
           <MD3TextField
@@ -242,111 +163,69 @@ const MD3Login = () => {
             helperText={passwordErrorMessage}
             disabled={submitting}
             required
+            style={{ width: '100%' }}
           />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="md3-login-checkbox-wrapper">
             <MD3Checkbox
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
               disabled={submitting}
             />
-            <span style={{
-              fontSize: '14px',
-              color: actualTheme === 'dark' ? '#e2e8f0' : '#374151'
-            }}>
+            <span className="md3-login-checkbox-label">
               Remember me
             </span>
           </div>
 
           <MD3Button
             type="submit"
+            variant="filled"
             disabled={submitting}
-            style={{
-              width: '100%',
-              backgroundColor: '#6750a4',
-              color: '#ffffff'
-            }}
+            style={{ width: '100%' }}
           >
             {submitting ? 'Signing in...' : 'Sign in'}
           </MD3Button>
 
-          <div style={{ textAlign: 'center' }}>
-            <Link 
+          <div className="text-center">
+            <Link
               to="/forgot-password"
-              style={{
-                color: '#6750a4',
-                textDecoration: 'none',
-                fontSize: '14px'
-              }}
+              className="md3-login-link"
             >
               Forgot your password?
             </Link>
           </div>
         </form>
 
-        <div style={{
-          margin: '24px 0',
-          textAlign: 'center',
-          position: 'relative'
-        }}>
-          <div style={{
-            height: '1px',
-            background: actualTheme === 'dark' ? '#334155' : '#e5e7eb'
-          }} />
-          <span style={{
-            position: 'absolute',
-            top: '-10px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: actualTheme === 'dark' ? '#1e293b' : '#ffffff',
-            padding: '0 16px',
-            fontSize: '14px',
-            color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
-          }}>
-            or
-          </span>
+        <div className="md3-login-divider-wrapper">
+          <div className="md3-login-divider-line" />
+          <span className="md3-login-divider-text">or</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="md3-login-social-buttons">
           <MD3Button
             onClick={() => console.log('TODO: Sign in with Google')}
+            variant="outlined"
             disabled={submitting}
-            style={{
-              width: '100%',
-              backgroundColor: 'transparent',
-              color: actualTheme === 'dark' ? '#f1f5f9' : '#374151',
-              border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-            }}
+            style={{ width: '100%' }}
           >
             Sign in with Google
           </MD3Button>
 
           <MD3Button
             onClick={() => console.log('TODO: Sign in with Facebook')}
+            variant="outlined"
             disabled={submitting}
-            style={{
-              width: '100%',
-              backgroundColor: 'transparent',
-              color: actualTheme === 'dark' ? '#f1f5f9' : '#374151',
-              border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`
-            }}
+            style={{ width: '100%' }}
           >
             Sign in with Facebook
           </MD3Button>
 
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            <span style={{
-              fontSize: '14px',
-              color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
-            }}>
+          <div className="md3-login-signup-wrapper">
+            <span className="md3-login-signup-text">
               Don't have an account?{' '}
-              <Link 
+              <Link
                 to="/signup"
-                style={{
-                  color: '#6750a4',
-                  textDecoration: 'none',
-                  fontWeight: '500'
-                }}
+                className="md3-login-link md3-login-link-bold"
               >
                 Sign up
               </Link>
