@@ -54,6 +54,7 @@ import { gamificationRouter } from './routes/gamification.js';
 import { aiRouter } from './routes/ai.js';
 import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
+import dataExportRouter from './routes/dataExport.js';
 import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
 import { monitor } from './services/monitoring.js';
 
@@ -233,6 +234,7 @@ app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));
 app.use('/covers-enhanced', coversEnhancedRouter);
 app.use('/ai', aiRouter(authenticateTokenEnhanced));
+app.use('/api/data-export', dataExportRouter);
 
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
 app.post('/auth/register', async (req, res) => {
