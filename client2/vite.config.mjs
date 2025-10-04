@@ -222,6 +222,8 @@ export default defineConfig({
     port: 5173,  // Port 3000 blocked by Windows (see docs/PORT-3000-ISSUE.md and fix-port-3000.ps1)
     strictPort: false,  // auto-increment if busy
     open: true,
+    // Fix for SPA routing - ensures all routes serve index.html
+    historyApiFallback: true,
   },
 
   resolve: {
