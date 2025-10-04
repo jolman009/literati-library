@@ -620,9 +620,10 @@
    RESPONSIVE DESIGN
    ============================================================================ */
 
-@media (max-width: 1024px) {
+/* Tablet range - hide navigation, remove margins */
+@media (min-width: 769px) and (max-width: 1024px) {
   .premium-navigation {
-    display: none;
+    display: none !important;
   }
 
   .md3-navigation-rail {
