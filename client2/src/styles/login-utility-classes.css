@@ -1,0 +1,185 @@
+/* Login Page Utility Classes - Replaces Tailwind utilities with MD3-aware styles */
+
+/* Text Utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-on-surface {
+  color: var(--md-sys-color-on-surface);
+}
+
+.text-on-surface-variant {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.text-error {
+  color: var(--md-sys-color-error);
+}
+
+.text-primary {
+  color: var(--md-sys-color-primary);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* Font Utilities */
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+/* Margin Utilities */
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Padding Utilities */
+.p-4 {
+  padding: 1rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Spacing Utilities */
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-x-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+.space-x-3 > * + * {
+  margin-left: 0.75rem;
+}
+
+/* Flex Utilities */
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+/* Width Utilities */
+.w-full {
+  width: 100%;
+}
+
+.w-20 {
+  width: 5rem;
+}
+
+/* Height Utilities */
+.h-12 {
+  height: 3rem;
+}
+
+.h-14 {
+  height: 3.5rem;
+}
+
+.h-20 {
+  height: 5rem;
+}
+
+/* Border Radius Utilities */
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+
+/* Background Utilities */
+.bg-surface-container\/80 {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 80%, transparent);
+}
+
+/* Position Utilities */
+.relative {
+  position: relative;
+}
+
+/* Display Utilities */
+.hidden {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .sm\:block {
+    display: block;
+  }
+}
