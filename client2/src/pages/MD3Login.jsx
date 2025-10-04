@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { MD3Card, MD3TextField, MD3Button, MD3Checkbox } from '../components/Material3';
+import { MD3TextField, MD3Button, MD3Checkbox } from '../components/Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Sun, Moon, Monitor } from 'lucide-react';
@@ -111,7 +111,7 @@ const MD3Login = () => {
     <div className="md3-login-container" data-theme={actualTheme}>
       <ThemeToggle />
 
-      <MD3Card style={{ maxWidth: '400px', width: '100%', padding: '2rem' }}>
+      <div className="md3-card md3-card--elevated" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="md3-login-content">
           <img src="/literatiLOGO.png" alt="Literati" className="md3-login-logo" />
           <h1 className="md3-login-title">Welcome to Literati</h1>
@@ -202,7 +202,7 @@ const MD3Login = () => {
             </Link>
           </div>
         </div>
-      </MD3Card>
+      </div>
     </div>
   );
 };
