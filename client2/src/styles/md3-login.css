@@ -1,183 +1,142 @@
-/* MD3 Login Page Styles - Material Design 3 Compliant */
+/* MD3 Login Page - Simple and Clean */
 
+/* Page container */
 .md3-login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: radial-gradient(
-    ellipse at center,
-    var(--md-sys-color-surface-container-lowest) 0%,
-    var(--md-sys-color-surface) 100%
-  );
+  background: var(--md-sys-color-surface);
 }
 
-/* Higher specificity to override MD3Card base styles */
-.md3-card.md3-login-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 2.5rem !important;
-  align-items: center;
+/* Content wrapper inside card - constrains width */
+.md3-login-content {
+  max-width: 280px;
+  margin: 0 auto;
 }
 
-.md3-login-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
+/* Logo */
 .md3-login-logo {
-  max-height: 80px;
-  max-width: 240px;
-  width: auto;
+  display: block;
+  width: 100%;
+  max-width: 120px;
   height: auto;
-  object-fit: contain;
-  margin-bottom: 1rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  margin: 0 auto 1.5rem;
 }
 
+/* Headers */
 .md3-login-title {
-  font-family: var(--md-sys-typescale-headline-medium-font-family);
-  font-size: var(--md-sys-typescale-headline-medium-font-size);
-  font-weight: var(--md-sys-typescale-headline-medium-font-weight);
-  line-height: var(--md-sys-typescale-headline-medium-line-height);
-  letter-spacing: var(--md-sys-typescale-headline-medium-tracking);
   color: var(--md-sys-color-on-surface);
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 500;
   text-align: center;
+  margin: 0 0 0.5rem 0;
 }
 
 .md3-login-subtitle {
-  font-family: var(--md-sys-typescale-title-medium-font-family);
-  font-size: var(--md-sys-typescale-title-medium-font-size);
-  font-weight: var(--md-sys-typescale-title-medium-font-weight);
-  line-height: var(--md-sys-typescale-title-medium-line-height);
-  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
   color: var(--md-sys-color-on-surface-variant);
-  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
   text-align: center;
+  margin: 0 0 2rem 0;
 }
 
-.md3-login-error-alert {
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 320px;
-  background-color: var(--md-sys-color-error-container);
-  border: 1px solid var(--md-sys-color-error);
-  border-radius: var(--md-sys-shape-corner-medium);
-  color: var(--md-sys-color-on-error-container);
-  font-family: var(--md-sys-typescale-body-small-font-family);
-  font-size: var(--md-sys-typescale-body-small-font-size);
-}
-
-.md3-login-success-alert {
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 320px;
-  background-color: color-mix(in srgb, var(--md-sys-color-tertiary-container) 30%, transparent);
-  border: 1px solid var(--md-sys-color-tertiary);
-  border-radius: var(--md-sys-shape-corner-medium);
-  color: var(--md-sys-color-on-tertiary-container);
-  font-family: var(--md-sys-typescale-body-small-font-family);
-  font-size: var(--md-sys-typescale-body-small-font-size);
-}
-
+/* Form */
 .md3-login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1.25rem;
-  width: 100%;
-  max-width: 320px;
+  margin-bottom: 1.5rem;
 }
 
-.md3-login-input {
-  width: 100%;
-}
-
-.md3-login-button {
+.md3-login-form > * {
   width: 100%;
 }
 
-.md3-login-checkbox-wrapper {
+/* Alerts */
+.md3-login-alert {
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.md3-login-alert--error {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border: 1px solid var(--md-sys-color-error);
+}
+
+.md3-login-alert--success {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+  border: 1px solid var(--md-sys-color-tertiary);
+}
+
+/* Checkbox */
+.md3-login-remember {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  width: 100%;
 }
 
-.md3-login-checkbox-label {
-  font-family: var(--md-sys-typescale-body-medium-font-family);
-  font-size: var(--md-sys-typescale-body-medium-font-size);
-  color: var(--md-sys-color-on-surface);
-}
-
+/* Links */
 .md3-login-link {
   color: var(--md-sys-color-primary);
   text-decoration: none;
-  font-family: var(--md-sys-typescale-body-small-font-family);
-  font-size: var(--md-sys-typescale-body-small-font-size);
-  transition: color 0.2s ease;
+  font-size: 0.875rem;
 }
 
 .md3-login-link:hover {
-  color: var(--md-sys-color-primary);
   text-decoration: underline;
 }
 
-.md3-login-link-bold {
-  font-weight: 500;
-}
-
-.md3-login-divider-wrapper {
-  margin: 1.5rem 0;
-  text-align: center;
+/* Divider */
+.md3-login-divider {
   position: relative;
-  width: 100%;
-  max-width: 320px;
+  text-align: center;
+  margin: 1.5rem 0;
 }
 
-.md3-login-divider-line {
+.md3-login-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
   height: 1px;
   background: var(--md-sys-color-outline-variant);
 }
 
-.md3-login-divider-text {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+.md3-login-divider span {
+  position: relative;
   background: var(--md-sys-color-surface-container-low);
   padding: 0 1rem;
-  font-family: var(--md-sys-typescale-body-small-font-family);
-  font-size: var(--md-sys-typescale-body-small-font-size);
   color: var(--md-sys-color-on-surface-variant);
+  font-size: 0.875rem;
 }
 
-.md3-login-social-buttons {
+/* Social buttons */
+.md3-login-social {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 0.75rem;
+}
+
+.md3-login-social > button {
   width: 100%;
-  max-width: 320px;
 }
 
-.md3-login-signup-wrapper {
+/* Signup text */
+.md3-login-signup {
   text-align: center;
-  margin-top: 1rem;
-}
-
-.md3-login-signup-text {
-  font-family: var(--md-sys-typescale-body-small-font-family);
-  font-size: var(--md-sys-typescale-body-small-font-size);
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
   color: var(--md-sys-color-on-surface-variant);
 }
 
+/* Theme toggle */
 .md3-login-theme-toggle {
   position: fixed;
   top: 1rem;
@@ -185,67 +144,30 @@
   display: flex;
   gap: 0.5rem;
   background: var(--md-sys-color-surface-container);
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: 12px;
   padding: 0.25rem;
   border: 1px solid var(--md-sys-color-outline-variant);
-  box-shadow: var(--md-sys-elevation-2);
 }
 
-.md3-login-theme-button {
+.md3-login-theme-toggle button {
   padding: 0.5rem;
-  border-radius: var(--md-sys-shape-corner-medium);
   border: none;
   background: transparent;
   color: var(--md-sys-color-on-surface);
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
-.md3-login-theme-button:hover {
+.md3-login-theme-toggle button:hover {
   background: var(--md-sys-color-surface-container-high);
 }
 
-.md3-login-theme-button.active {
+.md3-login-theme-toggle button.active {
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-on-primary-container);
 }
 
-/* Text alignment utilities */
+/* Utilities */
 .text-center {
   text-align: center;
-}
-
-/* Responsive adjustments */
-@media (max-width: 480px) {
-  .md3-login-card {
-    padding: 1.5rem;
-  }
-
-  .md3-login-title {
-    font-size: var(--md-sys-typescale-headline-small-font-size);
-  }
-
-  .md3-login-subtitle {
-    font-size: var(--md-sys-typescale-title-small-font-size);
-  }
-}
-
-/* Accessibility */
-.md3-login-theme-button:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
-}
-
-.md3-login-link:focus-visible {
-  outline: 2px solid var(--md-sys-color-primary);
-  outline-offset: 2px;
-  border-radius: var(--md-sys-shape-corner-extra-small);
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .md3-login-link,
-  .md3-login-theme-button {
-    transition: none;
-  }
 }

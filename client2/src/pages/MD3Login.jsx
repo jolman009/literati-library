@@ -111,125 +111,95 @@ const MD3Login = () => {
     <div className="md3-login-container" data-theme={actualTheme}>
       <ThemeToggle />
 
-      <MD3Card className="md3-login-card">
-        <div className="md3-login-header">
-          <img
-            src="/literatiLOGO.png"
-            alt="Literati"
-            className="md3-login-logo"
-          />
-          <h1 className="md3-login-title">
-            Welcome to Literati
-          </h1>
-          <h2 className="md3-login-subtitle">
-            Sign in to continue
-          </h2>
-        </div>
+      <MD3Card style={{ maxWidth: '400px', width: '100%', padding: '2rem' }}>
+        <div className="md3-login-content">
+          <img src="/literatiLOGO.png" alt="Literati" className="md3-login-logo" />
+          <h1 className="md3-login-title">Welcome to Literati</h1>
+          <h2 className="md3-login-subtitle">Sign in to continue</h2>
 
-        {/* Error Alert */}
-        {formError && (
-          <div className="md3-login-error-alert" role="alert">
-            {formError}
-          </div>
-        )}
+          {formError && (
+            <div className="md3-login-alert md3-login-alert--error" role="alert">
+              {formError}
+            </div>
+          )}
 
-        {/* Success Alert */}
-        {successMessage && (
-          <div className="md3-login-success-alert" role="alert">
-            {successMessage}
-          </div>
-        )}
+          {successMessage && (
+            <div className="md3-login-alert md3-login-alert--success" role="alert">
+              {successMessage}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="md3-login-form">
-          <MD3TextField
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={emailError}
-            helperText={emailErrorMessage}
-            disabled={submitting}
-            required
-            autoFocus
-            className="md3-login-input"
-          />
-
-          <MD3TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={passwordError}
-            helperText={passwordErrorMessage}
-            disabled={submitting}
-            required
-            className="md3-login-input"
-          />
-
-          <div className="md3-login-checkbox-wrapper">
-            <MD3Checkbox
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
+          <form onSubmit={handleSubmit} className="md3-login-form">
+            <MD3TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={emailError}
+              helperText={emailErrorMessage}
               disabled={submitting}
+              required
+              autoFocus
             />
-            <span className="md3-login-checkbox-label">
-              Remember me
-            </span>
-          </div>
 
-          <MD3Button
-            type="submit"
-            variant="filled"
-            disabled={submitting}
-            className="md3-login-button"
-          >
-            {submitting ? 'Signing in...' : 'Sign in'}
-          </MD3Button>
+            <MD3TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={passwordError}
+              helperText={passwordErrorMessage}
+              disabled={submitting}
+              required
+            />
 
-          <div className="text-center">
-            <Link
-              to="/forgot-password"
-              className="md3-login-link"
-            >
-              Forgot your password?
-            </Link>
-          </div>
-        </form>
+            <div className="md3-login-remember">
+              <MD3Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                disabled={submitting}
+              />
+              <span>Remember me</span>
+            </div>
 
-        <div className="md3-login-divider-wrapper">
-          <div className="md3-login-divider-line" />
-          <span className="md3-login-divider-text">or</span>
-        </div>
+            <MD3Button type="submit" variant="filled" disabled={submitting}>
+              {submitting ? 'Signing in...' : 'Sign in'}
+            </MD3Button>
 
-        <div className="md3-login-social-buttons">
-          <MD3Button
-            onClick={() => console.log('TODO: Sign in with Google')}
-            variant="outlined"
-            disabled={submitting}
-            className="md3-login-button"
-          >
-            Sign in with Google
-          </MD3Button>
-
-          <MD3Button
-            onClick={() => console.log('TODO: Sign in with Facebook')}
-            variant="outlined"
-            disabled={submitting}
-            className="md3-login-button"
-          >
-            Sign in with Facebook
-          </MD3Button>
-
-          <div className="md3-login-signup-wrapper">
-            <span className="md3-login-signup-text">
-              Don't have an account?{' '}
-              <Link
-                to="/signup"
-                className="md3-login-link md3-login-link-bold"
-              >
-                Sign up
+            <div className="text-center">
+              <Link to="/forgot-password" className="md3-login-link">
+                Forgot your password?
               </Link>
-            </span>
+            </div>
+          </form>
+
+          <div className="md3-login-divider">
+            <span>or</span>
+          </div>
+
+          <div className="md3-login-social">
+            <MD3Button
+              onClick={() => console.log('TODO: Sign in with Google')}
+              variant="outlined"
+              disabled={submitting}
+            >
+              Sign in with Google
+            </MD3Button>
+
+            <MD3Button
+              onClick={() => console.log('TODO: Sign in with Facebook')}
+              variant="outlined"
+              disabled={submitting}
+            >
+              Sign in with Facebook
+            </MD3Button>
+          </div>
+
+          <div className="md3-login-signup">
+            Don't have an account?{' '}
+            <Link to="/signup" className="md3-login-link">
+              Sign up
+            </Link>
           </div>
         </div>
       </MD3Card>
