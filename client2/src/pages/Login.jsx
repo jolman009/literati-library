@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import Card from '../components/Material3/Card';
 import TextField from '../components/Material3/TextField';
 import Button from '../components/Material3/Button';
+import '../styles/login-enhanced.css';
+import '../styles/login-utility-classes.css';
 
 const Login = () => {
+  const { actualTheme } = useMaterial3Theme();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -102,40 +106,49 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface relative overflow-hidden login-background">
+    <div
+      className="login-background"
+      data-theme={actualTheme}
+      style={{
+        minHeight: '100vh',
+        backgroundColor: 'var(--md-sys-color-surface)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
         {/* Decorative Geometric Shapes */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/10 blur-3xl floating-element"></div>
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-secondary/10 blur-3xl floating-element"></div>
-        <div className="absolute top-1/3 -right-16 w-32 h-32 rounded-full bg-tertiary/15 blur-2xl floating-element"></div>
-        
+        <div className="floating-element" style={{ position: 'absolute', top: '-6rem', right: '-6rem', width: '24rem', height: '24rem', borderRadius: '50%', backgroundColor: 'color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent)', filter: 'blur(3rem)' }}></div>
+        <div className="floating-element" style={{ position: 'absolute', bottom: '-8rem', left: '-8rem', width: '20rem', height: '20rem', borderRadius: '50%', backgroundColor: 'color-mix(in srgb, var(--md-sys-color-secondary) 10%, transparent)', filter: 'blur(3rem)' }}></div>
+        <div className="floating-element" style={{ position: 'absolute', top: '33%', right: '-4rem', width: '8rem', height: '8rem', borderRadius: '50%', backgroundColor: 'color-mix(in srgb, var(--md-sys-color-tertiary) 15%, transparent)', filter: 'blur(2rem)' }}></div>
+
         {/* Floating Book Icons */}
-        <div className="absolute top-20 left-10 opacity-10 floating-element">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-primary">
+        <div className="floating-element" style={{ position: 'absolute', top: '5rem', left: '2.5rem', opacity: 0.1 }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--md-sys-color-primary)' }}>
             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
           </svg>
         </div>
-        <div className="absolute bottom-20 right-16 opacity-10 floating-element">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-secondary">
+        <div className="floating-element" style={{ position: 'absolute', bottom: '5rem', right: '4rem', opacity: 0.1 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--md-sys-color-secondary)' }}>
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
         </div>
-        <div className="absolute top-2/3 left-16 opacity-10 floating-element">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" className="text-tertiary">
+        <div className="floating-element" style={{ position: 'absolute', top: '66%', left: '4rem', opacity: 0.1 }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--md-sys-color-tertiary)' }}>
             <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
           </svg>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-8 login-container">
-        <div className="w-full max-w-md">
+      <div className="login-container" style={{ position: 'relative', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '2rem 1rem' }}>
+        <div style={{ width: '100%', maxWidth: '28rem' }}>
           {/* Header Section */}
-          <div className="text-center mb-8 login-logo">
+          <div className="login-logo" style={{ textAlign: 'center', marginBottom: '2rem' }}>
             {/* Logo */}
-            <div className="inline-flex items-center justify-center w-20 h-20 mb-6 rounded-3xl logo-container">
-              <svg width="40" height="40" viewBox="0 0 100 100" className="text-primary">
+            <div className="logo-container" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '5rem', height: '5rem', marginBottom: '1.5rem', borderRadius: '1.5rem' }}>
+              <svg width="40" height="40" viewBox="0 0 100 100" style={{ color: 'var(--md-sys-color-primary)' }}>
                 {/* Literati Feather Logo */}
                 <path 
                   d="M20 20 L20 80 L40 80 L40 40 L60 20 C70 10, 80 15, 85 25 C90 35, 85 45, 75 50 L60 60 L80 60 C85 60, 90 65, 90 70 C90 75, 85 80, 80 80 L40 80" 
@@ -144,19 +157,19 @@ const Login = () => {
                 />
               </svg>
             </div>
-            
+
             {/* Brand Text */}
-            <h1 className="text-4xl font-bold text-on-surface mb-2 tracking-tight">
+            <h1 style={{ fontSize: '2.25rem', fontWeight: 700, color: 'var(--md-sys-color-on-surface)', marginBottom: '0.5rem', letterSpacing: '-0.025em' }}>
               Literati
             </h1>
-            <p className="text-lg text-on-surface-variant font-medium">
+            <p style={{ fontSize: '1.125rem', color: 'var(--md-sys-color-on-surface-variant)', fontWeight: 500 }}>
               Your Digital Bookshelf
             </p>
           </div>
 
           {/* Login Card */}
-          <Card className="login-card-enhanced shadow-2xl login-card">
-            <div className="p-8">
+          <Card className="login-card-enhanced login-card">
+            <div style={{ padding: '2rem' }}>
               {/* Form Header */}
               <div className="text-center mb-8">
                 <h2 className="text-2xl font-semibold text-on-surface mb-2">
