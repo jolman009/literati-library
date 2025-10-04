@@ -13,15 +13,11 @@
   );
 }
 
-.md3-login-card {
+/* Higher specificity to override MD3Card base styles */
+.md3-card.md3-login-card {
   width: 100%;
   max-width: 420px;
-  padding: 2.5rem;
-  background: var(--md-sys-color-surface-container-low);
-  border-radius: var(--md-sys-shape-corner-extra-large);
-  box-shadow: var(--md-sys-elevation-3);
-  display: flex;
-  flex-direction: column;
+  padding: 2.5rem !important;
   align-items: center;
 }
 
