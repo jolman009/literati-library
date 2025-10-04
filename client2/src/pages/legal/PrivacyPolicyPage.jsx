@@ -155,6 +155,7 @@ const PrivacyPolicyPage = () => {
         </div>
       </MD3Card>
     </div>
+    </LegalPageLayout>
   );
 };
 

@@ -1,9 +1,11 @@
 // src/components/legal/CookieConsent.jsx
 import React, { useState, useEffect } from 'react';
 import { MD3Button, MD3Card } from '../Material3';
+import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import './CookieConsent.css';
 
 const CookieConsent = () => {
+  const { actualTheme } = useMaterial3Theme();
   const [isVisible, setIsVisible] = useState(false);
   const [preferences, setPreferences] = useState({
     essential: true, // Always true, can't be disabled
@@ -89,7 +91,7 @@ const CookieConsent = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="cookie-consent-overlay">
+    <div className="cookie-consent-overlay" data-theme={actualTheme}>
       <div className="cookie-consent-container">
         <MD3Card className="cookie-consent-card">
           {!showPreferences ? (
