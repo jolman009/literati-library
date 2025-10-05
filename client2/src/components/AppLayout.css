@@ -770,7 +770,6 @@
   div.mobile-only[style*="position: fixed"] {
     bottom: 100px !important;
   }
-}
 
   /* Mobile navigation item styling */
   .md3-navigation-item--bar {
@@ -791,6 +790,7 @@
   .md3-navigation-rail {
     display: none;
   }
+}
 
 /* ============================================================================
    ANIMATIONS

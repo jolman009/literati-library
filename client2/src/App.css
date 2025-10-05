@@ -495,59 +495,6 @@
   z-index: -9999 !important;
 }
 
-/* 4. FORCE NAVIGATION TEXT VISIBILITY WITH MAXIMUM SPECIFICITY */
-.md3-rail-destination .md3-rail-destination-label,
-.md3-rail-destination .md3-rail-destination-icon,
-.md3-rail-destination .md3-rail-destination-icon .material-symbols-outlined {
-  position: relative !important;
-  z-index: 999999 !important;
-  color: var(--md-sys-color-on-surface) !important;
-  background: transparent !important;
-  text-shadow: none !important;
-  pointer-events: auto !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  isolation: isolate !important;
-}
-
-/* 5. FORCE HOVER STATES TO MAINTAIN TEXT VISIBILITY */
-.md3-rail-destination:hover .md3-rail-destination-label,
-.md3-rail-destination:focus .md3-rail-destination-label,
-.md3-rail-destination:active .md3-rail-destination-label,
-.md3-rail-destination:hover .md3-rail-destination-icon,
-.md3-rail-destination:focus .md3-rail-destination-icon,
-.md3-rail-destination:active .md3-rail-destination-icon {
-  position: relative !important;
-  z-index: 999999 !important;
-  color: var(--md-sys-color-on-surface) !important;
-  background: transparent !important;
-  text-shadow: none !important;
-  isolation: isolate !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* 6. REMOVE ANY OVERLAYS OR BACKGROUNDS THAT COULD COVER TEXT */
-.md3-rail-destination:hover,
-.md3-rail-destination:focus,
-.md3-rail-destination:active {
-  overflow: visible !important;
-  position: relative !important;
-}
-
-/* 7. ENSURE NO GLOBAL TOOLTIP STYLES AFFECT NAVIGATION */
-.md3-navigation-rail,
-.premium-header,
-.md3-top-app-bar {
-  position: relative !important;
-  z-index: var(--md-sys-z-index-fixed) !important;
-}
-
-/* 8. DISABLE ANY ANIMATION OR TRANSFORM THAT COULD HIDE TEXT */
-.md3-rail-destination *,
-.premium-header *,
-.md3-top-app-bar * {
-  transform: none !important;
-  animation: none !important;
-  transition: color 0.2s ease, background-color 0.2s ease !important;
-}
+/* CLEAN FIX: Removed overly aggressive !important rules that were conflicting
+   with Material Design 3 rendering pipeline. The proper z-index layering is now
+   handled in PremiumNavigation.css without !important declarations. */
