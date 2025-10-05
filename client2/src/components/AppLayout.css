@@ -60,9 +60,9 @@
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 1px 0 0 rgba(255, 255, 255, 0.5);
   padding: 24px 20px;
-  overflow: hidden;
+  overflow: visible;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 5;
+  z-index: 10;
 }
 
 .navigation-pane[data-collapsed="true"] {

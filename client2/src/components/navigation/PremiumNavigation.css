@@ -11,7 +11,7 @@
   flex-direction: column;
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
   z-index: 20;
-  overflow: hidden;
+  overflow: visible;
   color: var(--md-sys-color-on-surface);
 }
 
@@ -71,6 +71,7 @@
   flex-direction: column;
   gap: 4px;
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 /* Navigation destination item with premium transitions */

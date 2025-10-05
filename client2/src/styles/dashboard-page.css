@@ -5,7 +5,6 @@
   background: var(--md-sys-color-surface);
   min-height: calc(100vh - 80px); /* Account for header height */
   transition: background 0.3s ease;
-  margin-top: 56px; /* Reduced to account for AppLayout's page-content padding-top: 24px */
   position: relative;
   z-index: 1; /* Ensure proper stacking below header */
 }
