@@ -1,22 +1,25 @@
 /* Premium Navigation Rail - Material Design 3 */
 
 .md3-navigation-rail {
-  position: fixed;
-  left: 0;
+  position: sticky;
   top: 0;
   height: 100vh;
-  width: 80px;
+  min-height: 100vh;
+  width: 96px;
+  min-width: 80px;
+  max-width: 320px;
   background: var(--md-sys-color-surface-container);
   border-right: 1px solid var(--md-sys-color-outline-variant);
   display: flex;
   flex-direction: column;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-  z-index: 100;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 10;
   overflow: hidden;
   color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
-.md3-navigation-rail:not(.collapsed) {
+.md3-navigation-rail.expanded {
   width: 280px;
 }
 
@@ -276,9 +279,15 @@
 }
 
 /* Responsive - hide labels on small screens */
+@media (max-width: 1200px) {
+  .md3-navigation-rail.expanded {
+    width: 240px;
+  }
+}
+
 @media (max-width: 1024px) {
-  .md3-navigation-rail:not(.collapsed) {
-    width: 80px;
+  .md3-navigation-rail.expanded {
+    width: 96px;
   }
   
   .md3-rail-destination-label,
