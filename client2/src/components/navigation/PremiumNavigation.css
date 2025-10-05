@@ -1,18 +1,18 @@
 /* Premium Navigation Rail - Material Design 3 */
 
 .md3-navigation-rail {
-  position: sticky;
+  position: relative;
   top: 0;
   height: 100vh;
   width: 100%;
-  background: var(--md-sys-color-surface-container);
-  border-right: 1px solid var(--md-sys-color-outline-variant);
+  background: red; /* TEMP: Solid red to test visibility */
+  border: 5px solid yellow; /* TEMP: Bright border */
   display: flex;
   flex-direction: column;
   transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-  z-index: 20;
+  z-index: 1;
   overflow: visible;
-  color: var(--md-sys-color-on-surface);
+  color: white;
 }
 
 
