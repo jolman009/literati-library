@@ -78,6 +78,7 @@
   bottom: 0;
   background: linear-gradient(135deg, rgba(103, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
   pointer-events: none;
+  z-index: 0;
 }
 
 
@@ -542,11 +543,11 @@
 /* UPDATED: MD3-compliant responsive layout rules */
 @media (min-width: 769px) {
   .mobile-only {
-    display: none !important;
+    display: none;
   }
 
   .md3-navigation-bar {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -668,12 +669,13 @@
     transform: translateY(0);
   }
 }
+/* Mobile styles - ONLY apply on screens 768px and smaller */
 @media (max-width: 768px) {
   .premium-app-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .navigation-pane {
+  .premium-app-layout:not(.reader-mode) .navigation-pane {
     display: none;
   }
 
