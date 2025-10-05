@@ -292,7 +292,7 @@
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
-  z-index: -1; /* Ensure pseudo-elements stay behind text */
+  z-index: 0; /* Layer behind text content */
 }
 
 .md3-rail-destination::after {
@@ -307,7 +307,7 @@
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
-  z-index: -1; /* Ensure pseudo-elements stay behind text */
+  z-index: 0; /* Layer behind text content */
 }
 
 .md3-rail-destination:hover::before {
