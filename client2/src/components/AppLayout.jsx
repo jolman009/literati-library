@@ -44,15 +44,11 @@ const AppLayout = () => {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation - MD3 Navigation Bar */}
+      {/* Mobile Bottom Navigation - Self-contained with viewport detection */}
       {!inReader && <MobileNavigation />}
 
-      {/* Mobile Navigation FAB - Only show on mobile */}
-      {!inReader && (
-        <div className="mobile-only">
-          <NavigationFAB />
-        </div>
-      )}
+      {/* Mobile Navigation FAB - Self-contained with viewport detection */}
+      {!inReader && <NavigationFAB />}
 
       {/* Global Search Components */}
       <GlobalSearch
