@@ -5,10 +5,13 @@
    ============================================================================ */
 
 .premium-app-layout {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   min-height: 100vh;
   background: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark mode support for main app background */
@@ -30,6 +33,29 @@
   pointer-events: none;
   z-index: 0;
 }
+
+.premium-app-layout.reader-mode {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.premium-app-layout.reader-mode .navigation-pane {
+  display: none;
+}
+
+.navigation-pane {
+  position: relative;
+  min-height: 100vh;
+  background: var(--md-sys-color-surface-container-low);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.premium-app-layout > .mobile-only {
+  grid-column: 1 / -1;
+}
+
 
 .desktop-layout {
   display: flex;
@@ -529,39 +555,16 @@
 
 /* UPDATED: MD3-compliant responsive layout rules */
 @media (min-width: 769px) {
-  .content-area {
-    margin-left: 280px; /* Default expanded navigation width */
-    margin-bottom: 0;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* When navigation is expanded (default state) */
-  .premium-app-layout.nav-expanded .content-area {
-    margin-left: 280px !important;
-    padding-left: 0 !important;
-    border-left: none !important;
-  }
-
-  /* When navigation is collapsed */
-  .premium-app-layout.nav-collapsed .content-area {
-    margin-left: 80px !important;
-  }
-
-  /* Ensure desktop navigation rail is visible */
- .md3-navigation-rail {
-    display: flex !important;
-  }
-
-  /* Hide mobile-only elements on desktop */
   .mobile-only {
     display: none !important;
   }
 
-  /* Hide mobile navigation on desktop */
   .md3-navigation-bar {
     display: none !important;
   }
 }
+
+
 
 .page-content {
   flex: 1;
@@ -622,20 +625,6 @@
 
 /* Tablet range - hide navigation, remove margins */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .premium-navigation {
-    display: none !important;
-  }
-
-  .md3-navigation-rail {
-    display: none !important;
-  }
-
-  .content-area,
-  .premium-app-layout.nav-expanded .content-area,
-  .premium-app-layout.nav-collapsed .content-area {
-    margin-left: 0 !important;
-  }
-
   .premium-header-content {
     padding: 16px 24px;
   }
@@ -648,6 +637,8 @@
     display: none;
   }
 }
+
+
 
 /* Library Filters Section */
 .library-filters-section {
@@ -695,11 +686,12 @@
   }
 }
 @media (max-width: 768px) {
-  .desktop-layout {
-    flex-direction: column;
+  .premium-app-layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .premium-navigation {
+  .navigation-pane,
+  .md3-navigation-rail {
     display: none !important;
   }
 
@@ -734,18 +726,15 @@
     width: 240px;
   }
 
-  /* Content area mobile adjustments */
   .content-area {
     margin-left: 0 !important;
     margin-bottom: 80px; /* Space for mobile navigation */
   }
 
-  /* CRITICAL: Show mobile-only elements */
   .mobile-only {
     display: block !important;
   }
 
-  /* CRITICAL: Ensure MD3 Navigation Bar is visible */
   .md3-navigation-bar {
     display: flex !important;
     visibility: visible !important;
@@ -760,42 +749,9 @@
     border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   }
-
-
-/* CRITICAL: Force navigation destinations to display */
-  .md3-navigation-bar .md3-navigation-bar__destinations {
-    display: flex !important;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 8px;
-  }
-
-  /* Ensure navigation items are visible */
-  .md3-navigation-bar .md3-navigation-item {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 64px;
-    height: 100%;
-  }
-
-  /* CRITICAL: Navigation FAB positioning */
-  .navigation-fab {
-    display: block !important;
-    position: fixed !important;
-    bottom: 100px !important; /* Above bottom navigation */
-    right: 16px !important;
-    z-index: 1001 !important;
-  }
-
-  /* CRITICAL: Global Search FAB positioning */
-  div.mobile-only[style*="position: fixed"] {
-    bottom: 100px !important;
-  }
 }
+
+
 
   /* Mobile navigation item styling */
   .md3-navigation-item--bar {

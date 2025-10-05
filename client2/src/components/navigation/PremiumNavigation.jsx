@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -9,17 +9,24 @@ const PremiumNavigation = ({
   pendingUploads = 0,
   isAdmin = false,
   defaultCollapsed = false,
-  onCollapseChange,
+  isCollapsed,
+  onCollapseChange
 }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { actualTheme } = useMaterial3Theme();
   const { logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
+
+  const collapsed = typeof isCollapsed === 'boolean' ? isCollapsed : internalCollapsed;
 
   const handleCollapseToggle = () => {
     const newCollapsed = !collapsed;
-    setCollapsed(newCollapsed);
+
+    if (typeof isCollapsed !== 'boolean') {
+      setInternalCollapsed(newCollapsed);
+    }
+
     onCollapseChange?.(newCollapsed);
   };
 
@@ -30,7 +37,7 @@ const PremiumNavigation = ({
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
-    { to: null, label: 'Logout', icon: 'logout', isLogout: true },
+    { to: null, label: 'Logout', icon: 'logout', isLogout: true }
   ];
 
   const handleLogout = async () => {
@@ -38,9 +45,14 @@ const PremiumNavigation = ({
     navigate('/login', { replace: true });
   };
 
+  const navClasses = [
+    'md3-navigation-rail',
+    collapsed ? 'collapsed' : 'expanded',
+    actualTheme === 'dark' ? 'dark' : ''
+  ].filter(Boolean).join(' ');
+
   return (
-    <nav className={`md3-navigation-rail ${collapsed ? 'collapsed' : ''} ${actualTheme === 'dark' ? 'dark' : ''}`}>
-      {/* Header with collapse toggle */}
+    <nav className={navClasses}>
       <div className="md3-rail-header">
         <button
           className="md3-icon-button"
@@ -54,10 +66,8 @@ const PremiumNavigation = ({
         )}
       </div>
 
-      {/* Navigation items */}
       <div className="md3-rail-destinations">
         {navigationItems.map(({ to, label, icon, badge, isLogout }) => {
-          // Handle logout as a button instead of link
           if (isLogout) {
             return (
               <button
@@ -100,7 +110,6 @@ const PremiumNavigation = ({
           );
         })}
       </div>
-
     </nav>
   );
 };

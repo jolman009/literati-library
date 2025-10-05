@@ -14,48 +14,71 @@ const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
   const { pathname } = useLocation();
   const { isOpen, openSearch, closeSearch, navigateToResult } = useGlobalSearch();
-  const [navCollapsed, setNavCollapsed] = useState(false); // false = expanded = 280px
+  const [navCollapsed, setNavCollapsed] = useState(false);
 
   const inReader = /^\/read\/[^/]+$/.test(pathname);
 
+  const layoutClasses = [
+    'premium-app-layout',
+    actualTheme === 'dark' ? 'dark' : '',
+    navCollapsed ? 'nav-collapsed' : 'nav-expanded',
+    inReader ? 'reader-mode' : ''
+  ].filter(Boolean).join(' ');
 
   return (
-    <div className={`premium-app-layout ${actualTheme === 'dark' ? 'dark' : ''} ${navCollapsed ? 'nav-collapsed' : 'nav-expanded'}`}>
-      <div className="desktop-layout">
-        {!inReader && <PremiumNavigation onCollapseChange={setNavCollapsed} />}
-        <div className="content-area">
-          {!inReader && <PremiumHeader onSearch={openSearch} />}
-          <main className="page-content">
-            <Outlet />
-          </main>
-        </div>
+    <div className={layoutClasses}>
+      {!inReader && (
+        <aside className="navigation-pane" data-collapsed={navCollapsed}>
+          <PremiumNavigation
+            isCollapsed={navCollapsed}
+            onCollapseChange={setNavCollapsed}
+          />
+        </aside>
+      )}
+
+      <div className="content-area">
+        {!inReader && <PremiumHeader onSearch={openSearch} />}
+
+        <main className="page-content">
+          <Outlet />
+        </main>
       </div>
 
-      {/* Mobile Bottom Navigation - MD3 Navigation Bar */}
       {!inReader && <MobileNavigation />}
 
-      {/* Mobile Navigation FAB - Only show on mobile */}
       {!inReader && (
         <div className="mobile-only">
           <NavigationFAB />
         </div>
       )}
 
-      {/* Global Search Components */}
       <GlobalSearch
         isOpen={isOpen}
         onClose={closeSearch}
         onNavigateToResult={navigateToResult}
       />
 
-      {/* Mobile Search FAB - Position at bottom-left */}
-      <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
+      <div
+        className="mobile-only"
+        style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}
+      >
         <GlobalSearchFAB position="bottom-left" />
       </div>
 
-      {/* Debug indicator - shows when service worker is disabled */}
       {import.meta.env.VITE_ENABLE_SERVICE_WORKER === 'false' && (
-        <div style={{position:'fixed',bottom:8,left:8,fontSize:12,opacity:.7,background:'#000',color:'#fff',padding:'4px 8px',borderRadius:6}}>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 8,
+            left: 8,
+            fontSize: 12,
+            opacity: 0.7,
+            background: '#000',
+            color: '#fff',
+            padding: '4px 8px',
+            borderRadius: 6
+          }}
+        >
           SW disabled
         </div>
       )}
