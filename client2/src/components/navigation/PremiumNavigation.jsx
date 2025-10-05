@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -10,7 +10,7 @@ const PremiumNavigation = ({
   isAdmin = false,
   defaultCollapsed = false,
   isCollapsed,
-  onCollapseChange
+  onCollapseChange,
 }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -18,12 +18,19 @@ const PremiumNavigation = ({
   const { logout } = useAuth();
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
 
-  const collapsed = typeof isCollapsed === 'boolean' ? isCollapsed : internalCollapsed;
+  const isControlled = typeof isCollapsed === 'boolean';
+  const collapsed = isControlled ? isCollapsed : internalCollapsed;
+
+  useEffect(() => {
+    if (isControlled) {
+      setInternalCollapsed(isCollapsed);
+    }
+  }, [isControlled, isCollapsed]);
 
   const handleCollapseToggle = () => {
     const newCollapsed = !collapsed;
 
-    if (typeof isCollapsed !== 'boolean') {
+    if (!isControlled) {
       setInternalCollapsed(newCollapsed);
     }
 
@@ -37,7 +44,7 @@ const PremiumNavigation = ({
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
-    { to: null, label: 'Logout', icon: 'logout', isLogout: true }
+    { to: null, label: 'Logout', icon: 'logout', isLogout: true },
   ];
 
   const handleLogout = async () => {
@@ -45,14 +52,11 @@ const PremiumNavigation = ({
     navigate('/login', { replace: true });
   };
 
-  const navClasses = [
-    'md3-navigation-rail',
-    collapsed ? 'collapsed' : 'expanded',
-    actualTheme === 'dark' ? 'dark' : ''
-  ].filter(Boolean).join(' ');
-
   return (
-    <nav className={navClasses}>
+    <nav
+      className={`md3-navigation-rail ${collapsed ? 'collapsed' : 'expanded'} ${actualTheme === 'dark' ? 'dark' : ''}`}
+      data-collapsed={collapsed}
+    >
       <div className="md3-rail-header">
         <button
           className="md3-icon-button"

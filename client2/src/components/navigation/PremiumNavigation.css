@@ -4,25 +4,21 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  min-height: 100vh;
-  width: 96px;
-  min-width: 80px;
-  max-width: 320px;
+  width: 100%;
   background: var(--md-sys-color-surface-container);
   border-right: 1px solid var(--md-sys-color-outline-variant);
   display: flex;
   flex-direction: column;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
-  z-index: 10;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+  z-index: 20;
   overflow: hidden;
   color: var(--md-sys-color-on-surface);
-  box-shadow: var(--md-sys-elevation-level1);
 }
 
-.md3-navigation-rail.expanded {
-  width: 280px;
-}
 
+.navigation-pane[data-collapsed="true"] .md3-navigation-rail {
+  padding: 16px 12px;
+}
 
 /* Header section */
 .md3-rail-header {
@@ -279,28 +275,6 @@
 }
 
 /* Responsive - hide labels on small screens */
-@media (max-width: 1200px) {
-  .md3-navigation-rail.expanded {
-    width: 240px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .md3-navigation-rail.expanded {
-    width: 96px;
-  }
-  
-  .md3-rail-destination-label,
-  .md3-rail-title {
-    display: none;
-  }
-  
-  .md3-rail-destination {
-    justify-content: center;
-    padding: 0;
-  }
-}
-
 /* Mobile - convert to bottom navigation */
 @media (max-width: 768px) {
   .md3-navigation-rail {
