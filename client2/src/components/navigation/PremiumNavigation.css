@@ -123,6 +123,19 @@
   justify-content: center;
 }
 
+/* Ensure labels are visible in expanded state */
+.md3-navigation-rail.expanded .md3-rail-destination-label,
+.md3-navigation-rail:not(.collapsed) .md3-rail-destination-label {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Ensure labels are hidden in collapsed state */
+.md3-navigation-rail.collapsed .md3-rail-destination-label {
+  display: none;
+}
+
 .md3-rail-destination:hover {
   background: var(--md-sys-color-surface-container);
   color: var(--md-sys-color-on-surface);
@@ -189,7 +202,10 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: left center;
   position: relative;
-  z-index: 2; /* FIX: Ensure text is ABOVE pseudo-elements and backgrounds */
+  z-index: 2; /* Ensure text is ABOVE pseudo-elements and backgrounds */
+  display: block; /* Ensure label renders as block element */
+  visibility: visible; /* Explicitly set visibility */
+  opacity: 1; /* Explicitly set opacity */
 }
 
 .md3-rail-destination:hover .md3-rail-destination-label {
@@ -276,11 +292,19 @@
   animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Responsive - hide labels on small screens */
+/* Responsive Breakpoints */
+
+/* Desktop - ensure navigation rail is visible */
+@media (min-width: 769px) {
+  .md3-navigation-rail {
+    display: flex;
+  }
+}
+
 /* Mobile - convert to bottom navigation */
 @media (max-width: 768px) {
   .md3-navigation-rail {
-    display: none !important; /* FIX: Force hide on mobile to prevent cascade conflicts */
+    display: none;
   }
 }
 
