@@ -763,14 +763,7 @@
     height: 100%;
   }
 
-  /* Navigation FAB positioning above bottom bar */
-  .navigation-fab {
-    display: block;
-    position: fixed;
-    bottom: 100px; /* Above bottom navigation */
-    right: 16px;
-    z-index: 1001;
-  }
+  /* Navigation FAB positioning is now handled in NavigationFAB.css */
 
   /* Global Search FAB positioning */
   div.mobile-only[style*="position: fixed"] {
@@ -836,10 +829,7 @@
     padding-bottom: 120px;
   }
 
-  .navigation-fab {
-    bottom: 95px;
-    right: 12px;
-  }
+  /* Navigation FAB positioning is now handled in NavigationFAB.css */
 
   .md3-navigation-bar {
     height: 72px;

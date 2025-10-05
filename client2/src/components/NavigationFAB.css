@@ -2,17 +2,19 @@
    NAVIGATION FAB - MATERIAL DESIGN 3
    ============================================================================ */
 
+/* Base state: Hidden by default, shown on mobile via media query */
 .navigation-fab {
+  display: none;
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 1001; /* Above bottom navigation */
 }
 
-/* Desktop: Hide FAB */
+/* Desktop: Ensure FAB remains hidden */
 @media (min-width: 769px) {
   .navigation-fab {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -215,9 +217,9 @@
 /* Standard mobile screens */
 @media (max-width: 768px) {
   .navigation-fab {
-    display: block !important; /* Force display on mobile */
-    bottom: 100px !important; /* Position above bottom navigation */
-    right: 16px !important;
+    display: block; /* Show on mobile */
+    bottom: 100px; /* Position above bottom navigation */
+    right: 16px;
     z-index: 1001;
   }
 
@@ -235,8 +237,8 @@
 /* Small mobile screens */
 @media (max-width: 480px) {
   .navigation-fab {
-    bottom: 95px !important;
-    right: 12px !important;
+    bottom: 95px;
+    right: 12px;
   }
 
   .fab-main {

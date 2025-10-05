@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import './NavigationFAB.css';
 
 const NavigationFAB = ({ quickStats = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
