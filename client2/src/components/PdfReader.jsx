@@ -8,11 +8,22 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 export default function PdfReader({ file, book, token, onClose, onPageChange, initialPage }) {
   // Support both 'file' prop (legacy) and 'book' prop (new) - memoized to prevent unnecessary reloads
   const pdfFile = useMemo(() => {
-    return file || (book?.file_url ? (
-      token 
+    const result = file || (book?.file_url ? (
+      token
         ? { url: book.file_url, httpHeaders: { Authorization: `Bearer ${token}` } }
         : book.file_url
     ) : null);
+
+    console.log('📄 PdfReader - Preparing PDF file:', {
+      hasFile: !!file,
+      hasBook: !!book,
+      file_url: book?.file_url,
+      hasToken: !!token,
+      pdfFileType: typeof result,
+      pdfFileValue: result
+    });
+
+    return result;
   }, [file, book?.file_url, token]);
 
   // Check if we have a valid PDF file
@@ -174,9 +185,33 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         <Document
           file={pdfFile}
           onLoadSuccess={onLoadSuccess}
-          onLoadError={(err) => console.error('PDF load error:', err)}
-          loading={<div>Loading PDF…</div>}
-          error={<div>Failed to load PDF</div>}
+          onLoadError={(err) => {
+            console.error('❌ PDF load error:', err);
+            console.error('PDF file details:', {
+              pdfFile,
+              book: book?.title,
+              file_url: book?.file_url
+            });
+          }}
+          loading={
+            <div style={{ padding: '40px', textAlign: 'center', color: 'white' }}>
+              <div>Loading PDF…</div>
+              <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.7 }}>
+                {book?.title}
+              </div>
+            </div>
+          }
+          error={
+            <div style={{ padding: '40px', textAlign: 'center', color: 'white' }}>
+              <div>❌ Failed to load PDF</div>
+              <div style={{ fontSize: '12px', marginTop: '8px', opacity: 0.7 }}>
+                {book?.title}
+              </div>
+              <div style={{ fontSize: '11px', marginTop: '4px', opacity: 0.5 }}>
+                Check console for details
+              </div>
+            </div>
+          }
           // If you load via URL and need credentials:
           // options={{ withCredentials: true }}
           // Force a remount when file changes:

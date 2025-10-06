@@ -41,6 +41,15 @@ const ReadBook = () => {
 
       const bookData = res.data || null;
 
+      console.log('📖 Book data received:', {
+        id: bookData?.id,
+        title: bookData?.title,
+        file_url: bookData?.file_url,
+        file_type: bookData?.file_type,
+        format: bookData?.format,
+        filename: bookData?.filename
+      });
+
       // Client-side fallback: ensure format is set
       if (bookData && !bookData.format) {
         if (bookData.file_type?.includes('pdf')) {
@@ -55,6 +64,16 @@ const ReadBook = () => {
         }
         console.log(`📚 Derived book format: ${bookData.format} from file_type: ${bookData.file_type}, filename: ${bookData.filename}`);
       }
+
+      // Validate file_url exists
+      if (!bookData?.file_url) {
+        console.error('❌ Book has no file_url!', bookData);
+        setError('Book file is missing');
+        setLoading(false);
+        return;
+      }
+
+      console.log(`✅ Book ready to render: format=${bookData.format}, file_url=${bookData.file_url}`);
 
       setBook(bookData);
       setError(null);
