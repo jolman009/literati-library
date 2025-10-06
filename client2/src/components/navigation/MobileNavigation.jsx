@@ -61,20 +61,25 @@ const MobileNavigation = () => {
   }
 
   // Inline styles - guaranteed to work regardless of CSS state
+  // Dark mode colors with proper contrast
+  const isDark = actualTheme === 'dark';
+
   const containerStyle = {
     position: 'fixed',
     bottom: 0,
     left: 0,
     right: 0,
     height: '80px',
-    backgroundColor: 'rgb(var(--md-sys-color-surface-container, 239 237 242))',
-    borderTop: '1px solid rgb(var(--md-sys-color-outline-variant, 201 197 208))',
+    backgroundColor: isDark ? '#2b2b2b' : '#f5f5f5',
+    borderTop: isDark ? '1px solid #444' : '1px solid #ddd',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: '0 8px',
     zIndex: 1000,
-    boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: isDark
+      ? '0 -2px 8px rgba(0, 0, 0, 0.5)'
+      : '0 -2px 8px rgba(0, 0, 0, 0.1)',
   };
 
   const itemStyle = (active) => ({
@@ -86,8 +91,12 @@ const MobileNavigation = () => {
     height: '64px',
     cursor: 'pointer',
     borderRadius: '16px',
-    backgroundColor: active ? 'rgb(var(--md-sys-color-secondary-container, 232 222 248))' : 'transparent',
-    color: active ? 'rgb(var(--md-sys-color-on-secondary-container, 29 25 43))' : 'rgb(var(--md-sys-color-on-surface-variant, 73 69 79))',
+    backgroundColor: active
+      ? (isDark ? '#4a4a4a' : '#e8e0f5')
+      : 'transparent',
+    color: active
+      ? (isDark ? '#bb86fc' : '#6750a4')
+      : (isDark ? '#e0e0e0' : '#5f5f5f'),
     transition: 'all 0.2s ease',
     padding: '8px',
     border: 'none',

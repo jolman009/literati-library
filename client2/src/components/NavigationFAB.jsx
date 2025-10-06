@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 
 /**
  * Simplified Navigation FAB - Self-Contained with Inline Styles
  * No external CSS dependencies - guaranteed to work
+ * Always visible at bottom-right (fixed positioning)
  */
 const NavigationFAB = ({ quickStats = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +14,7 @@ const NavigationFAB = ({ quickStats = {} }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { logout } = useAuth();
+  const { actualTheme } = useMaterial3Theme();
 
   // Detect mobile viewport
   useEffect(() => {
@@ -61,6 +64,9 @@ const NavigationFAB = ({ quickStats = {} }) => {
     return null;
   }
 
+  // Dark mode support
+  const isDark = actualTheme === 'dark';
+
   // Inline styles
   const containerStyle = {
     position: 'fixed',
@@ -76,7 +82,7 @@ const NavigationFAB = ({ quickStats = {} }) => {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.3)',
     zIndex: -1,
     backdropFilter: 'blur(4px)',
     display: isOpen ? 'block' : 'none',
@@ -87,14 +93,16 @@ const NavigationFAB = ({ quickStats = {} }) => {
     height: '56px',
     borderRadius: '16px',
     border: 'none',
-    backgroundColor: 'rgb(var(--md-sys-color-primary-container, 234 221 255))',
-    color: 'rgb(var(--md-sys-color-on-primary-container, 33 0 94))',
+    backgroundColor: isDark ? '#6b4c9a' : '#eaddff',
+    color: isDark ? '#ffffff' : '#21005d',
     fontSize: '24px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+    boxShadow: isDark
+      ? '0 4px 8px rgba(0, 0, 0, 0.4)'
+      : '0 4px 8px rgba(0, 0, 0, 0.15)',
     transition: 'all 0.3s ease',
     transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
   };
@@ -114,23 +122,25 @@ const NavigationFAB = ({ quickStats = {} }) => {
     alignItems: 'center',
     gap: '12px',
     padding: '12px 16px',
-    border: '1px solid rgb(var(--md-sys-color-outline-variant, 201 197 208))',
+    border: isDark ? '1px solid #666' : '1px solid #ddd',
     borderRadius: '16px',
-    backgroundColor: 'rgb(var(--md-sys-color-surface-container-high, 236 234 240))',
-    color: 'rgb(var(--md-sys-color-on-surface, 28 27 31))',
+    backgroundColor: isDark ? '#3a3a3a' : '#f5f5f5',
+    color: isDark ? '#e0e0e0' : '#2b2b2b',
     fontSize: '14px',
     fontWeight: '500',
     cursor: 'pointer',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    boxShadow: isDark
+      ? '0 2px 4px rgba(0, 0, 0, 0.3)'
+      : '0 2px 4px rgba(0, 0, 0, 0.1)',
     whiteSpace: 'nowrap',
     transition: 'all 0.2s ease',
   };
 
   const logoutButtonStyle = {
     ...actionButtonStyle,
-    backgroundColor: 'rgb(var(--md-sys-color-error-container, 255 218 214))',
-    color: 'rgb(var(--md-sys-color-error, 186 26 26))',
-    borderColor: 'rgb(var(--md-sys-color-error, 186 26 26))',
+    backgroundColor: isDark ? '#5a2828' : '#ffebee',
+    color: isDark ? '#ff6b6b' : '#c62828',
+    borderColor: isDark ? '#ff6b6b' : '#c62828',
   };
 
   const iconStyle = {
@@ -143,8 +153,8 @@ const NavigationFAB = ({ quickStats = {} }) => {
   };
 
   const countStyle = {
-    backgroundColor: 'rgb(var(--md-sys-color-primary-container, 234 221 255))',
-    color: 'rgb(var(--md-sys-color-on-primary-container, 33 0 94))',
+    backgroundColor: isDark ? '#6b4c9a' : '#eaddff',
+    color: isDark ? '#ffffff' : '#21005d',
     padding: '4px 8px',
     borderRadius: '4px',
     fontSize: '12px',
