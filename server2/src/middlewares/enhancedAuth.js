@@ -10,7 +10,8 @@ const refreshTokenFamilies = new Map(); // family_id -> { userId, tokens: Set(),
 const activeRefreshAttempts = new Map(); // userId -> Promise (to prevent concurrent refresh)
 
 // Configuration constants
-const ACCESS_TOKEN_EXPIRY = '15m';
+// Note: Longer expiry for development convenience. Shorten for production!
+const ACCESS_TOKEN_EXPIRY = process.env.NODE_ENV === 'production' ? '15m' : '24h';
 const REFRESH_TOKEN_EXPIRY = '7d';
 
 // Enhanced secure cookie configuration
