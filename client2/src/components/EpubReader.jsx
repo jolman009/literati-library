@@ -12,9 +12,15 @@ import "../styles/epub-reader.css";
  * - initialLocation: string | null  // epubcfi(...) from query or a saved note  // [WIRING]
  */
 const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
+  // Use proxy endpoint for EPUB files to ensure proper authentication and CORS
+  const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const epubUrl = `${apiBaseUrl}/books/${book?.id}/file`;
+
   console.log('📖 EpubReader - Initializing:', {
     bookTitle: book?.title,
-    file_url: book?.file_url,
+    bookId: book?.id,
+    original_file_url: book?.file_url,
+    proxy_epub_url: epubUrl,
     hasFile: !!book?.file_url,
     initialLocation
   });
@@ -42,9 +48,34 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   // ReactReader gives us the underlying epub.js rendition instance
   const getRendition = useCallback(
     (rendition) => {
-      // Optional: tweak theme/size etc.
-      // rendition.themes.fontSize("110%");
-      // rendition.themes.default({ body: { lineHeight: 1.5 } });
+      console.log('📚 EPUB rendition created successfully');
+
+      // Set readable font size
+      rendition.themes.fontSize("110%");
+
+      // Apply custom theme with proper contrast for readability
+      rendition.themes.default({
+        body: {
+          lineHeight: '1.6',
+          color: '#1a1a1a !important',  // Force dark text
+          background: '#ffffff !important',  // Force white background
+          padding: '20px !important',
+        },
+        p: {
+          color: '#1a1a1a !important',
+          margin: '0.8em 0',
+        },
+        'h1, h2, h3, h4, h5, h6': {
+          color: '#1a1a1a !important',
+          marginTop: '1.2em',
+          marginBottom: '0.6em',
+        },
+        a: {
+          color: '#2563eb !important',  // Blue links
+        }
+      });
+
+      console.log('✅ EPUB theme applied: white background, dark text');
 
       // epub.js emits 'relocated' with detailed info (incl. percentage)
       rendition.on("relocated", (loc) => {
@@ -59,6 +90,11 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         if (onLocationChange && cfi) {
           onLocationChange({ cfi, percent: pct });
         }
+      });
+
+      // Listen for errors
+      rendition.on("displayError", (err) => {
+        console.error('❌ EPUB display error:', err);
       });
     },
     [onLocationChange]
@@ -91,8 +127,8 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       <div className="pt-16 h-full">
         <div className="epub-shell">
         <ReactReader
-          // [WIRING] — the EPUB file to render
-          url={book?.file_url}
+          // [WIRING] — the EPUB file to render via proxy endpoint
+          url={epubUrl}
           // [WIRING] — controlled location (CFI). Initial value is from props.
           location={location}
           // [WIRING] — called when user navigates; we update state + (optionally) parent

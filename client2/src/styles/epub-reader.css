@@ -1,8 +1,50 @@
+/* EPUB reader container - full viewport minus header */
 .epub-shell {
   height: calc(100vh - 4rem); /* matches your header offset (pt-16 ~= 4rem) */
+  width: 100%;
+  position: relative;
 }
+
+/* Force ReactReader to fill container */
+.epub-shell > div {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+/* Ensure iframe fills the container */
 .epub-shell iframe {
   width: 100% !important;
   height: 100% !important;
   border: 0;
+}
+
+/* Style the reader container for better readability */
+.epub-shell .epub-view {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+/* Center content with comfortable reading width on large screens */
+@media (min-width: 1024px) {
+  .epub-shell .epub-view {
+    max-width: 800px !important; /* Comfortable reading width */
+    padding: 0 40px;
+  }
+}
+
+/* Navigation arrows (if ReactReader renders them) */
+.epub-shell button {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  border: none !important;
+  padding: 20px 15px !important;
+  cursor: pointer !important;
+  z-index: 10;
+}
+
+.epub-shell button:hover {
+  background: rgba(0, 0, 0, 0.8) !important;
 }
