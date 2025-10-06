@@ -9,17 +9,31 @@ import FloatingTimer from "../components/FloatingTimer";
 import API from "../config/api";
 
 const ReadBook = () => {
+  console.log('🚀 ReadBook component mounting...');
+
   const { bookId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();              // <-- for deep-link ?cfi=...
-  const { user, token } = useAuth();
+
+  // Get auth context
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const { activeSession, hasActiveSession } = useReadingSession();
+
+  console.log('✅ Auth state:', {
+    hasUser: !!user,
+    isAuthenticated,
+    authLoading,
+    userId: user?.id
+  });
+  console.log('✅ Reading session state:', { hasActiveSession });
 
   const [book, setBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);  // (PDF-only; iframe can't update)
   const [currentLocator, setCurrentLocator] = useState(null); // <-- EPUB location { cfi, percent? }
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  console.log('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
 
   // --- fetch book (cancellable) ---
   const fetchBook = useCallback(async () => {
@@ -35,7 +49,6 @@ const ReadBook = () => {
       const controller = new AbortController();
       const res = await API.get(`/books/${bookId}`, {
         signal: controller.signal,
-        headers: { Authorization: `Bearer ${token}` },
         timeout: 30000,
       });
 
@@ -84,16 +97,35 @@ const ReadBook = () => {
     } finally {
       setLoading(false);
     }
-  }, [bookId, token]);
+  }, [bookId]);
 
   useEffect(() => {
-    // auth gate
-    if (!user || !token) {
+    console.log('🔄 ReadBook useEffect triggered', {
+      authLoading,
+      isAuthenticated,
+      hasUser: !!user
+    });
+
+    // Wait for auth to finish loading
+    if (authLoading) {
+      console.log('⏳ Auth still loading, waiting...');
+      return;
+    }
+
+    // Auth gate - only after loading is complete
+    if (!isAuthenticated || !user) {
+      console.warn('⚠️ Not authenticated, redirecting to login');
       navigate("/login");
       return;
     }
-    fetchBook();
-  }, [user, token, navigate, fetchBook]);
+
+    console.log('✅ User authenticated, fetching book...');
+    fetchBook().catch(err => {
+      console.error('❌ fetchBook failed in useEffect:', err);
+      setError(err.message);
+      setLoading(false);
+    });
+  }, [authLoading, isAuthenticated, user, navigate, fetchBook]);
 
   // Fallback: if PDF viewer (iframe) doesn’t emit page, default to 1 after book loads.
   useEffect(() => {
@@ -216,7 +248,6 @@ const ReadBook = () => {
         <>
           <ReadestReader
             book={book}
-            token={token}
             onClose={handleClose}
             onLocationChange={(loc) => setCurrentLocator(loc)} // EPUB
             initialLocation={initialLocation}

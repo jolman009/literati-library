@@ -195,11 +195,14 @@ const AppRoutes = () => {
           </ErrorBoundary>
         } />
         <Route path="/read/:bookId" element={
-          <ReaderErrorBoundary>
-            <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
-              <ReadBookWrapper />
-            </Suspense>
-          </ReaderErrorBoundary>
+          <>
+            {console.log('🛣️ App.jsx: /read/:bookId route matched!')}
+            <ReaderErrorBoundary>
+              <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
+                <ReadBookWrapper />
+              </Suspense>
+            </ReaderErrorBoundary>
+          </>
         } />
         <Route path="/collections" element={
           <ErrorBoundary fallbackComponent="collections" variant="full">
