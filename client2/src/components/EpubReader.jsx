@@ -12,7 +12,14 @@ import "../styles/epub-reader.css";
  * - initialLocation: string | null  // epubcfi(...) from query or a saved note  // [WIRING]
  */
 const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
-  // Track current CFI we’re rendering at
+  console.log('📖 EpubReader - Initializing:', {
+    bookTitle: book?.title,
+    file_url: book?.file_url,
+    hasFile: !!book?.file_url,
+    initialLocation
+  });
+
+  // Track current CFI we're rendering at
   const [location, setLocation] = useState(initialLocation || null); // [WIRING]
   // Keep refs for the last known cfi and percent so we can send both together
   const lastCfiRef = useRef(initialLocation || null);
