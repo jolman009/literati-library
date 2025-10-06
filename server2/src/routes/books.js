@@ -28,7 +28,7 @@ export function booksRouter(authenticateToken) {
   router.get("/:id", authenticateToken, async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       const { data: book, error } = await supabase
         .from("books")
         .select("*")
@@ -39,6 +39,21 @@ export function booksRouter(authenticateToken) {
       if (error || !book) {
         console.error("Book fetch error:", error);
         return res.status(404).json({ error: "Book not found" });
+      }
+
+      // Derive format from file_type or filename for reader compatibility
+      if (!book.format) {
+        if (book.file_type?.includes('pdf')) {
+          book.format = 'pdf';
+        } else if (book.file_type?.includes('epub') || book.filename?.toLowerCase().endsWith('.epub')) {
+          book.format = 'epub';
+        } else if (book.filename) {
+          // Fallback: derive from filename extension
+          const ext = book.filename.split('.').pop()?.toLowerCase();
+          book.format = ext === 'pdf' ? 'pdf' : ext === 'epub' ? 'epub' : 'pdf';
+        } else {
+          book.format = 'pdf'; // Default fallback
+        }
       }
 
       // Return book immediately without waiting for cover
@@ -88,11 +103,29 @@ export function booksRouter(authenticateToken) {
         return res.status(500).json({ error: "Failed to fetch books", details: error.message });
       }
 
+      // Derive format for each book to ensure reader compatibility
+      if (books && books.length > 0) {
+        books.forEach(book => {
+          if (!book.format) {
+            if (book.file_type?.includes('pdf')) {
+              book.format = 'pdf';
+            } else if (book.file_type?.includes('epub') || book.filename?.toLowerCase().endsWith('.epub')) {
+              book.format = 'epub';
+            } else if (book.filename) {
+              const ext = book.filename.split('.').pop()?.toLowerCase();
+              book.format = ext === 'pdf' ? 'pdf' : ext === 'epub' ? 'epub' : 'pdf';
+            } else {
+              book.format = 'pdf';
+            }
+          }
+        });
+      }
+
       // Return books immediately with performance metrics (development only)
       if (process.env.NODE_ENV === 'development') {
         const metrics = dbOptimizer.getPerformanceMetrics();
-        res.json({ 
-          books: books || [], 
+        res.json({
+          books: books || [],
           _performance: metrics.getBookList,
           _total: books?.length || 0
         });

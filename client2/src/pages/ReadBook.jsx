@@ -39,7 +39,24 @@ const ReadBook = () => {
         timeout: 30000,
       });
 
-      setBook(res.data || null);
+      const bookData = res.data || null;
+
+      // Client-side fallback: ensure format is set
+      if (bookData && !bookData.format) {
+        if (bookData.file_type?.includes('pdf')) {
+          bookData.format = 'pdf';
+        } else if (bookData.file_type?.includes('epub') || bookData.filename?.toLowerCase().endsWith('.epub')) {
+          bookData.format = 'epub';
+        } else if (bookData.filename) {
+          const ext = bookData.filename.split('.').pop()?.toLowerCase();
+          bookData.format = ext === 'pdf' ? 'pdf' : ext === 'epub' ? 'epub' : 'pdf';
+        } else {
+          bookData.format = 'pdf';
+        }
+        console.log(`📚 Derived book format: ${bookData.format} from file_type: ${bookData.file_type}, filename: ${bookData.filename}`);
+      }
+
+      setBook(bookData);
       setError(null);
     } catch (err) {
       if (err?.name !== "CanceledError" && err?.message !== "canceled") {
