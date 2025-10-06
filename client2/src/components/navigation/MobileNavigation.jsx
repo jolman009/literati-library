@@ -1,13 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 
 /**
  * Simplified Mobile Navigation - Self-Contained with Inline Styles
  * No external CSS dependencies - guaranteed to work
+ * Always visible at bottom of viewport (fixed positioning)
  */
 const MobileNavigation = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { actualTheme } = useMaterial3Theme();
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile viewport
