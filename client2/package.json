@@ -15,7 +15,6 @@
     "react-dom": "^19.1.1",
     "react-dropzone": "^14.3.8",
     "react-pdf": "^10.1.0",
-    "react-reader": "^2.0.13",
     "react-router-dom": "^7.6.2",
     "react-window": "^2.1.0",
     "react-window-infinite-loader": "^2.0.0",
