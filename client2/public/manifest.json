@@ -9,7 +9,7 @@
   "background_color": "#fff7fe",
   "theme_color": "#6750a4",
   "orientation": "portrait-primary",
-  "scope": "/literati/",
+  "scope": "/",
   "lang": "en",
   "categories": ["books", "education", "productivity"],
   "protocol_handlers": [
