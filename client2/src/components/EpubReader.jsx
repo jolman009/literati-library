@@ -1,7 +1,7 @@
 // src/components/EpubReader.jsx
 import React, { useCallback, useRef, useState } from "react";
 import { X, Download } from "lucide-react";
-import { ReactReader } from "react-reader";
+import { ReactReader, ReactReaderStyle } from "react-reader";
 import "../styles/epub-reader.css";
 
 /**
@@ -124,7 +124,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       </div>
 
       {/* Reader */}
-      <div className="pt-16 h-full">
+      <div className="pt-16 h-full w-full">
         <div className="epub-shell">
         <ReactReader
           // [WIRING] — the EPUB file to render via proxy endpoint
@@ -135,6 +135,32 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
           locationChanged={handleLocationChanged}
           // [WIRING] — get the rendition to hook 'relocated' and compute percent
           getRendition={getRendition}
+          // Custom styles to ensure full width
+          readerStyles={{
+            ...ReactReaderStyle,
+            readerArea: {
+              ...ReactReaderStyle.readerArea,
+              width: '100%',
+              maxWidth: '100%',
+              margin: '0 auto',
+              transition: undefined
+            },
+            container: {
+              ...ReactReaderStyle.container,
+              width: '100%',
+              height: '100%'
+            },
+            arrow: {
+              ...ReactReaderStyle.arrow,
+              background: 'rgba(0, 0, 0, 0.5)',
+              color: '#fff'
+            },
+            arrowHover: {
+              ...ReactReaderStyle.arrowHover,
+              background: 'rgba(0, 0, 0, 0.8)'
+            }
+          }}
+          swipeable
         />
       </div>
       </div>
