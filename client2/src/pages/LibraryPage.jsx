@@ -77,13 +77,37 @@ const LibraryPage = () => {
 
   const fetchBooks = async () => {
     try {
+      console.log('📚 LibraryPage: Starting to fetch books...');
       setLoading(true);
       const response = await API.get('/books');
+
+      console.log('📚 LibraryPage: Response received:', {
+        dataType: typeof response.data,
+        isArray: Array.isArray(response.data),
+        hasBooks: !!response.data?.books,
+        dataKeys: Object.keys(response.data || {}),
+        sampleData: response.data
+      });
+
       const booksData = Array.isArray(response.data) ? response.data : response.data.books || [];
+
+      console.log('📚 LibraryPage: Books data processed:', {
+        bookCount: booksData.length,
+        firstBook: booksData[0],
+        allTitles: booksData.map(b => b.title)
+      });
+
       setBooks(booksData);
       setError(null);
+      console.log('✅ LibraryPage: Books set successfully!');
     } catch (error) {
-      console.error('Failed to fetch books:', error);
+      console.error('❌ LibraryPage: Failed to fetch books:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
       setError('Failed to load your library');
     } finally {
       setLoading(false);
@@ -104,7 +128,13 @@ const LibraryPage = () => {
   });
 
   const handleBookClick = (book) => {
+    console.log('📖 LibraryPage: handleBookClick called for book:', {
+      id: book.id,
+      title: book.title,
+      navigatingTo: `/read/${book.id}`
+    });
     navigate(`/read/${book.id}`);
+    console.log('✅ LibraryPage: navigate() called successfully');
   };
 
   const handleBookUpdate = async (updatedBook) => {
@@ -121,7 +151,15 @@ const LibraryPage = () => {
   };
 
   const handleRead = (book) => {
+    console.log('📖 LibraryPage: handleRead called for book:', {
+      id: book.id,
+      title: book.title,
+      format: book.format,
+      file_url: book.file_url,
+      navigatingTo: `/read/${book.id}`
+    });
     navigate(`/read/${book.id}`);
+    console.log('✅ LibraryPage: navigate() to reader called successfully');
   };
 
   // Reading session handlers

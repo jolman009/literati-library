@@ -26,9 +26,15 @@ class ErrorBoundary extends React.Component {
       hasError: true
     });
 
-    // Log error to console in development
+    // Enhanced logging in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Error Boundary caught an error:', error, errorInfo);
+      console.error('🚨 ====== ERROR BOUNDARY CAUGHT ERROR ======');
+      console.error('Component:', this.props.fallbackComponent || 'unknown');
+      console.error('Error:', error);
+      console.error('Error Message:', error.message);
+      console.error('Error Stack:', error.stack);
+      console.error('Component Stack:', errorInfo.componentStack);
+      console.error('🚨 ==========================================');
     }
 
     // In production, you could send to error reporting service
@@ -66,6 +72,10 @@ class ErrorBoundary extends React.Component {
   };
 
   handleGoHome = () => {
+    // In development, log the error before redirecting
+    if (process.env.NODE_ENV === 'development') {
+      console.error('🚨 ErrorBoundary: Navigating home due to error:', this.state.error);
+    }
     window.location.href = '/';
   };
 
