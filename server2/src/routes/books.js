@@ -24,6 +24,68 @@ const upload = multer({
 export function booksRouter(authenticateToken) {
   const router = express.Router();
 
+  // Proxy endpoint to stream book files (needed for EPUB.js to work with private storage)
+  router.get("/:id/file", authenticateToken, async (req, res) => {
+    try {
+      const bookId = req.params.id;
+      const userId = req.user.id;
+
+      console.log(`📖 Proxying file for book ${bookId}, user ${userId}`);
+
+      // Get book record to verify ownership and get file_path
+      const { data: book, error: bookError } = await supabase
+        .from("books")
+        .select("*")
+        .eq("id", bookId)
+        .eq("user_id", userId)
+        .single();
+
+      if (bookError || !book) {
+        console.error("Book not found or access denied:", bookError);
+        return res.status(404).json({ error: "Book not found" });
+      }
+
+      if (!book.file_path) {
+        console.error("Book has no file_path:", book);
+        return res.status(404).json({ error: "Book file not found" });
+      }
+
+      // Download file from Supabase storage
+      const { data: fileData, error: downloadError } = await supabase.storage
+        .from('book-files')
+        .download(book.file_path);
+
+      if (downloadError || !fileData) {
+        console.error("Failed to download file from storage:", downloadError);
+        return res.status(500).json({ error: "Failed to retrieve book file" });
+      }
+
+      console.log(`✅ Successfully downloaded file: ${book.file_path}, size: ${fileData.size} bytes`);
+
+      // Set appropriate headers
+      const contentType = book.file_type || 'application/octet-stream';
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Length', fileData.size);
+      res.setHeader('Content-Disposition', `inline; filename="${book.filename || 'book'}"`);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+
+      // Enable CORS for the reader library
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Range');
+
+      // Convert blob to buffer and send
+      const arrayBuffer = await fileData.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      res.send(buffer);
+    } catch (error) {
+      console.error("Error proxying book file:", error);
+      res.status(500).json({ error: "Failed to retrieve book file" });
+    }
+  });
+
   // Get a specific book by ID
   router.get("/:id", authenticateToken, async (req, res) => {
     try {
