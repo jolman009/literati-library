@@ -1,20 +1,29 @@
 {
+  "id": "literati-pwa",
   "name": "Literati - Your Digital Bookshelf",
   "short_name": "Literati",
   "description": "A progressive web app for managing your digital library with reading tracking and annotations",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "background_color": "#fff7fe",
   "theme_color": "#6750a4",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "/literati/",
   "lang": "en",
   "categories": ["books", "education", "productivity"],
+  "protocol_handlers": [
+    {
+      "protocol": "web+literati",
+      "url": "/book?id=%s"
+    }
+  ],
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "16x16 32x32 48x48",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
       "src": "/favicon-96x96.png",
@@ -31,7 +40,7 @@
     {
       "src": "/literatiLOGO_144x153.png",
       "type": "image/png",
-      "sizes": "144x153",
+      "sizes": "144x144",
       "purpose": "any"
     },
     {
@@ -62,7 +71,8 @@
       "icons": [
         {
           "src": "/literatiLOGO.png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     },
@@ -74,7 +84,8 @@
       "icons": [
         {
           "src": "/literatiLOGO.png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     },
@@ -86,7 +97,8 @@
       "icons": [
         {
           "src": "/literatiLOGO.png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
