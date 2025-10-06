@@ -519,11 +519,13 @@ button {
    ================================================ */
 
 /* Use GPU acceleration for transforms */
+/* REMOVED: Universal selector with transform/perspective breaks position: fixed
 * {
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
+*/
 
 /* Smooth scrolling where overflow is allowed */
 * {
