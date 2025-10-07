@@ -1,5 +1,5 @@
 // src/components/EpubReader.jsx
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { X, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import ePub from "epubjs";
 import "../styles/epub-reader.css";
@@ -33,7 +33,6 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [canGoNext, setCanGoNext] = useState(true);
   const [canGoPrev, setCanGoPrev] = useState(false);
 
@@ -43,20 +42,60 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
 
     console.log('📚 Initializing EPUB.js with URL:', epubUrl);
 
-    try {
-      // Create book instance
-      const epubBook = ePub(epubUrl, {
-        openAs: 'epub',
-        requestCredentials: true,
-        requestHeaders: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      });
+    let rendition = null;
+    let epubBook = null;
+    let isCleanedUp = false;
 
+    // Timeout to catch hanging loads
+    const loadTimeout = setTimeout(() => {
+      if (!isCleanedUp) {
+        console.error('❌ EPUB loading timeout - taking too long to load');
+        setError('Book is taking too long to load. Please check your connection and try again.');
+        setIsLoading(false);
+      }
+    }, 30000); // 30 second timeout
+
+    // Fetch the file with credentials, then load into EPUB.js
+    console.log('🔧 Fetching EPUB file with credentials...');
+
+    fetch(epubUrl, {
+      method: 'GET',
+      credentials: 'include', // Send cookies for authentication
+      headers: {
+        'Accept': 'application/epub+zip'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch EPUB: ${response.status} ${response.statusText}`);
+      }
+      console.log('✅ EPUB file fetched successfully');
+      return response.arrayBuffer();
+    })
+    .then(arrayBuffer => {
+      console.log('📦 Creating EPUB book from arrayBuffer, size:', arrayBuffer.byteLength);
+
+      // Create book instance from the arrayBuffer
+      epubBook = ePub(arrayBuffer);
       bookRef.current = epubBook;
 
+      console.log('📘 EPUB book instance created');
+
+      // Wait for book to be ready
+      return epubBook.ready;
+    })
+    .then(() => {
+      clearTimeout(loadTimeout);
+      console.log('✅ EPUB book ready!');
+
+      if (isCleanedUp || !viewerRef.current) {
+        console.log('⚠️ Component unmounted during load, skipping render');
+        return;
+      }
+
       // Create rendition (the visual display)
-      const rendition = epubBook.renderTo(viewerRef.current, {
+      console.log('🎨 Creating rendition in viewer element');
+      rendition = epubBook.renderTo(viewerRef.current, {
         width: '100%',
         height: '100%',
         flow: 'paginated',
@@ -64,6 +103,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       });
 
       renditionRef.current = rendition;
+      console.log('✅ Rendition created');
 
       // Apply theme for readability
       rendition.themes.default({
@@ -91,21 +131,6 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         }
       });
 
-      // Display the book
-      const displayPromise = initialLocation
-        ? rendition.display(initialLocation)
-        : rendition.display();
-
-      displayPromise.then(() => {
-        console.log('✅ EPUB rendered successfully');
-        setIsLoading(false);
-        setError(null);
-      }).catch((err) => {
-        console.error('❌ Failed to render EPUB:', err);
-        setError('Failed to display book content');
-        setIsLoading(false);
-      });
-
       // Listen for location changes
       rendition.on('relocated', (location) => {
         console.log('📍 Location changed:', location.start.cfi);
@@ -113,7 +138,6 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         const cfi = location.start.cfi;
         const percent = location.start.percentage;
 
-        setCurrentLocation(cfi);
         setCanGoPrev(!location.atStart);
         setCanGoNext(!location.atEnd);
 
@@ -122,30 +146,47 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         }
       });
 
-      // Keyboard navigation
-      const handleKeyDown = (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'PageDown') {
-          rendition.next();
-        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-          rendition.prev();
-        }
-      };
+      // Display the book
+      const displayPromise = initialLocation
+        ? rendition.display(initialLocation)
+        : rendition.display();
 
-      document.addEventListener('keydown', handleKeyDown);
-
-      // Cleanup
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        rendition?.destroy();
-        epubBook?.destroy();
-        console.log('🧹 EPUB reader cleaned up');
-      };
-
-    } catch (err) {
-      console.error('❌ Error initializing EPUB:', err);
-      setError('Failed to load book');
+      return displayPromise;
+    })
+    .then(() => {
+      console.log('✅ EPUB rendered successfully');
       setIsLoading(false);
-    }
+      setError(null);
+    })
+    .catch((err) => {
+      clearTimeout(loadTimeout);
+      console.error('❌ Failed to load/render EPUB:', err);
+      if (!isCleanedUp) {
+        setError(err.message || 'Failed to load book');
+        setIsLoading(false);
+      }
+    });
+
+    // Keyboard navigation
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        renditionRef.current?.next();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        renditionRef.current?.prev();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function
+    return () => {
+      isCleanedUp = true;
+      clearTimeout(loadTimeout);
+      document.removeEventListener('keydown', handleKeyDown);
+      renditionRef.current?.destroy();
+      bookRef.current?.destroy();
+      console.log('🧹 EPUB reader cleaned up');
+    };
   }, [epubUrl, initialLocation, onLocationChange]);
 
   const handleNext = useCallback(() => {
