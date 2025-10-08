@@ -116,16 +116,19 @@
   right: 16px;
   width: 48px;
   height: 48px;
+  aspect-ratio: 1 / 1; /* Ensure perfect circle on all screens */
+  box-sizing: border-box;
+  padding: 0; /* Prevent UA padding from stretching */
   border-radius: 50%;
-  background: var(--md-sys-color-primary);
+  background: var(--md-sys-color-primary);`n  color: var(--md-sys-color-on-primary);
   border: none;
   cursor: pointer;
-  display: flex;
+  display: inline-flex; /* Avoid flex parent stretching */
   align-items: center;
   justify-content: center;
   font-size: 22px;
   line-height: 1;
-  flex-shrink: 0;
+  flex: 0 0 auto; /* Never grow or shrink */
   transition: all 0.3s ease;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -139,7 +142,7 @@
 }
 
 .theme-toggle-button:hover {
-  background: var(--md-sys-color-secondary);
+  background: var(--md-sys-color-secondary);`n  color: var(--md-sys-color-on-secondary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
@@ -702,6 +705,9 @@
   .theme-toggle-button {
     width: 40px;
     height: 40px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    flex: 0 0 auto;
     top: 12px;
     right: 12px;
     font-size: 18px;
@@ -737,7 +743,7 @@
 
 /* Currently Reading and Recent Achievements sections */
 :root:not([data-theme="dark"]) .section-card {
-  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
+  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);`n  color: var(--md-sys-color-on-primary);
   border: 1px solid #9ca3af;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -808,3 +814,18 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
+
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+

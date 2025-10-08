@@ -160,6 +160,8 @@
 .md3-checkbox__input:focus-visible + .md3-checkbox__box {
   outline: 2px solid rgb(var(--md-sys-color-primary));
   outline-offset: 2px;
+  /* Add a subtle focus ring similar to the inline MD3Checkbox */
+  box-shadow: 0 0 0 3px rgb(var(--md-sys-color-primary) / 0.35);
 }
 
 /* Disabled State */
