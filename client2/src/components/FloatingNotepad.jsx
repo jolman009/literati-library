@@ -7,7 +7,7 @@ import "./FloatingNotepad.css";
 
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
-const FloatingNotepad = ({ title, initialContent = "", currentPage = null }) => {
+const FloatingNotepad = ({ title, initialContent = "", currentPage = null, currentLocator = null }) => {
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
 
@@ -80,12 +80,33 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null }) => 
   const handleSave = async () => {
     if (!content.trim()) return;
 
+    // Determine location prefix and metadata based on file type
+    let locationPrefix = "";
+    let locationMetadata = {};
+    let tags = [];
+
+    if (currentPage) {
+      // PDF: use page number
+      locationPrefix = `[p.${currentPage}] `;
+      locationMetadata.page_number = currentPage;
+      tags.push(`page:${currentPage}`);
+    } else if (currentLocator?.scrollPercent != null) {
+      // EPUB: use scroll percentage and CFI
+      locationPrefix = `[${currentLocator.scrollPercent}%] `;
+      locationMetadata.epub_location = {
+        cfi: currentLocator.cfi,
+        percent: currentLocator.percent,
+        scrollPercent: currentLocator.scrollPercent
+      };
+      tags.push(`location:${currentLocator.scrollPercent}%`);
+    }
+
     const noteData = {
       title: title || content.substring(0, 30),
-      content: currentPage ? `[p.${currentPage}] ${content.trim()}` : content.trim(),
+      content: `${locationPrefix}${content.trim()}`,
       book_id: activeSession?.book?.id || null,
-      page_number: currentPage ?? null,              // harmless if backend ignores it
-      tags: currentPage ? [`page:${currentPage}`] : []
+      ...locationMetadata,
+      tags
     };
 
     try {
@@ -112,13 +133,25 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null }) => 
         aria-grabbed={dragging}
       >
         <h3>{title}</h3>
-        <span className="hint">{currentPage ? `Page ${currentPage}` : "Drag me"}</span>
+        <span className="hint">
+          {currentPage
+            ? `Page ${currentPage}`
+            : currentLocator?.scrollPercent != null
+              ? `${currentLocator.scrollPercent}% through book`
+              : "Drag me"}
+        </span>
       </div>
 
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={currentPage ? `Note for page ${currentPage}…` : "Write your notes here…"}
+        placeholder={
+          currentPage
+            ? `Note for page ${currentPage}…`
+            : currentLocator?.scrollPercent != null
+              ? `Note at ${currentLocator.scrollPercent}%…`
+              : "Write your notes here…"
+        }
         aria-label="Notepad content"
       />
 
