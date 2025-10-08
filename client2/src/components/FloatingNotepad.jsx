@@ -7,9 +7,12 @@ import "./FloatingNotepad.css";
 
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
-const FloatingNotepad = ({ title, initialContent = "", currentPage = null, currentLocator = null }) => {
+const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage = null, currentLocator = null }) => {
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
+
+  // Get book_id from either the passed book prop or activeSession
+  const bookId = book?.id || activeSession?.book?.id || null;
 
   const noteRef = useRef(null);
   const [content, setContent] = useState(initialContent);
@@ -17,6 +20,18 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null, curre
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const startPos = useRef({ x: 0, y: 0 });
+
+  // Debug: log location updates and session state
+  useEffect(() => {
+    console.log('📍 FloatingNotepad state:', {
+      currentPage,
+      currentLocator,
+      bookId: bookId,
+      bookTitle: book?.title || activeSession?.book?.title,
+      hasBook: !!book,
+      hasActiveSession: !!activeSession
+    });
+  }, [currentPage, currentLocator, bookId, book, activeSession]);
 
   // Start dragging when user presses on header
   const onPointerDown = (e) => {
@@ -78,7 +93,12 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null, curre
   }, [dragging]);
 
   const handleSave = async () => {
-    if (!content.trim()) return;
+    console.log('💾 Save button clicked', { hasContent: !!content.trim() });
+
+    if (!content.trim()) {
+      console.warn('⚠️ Cannot save empty note');
+      return;
+    }
 
     // Determine location prefix and metadata based on file type
     let locationPrefix = "";
@@ -104,18 +124,33 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null, curre
     const noteData = {
       title: title || content.substring(0, 30),
       content: `${locationPrefix}${content.trim()}`,
-      book_id: activeSession?.book?.id || null,
+      book_id: bookId,
       ...locationMetadata,
       tags
     };
 
+    console.log('📝 Attempting to save note:', {
+      ...noteData,
+      bookId,
+      hasBookId: !!bookId
+    });
+
     try {
-      await API.post("/notes", noteData);
+      const response = await API.post("/notes", noteData);
+      console.log('✅ Note saved successfully:', response.data);
       showSnackbar({ message: "Note saved!", variant: "success" });
       setContent("");
     } catch (error) {
-      showSnackbar({ message: "Failed to save note", variant: "error" });
-      console.error(error);
+      console.error('❌ Failed to save note:', {
+        error,
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      showSnackbar({
+        message: `Failed to save note: ${error.response?.data?.error || error.message}`,
+        variant: "error"
+      });
     }
   };
 
@@ -159,12 +194,12 @@ const FloatingNotepad = ({ title, initialContent = "", currentPage = null, curre
         <button onClick={handleSave} disabled={!content.trim()}>
           💾 Save Note
         </button>
-        <button 
+        <button
           onClick={() => setContent('')}
           disabled={!content.trim()}
-          style={{ 
-            background: 'var(--md3-secondary)', 
-            color: 'var(--md3-on-secondary)' 
+          style={{
+            background: 'var(--md-sys-color-secondary, #7c3aed)',
+            color: 'var(--md-sys-color-on-secondary, #ffffff)'
           }}
         >
           🗑️ Clear
