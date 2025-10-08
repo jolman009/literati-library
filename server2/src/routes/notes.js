@@ -48,10 +48,10 @@ export const notesRouter = (authenticateToken) => {
     }
   });
 
-  // POST /api/notes → create a general note (used by NotesPage)
+  // POST /api/notes → create a general note (used by NotesPage and FloatingNotepad)
   router.post('/', async (req, res) => {
     try {
-      const { title, content, book_id, tags } = req.body;
+      const { title, content, book_id, tags, page_number, epub_location } = req.body;
       if (!content?.trim()) return res.status(400).json({ error: 'Note content is required' });
 
       const noteData = {
@@ -64,6 +64,19 @@ export const notesRouter = (authenticateToken) => {
         created_at: new Date().toISOString(),
       };
 
+      // Add page for PDF notes if provided (database uses 'page', not 'page_number')
+      if (page_number != null) {
+        noteData.page = parseInt(page_number, 10);
+      }
+
+      // For EPUB notes, store location info in position field as JSON string
+      // (database doesn't have epub_location field, using 'position' instead)
+      if (epub_location) {
+        noteData.position = JSON.stringify(epub_location);
+      }
+
+      console.log('📝 Creating note with data:', noteData);
+
       const { data: note, error } = await supabase
         .from('notes')
         .insert(noteData)
@@ -71,10 +84,11 @@ export const notesRouter = (authenticateToken) => {
         .single();
 
       if (error) {
-        console.error('Note creation error:', error);
-        return res.status(500).json({ error: 'Failed to create note' });
+        console.error('❌ Note creation error:', error);
+        return res.status(500).json({ error: 'Failed to create note', details: error.message });
       }
 
+      console.log('✅ Note created successfully:', note.id);
       res.status(201).json(note);
     } catch (e) {
       console.error('Create note error:', e);

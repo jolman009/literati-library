@@ -127,9 +127,12 @@ const ReadBook = () => {
     });
   }, [authLoading, isAuthenticated, user, navigate, fetchBook]);
 
-  // Fallback: if PDF viewer (iframe) doesn’t emit page, default to 1 after book loads.
+  // Fallback: if PDF viewer (iframe) doesn't emit page, default to 1 after book loads.
+  // Only set for PDFs, not EPUBs (EPUBs use currentLocator instead)
   useEffect(() => {
-    if (book && currentPage == null) setCurrentPage(1);
+    if (book && book.format === 'pdf' && currentPage == null) {
+      setCurrentPage(1);
+    }
   }, [book, currentPage]);
 
   const handleClose = () => navigate("/library");
@@ -255,6 +258,7 @@ const ReadBook = () => {
           />
           <FloatingNotepad
             title={`Note — ${book.title}`}
+            book={book}
             currentPage={currentPage}
             currentLocator={currentLocator}
           />

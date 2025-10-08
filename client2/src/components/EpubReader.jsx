@@ -170,16 +170,19 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
           ? (scrollTop / (scrollHeight - clientHeight)) * 100
           : 0;
 
-        setScrollPercent(Math.round(percent));
+        const roundedPercent = Math.round(percent);
+        setScrollPercent(roundedPercent);
 
         // Update location callback with scroll percentage
         // Use ref to get current CFI value (avoids stale closure)
         if (onLocationChangeRef.current) {
-          onLocationChangeRef.current({
+          const locationData = {
             cfi: currentCFIRef.current || null,
             percent: percent / 100, // Convert to 0-1 range
-            scrollPercent: Math.round(percent)
-          });
+            scrollPercent: roundedPercent
+          };
+          console.log('📜 Scroll update:', locationData);
+          onLocationChangeRef.current(locationData);
         }
       };
 
