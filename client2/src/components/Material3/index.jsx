@@ -584,7 +584,7 @@ export const MD3Switch = React.forwardRef(({ checked = false, onChange, disabled
 MD3Switch.displayName = 'MD3Switch';
 
 // Checkbox (inline)
-export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabled = false, label, className = '', style = {}, ...props }, ref) => {
+export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabled = false, label, className = '', style = {}, id, ...props }, ref) => {
   const checkboxStyle = { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1, ...style };
   const boxStyle = { 
     width: '18px', 
@@ -609,7 +609,13 @@ export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabl
   };
 
   return (
-    <label ref={ref} style={checkboxStyle} className={`md3-checkbox ${className}`} {...props}>
+    <label
+      ref={ref}
+      style={checkboxStyle}
+      className={`md3-checkbox ${className}`}
+      htmlFor={id}
+      {...props}
+    >
       <div style={boxStyle} onClick={() => !disabled && onChange && onChange({ target: { checked: !checked } })}>
         <div style={checkStyle}>✓</div>
       </div>
@@ -619,6 +625,7 @@ export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabl
         checked={checked} 
         onChange={onChange} 
         disabled={disabled} 
+        id={id}
         style={{ display: 'none' }} 
       />
     </label>
