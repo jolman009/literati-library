@@ -30,20 +30,11 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   const viewerRef = useRef(null);
   const renditionRef = useRef(null);
   const bookRef = useRef(null);
-  const currentCFIRef = useRef(null); // Track CFI in ref for scroll handler
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [canGoNext, setCanGoNext] = useState(true);
   const [canGoPrev, setCanGoPrev] = useState(false);
-  const [scrollPercent, setScrollPercent] = useState(0);
-  const [currentCFI, setCurrentCFI] = useState(null);
-
-  // Store callback in ref to avoid recreating effect when it changes
-  const onLocationChangeRef = useRef(onLocationChange);
-  useEffect(() => {
-    onLocationChangeRef.current = onLocationChange;
-  }, [onLocationChange]);
 
   // Initialize EPUB book
   useEffect(() => {
@@ -108,7 +99,9 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         width: '100%',
         height: '100%',
         flow: 'scrolled-doc', // Use scrolled mode instead of paginated for better reading experience
-        manager: 'continuous'
+        manager: 'continuous',
+        allowScriptedContent: true, // Allow scripts in EPUB content
+        snap: false // Disable snapping for smooth scrolling
       });
 
       renditionRef.current = rendition;
@@ -140,55 +133,15 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         }
       });
 
-      // Listen for location changes
+      // Listen for location changes (chapter/section navigation)
       rendition.on('relocated', (location) => {
         console.log('📍 Location changed:', location.start.cfi);
-
-        const cfi = location.start.cfi;
-        const percent = location.start.percentage;
-
-        setCurrentCFI(cfi);
-        currentCFIRef.current = cfi; // Update ref for scroll handler
         setCanGoPrev(!location.atStart);
         setCanGoNext(!location.atEnd);
-
-        if (onLocationChangeRef.current) {
-          onLocationChangeRef.current({ cfi, percent });
-        }
       });
 
-      // Track scroll position in the viewer
-      const handleScroll = () => {
-        if (!viewerRef.current) return;
-
-        const scrollTop = viewerRef.current.scrollTop;
-        const scrollHeight = viewerRef.current.scrollHeight;
-        const clientHeight = viewerRef.current.clientHeight;
-
-        // Calculate percentage through the book
-        const percent = scrollHeight > clientHeight
-          ? (scrollTop / (scrollHeight - clientHeight)) * 100
-          : 0;
-
-        const roundedPercent = Math.round(percent);
-        setScrollPercent(roundedPercent);
-
-        // Update location callback with scroll percentage
-        // Use ref to get current CFI value (avoids stale closure)
-        if (onLocationChangeRef.current) {
-          const locationData = {
-            cfi: currentCFIRef.current || null,
-            percent: percent / 100, // Convert to 0-1 range
-            scrollPercent: roundedPercent
-          };
-          console.log('📜 Scroll update:', locationData);
-          onLocationChangeRef.current(locationData);
-        }
-      };
-
-      if (viewerRef.current) {
-        viewerRef.current.addEventListener('scroll', handleScroll);
-      }
+      // NOTE: Location tracking disabled to prevent infinite loops
+      // Will revisit EPUB page number tracking in future iteration
 
       // Display the book
       const displayPromise = initialLocation
@@ -227,9 +180,6 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       isCleanedUp = true;
       clearTimeout(loadTimeout);
       document.removeEventListener('keydown', handleKeyDown);
-      if (viewerRef.current) {
-        viewerRef.current.removeEventListener('scroll', handleScroll);
-      }
       renditionRef.current?.destroy();
       bookRef.current?.destroy();
       console.log('🧹 EPUB reader cleaned up');

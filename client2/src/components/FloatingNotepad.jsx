@@ -18,20 +18,10 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   const [content, setContent] = useState(initialContent);
   const [pos, setPos] = useState({ x: 20, y: 20 });
   const [dragging, setDragging] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const startPos = useRef({ x: 0, y: 0 });
 
-  // Debug: log location updates and session state
-  useEffect(() => {
-    console.log('📍 FloatingNotepad state:', {
-      currentPage,
-      currentLocator,
-      bookId: bookId,
-      bookTitle: book?.title || activeSession?.book?.title,
-      hasBook: !!book,
-      hasActiveSession: !!activeSession
-    });
-  }, [currentPage, currentLocator, bookId, book, activeSession]);
 
   // Start dragging when user presses on header
   const onPointerDown = (e) => {
@@ -93,12 +83,20 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   }, [dragging]);
 
   const handleSave = async () => {
-    console.log('💾 Save button clicked', { hasContent: !!content.trim() });
+    console.log('💾 Save button clicked');
 
     if (!content.trim()) {
       console.warn('⚠️ Cannot save empty note');
       return;
     }
+
+    // Prevent double-clicking
+    if (isSaving) {
+      console.log('⏳ Already saving, ignoring duplicate click');
+      return;
+    }
+
+    setIsSaving(true);
 
     // Determine location prefix and metadata based on file type
     let locationPrefix = "";
@@ -107,18 +105,13 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
     if (currentPage) {
       // PDF: use page number
+      console.log('📄 Saving PDF note with page:', currentPage);
       locationPrefix = `[p.${currentPage}] `;
       locationMetadata.page_number = currentPage;
       tags.push(`page:${currentPage}`);
-    } else if (currentLocator?.scrollPercent != null) {
-      // EPUB: use scroll percentage and CFI
-      locationPrefix = `[${currentLocator.scrollPercent}%] `;
-      locationMetadata.epub_location = {
-        cfi: currentLocator.cfi,
-        percent: currentLocator.percent,
-        scrollPercent: currentLocator.scrollPercent
-      };
-      tags.push(`location:${currentLocator.scrollPercent}%`);
+    } else {
+      // EPUB: location tracking disabled for now (will revisit in future)
+      console.log('📖 Saving EPUB note (no location tracking)');
     }
 
     const noteData = {
@@ -132,14 +125,17 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     console.log('📝 Attempting to save note:', {
       ...noteData,
       bookId,
-      hasBookId: !!bookId
+      hasBookId: !!bookId,
+      hasEpubLocation: !!locationMetadata.epub_location,
+      hasPageNumber: !!locationMetadata.page_number
     });
 
     try {
       const response = await API.post("/notes", noteData);
       console.log('✅ Note saved successfully:', response.data);
-      showSnackbar({ message: "Note saved!", variant: "success" });
+      showSnackbar({ message: "Note saved successfully! ✓", variant: "success" });
       setContent("");
+      setIsSaving(false);
     } catch (error) {
       console.error('❌ Failed to save note:', {
         error,
@@ -151,6 +147,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         message: `Failed to save note: ${error.response?.data?.error || error.message}`,
         variant: "error"
       });
+      setIsSaving(false);
     }
   };
 
@@ -171,9 +168,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         <span className="hint">
           {currentPage
             ? `Page ${currentPage}`
-            : currentLocator?.scrollPercent != null
-              ? `${currentLocator.scrollPercent}% through book`
-              : "Drag me"}
+            : "Drag me"}
         </span>
       </div>
 
@@ -183,20 +178,25 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         placeholder={
           currentPage
             ? `Note for page ${currentPage}…`
-            : currentLocator?.scrollPercent != null
-              ? `Note at ${currentLocator.scrollPercent}%…`
-              : "Write your notes here…"
+            : "Write your notes here…"
         }
         aria-label="Notepad content"
       />
 
       <div className="notepad-actions">
-        <button onClick={handleSave} disabled={!content.trim()}>
-          💾 Save Note
+        <button
+          onClick={handleSave}
+          disabled={!content.trim() || isSaving}
+          style={{
+            opacity: isSaving ? 0.7 : 1,
+            cursor: isSaving ? 'wait' : 'pointer'
+          }}
+        >
+          {isSaving ? '⏳ Saving...' : '💾 Save Note'}
         </button>
         <button
           onClick={() => setContent('')}
-          disabled={!content.trim()}
+          disabled={!content.trim() || isSaving}
           style={{
             background: 'var(--md-sys-color-secondary, #7c3aed)',
             color: 'var(--md-sys-color-on-secondary, #ffffff)'
