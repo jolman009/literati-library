@@ -1,0 +1,36 @@
+/* Subtle affordances for the TOS consent text */
+
+.tos-consent-text {
+  cursor: pointer;
+  user-select: none;
+}
+
+.tos-consent-text label {
+  cursor: pointer;
+}
+
+/* Only apply hover styles on devices that support hover */
+@media (hover: hover) {
+  .tos-consent-text label:hover {
+    text-decoration: underline;
+    color: var(--md-sys-color-primary);
+  }
+
+  .tos-consent-text a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Active/tap feedback on touch and desktop */
+.tos-consent-text label:active {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+  border-radius: 4px;
+}
+
+/* Accessibility: make focus visible if labels are focused programmatically */
+.tos-consent-text label:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+

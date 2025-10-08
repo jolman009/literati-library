@@ -218,13 +218,28 @@ MD3Button.displayName = 'MD3Button';
 
 // Card (surface)
 export const MD3Card = React.forwardRef(({ variant = 'elevated', children, className = '', style = {}, ...props }, ref) => {
+  // Use MD3 tokens for proper theming in light/dark modes
+  const bgByVariant =
+    variant === 'filled'
+      ? 'var(--md-sys-color-surface-container-highest)'
+      : variant === 'outlined'
+      ? 'var(--md-sys-color-surface)'
+      : 'var(--md-sys-color-surface-container-low)'; // elevated default
+
+  const boxShadow =
+    variant === 'elevated'
+      ? '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'
+      : variant === 'filled'
+      ? '0 1px 2px rgba(0,0,0,0.1)'
+      : 'none';
+
   const cardStyle = {
     borderRadius: '12px',
     padding: '16px',
-    backgroundColor: '#ffffff',
-    boxShadow:
-      variant === 'elevated' ? '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)' : variant === 'outlined' ? 'none' : '0 1px 2px rgba(0,0,0,0.1)',
-    border: variant === 'outlined' ? '1px solid #e0e0e0' : 'none',
+    backgroundColor: bgByVariant,
+    color: 'var(--md-sys-color-on-surface)',
+    boxShadow,
+    border: variant === 'outlined' ? '1px solid var(--md-sys-color-outline-variant)' : 'none',
     ...style,
   };
 
