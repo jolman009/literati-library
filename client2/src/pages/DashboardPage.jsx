@@ -1,5 +1,6 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
@@ -10,6 +11,7 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
 import '../styles/dashboard-page.css';
+import ThemeToggle from '../components/ThemeToggle';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
@@ -139,7 +141,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
         className="theme-toggle-button"
         title={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
       >
-        {actualTheme === 'dark' ? '☀️' : '🌙'}
+        {actualTheme === 'dark' ? (<Sun size={20} aria-hidden="true" />) : (<Moon size={20} aria-hidden="true" />)}
       </button>
 
       <div className="welcome-header">

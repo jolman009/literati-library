@@ -586,22 +586,26 @@ MD3Switch.displayName = 'MD3Switch';
 // Checkbox (inline)
 export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabled = false, label, className = '', style = {}, id, ...props }, ref) => {
   const checkboxStyle = { display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1, ...style };
+  const [isFocused, setIsFocused] = React.useState(false);
   const boxStyle = { 
     width: '18px', 
     height: '18px', 
     borderRadius: '2px', 
-    border: `2px solid ${checked ? '#6750a4' : '#79747e'}`, 
-    backgroundColor: checked ? '#6750a4' : 'transparent', 
+    border: checked ? '2px solid var(--md-sys-color-primary)' : '2px solid var(--md-sys-color-on-surface-variant)', 
+    backgroundColor: checked ? 'var(--md-sys-color-primary)' : 'transparent', 
     display: 'flex', 
     alignItems: 'center', 
     justifyContent: 'center', 
     transition: 'all 0.2s ease',
-    cursor: disabled ? 'not-allowed' : 'pointer'
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    outline: isFocused ? '2px solid var(--md-sys-color-primary)' : 'none',
+    outlineOffset: isFocused ? '2px' : 0,
+    boxShadow: isFocused ? '0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent)' : 'none',
   };
   const checkStyle = { 
     width: '10px', 
     height: '10px', 
-    color: '#ffffff', 
+    color: 'var(--md-sys-color-on-primary)', 
     fontSize: '12px', 
     lineHeight: '1',
     opacity: checked ? 1 : 0,
@@ -613,20 +617,32 @@ export const MD3Checkbox = React.forwardRef(({ checked = false, onChange, disabl
       ref={ref}
       style={checkboxStyle}
       className={`md3-checkbox ${className}`}
-      htmlFor={id}
+      
       {...props}
     >
-      <div style={boxStyle} onClick={() => !disabled && onChange && onChange({ target: { checked: !checked } })}>
+      <div style={boxStyle}>
         <div style={checkStyle}>✓</div>
       </div>
-      {label && <span style={{ fontSize: '14px', color: '#1c1b1f' }}>{label}</span>}
+      {label && <span style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface)' }}>{label}</span>}
       <input 
         type="checkbox" 
         checked={checked} 
         onChange={onChange} 
         disabled={disabled} 
         id={id}
-        style={{ display: 'none' }} 
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }} 
       />
     </label>
   );
