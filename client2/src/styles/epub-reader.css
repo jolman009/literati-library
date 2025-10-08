@@ -100,26 +100,38 @@
 
 /* Content area */
 .epub-reader-content {
-  position: relative;
-  padding-top: 4rem;
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  top: 4rem; /* Height of header */
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
+  /* Add horizontal padding to prevent overlap with floating widgets */
+  padding-left: 380px;  /* Space for floating notepad on left */
+  padding-right: 100px; /* Space for timer and other right-side widgets */
+  box-sizing: border-box;
 }
 
 /* EPUB Viewer - this is where epub.js renders */
 .epub-viewer {
   width: 100%;
-  height: 100%;
+  height: 100%; /* Fill parent container completely */
   background: #ffffff;
   transition: opacity 0.3s;
+  /* Center the content within the available space */
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  overflow-y: auto; /* Allow vertical scrolling in scrolled-doc mode */
+  overflow-x: hidden;
 }
 
-/* Ensure epub.js iframe fills container */
-.epub-viewer iframe {
+/* Ensure epub.js iframe/div fills container */
+.epub-viewer iframe,
+.epub-viewer > div {
   border: none !important;
   width: 100% !important;
-  height: 100% !important;
+  min-height: 100% !important;
 }
 
 /* Loading state */
@@ -207,8 +219,21 @@
   right: 1rem;
 }
 
+/* Tablet and smaller - reduce padding as widgets may collapse */
+@media (max-width: 1024px) {
+  .epub-reader-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
+  .epub-reader-content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
   .epub-nav-arrow {
     padding: 0.75rem;
   }

@@ -30,11 +30,14 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   const viewerRef = useRef(null);
   const renditionRef = useRef(null);
   const bookRef = useRef(null);
+  const currentCFIRef = useRef(null); // Track CFI in ref for scroll handler
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [canGoNext, setCanGoNext] = useState(true);
   const [canGoPrev, setCanGoPrev] = useState(false);
+  const [scrollPercent, setScrollPercent] = useState(0);
+  const [currentCFI, setCurrentCFI] = useState(null);
 
   // Store callback in ref to avoid recreating effect when it changes
   const onLocationChangeRef = useRef(onLocationChange);
@@ -104,8 +107,8 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       rendition = epubBook.renderTo(viewerRef.current, {
         width: '100%',
         height: '100%',
-        flow: 'paginated',
-        spread: 'none'
+        flow: 'scrolled-doc', // Use scrolled mode instead of paginated for better reading experience
+        manager: 'continuous'
       });
 
       renditionRef.current = rendition;
@@ -144,6 +147,8 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         const cfi = location.start.cfi;
         const percent = location.start.percentage;
 
+        setCurrentCFI(cfi);
+        currentCFIRef.current = cfi; // Update ref for scroll handler
         setCanGoPrev(!location.atStart);
         setCanGoNext(!location.atEnd);
 
@@ -151,6 +156,36 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
           onLocationChangeRef.current({ cfi, percent });
         }
       });
+
+      // Track scroll position in the viewer
+      const handleScroll = () => {
+        if (!viewerRef.current) return;
+
+        const scrollTop = viewerRef.current.scrollTop;
+        const scrollHeight = viewerRef.current.scrollHeight;
+        const clientHeight = viewerRef.current.clientHeight;
+
+        // Calculate percentage through the book
+        const percent = scrollHeight > clientHeight
+          ? (scrollTop / (scrollHeight - clientHeight)) * 100
+          : 0;
+
+        setScrollPercent(Math.round(percent));
+
+        // Update location callback with scroll percentage
+        // Use ref to get current CFI value (avoids stale closure)
+        if (onLocationChangeRef.current) {
+          onLocationChangeRef.current({
+            cfi: currentCFIRef.current || null,
+            percent: percent / 100, // Convert to 0-1 range
+            scrollPercent: Math.round(percent)
+          });
+        }
+      };
+
+      if (viewerRef.current) {
+        viewerRef.current.addEventListener('scroll', handleScroll);
+      }
 
       // Display the book
       const displayPromise = initialLocation
@@ -189,6 +224,9 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       isCleanedUp = true;
       clearTimeout(loadTimeout);
       document.removeEventListener('keydown', handleKeyDown);
+      if (viewerRef.current) {
+        viewerRef.current.removeEventListener('scroll', handleScroll);
+      }
       renditionRef.current?.destroy();
       bookRef.current?.destroy();
       console.log('🧹 EPUB reader cleaned up');
@@ -196,14 +234,22 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   }, [epubUrl, initialLocation]); // Removed onLocationChange - using ref instead
 
   const handleNext = useCallback(() => {
-    if (renditionRef.current) {
-      renditionRef.current.next();
+    // In scrolled mode, scroll down by viewport height
+    if (viewerRef.current) {
+      viewerRef.current.scrollBy({
+        top: viewerRef.current.clientHeight * 0.9, // Scroll 90% of viewport for some overlap
+        behavior: 'smooth'
+      });
     }
   }, []);
 
   const handlePrev = useCallback(() => {
-    if (renditionRef.current) {
-      renditionRef.current.prev();
+    // In scrolled mode, scroll up by viewport height
+    if (viewerRef.current) {
+      viewerRef.current.scrollBy({
+        top: -(viewerRef.current.clientHeight * 0.9), // Scroll up 90% of viewport
+        behavior: 'smooth'
+      });
     }
   }, []);
 
