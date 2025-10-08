@@ -3,8 +3,6 @@
   "target": {
     "namespace": "android_app",
     "package_name": "app.literati.pro",
-    "sha256_cert_fingerprints": [
-      "REPLACE_WITH_YOUR_SHA256_FINGERPRINT"
-    ]
+    "sha256_cert_fingerprints": ["BA:AA:BD:5C:06:C0:CC:17:F8:20:AA:5E:1E:BE:A2:2A:A3:5C:26:C8:20:67:68:95:45:F0:61:A0:13:4D:53:40"]
   }
 }]
