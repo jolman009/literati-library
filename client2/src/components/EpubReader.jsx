@@ -36,6 +36,12 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   const [canGoNext, setCanGoNext] = useState(true);
   const [canGoPrev, setCanGoPrev] = useState(false);
 
+  // Store callback in ref to avoid recreating effect when it changes
+  const onLocationChangeRef = useRef(onLocationChange);
+  useEffect(() => {
+    onLocationChangeRef.current = onLocationChange;
+  }, [onLocationChange]);
+
   // Initialize EPUB book
   useEffect(() => {
     if (!viewerRef.current || !epubUrl) return;
@@ -141,8 +147,8 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
         setCanGoPrev(!location.atStart);
         setCanGoNext(!location.atEnd);
 
-        if (onLocationChange) {
-          onLocationChange({ cfi, percent });
+        if (onLocationChangeRef.current) {
+          onLocationChangeRef.current({ cfi, percent });
         }
       });
 
@@ -187,7 +193,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       bookRef.current?.destroy();
       console.log('🧹 EPUB reader cleaned up');
     };
-  }, [epubUrl, initialLocation, onLocationChange]);
+  }, [epubUrl, initialLocation]); // Removed onLocationChange - using ref instead
 
   const handleNext = useCallback(() => {
     if (renditionRef.current) {

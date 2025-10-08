@@ -16,19 +16,21 @@ const REFRESH_TOKEN_EXPIRY = '7d';
 
 // Enhanced secure cookie configuration
 export const COOKIE_OPTIONS = {
-  httpOnly: true, 
-  secure: process.env.NODE_ENV === 'production', 
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // ✅ CRITICAL FIX
+  httpOnly: true,
+  // In development, don't use secure/sameSite=none (requires HTTPS)
+  // Instead, make sure frontend and backend use same hostname (both localhost)
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   path: '/',
-  domain: process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN 
-    ? process.env.COOKIE_DOMAIN 
+  domain: process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN
+    ? process.env.COOKIE_DOMAIN
     : undefined
 };
 
 // Separate cookie options for access and refresh tokens
 export const ACCESS_COOKIE_OPTIONS = {
   ...COOKIE_OPTIONS,
-  maxAge: 15 * 60 * 1000, // 15 minutes in milliseconds
+  maxAge: process.env.NODE_ENV === 'production' ? 15 * 60 * 1000 : 24 * 60 * 60 * 1000, // 15 min prod, 24h dev
   path: '/' // Access token needed for all API calls
 };
 

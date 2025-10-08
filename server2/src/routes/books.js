@@ -24,8 +24,28 @@ const upload = multer({
 export function booksRouter(authenticateToken) {
   const router = express.Router();
 
+  // Handle OPTIONS preflight for CORS
+  router.options("/:id/file", (req, res) => {
+    const origin = req.headers.origin || req.headers.referer;
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Range, Cookie, Authorization');
+    res.status(204).end();
+  });
+
   // Proxy endpoint to stream book files (needed for EPUB.js to work with private storage)
-  router.get("/:id/file", authenticateToken, async (req, res) => {
+  router.get("/:id/file", (req, res, next) => {
+    console.log('🔐 Book file proxy - checking authentication:', {
+      hasCookies: !!req.cookies,
+      cookies: Object.keys(req.cookies || {}),
+      hasAuthHeader: !!req.headers.authorization,
+      origin: req.headers.origin
+    });
+    next();
+  }, authenticateToken, async (req, res) => {
     try {
       const bookId = req.params.id;
       const userId = req.user.id;
@@ -70,10 +90,14 @@ export function booksRouter(authenticateToken) {
       res.setHeader('Accept-Ranges', 'bytes');
       res.setHeader('Cache-Control', 'public, max-age=3600');
 
-      // Enable CORS for the reader library
-      res.setHeader('Access-Control-Allow-Origin', '*');
+      // Enable CORS with credentials - must specify exact origin, not wildcard
+      const origin = req.headers.origin || req.headers.referer;
+      if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
       res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Range');
+      res.setHeader('Access-Control-Allow-Headers', 'Range, Cookie');
 
       // Convert blob to buffer and send
       const arrayBuffer = await fileData.arrayBuffer();
