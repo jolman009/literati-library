@@ -4,6 +4,7 @@ import { MD3Card, MD3TextField, MD3Button, MD3Checkbox } from '../components/Mat
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import './SignUpPage.css';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -269,31 +270,28 @@ const SignUpPage = () => {
 
           <div style={{
             display: 'flex',
-            alignItems: 'center',  // Changed from flex-start to center
+            alignItems: 'center',
             gap: '12px',
             marginTop: '4px',
             marginBottom: '4px'
           }}>
-            <div
-              onClick={() => !isLoading && setAcceptedTos(!acceptedTos)}
+            <MD3Checkbox
+              id="signup-accept-tos"
+              checked={acceptedTos}
+              onChange={(e) => setAcceptedTos(e.target.checked)}
+              disabled={isLoading}
+            />
+            <span
+              className="tos-consent-text"
               style={{
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center'
+                fontSize: '14px',
+                color: actualTheme === 'dark' ? '#e2e8f0' : '#374151',
+                lineHeight: '1.5'
               }}
             >
-              <MD3Checkbox
-                checked={acceptedTos}
-                onChange={(e) => setAcceptedTos(e.target.checked)}
-                disabled={isLoading}
-              />
-            </div>
-            <span style={{
-              fontSize: '14px',
-              color: actualTheme === 'dark' ? '#e2e8f0' : '#374151',
-              lineHeight: '1.5'
-            }}>
-              I agree to the{' '}
+              <label htmlFor="signup-accept-tos">
+                I agree to the{' '}
+              </label>
               <Link
                 to="/legal/terms-of-service"
                 target="_blank"
@@ -302,7 +300,9 @@ const SignUpPage = () => {
               >
                 Terms of Service
               </Link>
-              {' '}and{' '}
+              <label htmlFor="signup-accept-tos">
+                {' '}and{' '}
+              </label>
               <Link
                 to="/legal/privacy-policy"
                 target="_blank"
@@ -310,7 +310,10 @@ const SignUpPage = () => {
                 style={{ color: '#6750a4', textDecoration: 'none' }}
               >
                 Privacy Policy
-              </Link>.
+              </Link>
+              <label htmlFor="signup-accept-tos">
+                .
+              </label>
             </span>
           </div>
 

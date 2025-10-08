@@ -18,16 +18,24 @@ const MD3Card = React.forwardRef(({
   ...props
 }, ref) => {
   const isInteractive = interactive || typeof onClick === 'function';
+  const bgByVariant =
+    variant === 'filled'
+      ? 'var(--md-sys-color-surface-container-highest)'
+      : variant === 'outlined'
+      ? 'var(--md-sys-color-surface)'
+      : 'var(--md-sys-color-surface-container-low)';
+
   const base = {
-    display:'grid',
-    backgroundColor: variant==='filled' ? '#fef7ff' : '#ffffff',
-    border: variant==='outlined' ? '1px solid #e0e0e0' : 'none',
+    display: 'grid',
+    backgroundColor: bgByVariant,
+    color: 'var(--md-sys-color-on-surface)',
+    border: variant === 'outlined' ? '1px solid var(--md-sys-color-outline-variant)' : 'none',
     borderRadius: 16,
-    boxShadow: variant==='elevated' ? (ELEVATION[elevation] || ELEVATION[1]) : 'none',
-    transition:'transform .04s ease, box-shadow .2s ease, filter .2s ease',
+    boxShadow: variant === 'elevated' ? (ELEVATION[elevation] || ELEVATION[1]) : 'none',
+    transition: 'transform .04s ease, box-shadow .2s ease, filter .2s ease',
     cursor: isInteractive ? 'pointer' : 'default',
-    overflow:'hidden',
-    ...style
+    overflow: 'hidden',
+    ...style,
   };
 
   const handleKeyDown = (e) => {
