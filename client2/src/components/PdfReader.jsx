@@ -1,6 +1,7 @@
 // src/components/PdfReader.jsx
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import '../styles/pdf-reader.css';
 
 // Set up PDF.js worker for Vite compatibility
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
@@ -73,6 +74,7 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(initialPage || 1);
   const [pageWidth, setPageWidth] = useState(undefined);
+  const [pageHeight, setPageHeight] = useState(undefined);
   const touchStartX = useRef(null);
 
   // Memoize PDF.js options to prevent unnecessary reloads
@@ -82,16 +84,28 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     cMapPacked: true,
   }), []);
 
-  // Resize observer so the canvas fits the container width
+  // Resize observer so the canvas fits the viewport
   useEffect(() => {
     if (!containerRef.current) return;
     const el = containerRef.current;
     const ro = new ResizeObserver(() => {
-      // Use full width minus padding, no max width constraint
-      setPageWidth(el.clientWidth ? el.clientWidth - 24 : undefined);
+      // Calculate available height (viewport height minus controls bar)
+      const controlsHeight = 60; // Approximate height of controls bar
+      const availableHeight = window.innerHeight - controlsHeight - 24; // 24px padding
+      const availableWidth = el.clientWidth - 24;
+
+      setPageHeight(availableHeight);
+      setPageWidth(availableWidth);
     });
     ro.observe(el);
-    setPageWidth(el.clientWidth ? el.clientWidth - 24 : undefined);
+
+    // Initial calculation
+    const controlsHeight = 60;
+    const availableHeight = window.innerHeight - controlsHeight - 24;
+    const availableWidth = el.clientWidth - 24;
+    setPageHeight(availableHeight);
+    setPageWidth(availableWidth);
+
     return () => ro.disconnect();
   }, []);
 
@@ -158,37 +172,22 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
   }, [pageNumber, onPageChange]);
 
   return (
-    <div
-      ref={containerRef}
-      onWheel={onWheel}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        overflow: 'auto',
-        background: 'var(--md-sys-color-surface, #121212)',
-      }}
-    >
-      {/* Top controls; replace with MD3 Buttons later */}
-      <div style={{
-        display: 'flex', gap: 12, alignItems: 'center',
-        padding: 8, position: 'sticky', top: 0, zIndex: 2,
-        background: 'var(--md-sys-color-surface, #121212)'
-      }}>
-        <button onClick={prevPage} disabled={pageNumber <= 1}>Prev</button>
-        <span>{pageNumber} / {numPages ?? '—'}</span>
-        <button onClick={nextPage} disabled={!numPages || pageNumber >= numPages}>Next</button>
-      </div>
+    <div className="pdf-reader-container">
+      <div
+        ref={containerRef}
+        className="pdf-content-area"
+        onWheel={onWheel}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
+        {/* Top controls */}
+        <div className="pdf-controls-bar">
+          <button onClick={prevPage} disabled={pageNumber <= 1}>Prev</button>
+          <span>{pageNumber} / {numPages ?? '—'}</span>
+          <button onClick={nextPage} disabled={!numPages || pageNumber >= numPages}>Next</button>
+        </div>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        padding: '12px 0'
-      }}>
+        <div className="pdf-page-container">
         <Document
           file={pdfFile}
           onLoadSuccess={onLoadSuccess}
@@ -227,12 +226,6 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         >
           <div
             onClick={onCanvasClick}
-            style={{
-              cursor: 'pointer',
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'center'
-            }}
             className="pdf-click-layer"
           >
             <Page
@@ -240,12 +233,13 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
               // Make sure layers don't block clicks:
               renderTextLayer={false}
               renderAnnotationLayer={false}
-              // Crisp rendering; width auto-adapts:
-              width={pageWidth}
+              // Fit to viewport - height takes priority to avoid scrolling
+              height={pageHeight}
               renderMode="canvas"
             />
           </div>
         </Document>
+      </div>
       </div>
     </div>
   );
