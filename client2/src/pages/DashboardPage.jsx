@@ -16,10 +16,9 @@ import ThemeToggle from '../components/ThemeToggle';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
-  const { stats, achievements, syncWithServer } = useGamification();
+  const { stats, achievements, syncWithServer, trackAction } = useGamification();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
   const navigate = useNavigate();
-  const { trackAction } = useGamification();
   const { showSnackbar } = useSnackbar();
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -137,24 +136,37 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
   const handleSync = useCallback(async () => {
-    setIsSyncing(true);
-    console.log('🔄 Manual sync initiated by user');
+    try {
+      setIsSyncing(true);
+      console.log('🔄 Manual sync initiated by user');
 
-    const result = await syncWithServer();
+      // Safety check: ensure syncWithServer exists
+      if (!syncWithServer || typeof syncWithServer !== 'function') {
+        throw new Error('Sync function not available');
+      }
 
-    setIsSyncing(false);
+      const result = await syncWithServer();
 
-    if (result.success) {
-      setLastSyncTime(new Date());
+      if (result && result.success) {
+        setLastSyncTime(new Date());
+        showSnackbar({
+          message: `✅ Data synced! ${result.stats?.totalPoints || 0} points, ${result.achievements || 0} achievements`,
+          variant: 'success'
+        });
+      } else {
+        showSnackbar({
+          message: `❌ Sync failed: ${result?.error || 'Unknown error'}`,
+          variant: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('❌ Sync error:', error);
       showSnackbar({
-        message: `✅ Data synced! ${result.stats?.totalPoints || 0} points, ${result.achievements || 0} achievements`,
-        variant: 'success'
-      });
-    } else {
-      showSnackbar({
-        message: `❌ Sync failed: ${result.error}`,
+        message: `❌ Sync failed: ${error.message || 'Please try again.'}`,
         variant: 'error'
       });
+    } finally {
+      setIsSyncing(false);
     }
   }, [syncWithServer, showSnackbar]);
 
