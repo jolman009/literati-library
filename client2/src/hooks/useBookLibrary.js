@@ -17,6 +17,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { bookStorageService } from '../services/bookStorageServices';
 import { useSnackbar } from '../components/Material3';
+import { useGamification } from '../contexts/GamificationContext';
 
 export const useBookLibrary = () => {
   const [books, setBooks] = useState([]);
@@ -26,6 +27,7 @@ export const useBookLibrary = () => {
   const [lastSync, setLastSync] = useState(null);
 
   const { showSnackbar } = useSnackbar();
+  const { trackAction } = useGamification();
 
   // ---- NEW: fetch de-dupe & throttle guards ----
   const inFlight = useRef(false);
@@ -185,17 +187,39 @@ export const useBookLibrary = () => {
           last_read: new Date().toISOString(),
         };
         if (currentPage !== null) updates.current_page = currentPage;
-        if (progress >= 100) {
+
+        const wasJustCompleted = progress >= 100;
+        if (wasJustCompleted) {
           updates.completed = true;
           updates.completed_at = new Date().toISOString();
         }
-        return await updateBook(bookId, updates);
+
+        const result = await updateBook(bookId, updates);
+
+        // Track book completion for gamification
+        if (wasJustCompleted && trackAction) {
+          try {
+            const book = books.find(b => b.id === bookId);
+            await trackAction('complete_book', {
+              bookId,
+              bookTitle: book?.title,
+              bookAuthor: book?.author,
+              totalPages: book?.total_pages,
+              completedAt: updates.completed_at
+            });
+          } catch (trackError) {
+            console.error('Failed to track book completion:', trackError);
+            // Don't fail the progress update if tracking fails
+          }
+        }
+
+        return result;
       } catch (err) {
         console.error('Failed to update progress:', err);
         throw err;
       }
     },
-    [updateBook]
+    [updateBook, trackAction, books]
   );
 
   const startReading = useCallback(

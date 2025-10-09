@@ -2,14 +2,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
-import { 
-  MD3Card, 
-  MD3Button, 
-  MD3TextField, 
-  MD3Chip, 
+import { useGamification } from '../contexts/GamificationContext';
+import {
+  MD3Card,
+  MD3Button,
+  MD3TextField,
+  MD3Chip,
   MD3Progress,
   MD3Surface,
-  useSnackbar 
+  useSnackbar
 } from '../components/Material3';
 import './MD3UploadPage.css';
 
@@ -17,6 +18,7 @@ const MD3UploadPage = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const { showSnackbar } = useSnackbar();
+  const { trackAction } = useGamification();
   
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -119,9 +121,23 @@ const MD3UploadPage = () => {
       const uploadedBook = response.data;
       setIsUploading(false);
       setUploadStep('complete');
-      
+
+      // Track book upload action for gamification
+      try {
+        await trackAction('book_upload', {
+          bookId: uploadedBook.id,
+          bookTitle: uploadedBook.title,
+          bookAuthor: uploadedBook.author,
+          fileType: selectedFile.type,
+          fileSize: selectedFile.size
+        });
+      } catch (trackError) {
+        console.error('Failed to track book upload:', trackError);
+        // Don't fail the upload if tracking fails
+      }
+
       showSnackbar({
-        message: `"${uploadedBook.title}" uploaded successfully!`,
+        message: `"${uploadedBook.title}" uploaded successfully! +50 points earned!`,
         variant: 'success'
       });
 

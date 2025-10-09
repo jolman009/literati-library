@@ -1,0 +1,575 @@
+/**
+ * FillingArc.css
+ * Advanced animations and styles for the gamification progress visualization
+ * Supports 4 visual variants: simple, detailed, intricate, cosmic
+ */
+
+/* ========================================================================
+   BASE CONTAINER STYLES
+   ======================================================================== */
+
+.filling-arc-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Size variants */
+.filling-arc--small {
+  width: 120px;
+  height: 120px;
+}
+
+.filling-arc--medium {
+  width: 200px;
+  height: 200px;
+}
+
+.filling-arc--large {
+  width: 280px;
+  height: 280px;
+}
+
+/* ========================================================================
+   STATS OVERLAY
+   ======================================================================== */
+
+.filling-arc-stats {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.filling-arc-level {
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.7;
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filling-arc-level-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.filling-arc-points {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  margin: 4px 0 0 0;
+}
+
+.filling-arc-percentage {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 2px 0 0 0;
+  color: var(--md-sys-color-primary);
+}
+
+/* Small size adjustments */
+.filling-arc--small .filling-arc-level {
+  font-size: 0.6rem;
+}
+
+.filling-arc--small .filling-arc-level-number {
+  font-size: 1.5rem;
+}
+
+.filling-arc--small .filling-arc-points,
+.filling-arc--small .filling-arc-percentage {
+  font-size: 0.55rem;
+}
+
+/* Large size adjustments */
+.filling-arc--large .filling-arc-level {
+  font-size: 0.85rem;
+}
+
+.filling-arc--large .filling-arc-level-number {
+  font-size: 2.5rem;
+}
+
+.filling-arc--large .filling-arc-points {
+  font-size: 0.75rem;
+}
+
+.filling-arc--large .filling-arc-percentage {
+  font-size: 1rem;
+}
+
+/* ========================================================================
+   GLOW ANIMATIONS
+   ======================================================================== */
+
+/* Basic glow (simple & detailed variants) */
+@keyframes arc-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px #6366f1)
+            drop-shadow(0 0 8px #6366f1)
+            drop-shadow(0 0 12px rgba(99, 102, 241, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #6366f1)
+            drop-shadow(0 0 16px #8b5cf6)
+            drop-shadow(0 0 24px rgba(139, 92, 246, 0.7))
+            drop-shadow(0 0 32px rgba(168, 85, 247, 0.4));
+  }
+}
+
+.arc-glow {
+  animation: arc-glow-pulse 2s ease-in-out infinite;
+}
+
+/* Intense glow (intricate variant) */
+@keyframes arc-glow-intense-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px #6366f1)
+            drop-shadow(0 0 12px #8b5cf6)
+            drop-shadow(0 0 18px rgba(139, 92, 246, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px #6366f1)
+            drop-shadow(0 0 24px #8b5cf6)
+            drop-shadow(0 0 36px rgba(168, 85, 247, 0.8))
+            drop-shadow(0 0 48px rgba(192, 132, 252, 0.5));
+  }
+}
+
+.arc-glow-intense {
+  animation: arc-glow-intense-pulse 1.5s ease-in-out infinite;
+}
+
+/* Cosmic glow (cosmic variant) */
+@keyframes arc-glow-cosmic-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px currentColor)
+            drop-shadow(0 0 8px currentColor)
+            drop-shadow(0 0 12px currentColor)
+            drop-shadow(0 0 16px rgba(99, 102, 241, 0.4));
+  }
+  25% {
+    filter: drop-shadow(0 0 6px currentColor)
+            drop-shadow(0 0 12px currentColor)
+            drop-shadow(0 0 18px currentColor)
+            drop-shadow(0 0 24px rgba(139, 92, 246, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px currentColor)
+            drop-shadow(0 0 16px currentColor)
+            drop-shadow(0 0 24px currentColor)
+            drop-shadow(0 0 32px rgba(168, 85, 247, 0.6));
+  }
+  75% {
+    filter: drop-shadow(0 0 6px currentColor)
+            drop-shadow(0 0 12px currentColor)
+            drop-shadow(0 0 18px currentColor)
+            drop-shadow(0 0 24px rgba(139, 92, 246, 0.5));
+  }
+}
+
+.arc-glow-cosmic {
+  animation: arc-glow-cosmic-pulse 3s ease-in-out infinite;
+}
+
+/* ========================================================================
+   PULSE ANIMATIONS
+   ======================================================================== */
+
+/* Standard pulse */
+@keyframes arc-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.arc-pulse {
+  animation: arc-pulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Slow pulse */
+@keyframes arc-pulse-slow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.01);
+  }
+}
+
+.arc-pulse-slow {
+  animation: arc-pulse-slow 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Fast pulse */
+@keyframes arc-pulse-fast {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+.arc-pulse-fast {
+  animation: arc-pulse-fast 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Cosmic pulse with color shift */
+@keyframes arc-cosmic-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    opacity: 0.7;
+    transform: scale(1.015);
+    filter: hue-rotate(15deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03);
+    filter: hue-rotate(30deg);
+  }
+  75% {
+    opacity: 0.7;
+    transform: scale(1.015);
+    filter: hue-rotate(15deg);
+  }
+}
+
+.arc-cosmic-pulse {
+  animation: arc-cosmic-pulse 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Staggered pulse delays for layered effects */
+.arc-pulse-delay-0 {
+  animation-delay: 0s;
+}
+
+.arc-pulse-delay-1 {
+  animation-delay: 0.2s;
+}
+
+.arc-pulse-delay-2 {
+  animation-delay: 0.4s;
+}
+
+.arc-pulse-delay-3 {
+  animation-delay: 0.6s;
+}
+
+.arc-pulse-delay-4 {
+  animation-delay: 0.8s;
+}
+
+/* ========================================================================
+   ROTATION ANIMATIONS
+   ======================================================================== */
+
+/* Standard rotation */
+@keyframes arc-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.arc-rotate {
+  animation: arc-rotate 20s linear infinite;
+  transform-origin: center;
+}
+
+/* Slow rotation */
+@keyframes arc-rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.arc-rotate-slow {
+  animation: arc-rotate-slow 40s linear infinite;
+  transform-origin: center;
+}
+
+/* ========================================================================
+   SHIMMER & SPARKLE EFFECTS
+   ======================================================================== */
+
+/* Shimmer animation for light reflections */
+@keyframes arc-shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.arc-shimmer {
+  animation: arc-shimmer 3s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Twinkle animation for star-like elements */
+@keyframes arc-twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  25% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+  75% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+.arc-twinkle {
+  animation: arc-twinkle 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Sparkle effect for decorative elements */
+@keyframes arc-sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+.arc-sparkle {
+  animation: arc-sparkle 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* ========================================================================
+   VARIANT-SPECIFIC STYLES
+   ======================================================================== */
+
+/* Simple variant - minimal styling */
+.filling-arc--simple .filling-arc-stats {
+  font-weight: 600;
+}
+
+/* Detailed variant - enhanced contrast */
+.filling-arc--detailed .filling-arc-level-number {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Intricate variant - rich decoration */
+.filling-arc--intricate .filling-arc-stats {
+  text-shadow: 0 0 10px rgba(103, 80, 164, 0.3),
+               0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.filling-arc--intricate .filling-arc-level-number {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-primary),
+    var(--md-sys-color-tertiary),
+    var(--md-sys-color-primary));
+  background-size: 200% auto;
+  animation: gradient-shift 3s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* Cosmic variant - otherworldly effects */
+.filling-arc--cosmic .filling-arc-stats {
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.6),
+               0 0 40px rgba(168, 85, 247, 0.4),
+               0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.filling-arc--cosmic .filling-arc-level-number {
+  background: linear-gradient(135deg,
+    #6366f1,
+    #8b5cf6,
+    #a855f7,
+    #c084fc,
+    #8b5cf6,
+    #6366f1);
+  background-size: 400% auto;
+  animation: cosmic-gradient-flow 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
+}
+
+@keyframes cosmic-gradient-flow {
+  0%, 100% {
+    background-position: 0% center;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5)) hue-rotate(0deg);
+  }
+  33% {
+    background-position: 50% center;
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6)) hue-rotate(15deg);
+  }
+  66% {
+    background-position: 100% center;
+    filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.7)) hue-rotate(30deg);
+  }
+}
+
+/* ========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================================================== */
+
+/* Reduce animation intensity on mobile for performance */
+@media (max-width: 768px) {
+  .arc-glow,
+  .arc-glow-intense,
+  .arc-glow-cosmic {
+    animation-duration: 3s; /* Slower animations */
+  }
+
+  .arc-rotate,
+  .arc-rotate-slow {
+    animation-duration: 60s; /* Much slower rotations */
+  }
+
+  /* Simplify cosmic effects on mobile */
+  .filling-arc--cosmic .filling-arc-level-number {
+    animation: cosmic-gradient-flow 8s ease-in-out infinite;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .arc-glow,
+  .arc-glow-intense,
+  .arc-glow-cosmic,
+  .arc-pulse,
+  .arc-pulse-slow,
+  .arc-pulse-fast,
+  .arc-cosmic-pulse,
+  .arc-rotate,
+  .arc-rotate-slow,
+  .arc-shimmer,
+  .arc-twinkle,
+  .arc-sparkle,
+  .filling-arc--intricate .filling-arc-level-number,
+  .filling-arc--cosmic .filling-arc-level-number {
+    animation: none !important;
+  }
+
+  /* Keep essential styles without animation */
+  .arc-glow,
+  .arc-glow-intense,
+  .arc-glow-cosmic {
+    filter: drop-shadow(0 0 4px currentColor);
+  }
+}
+
+/* ========================================================================
+   THEME SUPPORT
+   ======================================================================== */
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .filling-arc-stats {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .filling-arc--cosmic .filling-arc-stats {
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.8),
+                 0 0 40px rgba(168, 85, 247, 0.6),
+                 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Light mode adjustments */
+@media (prefers-color-scheme: light) {
+  .filling-arc-stats {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  .filling-arc--cosmic .filling-arc-stats {
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.4),
+                 0 0 30px rgba(168, 85, 247, 0.3),
+                 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ========================================================================
+   ACCESSIBILITY
+   ======================================================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .filling-arc-level-number {
+    -webkit-text-fill-color: currentColor;
+    text-shadow: none;
+    filter: none;
+  }
+
+  .filling-arc--cosmic .filling-arc-stats,
+  .filling-arc--intricate .filling-arc-stats {
+    text-shadow: none;
+  }
+}
+
+/* Focus visible states for accessibility */
+.filling-arc-container:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
