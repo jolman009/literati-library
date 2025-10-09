@@ -305,28 +305,6 @@ export const GamificationProvider = ({ children }) => {
     fetchData();
   }, [fetchData]);
 
-  // Listen for daily login events from AuthContext
-  useEffect(() => {
-    const handleDailyLogin = (event) => {
-      if (!user) return;
-
-      console.log('🎯 Daily login event received', event.detail);
-
-      // Track the daily login action
-      trackAction('daily_login', {
-        userId: event.detail.userId,
-        timestamp: event.detail.timestamp,
-        date: event.detail.date
-      });
-    };
-
-    window.addEventListener('dailyLoginTracked', handleDailyLogin);
-
-    return () => {
-      window.removeEventListener('dailyLoginTracked', handleDailyLogin);
-    };
-  }, [user, trackAction]);
-
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}) => {
     if (!user) return;
@@ -389,7 +367,8 @@ export const GamificationProvider = ({ children }) => {
     });
 
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
-    const localOnlyActions = ['daily_checkin', 'daily_login', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
+    // Note: daily_login is now synced with server to prevent duplicate points across devices
+    const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
     if (!offlineMode && token && !localOnlyActions.includes(actionType)) {
       try {
         await makeSafeApiCall('/gamification/actions', {
@@ -485,6 +464,28 @@ export const GamificationProvider = ({ children }) => {
       localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(updatedAchievements));
     });
   }, [stats, unlockedAchievements, user]);
+
+  // Listen for daily login events from AuthContext
+  useEffect(() => {
+    const handleDailyLogin = (event) => {
+      if (!user) return;
+
+      console.log('🎯 Daily login event received', event.detail);
+
+      // Track the daily login action
+      trackAction('daily_login', {
+        userId: event.detail.userId,
+        timestamp: event.detail.timestamp,
+        date: event.detail.date
+      });
+    };
+
+    window.addEventListener('dailyLoginTracked', handleDailyLogin);
+
+    return () => {
+      window.removeEventListener('dailyLoginTracked', handleDailyLogin);
+    };
+  }, [user, trackAction]);
 
   // Create a new goal
   const createGoal = useCallback(async (goalData) => {

@@ -1062,6 +1062,76 @@
   font-size: 0.85rem;
 }
 
+/* Manual Sync Button */
+.sync-button {
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sync-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.sync-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.sync-button.syncing {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.sync-button.synced {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.sync-icon {
+  transition: transform 0.6s ease-in-out;
+}
+
+.sync-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sync-button-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sync-time-badge {
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
 /* Quick Actions Card */
 .quick-actions-card {
   background: rgba(255, 255, 255, 0.7);

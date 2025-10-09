@@ -395,6 +395,118 @@ localStorage.getItem('checkInStreak')
 
 ---
 
-**Document Version**: 1.0
+## 12. Server-Side Implementation Requirements
+
+### 12.1 Daily Login Endpoint Enhancement
+**Required Changes**: The `/gamification/actions` endpoint must implement duplicate checking for `daily_login` events.
+
+**Implementation Details**:
+```javascript
+// Server-side pseudocode
+if (actionType === 'daily_login') {
+  // Check user's last_login_date in database
+  const lastLoginDate = await getUserLastLoginDate(userId);
+  const today = new Date().toDateString();
+
+  if (lastLoginDate === today) {
+    // Already logged in today - reject duplicate
+    return {
+      success: false,
+      message: 'Already logged in today',
+      pointsAwarded: 0
+    };
+  }
+
+  // Award points and update last_login_date
+  await awardPoints(userId, 10);
+  await updateLastLoginDate(userId, today);
+
+  return {
+    success: true,
+    message: 'Daily login tracked',
+    pointsAwarded: 10
+  };
+}
+```
+
+**Database Changes**:
+- Add `last_login_date` column to `users` table (VARCHAR or DATE type)
+- Add index on `last_login_date` for query performance
+
+**Endpoint**: `POST /gamification/actions`
+**Request Body**:
+```json
+{
+  "actionType": "daily_login",
+  "points": 10,
+  "data": {
+    "userId": "user-id",
+    "timestamp": "2025-10-09T10:30:00.000Z",
+    "date": "Wed Oct 09 2025"
+  }
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "pointsAwarded": 10,
+  "message": "Daily login tracked",
+  "totalPoints": 1250
+}
+```
+
+### 12.2 Manual Sync Functionality ✅ CLIENT IMPLEMENTED
+**Status**: Client-side complete, awaiting server-side data consistency
+
+**Client Features**:
+- ✅ Sync button added to Dashboard ([DashboardPage.jsx:198-217](client2/src/pages/DashboardPage.jsx#L198-L217))
+- ✅ syncWithServer function implemented ([GamificationContext.jsx:519-576](client2/src/contexts/GamificationContext.jsx#L519-L576))
+- ✅ Visual feedback with spinning icon during sync
+- ✅ Success/error snackbar messages
+- ✅ Timestamp badge showing last sync time
+- ✅ Styled with green gradient button
+
+**How It Works**:
+1. User clicks "Sync Data" button
+2. Client fetches latest data from server:
+   - `/gamification/stats`
+   - `/gamification/achievements`
+   - `/gamification/goals`
+3. Server data **overwrites** local state (server as source of truth)
+4. localStorage updated with synced data
+5. User sees confirmation with point/achievement counts
+
+**Use Cases**:
+- User logs in on Device A, earns 50 points
+- User switches to Device B, clicks Sync
+- Device B fetches server data and shows 50 points
+- Prevents localStorage desynchronization across devices
+
+### 12.3 Pending Server Tasks
+
+**High Priority**:
+1. ✅ Remove `daily_login` from client-side localOnlyActions (DONE)
+2. ⚠️ Implement `daily_login` duplicate checking in `/gamification/actions` endpoint
+3. ⚠️ Add `last_login_date` column to users table
+4. ⚠️ Test cross-device daily login behavior
+
+**Medium Priority**:
+5. ⚠️ Verify `/gamification/stats` returns correct data format
+6. ⚠️ Verify `/gamification/achievements` returns user's unlocked achievements
+7. ⚠️ Verify `/gamification/goals` returns user's active goals
+
+**Testing Checklist**:
+- [ ] Test daily_login awards points on first login of day
+- [ ] Test daily_login rejects duplicate on same day
+- [ ] Test daily_login works correctly across multiple devices
+- [ ] Test manual sync button fetches latest server data
+- [ ] Test sync overwrites outdated local state
+- [ ] Verify localStorage inconsistencies are resolved by sync
+
+---
+
+**Document Version**: 1.1
 **Last Updated**: 2025-10-09
-**Status**: Ready for Testing
+**Status**: Client Implementation Complete - Awaiting Server Updates
