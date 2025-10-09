@@ -10,6 +10,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
+import FillingArc from '../components/gamification/FillingArc';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -154,18 +155,20 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
           {checkInStreak > 0 && ` with a ${checkInStreak}-day check-in streak`}.
         </p>
 
-        {/* Level Progress Bar */}
+        {/* Level Progress Arc */}
         <div className="level-progress-container">
-          <div className="level-progress-text">
-            <span>Level {stats?.level || 1}</span>
-            <span>{Math.round(levelProgress)}% to Level {(stats?.level || 1) + 1}</span>
-          </div>
-          <div className="level-progress-bar">
-            <div
-              className="level-progress-fill"
-              style={{ width: `${levelProgress}%` }}
-            />
-          </div>
+          <FillingArc
+            progress={levelProgress}
+            level={stats?.level || 1}
+            variant="detailed"
+            size="large"
+            showStats={true}
+            stats={{
+              totalPoints: stats?.totalPoints || 0,
+              nextLevelPoints: (stats?.level || 1) * 100,
+              currentLevelPoints: ((stats?.level || 1) - 1) * 100
+            }}
+          />
         </div>
 
         {/* Quick Actions */}
@@ -203,12 +206,12 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 };
 
 
-// Quick Stats Overview Component
+// Quick Stats Overview Component with FillingArcs
 const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
-  
+
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
@@ -216,47 +219,73 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     if (stats) setLoading(false);
   }, [stats]);
 
+  // Calculate progress percentages for each metric
+  const booksReadProgress = Math.min((stats?.booksRead || 0) * 10, 100); // 10 books = 100%
+  const pagesReadProgress = Math.min((stats?.pagesRead || 0) / 10, 100); // 1000 pages = 100%
+  const checkInStreakProgress = Math.min((displayStreak || 0) * 10, 100); // 10 days = 100%
+  const readingStreakProgress = Math.min((stats?.readingStreak || 0) * 10, 100); // 10 days = 100%
+  const pointsProgress = ((stats?.totalPoints || 0) % 100); // Progress to next level
+  const notesProgress = Math.min((stats?.notesCreated || 0) * 5, 100); // 20 notes = 100%
+
+  const arcVariants = ['simple', 'detailed', 'intricate', 'cosmic', 'simple', 'detailed'];
+
   const statItems = [
     {
       icon: '📚',
       value: stats?.booksRead || 0,
-      label: 'Books Read'
+      label: 'Books Read',
+      progress: booksReadProgress,
+      variant: 'simple',
+      level: Math.floor((stats?.booksRead || 0) / 10) + 1
     },
     {
       icon: '📖',
       value: stats?.pagesRead || 0,
-      label: 'Pages Read'
+      label: 'Pages Read',
+      progress: pagesReadProgress,
+      variant: 'detailed',
+      level: Math.floor((stats?.pagesRead || 0) / 1000) + 1
     },
     {
       icon: '✅',
       value: displayStreak,
-      label: 'Check-in Streak'
+      label: 'Check-in Streak',
+      progress: checkInStreakProgress,
+      variant: 'intricate',
+      level: Math.floor((displayStreak || 0) / 10) + 1
     },
     {
       icon: '🔥',
       value: stats?.readingStreak || 0,
-      label: 'Reading Streak'
+      label: 'Reading Streak',
+      progress: readingStreakProgress,
+      variant: 'cosmic',
+      level: Math.floor((stats?.readingStreak || 0) / 10) + 1
     },
     {
       icon: '⭐',
       value: stats?.totalPoints || 0,
-      label: 'Total Points'
+      label: 'Total Points',
+      progress: pointsProgress,
+      variant: 'simple',
+      level: stats?.level || 1
     },
     {
       icon: '📝',
       value: stats?.notesCreated || 0,
-      label: 'Notes Created'
+      label: 'Notes Created',
+      progress: notesProgress,
+      variant: 'detailed',
+      level: Math.floor((stats?.notesCreated || 0) / 20) + 1
     }
   ];
 
  if (loading) {
   return (
-    <div className="stats-grid">
+    <div className="stats-arc-grid">
       {[...Array(6)].map((_, i) => (
-        <div key={i} className="stat-card">
-          <div className="loading-shimmer" style={{ height: '24px', marginBottom: '8px' }}></div>
-          <div className="loading-shimmer" style={{ height: '32px', marginBottom: '4px' }}></div>
-          <div className="loading-shimmer" style={{ height: '16px' }}></div>
+        <div key={i} className="stat-arc-card">
+          <div className="loading-shimmer" style={{ width: '150px', height: '150px', borderRadius: '50%' }}></div>
         </div>
       ))}
     </div>
@@ -264,15 +293,24 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 }
 
   return (
-  <div className="stats-grid">
+  <div className="stats-arc-grid">
     {statItems.map((stat, index) => (
       <div
         key={index}
-        className={`stat-card ${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
+        className={`stat-arc-card ${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
       >
-        <div className="stat-icon">{stat.icon}</div>
-        <div className="stat-value">{stat.value}</div>
-        <div className="stat-label">{stat.label}</div>
+        <FillingArc
+          progress={stat.progress}
+          level={stat.level}
+          variant={stat.variant}
+          size="medium"
+          showStats={false}
+        />
+        <div className="stat-arc-info">
+          <div className="stat-arc-icon">{stat.icon}</div>
+          <div className="stat-arc-value">{stat.value}</div>
+          <div className="stat-arc-label">{stat.label}</div>
+        </div>
       </div>
     ))}
   </div>

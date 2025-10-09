@@ -23,6 +23,10 @@ export { default as MD3Checkbox } from './MD3Checkbox.jsx';
 export { default as MD3SortMenu } from './MD3SortMenu.jsx';
 export { default as MD3Surface } from './MD3Surface.jsx';
 
+// Book-specific components
+export { MD3BookActionsMenu } from './MD3Menu.jsx';
+export { default as MD3BookLibraryFab } from './MD3FloatingActionButton.jsx';
+
 // Navigation components
 export {
   MD3NavigationRail,
