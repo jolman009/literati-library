@@ -16,13 +16,15 @@ import ThemeToggle from '../components/ThemeToggle';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
-  const { stats, achievements } = useGamification();
+  const { stats, achievements, syncWithServer } = useGamification();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   const { trackAction } = useGamification();
   const { showSnackbar } = useSnackbar();
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
-  
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
+
   // Check if already checked in today and calculate streak on component mount
   const [checkInStreak, setCheckInStreak] = useState(0);
   
@@ -134,6 +136,28 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
     }
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
+  const handleSync = useCallback(async () => {
+    setIsSyncing(true);
+    console.log('🔄 Manual sync initiated by user');
+
+    const result = await syncWithServer();
+
+    setIsSyncing(false);
+
+    if (result.success) {
+      setLastSyncTime(new Date());
+      showSnackbar({
+        message: `✅ Data synced! ${result.stats?.totalPoints || 0} points, ${result.achievements || 0} achievements`,
+        variant: 'success'
+      });
+    } else {
+      showSnackbar({
+        message: `❌ Sync failed: ${result.error}`,
+        variant: 'error'
+      });
+    }
+  }, [syncWithServer, showSnackbar]);
+
   return (
     <div className="welcome-section-compact">
       {/* Theme Toggle Button - Top Right */}
@@ -167,6 +191,27 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
             {!hasCheckedInToday && checkInStreak > 0 && (
               <span className="checkin-streak-badge-compact">
                 🔥 {checkInStreak} days
+              </span>
+            )}
+          </button>
+
+          {/* Manual Sync Button */}
+          <button
+            onClick={handleSync}
+            disabled={isSyncing}
+            className={`sync-button ${isSyncing ? 'syncing' : ''} ${lastSyncTime ? 'synced' : ''}`}
+            title="Sync your data with the server to ensure consistency across devices"
+          >
+            <RefreshCw
+              className={`sync-icon ${isSyncing ? 'spinning' : ''}`}
+              size={16}
+            />
+            <span className="sync-button-text">
+              {isSyncing ? 'Syncing...' : lastSyncTime ? 'Synced' : 'Sync Data'}
+            </span>
+            {lastSyncTime && !isSyncing && (
+              <span className="sync-time-badge">
+                {new Date(lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             )}
           </button>
