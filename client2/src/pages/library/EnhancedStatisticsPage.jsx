@@ -466,7 +466,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
         <div className="statistics-content">
           {/* Key Metrics Grid */}
           <div className="metrics-grid">
-            <MD3Card className="metric-card primary">
+            <MD3Card className="metric-card metric-card-1 primary">
               <div className="metric-icon">📚</div>
               <div className="metric-content">
                 <div className="metric-value">{statistics.totalBooks}</div>
@@ -477,7 +477,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
               </div>
             </MD3Card>
 
-            <MD3Card className="metric-card success">
+            <MD3Card className="metric-card metric-card-2 success">
               <div className="metric-icon">⏱️</div>
               <div className="metric-content">
                 <div className="metric-value">{formatTime(statistics.totalMinutes)}</div>
@@ -488,7 +488,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
               </div>
             </MD3Card>
 
-            <MD3Card className="metric-card warning">
+            <MD3Card className="metric-card metric-card-3 warning">
               <div className="metric-icon">🔥</div>
               <div className="metric-content">
                 <div className="metric-value">{statistics.currentStreak}</div>
@@ -499,7 +499,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
               </div>
             </MD3Card>
 
-            <MD3Card className="metric-card info">
+            <MD3Card className="metric-card metric-card-4 info">
               <div className="metric-icon">📖</div>
               <div className="metric-content">
                 <div className="metric-value">{statistics.totalPages}</div>
@@ -513,16 +513,16 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
 
           {/* Charts Row */}
           <div className="charts-row">
-            <MD3Card className="chart-card">
+            <MD3Card className="chart-card chart-card-1">
               <h3>Reading Activity</h3>
-              <MiniChart 
+              <MiniChart
                 data={Object.values(statistics.booksByMonth)}
                 label="Books per Month"
                 color="var(--md3-primary)"
               />
             </MD3Card>
 
-            <MD3Card className="chart-card">
+            <MD3Card className="chart-card chart-card-2">
               <h3>Genre Distribution</h3>
               <div className="genre-list">
                 {Object.entries(statistics.genreDistribution)
@@ -532,9 +532,9 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
                     <div key={genre} className="genre-item">
                       <span className="genre-name">{genre}</span>
                       <div className="genre-bar">
-                        <div 
+                        <div
                           className="genre-fill"
-                          style={{ 
+                          style={{
                             width: `${(count / statistics.totalBooks) * 100}%`
                           }}
                         />
@@ -545,7 +545,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
               </div>
             </MD3Card>
 
-            <MD3Card className="chart-card">
+            <MD3Card className="chart-card chart-card-3">
               <h3>Reading Patterns</h3>
               <div className="pattern-info">
                 <div className="pattern-item">
@@ -566,7 +566,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
           </div>
 
           {/* Year Progress */}
-          <MD3Card className="year-progress-card">
+          <MD3Card className="year-progress-card year-progress-card-1">
             <h3>Yearly Reading Goal</h3>
             <div className="goal-progress">
               <div className="goal-info">

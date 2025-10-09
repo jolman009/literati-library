@@ -117,28 +117,45 @@
   box-shadow: var(--md3-elevation-3);
 }
 
-.metric-card.primary {
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-surface-container)),
-    var(--md-sys-color-surface-container)) !important;
+/* Light mode: Colored gradient backgrounds for metric cards */
+:root:not([data-theme="dark"]) .metric-card-1 {
+  background-image: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.08),
+    rgba(99, 102, 241, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(79, 70, 229, 0.4) !important;
 }
 
-.metric-card.success {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, #4caf50 10%, var(--md-sys-color-surface-container)),
-    var(--md-sys-color-surface-container)) !important;
+:root:not([data-theme="dark"]) .metric-card-2 {
+  background-image: linear-gradient(135deg,
+    rgba(16, 185, 129, 0.08),
+    rgba(5, 150, 105, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(16, 185, 129, 0.4) !important;
 }
 
-.metric-card.warning {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, #ff9800 10%, var(--md-sys-color-surface-container)),
-    var(--md-sys-color-surface-container)) !important;
+:root:not([data-theme="dark"]) .metric-card-3 {
+  background-image: linear-gradient(135deg,
+    rgba(234, 88, 12, 0.08),
+    rgba(249, 115, 22, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(234, 88, 12, 0.4) !important;
 }
 
-.metric-card.info {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, #2196f3 10%, var(--md-sys-color-surface-container)),
-    var(--md-sys-color-surface-container)) !important;
+:root:not([data-theme="dark"]) .metric-card-4 {
+  background-image: linear-gradient(135deg,
+    rgba(59, 130, 246, 0.08),
+    rgba(37, 99, 235, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(59, 130, 246, 0.4) !important;
 }
 
 .metric-icon {
@@ -190,6 +207,48 @@
   display: block !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
               0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Light mode: Colored gradient backgrounds for chart cards */
+:root:not([data-theme="dark"]) .chart-card-1 {
+  background-image: linear-gradient(135deg,
+    rgba(124, 58, 237, 0.08),
+    rgba(139, 92, 246, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(124, 58, 237, 0.4) !important;
+}
+
+:root:not([data-theme="dark"]) .chart-card-2 {
+  background-image: linear-gradient(135deg,
+    rgba(239, 68, 68, 0.08),
+    rgba(220, 38, 38, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(239, 68, 68, 0.4) !important;
+}
+
+:root:not([data-theme="dark"]) .chart-card-3 {
+  background-image: linear-gradient(135deg,
+    rgba(124, 58, 237, 0.08),
+    rgba(139, 92, 246, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(124, 58, 237, 0.4) !important;
+}
+
+/* Year progress card gradient */
+:root:not([data-theme="dark"]) .year-progress-card-1 {
+  background-image: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.12),
+    rgba(99, 102, 241, 0.08),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-primary-container) !important;
+  border-left: 4px solid rgba(79, 70, 229, 0.6) !important;
 }
 
 .chart-card h3 {
