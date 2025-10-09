@@ -17,7 +17,8 @@ import "../styles/epub-reader.css";
  */
 const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   // Use proxy endpoint for EPUB files to ensure proper authentication and CORS
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  // Use environment config for consistent API URL across environments
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const epubUrl = `${apiBaseUrl}/books/${book?.id}/file`;
 
   console.log('📖 EpubReader - Initializing custom EPUB.js reader:', {
