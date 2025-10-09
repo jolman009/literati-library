@@ -193,7 +193,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 };
 
 
-// Quick Stats Overview Component with FillingArcs
+// Quick Stats Overview Component - Top 4 Stats Cards (like reference image)
 const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
@@ -206,102 +206,145 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     if (stats) setLoading(false);
   }, [stats]);
 
-  // Calculate progress percentages for each metric
-  const booksReadProgress = Math.min((stats?.booksRead || 0) * 10, 100); // 10 books = 100%
-  const pagesReadProgress = Math.min((stats?.pagesRead || 0) / 10, 100); // 1000 pages = 100%
-  const checkInStreakProgress = Math.min((displayStreak || 0) * 10, 100); // 10 days = 100%
-  const readingStreakProgress = Math.min((stats?.readingStreak || 0) * 10, 100); // 10 days = 100%
-  const pointsProgress = ((stats?.totalPoints || 0) % 100); // Progress to next level
-  const notesProgress = Math.min((stats?.notesCreated || 0) * 5, 100); // 20 notes = 100%
+  // Calculate growth percentage (mock data for now)
+  const calculateGrowth = (value) => {
+    return value > 0 ? `+${Math.min(Math.floor(value / 10) * 4, 15)}%` : '+0%';
+  };
 
-  const arcVariants = ['simple', 'detailed', 'intricate', 'cosmic', 'simple', 'detailed'];
-
-  const statItems = [
+  const statCards = [
     {
       icon: '📚',
       value: stats?.booksRead || 0,
-      label: 'Books Read',
-      progress: booksReadProgress,
-      variant: 'simple',
-      level: Math.floor((stats?.booksRead || 0) / 10) + 1
-    },
-    {
-      icon: '📖',
-      value: stats?.pagesRead || 0,
-      label: 'Pages Read',
-      progress: pagesReadProgress,
-      variant: 'detailed',
-      level: Math.floor((stats?.pagesRead || 0) / 1000) + 1
-    },
-    {
-      icon: '✅',
-      value: displayStreak,
-      label: 'Check-in Streak',
-      progress: checkInStreakProgress,
-      variant: 'intricate',
-      level: Math.floor((displayStreak || 0) / 10) + 1
-    },
-    {
-      icon: '🔥',
-      value: stats?.readingStreak || 0,
-      label: 'Reading Streak',
-      progress: readingStreakProgress,
-      variant: 'cosmic',
-      level: Math.floor((stats?.readingStreak || 0) / 10) + 1
+      label: 'Total Books',
+      growth: calculateGrowth(stats?.booksRead || 0),
+      trend: 'up'
     },
     {
       icon: '⭐',
       value: stats?.totalPoints || 0,
       label: 'Total Points',
-      progress: pointsProgress,
-      variant: 'simple',
-      level: stats?.level || 1
+      growth: calculateGrowth(stats?.totalPoints || 0),
+      trend: 'up'
     },
     {
-      icon: '📝',
-      value: stats?.notesCreated || 0,
-      label: 'Notes Created',
-      progress: notesProgress,
-      variant: 'detailed',
-      level: Math.floor((stats?.notesCreated || 0) / 20) + 1
+      icon: '📖',
+      value: stats?.pagesRead || 0,
+      label: 'Pages Read',
+      growth: calculateGrowth(stats?.pagesRead || 0),
+      trend: 'up'
+    },
+    {
+      icon: '🔥',
+      value: displayStreak,
+      label: 'Daily Streak',
+      growth: displayStreak > 0 ? `+${displayStreak}d` : '+0d',
+      trend: displayStreak > 0 ? 'up' : 'neutral'
     }
   ];
 
- if (loading) {
+  if (loading) {
+    return (
+      <div className="stats-cards-grid">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="stat-metric-card">
+            <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="stats-arc-grid">
-      {[...Array(6)].map((_, i) => (
-        <div key={i} className="stat-arc-card">
-          <div className="loading-shimmer" style={{ width: '150px', height: '150px', borderRadius: '50%' }}></div>
+    <div className="stats-cards-grid">
+      {statCards.map((stat, index) => (
+        <div key={index} className="stat-metric-card">
+          <div className="stat-metric-header">
+            <span className="stat-metric-value">${stat.value}</span>
+            <span className={`stat-metric-growth ${stat.trend}`}>
+              {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
+            </span>
+          </div>
+          <div className="stat-metric-footer">
+            <span className="stat-metric-label">{stat.label}</span>
+            <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
+          </div>
         </div>
       ))}
     </div>
   );
-}
+};
+
+// Point Categories Component - Shows how to earn points
+const PointCategoriesSection = () => {
+  const navigate = useNavigate();
+
+  const pointCategories = [
+    {
+      title: 'Reading Activities',
+      icon: '📖',
+      color: '#6366f1',
+      actions: [
+        { action: 'Start Reading Session', points: 5, icon: '🚀' },
+        { action: 'Complete Reading Session', points: 10, icon: '✅' },
+        { action: 'Read Page', points: 1, icon: '📄' },
+        { action: 'Reading Time', points: '1/min', icon: '⏱️' },
+        { action: 'Complete Book', points: 100, icon: '🎉' },
+      ]
+    },
+    {
+      title: 'Library Management',
+      icon: '📚',
+      color: '#8b5cf6',
+      actions: [
+        { action: 'Upload Book', points: 25, icon: '📤' },
+        { action: 'Daily Login', points: 10, icon: '🌅' },
+        { action: 'Daily Check-in', points: 10, icon: '✔️' },
+      ]
+    },
+    {
+      title: 'Note-Taking & Study',
+      icon: '📝',
+      color: '#ec4899',
+      actions: [
+        { action: 'Create Note', points: 15, icon: '📋' },
+        { action: 'Create Highlight', points: 10, icon: '✏️' },
+      ]
+    }
+  ];
 
   return (
-  <div className="stats-arc-grid">
-    {statItems.map((stat, index) => (
-      <div
-        key={index}
-        className={`stat-arc-card ${stat.label.toLowerCase().replace(/\s+/g, '-')}`}
-      >
-        <FillingArc
-          progress={stat.progress}
-          level={stat.level}
-          variant={stat.variant}
-          size="medium"
-          showStats={false}
-        />
-        <div className="stat-arc-info">
-          <div className="stat-arc-icon">{stat.icon}</div>
-          <div className="stat-arc-value">{stat.value}</div>
-          <div className="stat-arc-label">{stat.label}</div>
+    <>
+      {pointCategories.map((category, index) => (
+        <div key={index} className="point-category-card">
+          <div className="point-category-header">
+            <h3 className="point-category-title">
+              <span className="point-category-icon">{category.icon}</span>
+              {category.title}
+            </h3>
+          </div>
+          <div className="point-category-actions">
+            {category.actions.map((action, actionIndex) => (
+              <div key={actionIndex} className="point-action-item">
+                <div className="point-action-info">
+                  <span className="point-action-icon">{action.icon}</span>
+                  <span className="point-action-name">{action.action}</span>
+                </div>
+                <div className="point-action-badge" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
+                  +{action.points}
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => navigate('/gamification-rules')}
+            className="point-category-footer-link"
+          >
+            View all rewards →
+          </button>
         </div>
-      </div>
-    ))}
-  </div>
-);
+      ))}
+    </>
+  );
 };
 
 // Recent Achievements Component (kept but can be removed if needed)
@@ -685,75 +728,30 @@ const DashboardPage = () => {
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
       <div className="dashboard-content">
-        {/* Welcome Section with Theme Toggle - Streamlined */}
-        <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} />
 
-        {/* Main Dashboard Grid - 2 Column Layout */}
-        <div className="dashboard-main-grid">
+        {/* Top Stats Row - 4 metric cards like the reference */}
+        <div className="dashboard-stats-row">
+          <QuickStatsOverview checkInStreak={checkInStreak} />
+        </div>
 
-          {/* Left Column - Progress & Activity */}
-          <div className="dashboard-left-column">
+        {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
+        <div className="dashboard-main-content-grid">
 
-            {/* Your Progress Section with FillingArcs */}
-            <div className="progress-section">
-              <h2 className="section-header">📊 Your Progress</h2>
-              <QuickStatsOverview checkInStreak={checkInStreak} />
-            </div>
+          {/* Left Column - Welcome Section (replaces Transaction History) */}
+          <div className="dashboard-content-left">
+            <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} />
+          </div>
 
-            {/* Currently Reading - Compact */}
+          {/* Right Column - Currently Reading Sessions (replaces Open Projects) */}
+          <div className="dashboard-content-right">
             <CurrentlyReading />
-
-            {/* Recent Achievements - Compact */}
-            <RecentAchievements />
-
           </div>
 
-          {/* Right Column - Recent Activity & Quick Actions */}
-          <div className="dashboard-right-column">
+        </div>
 
-            {/* Quick Actions Card */}
-            <div className="quick-actions-card">
-              <h3 className="card-title">Quick Actions</h3>
-              <div className="quick-actions-grid">
-                <button
-                  onClick={() => navigate('/library')}
-                  className="quick-action-button library"
-                >
-                  <span className="action-icon">📚</span>
-                  <span className="action-label">Browse Library</span>
-                </button>
-
-                <button
-                  onClick={() => navigate('/upload')}
-                  className="quick-action-button upload"
-                >
-                  <span className="action-icon">⬆️</span>
-                  <span className="action-label">Upload Book</span>
-                </button>
-
-                <button
-                  onClick={() => navigate('/notes')}
-                  className="quick-action-button notes"
-                >
-                  <span className="action-icon">📝</span>
-                  <span className="action-label">My Notes</span>
-                </button>
-
-                <button
-                  onClick={() => navigate('/mentor')}
-                  className="quick-action-button mentor"
-                >
-                  <span className="action-icon">🎓</span>
-                  <span className="action-label">AI Mentor</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Recently Added Books - Compact List */}
-            <RecentlyAdded />
-
-          </div>
-
+        {/* Bottom Row - Point Categories (How to Earn Points) */}
+        <div className="dashboard-bottom-row">
+          <PointCategoriesSection />
         </div>
       </div>
     </div>
