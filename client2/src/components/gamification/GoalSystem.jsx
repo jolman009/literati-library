@@ -8,18 +8,22 @@ const GoalItem = ({ goal, onComplete }) => {
   const progressWidth = Math.min(100, goal.progress);
 
   return (
-    <MD3Card style={{
-      padding: '24px',
-      transition: 'all 0.3s ease',
-      background: isCompleted ? '#f0fdf4' : 'var(--md3-surface-container)',
-      border: `1px solid ${isCompleted ? '#86efac' : 'var(--md3-outline-variant)'}`
-    }}>
+    <MD3Card
+      variant="outlined"
+      style={{
+        padding: '24px',
+        transition: 'all 0.3s ease',
+        background: isCompleted ? 'color-mix(in srgb, #22c55e 15%, var(--md-sys-color-surface-container))' : 'var(--md-sys-color-surface-container)',
+        border: `3px solid ${isCompleted ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-outline-variant)'}`,
+        borderRadius: '12px',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'
+      }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
         <div style={{ flex: 1 }}>
-          <h4 style={{ fontWeight: 'bold', fontSize: '18px', color: isCompleted ? '#166534' : '#111827' }}>
+          <h4 style={{ fontWeight: 'bold', fontSize: '18px', color: 'var(--md-sys-color-on-surface)' }}>
             {goal.title}
           </h4>
-          <p style={{ fontSize: '14px', color: isCompleted ? '#16a34a' : '#4b5563' }}>
+          <p style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             {goal.description}
           </p>
         </div>
@@ -44,28 +48,28 @@ const GoalItem = ({ goal, onComplete }) => {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-          <span style={{ color: isCompleted ? '#16a34a' : '#4b5563', fontWeight: isCompleted ? '500' : 'normal' }}>
+          <span style={{ color: 'var(--md-sys-color-on-surface-variant)', fontWeight: isCompleted ? '500' : 'normal' }}>
             Progress
           </span>
-          <span style={{ fontWeight: '500', color: isCompleted ? '#16a34a' : '#111827' }}>
+          <span style={{ fontWeight: '500', color: 'var(--md-sys-color-on-surface)' }}>
             {goal.currentValue} / {goal.targetValue}
           </span>
         </div>
 
-        <div style={{ width: '100%', backgroundColor: '#e5e7eb', borderRadius: '9999px', height: '12px' }}>
-          <div 
+        <div style={{ width: '100%', backgroundColor: 'var(--md-sys-color-surface-container-highest)', borderRadius: '9999px', height: '12px' }}>
+          <div
             style={{
               height: '12px',
               borderRadius: '9999px',
               transition: 'all 0.5s ease',
-              backgroundColor: isCompleted ? '#22c55e' : '#3b82f6',
+              backgroundColor: isCompleted ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-secondary)',
               width: `${progressWidth}%`
             }}
           />
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '12px', color: isCompleted ? '#16a34a' : '#6b7280' }}>
+          <span style={{ fontSize: '12px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             {progressWidth.toFixed(1)}% complete
           </span>
           {isCompleted && onComplete && (
@@ -172,8 +176,16 @@ const GoalCreator = ({ onCreateGoal, onCancel }) => {
   };
 
   return (
-    <MD3Card style={{ padding: '24px' }}>
-      <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px' }}>Create Custom Goal</h3>
+    <MD3Card
+      variant="outlined"
+      style={{
+        padding: '24px',
+        border: '3px solid var(--md-sys-color-outline-variant)',
+        borderRadius: '12px',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'
+      }}
+    >
+      <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px', color: 'var(--md-sys-color-on-surface)' }}>Create Custom Goal</h3>
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
@@ -361,12 +373,21 @@ const GoalSystem = ({ goals = [], onComplete, onCompleteGoal, onCreateGoal }) =>
 
       {/* Goals Grid */}
       {filteredGoals.length === 0 ? (
-        <MD3Card style={{ padding: '32px', textAlign: 'center' }}>
+        <MD3Card
+          variant="outlined"
+          style={{
+            padding: '32px',
+            textAlign: 'center',
+            border: '3px solid var(--md-sys-color-outline-variant)',
+            borderRadius: '12px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'
+          }}
+        >
           <div style={{ fontSize: '60px', marginBottom: '16px' }}>🎯</div>
-          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#4b5563', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--md-sys-color-on-surface)', marginBottom: '8px' }}>
             {goals.length === 0 ? 'No goals yet' : 'No goals match your filter'}
           </h3>
-          <p style={{ color: '#6b7280', marginBottom: '16px' }}>
+          <p style={{ color: 'var(--md-sys-color-on-surface-variant)', marginBottom: '16px' }}>
             {goals.length === 0 
               ? "Create your first reading goal to stay motivated!"
               : "Try adjusting your filter to see more goals."

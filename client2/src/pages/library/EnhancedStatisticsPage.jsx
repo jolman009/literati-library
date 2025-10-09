@@ -426,7 +426,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
       <div className="statistics-header">
         <h1 className="page-title">
           <span className="title-icon">📊</span>
-          Reading Analytics
+          Statistics
         </h1>
         
         {/* Time Range Selector */}
@@ -734,24 +734,24 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
           <h2>Reading Insights</h2>
           
           <div className="insights-grid">
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-1">
               <h3>📚 Reading Velocity</h3>
               <p>You're reading {statistics.avgReadingSpeed} pages per hour, which is {
                 statistics.avgReadingSpeed > 40 ? 'above' : 'below'
               } average!</p>
-              {statistics.avgReadingSpeed > 40 && 
+              {statistics.avgReadingSpeed > 40 &&
                 <MD3Chip icon="⚡" label="Speed Reader" color="success" />
               }
             </MD3Card>
 
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-2">
               <h3>🎯 Goal Progress</h3>
               <p>At your current pace of {statistics.dailyAverage} minutes per day, you'll complete your yearly goal in {
                 Math.ceil((50 - statistics.completedBooks) * 300 / statistics.dailyAverage)
               } days.</p>
             </MD3Card>
 
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-3">
               <h3>📖 Favorite Genre</h3>
               <p>Your most read genre is <strong>{
                 Object.entries(statistics.genreDistribution)
@@ -762,26 +762,26 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
               } books.</p>
             </MD3Card>
 
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-4">
               <h3>⏰ Best Reading Time</h3>
-              <p>You're most productive reading at <strong>{statistics.peakReadingHour}:00</strong>. 
-              {statistics.peakReadingHour >= 21 ? ' A true night owl!' : 
-               statistics.peakReadingHour < 9 ? ' Early bird catches the worm!' : 
+              <p>You're most productive reading at <strong>{statistics.peakReadingHour}:00</strong>.
+              {statistics.peakReadingHour >= 21 ? ' A true night owl!' :
+               statistics.peakReadingHour < 9 ? ' Early bird catches the worm!' :
                ' Perfect for a midday break!'}</p>
             </MD3Card>
 
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-5">
               <h3>🔥 Streak Analysis</h3>
-              <p>Your current streak is {statistics.currentStreak} days. 
+              <p>Your current streak is {statistics.currentStreak} days.
               {statistics.currentStreak > 0 ? ' Keep it up!' : ' Start reading today to begin a new streak!'}</p>
-              {statistics.currentStreak >= 7 && 
+              {statistics.currentStreak >= 7 &&
                 <MD3Chip icon="🔥" label="On Fire!" color="warning" />
               }
             </MD3Card>
 
-            <MD3Card className="insight-card">
+            <MD3Card className="insight-card insight-card-6">
               <h3>📈 Monthly Trend</h3>
-              <p>You've read {statistics.completedBooks} books this {timeRange}, 
+              <p>You've read {statistics.completedBooks} books this {timeRange},
               {statistics.completedBooks > 3 ? ' exceeding' : ' working towards'} your monthly goal!</p>
             </MD3Card>
           </div>
