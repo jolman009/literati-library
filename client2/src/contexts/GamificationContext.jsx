@@ -305,6 +305,28 @@ export const GamificationProvider = ({ children }) => {
     fetchData();
   }, [fetchData]);
 
+  // Listen for daily login events from AuthContext
+  useEffect(() => {
+    const handleDailyLogin = (event) => {
+      if (!user) return;
+
+      console.log('🎯 Daily login event received', event.detail);
+
+      // Track the daily login action
+      trackAction('daily_login', {
+        userId: event.detail.userId,
+        timestamp: event.detail.timestamp,
+        date: event.detail.date
+      });
+    };
+
+    window.addEventListener('dailyLoginTracked', handleDailyLogin);
+
+    return () => {
+      window.removeEventListener('dailyLoginTracked', handleDailyLogin);
+    };
+  }, [user, trackAction]);
+
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}) => {
     if (!user) return;
@@ -515,6 +537,66 @@ export const GamificationProvider = ({ children }) => {
     }
   }, [token, offlineMode]);
 
+  // Manual sync function - fetch latest data from server and reconcile with local
+  const syncWithServer = useCallback(async () => {
+    if (!user || !token || offlineMode) {
+      console.warn('⚠️ Cannot sync: user not authenticated or in offline mode');
+      return { success: false, error: 'Not authenticated or offline' };
+    }
+
+    console.log('🔄 Starting manual sync with server...');
+    setLoading(true);
+
+    try {
+      // Fetch fresh data from server
+      const statsData = await makeSafeApiCall('/gamification/stats');
+      const achievementsData = await makeSafeApiCall('/gamification/achievements');
+      const goalsData = await makeSafeApiCall('/gamification/goals');
+
+      if (statsData) {
+        const enhancedStats = {
+          ...statsData,
+          level: calculateLevel(statsData.totalPoints || 0),
+          readingStreak: calculateReadingStreak() // Always recalculate from local sessions
+        };
+
+        // Update state with server data (server is source of truth)
+        setStats(enhancedStats);
+        localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(enhancedStats));
+        console.log('✅ Stats synced from server:', enhancedStats);
+      }
+
+      if (achievementsData) {
+        setAchievements(achievementsData);
+        setUnlockedAchievements(new Set(achievementsData.map(a => a.id)));
+        localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(achievementsData.map(a => a.id)));
+        console.log('✅ Achievements synced from server');
+      }
+
+      if (goalsData) {
+        setGoals(goalsData);
+        console.log('✅ Goals synced from server');
+      }
+
+      console.log('✅ Sync complete - all data updated from server');
+      return {
+        success: true,
+        message: 'Data synced successfully',
+        stats: statsData,
+        achievements: achievementsData?.length || 0
+      };
+
+    } catch (error) {
+      console.error('❌ Sync failed:', error);
+      return {
+        success: false,
+        error: error.message || 'Sync failed'
+      };
+    } finally {
+      setLoading(false);
+    }
+  }, [user, token, offlineMode, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
+
   const value = {
     // State
     stats,
@@ -529,6 +611,7 @@ export const GamificationProvider = ({ children }) => {
     trackAction,
     createGoal,
     updateGoalProgress,
+    syncWithServer,
     clearRecentAchievement: () => setRecentAchievement(null),
 
     // Utilities

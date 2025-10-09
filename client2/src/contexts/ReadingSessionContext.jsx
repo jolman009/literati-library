@@ -103,11 +103,12 @@ export const ReadingSessionProvider = ({ children }) => {
       // Track to gamification system
       if (trackAction) {
         try {
-          await trackAction('start_reading_session', {
+          await trackAction('reading_session_started', {
             bookId: book.id,
             bookTitle: book.title,
             timestamp: new Date().toISOString()
           });
+          console.log('✅ Reading session start tracked - 5 points awarded');
         } catch (error) {
           console.warn('Failed to track reading start:', error);
         }
@@ -196,7 +197,7 @@ export const ReadingSessionProvider = ({ children }) => {
       // Track session end to gamification system
       if (trackAction && durationMinutes > 0) {
         try {
-          await trackAction('complete_reading_session', {
+          await trackAction('reading_session_completed', {
             bookId: activeSession.book.id,
             bookTitle: activeSession.book.title,
             duration: durationMinutes,
@@ -204,6 +205,7 @@ export const ReadingSessionProvider = ({ children }) => {
             pagesRead: activeSession.pagesRead || 0,
             timestamp: endTime.toISOString()
           });
+          console.log(`✅ Reading session completed tracked - 10 points + ${durationMinutes} minutes reading time`);
         } catch (error) {
           console.warn('Failed to track reading session completion:', error);
         }
@@ -258,15 +260,22 @@ export const ReadingSessionProvider = ({ children }) => {
       }));
       // Save to localStorage
       localStorage.setItem('active_reading_session', JSON.stringify(updatedSession));
-      // Track to gamification if available
+      // Track to gamification if available (track each page individually)
       if (trackAction && pagesRead > 0) {
         try {
-          await trackAction('pages_read', {
-            pages: pagesRead,
-            bookId: activeSession.book.id,
-            bookTitle: activeSession.book.title,
-            timestamp: new Date().toISOString()
-          });
+          const previousPages = activeSession.pagesRead || 0;
+          const newPages = pagesRead - previousPages;
+
+          if (newPages > 0) {
+            // Track page_read for each new page read
+            await trackAction('page_read', {
+              pages: newPages,
+              bookId: activeSession.book.id,
+              bookTitle: activeSession.book.title,
+              timestamp: new Date().toISOString()
+            });
+            console.log(`✅ ${newPages} page(s) tracked - ${newPages} point(s) awarded`);
+          }
         } catch (error) {
           console.warn('Failed to track pages read:', error);
         }

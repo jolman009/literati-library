@@ -267,6 +267,33 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
+        // Track daily login for gamification (once per day)
+        try {
+          const lastLogin = localStorage.getItem('lastDailyLogin');
+          const today = new Date().toDateString();
+
+          if (lastLogin !== today) {
+            // Mark as logged in today
+            localStorage.setItem('lastDailyLogin', today);
+
+            // Dispatch event for gamification context to pick up
+            window.dispatchEvent(new CustomEvent('dailyLoginTracked', {
+              detail: {
+                userId: data.user.id,
+                timestamp: new Date().toISOString(),
+                date: today
+              }
+            }));
+
+            console.log('✅ Daily login tracked - 10 points will be awarded');
+          } else {
+            console.log('ℹ️ Already logged in today - no additional points');
+          }
+        } catch (loginTrackError) {
+          console.warn('Failed to track daily login:', loginTrackError);
+          // Don't fail login if tracking fails
+        }
+
         console.log('✅ Login successful - token stored in localStorage');
         return { success: true, user: data.user };
       } catch (err) {
