@@ -1197,5 +1197,301 @@
   .welcome-section-compact {
     padding: 20px;
   }
+
+  .stats-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-main-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================================================
+   NEW DASHBOARD LAYOUT - Reference Image Style
+   ======================================================================== */
+
+/* Top Stats Row - 4 Metric Cards */
+.dashboard-stats-row {
+  margin-bottom: 24px;
+}
+
+.stats-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-metric-card {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: var(--md-sys-color-primary);
+}
+
+[data-theme="dark"] .stat-metric-card {
+  background: var(--md-sys-color-surface-container-low);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .stat-metric-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.stat-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stat-metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1;
+}
+
+.stat-metric-growth {
+  font-size: 1.5rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  transition: all 0.3s ease;
+}
+
+.stat-metric-growth.up {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stat-metric-growth.down {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.stat-metric-growth.neutral {
+  background: rgba(156, 163, 175, 0.1);
+  color: #9ca3af;
+}
+
+.stat-metric-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-metric-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  text-transform: capitalize;
+}
+
+.stat-metric-percentage {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.stat-metric-percentage.up {
+  color: #10b981;
+}
+
+.stat-metric-percentage.down {
+  color: #ef4444;
+}
+
+.stat-metric-percentage.neutral {
+  color: #9ca3af;
+}
+
+/* Main Content Grid - Two Columns (Welcome + Reading Sessions) */
+.dashboard-main-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.dashboard-content-left,
+.dashboard-content-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Welcome Section as a Card */
+.dashboard-content-left .welcome-section-compact {
+  height: 100%;
+  margin-bottom: 0;
+}
+
+/* Currently Reading as a Card */
+.dashboard-content-right .section-card {
+  height: 100%;
+  margin-bottom: 0;
+}
+
+/* Bottom Row - 3 Columns */
+.dashboard-bottom-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* Responsive adjustments for new layout */
+@media (max-width: 1200px) {
+  .stats-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-main-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================================================
+   POINT CATEGORY CARDS - Bottom Row
+   ======================================================================== */
+
+.point-category-card {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.point-category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .point-category-card {
+  background: var(--md-sys-color-surface-container-low);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .point-category-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.point-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.point-category-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.point-category-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.point-category-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.point-action-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .point-action-item {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.point-action-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateX(4px);
+}
+
+[data-theme="dark"] .point-action-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.point-action-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.point-action-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.point-action-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.point-action-badge {
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.point-category-footer-link {
+  background: none;
+  border: none;
+  color: var(--md-sys-color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.point-category-footer-link:hover {
+  color: var(--md-sys-color-primary);
+  text-decoration: underline;
 }
 
