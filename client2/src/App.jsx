@@ -4,6 +4,7 @@
 // ===============================================
 import React, { Suspense, lazy, useEffect } from 'react';
 import { initWebVitals } from './utils/webVitals';
+import { initOfflineReading } from './utils/offlineInit';
 import PerformanceMonitor from './components/PerformanceMonitor';
 import CacheMonitor from './components/CacheMonitor';
 
@@ -21,7 +22,8 @@ import ErrorBoundary, {
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 
 // PWA Components
-import { InstallPrompt, OfflineIndicator, UpdateNotification } from './components/PWA';
+import { InstallPrompt, UpdateNotification } from './components/PWA';
+import OfflineIndicator from './components/OfflineIndicator';
 
 // Sentry testing (development only)
 // import SentryTestButton from './components/SentryTestButton.jsx';
@@ -240,6 +242,18 @@ const App = () => {
 
   useEffect(() => {
     initWebVitals(); // ✅ keep web vitals monitoring
+
+    // Initialize offline reading system
+    initOfflineReading().then(result => {
+      if (result.success) {
+        console.log('📚 Offline reading initialized successfully');
+        console.log('💾 Storage available:', result.storage);
+      } else {
+        console.warn('⚠️ Offline reading initialization failed:', result.error);
+      }
+    }).catch(error => {
+      console.error('❌ Failed to initialize offline reading:', error);
+    });
   }, []);
 
   return (
