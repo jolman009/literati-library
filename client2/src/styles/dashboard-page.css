@@ -944,3 +944,258 @@
   border: 0;
 }
 
+/* ========================================================================
+   MODERN DASHBOARD REDESIGN - Compact & Clean
+   ======================================================================== */
+
+/* Main Dashboard Grid - 2 Column Layout */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.dashboard-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Compact Welcome Section */
+.welcome-section-compact {
+  position: relative;
+  padding: 24px 32px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(139, 92, 246, 0.05) 50%,
+    rgba(99, 102, 241, 0.1) 100%);
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .welcome-section-compact {
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(139, 92, 246, 0.1) 50%,
+    rgba(99, 102, 241, 0.15) 100%);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-content-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.welcome-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.welcome-title-compact {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.2;
+}
+
+.welcome-subtitle-compact {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 500;
+}
+
+.welcome-arc-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Compact Check-in Button */
+.checkin-button-compact {
+  align-self: flex-start;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkin-button-compact:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+}
+
+.checkin-button-compact:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #6b7280, #9ca3af);
+}
+
+.checkin-streak-badge-compact {
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Quick Actions Card */
+.quick-actions-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(99, 102, 241, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .quick-actions-card {
+  background: rgba(30, 30, 35, 0.9);
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.quick-action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 16px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(99, 102, 241, 0.1);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+}
+
+.quick-action-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.15);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .quick-action-button {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+[data-theme="dark"] .quick-action-button:hover {
+  background: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+.action-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.action-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Color variations for quick action buttons */
+.quick-action-button.library {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.quick-action-button.library:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.quick-action-button.upload {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.quick-action-button.upload:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.quick-action-button.notes {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.quick-action-button.notes:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.quick-action-button.mentor {
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.quick-action-button.mentor:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+/* Responsive Design for Dashboard Grid */
+@media (max-width: 1024px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-right-column {
+    order: -1; /* Move quick actions to top on mobile */
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .welcome-arc-container {
+    order: -1; /* Arc on top on mobile */
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-section-compact {
+    padding: 20px;
+  }
+}
+

@@ -135,7 +135,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
   return (
-    <div className="welcome-section">
+    <div className="welcome-section-compact">
       {/* Theme Toggle Button - Top Right */}
       <button
         onClick={toggleTheme}
@@ -145,23 +145,40 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
         {actualTheme === 'dark' ? (<Sun size={20} aria-hidden="true" />) : (<Moon size={20} aria-hidden="true" />)}
       </button>
 
-      <div className="welcome-header">
-        <h1 className="welcome-title">
-          {getMotivationalMessage()}
-        </h1>
+      <div className="welcome-content-grid">
+        {/* Left: Greeting & Level Arc */}
+        <div className="welcome-info">
+          <h1 className="welcome-title-compact">
+            {getMotivationalMessage()}
+          </h1>
 
-        <p className="welcome-subtitle">
-          Welcome back, {user?.name || 'Reader'}! You're currently Level {stats?.level || 1}
-          {checkInStreak > 0 && ` with a ${checkInStreak}-day check-in streak`}.
-        </p>
+          <p className="welcome-subtitle-compact">
+            {user?.name || 'Reader'} • Level {stats?.level || 1}
+            {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
+          </p>
 
-        {/* Level Progress Arc */}
-        <div className="level-progress-container">
+          {/* Daily Check-in Button - Prominent */}
+          <button
+            onClick={handleDailyCheckIn}
+            disabled={hasCheckedInToday}
+            className="checkin-button-compact"
+          >
+            {hasCheckedInToday ? '✓ Checked In Today' : '✅ Daily Check-in'}
+            {!hasCheckedInToday && checkInStreak > 0 && (
+              <span className="checkin-streak-badge-compact">
+                🔥 {checkInStreak} days
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Right: Level Progress Arc - Smaller */}
+        <div className="welcome-arc-container">
           <FillingArc
             progress={levelProgress}
             level={stats?.level || 1}
             variant="detailed"
-            size="large"
+            size="medium"
             showStats={true}
             stats={{
               totalPoints: stats?.totalPoints || 0,
@@ -169,36 +186,6 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
               currentLevelPoints: ((stats?.level || 1) - 1) * 100
             }}
           />
-        </div>
-
-        {/* Quick Actions */}
-        <div className="quick-actions">
-          <button
-            onClick={() => navigate('/library')}
-            className="action-button-primary"
-          >
-            📚 Continue Reading
-          </button>
-          
-          <button
-            onClick={() => navigate('/upload')}
-            className="action-button-secondary"
-          >
-            ⬆️ Add Books
-          </button>
-
-          <button
-            onClick={handleDailyCheckIn}
-            disabled={hasCheckedInToday}
-            className="checkin-button"
-          >
-            {hasCheckedInToday ? '✓ Checked In' : '✅ Daily Check-in'}
-            {checkInStreak > 0 && (
-              <span className="checkin-streak-badge">
-                🔥 {checkInStreak}
-              </span>
-            )}
-          </button>
         </div>
       </div>
     </div>
@@ -698,63 +685,76 @@ const DashboardPage = () => {
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
       <div className="dashboard-content">
-        {/* Welcome Section with Theme Toggle */}
+        {/* Welcome Section with Theme Toggle - Streamlined */}
         <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} />
 
-      {/* Your Progress Section */}
-      <div className="progress-section">
-        <h2 className="section-header">
-          📊 Your Progress
-        </h2>
-        <QuickStatsOverview checkInStreak={checkInStreak} />
-      </div>
+        {/* Main Dashboard Grid - 2 Column Layout */}
+        <div className="dashboard-main-grid">
 
-      {/* Literary Mentor Section */}
-      <div className="progress-section">
-        <h2 className="section-header">
-          🎓 Your Literary Mentor
-        </h2>
-        <LiteraryMentorUI 
-          currentBook={null} // This can be connected to currently reading books
-          onQuizStart={(quiz) => console.log('Starting quiz:', quiz)}
-          onDiscussionStart={(discussion) => console.log('Starting discussion:', discussion)}
-        />
-      </div>
+          {/* Left Column - Progress & Activity */}
+          <div className="dashboard-left-column">
 
-      {/* Currently Reading Section */}
-      <CurrentlyReading />
+            {/* Your Progress Section with FillingArcs */}
+            <div className="progress-section">
+              <h2 className="section-header">📊 Your Progress</h2>
+              <QuickStatsOverview checkInStreak={checkInStreak} />
+            </div>
 
+            {/* Currently Reading - Compact */}
+            <CurrentlyReading />
 
-      {/* Recently Added Section */}
-      <RecentlyAdded />
+            {/* Recent Achievements - Compact */}
+            <RecentAchievements />
 
-      {/* Recent Achievements (Optional - can be removed) */}
-      <RecentAchievements />
+          </div>
 
-      {/* Call to Action */}
-      <div className="cta-section">
-        <h3 className="cta-title">
-          🚀 Ready to Level Up?
-        </h3>
-        <p className="cta-subtitle">
-          Continue your reading journey and unlock amazing achievements!
-        </p>
-        <div className="cta-buttons">
-          <button
-            onClick={() => navigate('/library')}
-            className="cta-button-primary"
-          >
-            📚 Open Library
-          </button>
-          
-          <button
-            onClick={() => navigate('/upload')}
-            className="cta-button-secondary"
-          >
-            ⬆️ Upload Books
-          </button>
+          {/* Right Column - Recent Activity & Quick Actions */}
+          <div className="dashboard-right-column">
+
+            {/* Quick Actions Card */}
+            <div className="quick-actions-card">
+              <h3 className="card-title">Quick Actions</h3>
+              <div className="quick-actions-grid">
+                <button
+                  onClick={() => navigate('/library')}
+                  className="quick-action-button library"
+                >
+                  <span className="action-icon">📚</span>
+                  <span className="action-label">Browse Library</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/upload')}
+                  className="quick-action-button upload"
+                >
+                  <span className="action-icon">⬆️</span>
+                  <span className="action-label">Upload Book</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/notes')}
+                  className="quick-action-button notes"
+                >
+                  <span className="action-icon">📝</span>
+                  <span className="action-label">My Notes</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/mentor')}
+                  className="quick-action-button mentor"
+                >
+                  <span className="action-icon">🎓</span>
+                  <span className="action-label">AI Mentor</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Recently Added Books - Compact List */}
+            <RecentlyAdded />
+
+          </div>
+
         </div>
-      </div>
       </div>
     </div>
   );
