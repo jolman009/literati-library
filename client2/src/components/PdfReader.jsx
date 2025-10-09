@@ -87,10 +87,11 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     if (!containerRef.current) return;
     const el = containerRef.current;
     const ro = new ResizeObserver(() => {
-      setPageWidth(el.clientWidth ? Math.min(el.clientWidth - 24, 1200) : undefined);
+      // Use full width minus padding, no max width constraint
+      setPageWidth(el.clientWidth ? el.clientWidth - 24 : undefined);
     });
     ro.observe(el);
-    setPageWidth(el.clientWidth ? Math.min(el.clientWidth - 24, 1200) : undefined);
+    setPageWidth(el.clientWidth ? el.clientWidth - 24 : undefined);
     return () => ro.disconnect();
   }, []);
 
@@ -181,7 +182,13 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         <button onClick={nextPage} disabled={!numPages || pageNumber >= numPages}>Next</button>
       </div>
 
-      <div style={{ display: 'grid', placeItems: 'center', padding: 12 }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%',
+        padding: '12px 0'
+      }}>
         <Document
           file={pdfFile}
           onLoadSuccess={onLoadSuccess}
@@ -220,8 +227,12 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         >
           <div
             onClick={onCanvasClick}
-            // Let clicks pass through “text layer” if you later enable it
-            style={{ cursor: 'pointer' }}
+            style={{
+              cursor: 'pointer',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
             className="pdf-click-layer"
           >
             <Page
