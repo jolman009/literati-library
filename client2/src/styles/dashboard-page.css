@@ -120,7 +120,8 @@
   box-sizing: border-box;
   padding: 0; /* Prevent UA padding from stretching */
   border-radius: 50%;
-  background: var(--md-sys-color-primary);`n  color: var(--md-sys-color-on-primary);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
   border: none;
   cursor: pointer;
   display: inline-flex; /* Avoid flex parent stretching */
@@ -142,7 +143,8 @@
 }
 
 .theme-toggle-button:hover {
-  background: var(--md-sys-color-secondary);`n  color: var(--md-sys-color-on-secondary);
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
@@ -743,7 +745,8 @@
 
 /* Currently Reading and Recent Achievements sections */
 :root:not([data-theme="dark"]) .section-card {
-  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);`n  color: var(--md-sys-color-on-primary);
+  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
+  color: var(--md-sys-color-on-primary);
   border: 1px solid #9ca3af;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
