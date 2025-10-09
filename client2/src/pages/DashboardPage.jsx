@@ -176,9 +176,13 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
       <button
         onClick={toggleTheme}
         className="theme-toggle-button"
+        aria-label={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
         title={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
       >
         {actualTheme === 'dark' ? (<Sun size={20} aria-hidden="true" />) : (<Moon size={20} aria-hidden="true" />)}
+        <span className="sr-only">
+          {actualTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        </span>
       </button>
 
       <div className="welcome-content-grid">
@@ -212,6 +216,8 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
             onClick={handleSync}
             disabled={isSyncing}
             className={`sync-button ${isSyncing ? 'syncing' : ''} ${lastSyncTime ? 'synced' : ''}`}
+            aria-label={isSyncing ? 'Syncing data with server' : 'Sync data with server'}
+            aria-busy={isSyncing}
             title="Sync your data with the server to ensure consistency across devices"
           >
             <RefreshCw

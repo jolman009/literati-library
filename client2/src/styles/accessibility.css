@@ -1,0 +1,363 @@
+/* ==================================================
+   ACCESSIBILITY UTILITIES - WCAG AA COMPLIANCE
+   ==================================================
+   This file contains accessibility-specific styles
+   to ensure WCAG 2.1 Level AA compliance.
+   ================================================== */
+
+/* ===== SCREEN READER ONLY UTILITY ===== */
+/* Visually hide content but keep it accessible to screen readers */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Show sr-only content when focused (for skip links) */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+/* ===== FOCUS INDICATORS ===== */
+/* High-contrast, visible focus indicators for keyboard navigation */
+
+/* Light Theme Focus States */
+:root:not([data-theme="dark"]) button:focus-visible,
+:root:not([data-theme="dark"]) a:focus-visible,
+:root:not([data-theme="dark"]) input:focus-visible,
+:root:not([data-theme="dark"]) select:focus-visible,
+:root:not([data-theme="dark"]) textarea:focus-visible,
+:root:not([data-theme="dark"]) [tabindex]:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary, #4f46e5);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+/* Dark Theme Focus States */
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] a:focus-visible,
+[data-theme="dark"] input:focus-visible,
+[data-theme="dark"] select:focus-visible,
+[data-theme="dark"] textarea:focus-visible,
+[data-theme="dark"] [tabindex]:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary, #a5c2ff);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(165, 194, 255, 0.25);
+}
+
+/* Remove default focus outline to replace with our custom one */
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Fallback for browsers that don't support :focus-visible */
+@supports not selector(:focus-visible) {
+  button:focus,
+  a:focus,
+  input:focus,
+  select:focus,
+  textarea:focus,
+  [tabindex]:focus {
+    outline: 3px solid var(--md-sys-color-primary, #4f46e5);
+    outline-offset: 2px;
+  }
+}
+
+/* ===== REDUCED MOTION SUPPORT ===== */
+/* Respect user's motion preferences for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Specifically target known animations */
+  .spinning,
+  .sync-icon.spinning,
+  .loading-spinner,
+  .rotating,
+  .pulsing,
+  [class*="animate"],
+  [class*="transition"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE SUPPORT ===== */
+/* Ensure content is visible in Windows High Contrast Mode */
+@media (prefers-contrast: high) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible {
+    outline: 4px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* ===== SKIP NAVIGATION LINKS ===== */
+/* Allow keyboard users to skip repetitive content */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 10000;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--md-sys-color-on-primary);
+  outline-offset: 2px;
+}
+
+/* ===== ARIA LIVE REGION STYLING ===== */
+/* Ensure live regions are positioned correctly */
+[aria-live="polite"],
+[aria-live="assertive"],
+[role="status"],
+[role="alert"] {
+  /* Live regions should be visible but can be off-screen if needed */
+  position: relative;
+}
+
+/* Visually hidden live region for screen readers only */
+.aria-live-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ===== COLOR CONTRAST UTILITIES ===== */
+/* Ensure minimum contrast ratios are met */
+
+/* Error text - 4.5:1 contrast minimum */
+.text-error {
+  color: var(--md-sys-color-error);
+  font-weight: 500; /* Slightly bolder for better readability */
+}
+
+/* Warning text - 4.5:1 contrast minimum */
+.text-warning {
+  color: var(--md-sys-color-tertiary);
+  font-weight: 500;
+}
+
+/* Success text - 4.5:1 contrast minimum */
+.text-success {
+  color: var(--md-sys-color-secondary);
+  font-weight: 500;
+}
+
+/* ===== TOUCH TARGET SIZES ===== */
+/* Ensure minimum touch target size (44x44px per WCAG) */
+@media (pointer: coarse) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  [role="button"],
+  [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exception for buttons with explicit small size */
+  button.small,
+  a.small {
+    min-height: 32px;
+    min-width: 32px;
+  }
+}
+
+/* ===== FORM ACCESSIBILITY ===== */
+/* Ensure form inputs meet accessibility standards */
+
+/* Required field indicator */
+.required::after {
+  content: " *";
+  color: var(--md-sys-color-error);
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Error message styling */
+.error-message {
+  color: var(--md-sys-color-error);
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Input error state */
+input:invalid:not(:focus),
+select:invalid:not(:focus),
+textarea:invalid:not(:focus) {
+  border-color: var(--md-sys-color-error);
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--md-sys-color-error);
+  border-width: 2px;
+}
+
+/* ===== KEYBOARD-ONLY STYLES ===== */
+/* Only show focus indicators for keyboard navigation */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.js-focus-visible .focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* ===== TEXT RESIZE SUPPORT ===== */
+/* Ensure layout doesn't break when text is resized up to 200% */
+@media (min-resolution: 120dpi) {
+  body {
+    font-size: 106.25%; /* 17px on most displays */
+  }
+}
+
+/* ===== ORIENTATION SUPPORT ===== */
+/* Ensure content is usable in both portrait and landscape */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Adjust for very short landscape viewports */
+  .modal,
+  .dialog {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ===== REFLOW SUPPORT (320px width) ===== */
+/* Ensure no horizontal scrolling at 320px width */
+@media (max-width: 320px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  * {
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Indicate interactive elements */
+.interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Indicate disabled state */
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Loading state */
+[aria-busy="true"] {
+  cursor: wait;
+  position: relative;
+}
+
+/* Visually indicate current page in navigation */
+[aria-current="page"] {
+  font-weight: 700;
+  border-left: 4px solid var(--md-sys-color-primary);
+  padding-left: 12px;
+}
+
+/* ===== PRINT ACCESSIBILITY ===== */
+@media print {
+  /* Ensure links are visible in print */
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Remove unnecessary elements from print */
+  nav,
+  .no-print,
+  [aria-hidden="true"] {
+    display: none !important;
+  }
+
+  /* Ensure good contrast for printing */
+  * {
+    color: #000 !important;
+    background: #fff !important;
+  }
+}
+
+/* ===== DOCUMENTATION ===== */
+/*
+ * USAGE EXAMPLES:
+ *
+ * 1. Screen Reader Only Text:
+ *    <span class="sr-only">Descriptive text for screen readers</span>
+ *
+ * 2. Skip Link:
+ *    <a href="#main" class="skip-link">Skip to main content</a>
+ *
+ * 3. Required Field:
+ *    <label class="required">Email Address</label>
+ *
+ * 4. Error Message:
+ *    <span class="error-message" role="alert">Invalid email format</span>
+ *
+ * 5. Live Region:
+ *    <div aria-live="polite" role="status">Loading...</div>
+ */
