@@ -24,7 +24,7 @@ import App from './App.jsx';
 // 4) Utilities
 import { clearExpiredToken } from './utils/clearExpiredToken';
 
-// 5) OPTIONAL PWA registration (PROD only to avoid dev cache fights)
+// 5) PWA registration with update notifications
 import { registerSW } from 'virtual:pwa-register';
 
 // One-time token cleanup
@@ -36,15 +36,35 @@ const shouldRegisterSW = import.meta.env.PROD &&
   (import.meta.env.VITE_ENABLE_SERVICE_WORKER !== 'false');
 
 if (shouldRegisterSW) {
-  try {
-    registerSW({
-      immediate: true,
-      // onNeedRefresh() { /* show refresh UI */ },
-      // onOfflineReady() { /* toast "ready to work offline" */ },
-    });
-  } catch (error) {
-    console.log('[PWA] Service Worker registration failed:', error);
-  }
+  const updateSW = registerSW({
+    immediate: true,
+
+    onNeedRefresh() {
+      // Show update notification when new version is available
+      if (window.confirm('New content available! Click OK to refresh and update.')) {
+        updateSW(true); // Force update
+      }
+    },
+
+    onOfflineReady() {
+      console.log('[PWA] App ready to work offline');
+      // Optional: Show toast notification
+      // showToast('App is ready to work offline!');
+    },
+
+    onRegistered(registration) {
+      console.log('[PWA] Service Worker registered:', registration);
+
+      // Check for updates every hour
+      setInterval(() => {
+        registration?.update();
+      }, 60 * 60 * 1000);
+    },
+
+    onRegisterError(error) {
+      console.error('[PWA] Service Worker registration failed:', error);
+    },
+  });
 }
 
 

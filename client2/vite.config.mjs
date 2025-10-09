@@ -12,73 +12,132 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png'],
-      manifest: {
-        name: 'My Library App',
-        short_name: 'Library',
-        description: 'A progressive web app for managing your digital library',
-        theme_color: '#3B82F6',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
-          { src: 'logo192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'logo512.png', sizes: '512x512', type: 'image/png' },
-          // add a maskable icon if you have it:
-          // { src: 'logo512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
-        ],
-      },
+      includeAssets: [
+        'favicon.ico',
+        'literatiLOGO.png',
+        'literati512.png',
+        'favicon-96x96.png',
+        'literatiLOGO_144x153.png'
+      ],
+
+      // Use the comprehensive manifest.json from public/ directory
+      manifest: false, // This tells Vite to use public/manifest.json directly
+
       workbox: {
         // Ensure SPA works on deep links when offline
         navigateFallback: '/index.html',
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        navigateFallbackDenylist: [/^\/api/, /\.(pdf|epub)$/],
 
-        // Runtime caching rules tuned for your app
+        // Comprehensive glob patterns for precaching
+        globPatterns: [
+          '**/*.{js,css,html,ico,png,svg,woff,woff2}',
+          '**/manifest.json'
+        ],
+
+        // Clean up old caches automatically
+        cleanupOutdatedCaches: true,
+
+        // Skip waiting and claim clients immediately on update
+        skipWaiting: true,
+        clientsClaim: true,
+
+        // Runtime caching rules optimized for Literati
         runtimeCaching: [
-          // API calls (Render)
+          // 1. API calls to backend (NetworkFirst with offline fallback)
           {
-            urlPattern: /^https:\/\/library-server-m6gr\.onrender\.com\/.*/i,
+            urlPattern: /^https:\/\/library-server-m6gr\.onrender\.com\/api\/.*/i,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'api-cache',
+              cacheName: 'literati-api-cache',
               networkTimeoutSeconds: 10,
-              cacheableResponse: { statuses: [0, 200] },
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 }, // 24h
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 // 24 hours
+              }
             },
           },
 
-          // PDFs — fast reading once cached; version with ?v= to bust
+          // 2. Supabase Storage - Book files (PDFs, EPUBs)
           {
-            urlPattern: ({ url }) => url.pathname.endsWith('.pdf'),
+            urlPattern: ({ url }) => {
+              return url.pathname.includes('.pdf') ||
+                     url.pathname.includes('.epub') ||
+                     url.hostname.includes('supabase.co');
+            },
             handler: 'CacheFirst',
             options: {
-              cacheName: 'pdf-cache',
-              cacheableResponse: { statuses: [0, 200] },
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 }, // 7d
+              cacheName: 'literati-books-cache',
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              expiration: {
+                maxEntries: 50, // Store up to 50 books offline
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              }
             },
           },
 
-          // Images / covers
+          // 3. Book covers and images (StaleWhileRevalidate for freshness)
           {
-            urlPattern: ({ request }) => request.destination === 'image',
+            urlPattern: ({ request, url }) => {
+              return request.destination === 'image' ||
+                     url.hostname.includes('covers.openlibrary.org') ||
+                     url.hostname.includes('picsum.photos') ||
+                     url.pathname.includes('/covers/');
+            },
             handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'img-cache',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 14 }, // 14d
+              cacheName: 'literati-images-cache',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 60 * 60 * 24 * 14 // 14 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             },
           },
 
-          // JS/CSS/workers (static assets)
+          // 4. Google Fonts and Material Icons
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'literati-fonts-cache',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+
+          // 5. Static assets (JS/CSS/Workers)
           {
             urlPattern: ({ request }) =>
               ['style', 'script', 'worker'].includes(request.destination),
             handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'asset-cache',
-              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30d
+              cacheName: 'literati-assets-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
             },
           },
         ],
+      },
+
+      // Development options
+      devOptions: {
+        enabled: false, // Disable SW in development to avoid cache conflicts
+        type: 'module',
+        navigateFallback: 'index.html',
       },
     }),
 
