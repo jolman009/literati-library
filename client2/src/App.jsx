@@ -41,6 +41,7 @@ import './styles/md3-components.css';
 import './styles/library-md3.css';
 import './styles/reading-timer-md3.css';
 import './App.css';
+import './styles/accessibility.css'; // WCAG AA compliance styles
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { GamificationProvider } from './contexts/GamificationContext';
