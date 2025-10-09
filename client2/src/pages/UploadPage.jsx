@@ -2,10 +2,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
+import { useGamification } from '../contexts/GamificationContext';
 import '../styles/upload-page.css';
 
 const UploadPage = () => {
   const navigate = useNavigate();
+  const { trackAction } = useGamification();
   const fileInputRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -122,6 +124,14 @@ const UploadPage = () => {
       // Get the uploaded book from response
       const uploadedBook = response.data;
       console.log('📚 Book uploaded successfully:', uploadedBook);
+
+      // 🎮 Track gamification action - Book Upload
+      trackAction('book_uploaded', {
+        bookId: uploadedBook.id,
+        title: uploadedBook.title,
+        author: uploadedBook.author,
+        timestamp: new Date().toISOString()
+      });
 
       // Trigger events to notify other components (Dashboard, Collections, etc.)
       window.dispatchEvent(new CustomEvent('bookUploaded', {
