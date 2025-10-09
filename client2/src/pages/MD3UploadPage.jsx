@@ -124,20 +124,21 @@ const MD3UploadPage = () => {
 
       // Track book upload action for gamification
       try {
-        await trackAction('book_upload', {
+        await trackAction('book_uploaded', {
           bookId: uploadedBook.id,
           bookTitle: uploadedBook.title,
           bookAuthor: uploadedBook.author,
           fileType: selectedFile.type,
           fileSize: selectedFile.size
         });
+        console.log('✅ Book upload tracked successfully - 25 points awarded');
       } catch (trackError) {
         console.error('Failed to track book upload:', trackError);
         // Don't fail the upload if tracking fails
       }
 
       showSnackbar({
-        message: `"${uploadedBook.title}" uploaded successfully! +50 points earned!`,
+        message: `"${uploadedBook.title}" uploaded successfully! +25 points earned!`,
         variant: 'success'
       });
 

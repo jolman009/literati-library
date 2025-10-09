@@ -199,19 +199,20 @@ const openAtLocation = (note) => {
 
         // Track note creation for gamification
         try {
-          await trackAction('create_note', {
+          await trackAction('note_created', {
             noteId: response.data.id,
             bookId: noteData.book_id,
             noteLength: noteData.content.length,
             hasTags: noteData.tags.length > 0
           });
+          console.log('✅ Note creation tracked - 15 points awarded');
         } catch (trackError) {
           console.error('Failed to track note creation:', trackError);
           // Don't fail note creation if tracking fails
         }
 
         showSnackbar({
-          message: 'Note created successfully! +25 points earned!',
+          message: 'Note created successfully! +15 points earned!',
           variant: 'success'
         });
       }

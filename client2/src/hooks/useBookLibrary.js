@@ -200,13 +200,14 @@ export const useBookLibrary = () => {
         if (wasJustCompleted && trackAction) {
           try {
             const book = books.find(b => b.id === bookId);
-            await trackAction('complete_book', {
+            await trackAction('book_completed', {
               bookId,
               bookTitle: book?.title,
               bookAuthor: book?.author,
               totalPages: book?.total_pages,
               completedAt: updates.completed_at
             });
+            console.log(`✅ Book completion tracked - "${book?.title}" - 100 points awarded`);
           } catch (trackError) {
             console.error('Failed to track book completion:', trackError);
             // Don't fail the progress update if tracking fails
