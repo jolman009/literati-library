@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useMaterial3Theme } from './Material3';
 
 const ThemeToggle = ({
   className = '',

@@ -44,8 +44,9 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { GamificationProvider } from './contexts/GamificationContext';
 import './styles/dashboard-dark-mode-fix.css';
 
-// Material3 imports - Direct imports from Material3 barrel
-import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Material3';
+// Material3 imports - adjust paths as needed
+import { Material3ThemeProvider } from './contexts/Material3ThemeContext';
+import { MD3SnackbarProvider } from './components/Material3';
 
 import AppLayout from './components/AppLayout';
 import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
