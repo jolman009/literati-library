@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import {
   MD3Button,
@@ -12,13 +13,14 @@ import {
 import { createDefaultCollections, loadCollectionsFromStorage, migrateDuplicateCollections } from '../../utils/collections';
 import './EnhancedCollectionsPage.css';
 
-const EnhancedCollectionsPage = ({ 
-  books = [], 
-  onBookUpdate, 
+const EnhancedCollectionsPage = ({
+  books = [],
+  onBookUpdate,
   user,
-  className = '' 
+  className = ''
 }) => {
   const { actualTheme } = useMaterial3Theme();
+  const navigate = useNavigate();
   
   
   // State management
@@ -416,12 +418,48 @@ const EnhancedCollectionsPage = ({
       <div className="collections-page-content">
         {/* Header Section - Following MD3 Style Guide */}
         <div className="collections-header-section">
-          <h1>
-            📚 Collections
-          </h1>
-          <p>
-            Organize your library with custom collections that reflect your reading journey
-          </p>
+          <div className="collections-header-title-row">
+            <div>
+              <h1>
+                📚 Collections
+              </h1>
+              <p>
+                Organize your library with custom collections that reflect your reading journey
+              </p>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="collections-header-nav">
+              <MD3Button
+                variant="text"
+                onClick={() => navigate('/library', { state: { page: 'library' } })}
+                className="collections-nav-button"
+              >
+                📚 Library
+              </MD3Button>
+              <MD3Button
+                variant="text"
+                onClick={() => navigate('/library', { state: { page: 'reading' } })}
+                className="collections-nav-button"
+              >
+                📖 Reading
+              </MD3Button>
+              <MD3Button
+                variant="text"
+                onClick={() => navigate('/library', { state: { page: 'stats' } })}
+                className="collections-nav-button"
+              >
+                📊 Statistics
+              </MD3Button>
+              <MD3Button
+                variant="text"
+                onClick={() => navigate('/library', { state: { page: 'notes' } })}
+                className="collections-nav-button"
+              >
+                📝 Notes
+              </MD3Button>
+            </div>
+          </div>
 
           {/* Search and controls */}
           <div className="collections-search-controls">

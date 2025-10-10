@@ -1,11 +1,13 @@
 // src/pages/subpages/NotesSubpage.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MD3Card, MD3TextField, MD3Chip, MD3Button } from '../../components/Material3';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import API from '../../config/api';
 
 const NotesSubpage = ({ books = [], onNoteAction }) => {
   const { actualTheme } = useMaterial3Theme();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [filteredNotes, setFilteredNotes] = useState([]);
@@ -188,14 +190,71 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
 
   return (
     <div style={{ padding: '24px' }}>
-      <h2 style={{
-        fontSize: '28px',
-        fontWeight: 'bold',
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-        marginBottom: '24px'
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        gap: '16px'
       }}>
-        📝 Notes & Highlights
-      </h2>
+        <h2 style={{
+          fontSize: '28px',
+          fontWeight: 'bold',
+          color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
+          margin: 0
+        }}>
+          📝 Notes & Highlights
+        </h2>
+
+        {/* Navigation Links */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'library' } })}
+            style={{
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '12px'
+            }}
+          >
+            📚 Library
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'reading' } })}
+            style={{
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '12px'
+            }}
+          >
+            📖 Reading
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'stats' } })}
+            style={{
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '12px'
+            }}
+          >
+            📊 Statistics
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'collections' } })}
+            style={{
+              fontSize: '14px',
+              padding: '8px 16px',
+              borderRadius: '12px'
+            }}
+          >
+            📁 Collections
+          </MD3Button>
+        </div>
+      </div>
 
       {/* Search and Filter Bar */}
       <MD3Card style={{

@@ -276,10 +276,9 @@ const LibraryPage = () => {
       case 'reading':
         return (
           <React.Suspense fallback={<div className="md3-loading-text">📖 Loading Reading Page...</div>}>
-            <ReadingPage 
-              books={books} 
+            <ReadingPage
+              books={books}
               onBookAction={handleBookUpdate}
-              readingSessions={[]}
             />
           </React.Suspense>
         );
