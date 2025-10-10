@@ -1,0 +1,298 @@
+/* BookCarousel.css - Simplified Scrollable Grid (Material 3) */
+
+.book-carousel-container {
+  position: relative;
+  padding: 20px;
+  background: rgb(var(--md-sys-color-surface-container-lowest, 255, 255, 255));
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .book-carousel-container,
+.dark .book-carousel-container {
+  background: rgb(var(--md-sys-color-surface-container-low, 28, 27, 31));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Header */
+.book-carousel-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant, 202, 196, 208), 0.3);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .book-carousel-header,
+.dark .book-carousel-header {
+  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant, 73, 69, 79), 0.3);
+}
+
+.book-carousel-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+}
+
+[data-theme="dark"] .book-carousel-title,
+.dark .book-carousel-title {
+  color: rgb(var(--md-sys-color-on-surface, 230, 225, 229));
+}
+
+.book-carousel-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.875rem;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+}
+
+[data-theme="dark"] .book-carousel-subtitle,
+.dark .book-carousel-subtitle {
+  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
+}
+
+/* Scrollable Grid Container */
+.book-grid-scrollable {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  padding: 4px;
+  max-height: calc(80vh - 100px);
+}
+
+/* Custom Scrollbar */
+.book-grid-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.book-grid-scrollable::-webkit-scrollbar-track {
+  background: rgba(var(--md-sys-color-surface-variant, 231, 224, 236), 0.3);
+  border-radius: 4px;
+}
+
+.book-grid-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(103, 80, 164, 0.5);
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.book-grid-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(103, 80, 164, 0.8);
+}
+
+/* Dark mode scrollbar */
+[data-theme="dark"] .book-grid-scrollable::-webkit-scrollbar-track,
+.dark .book-grid-scrollable::-webkit-scrollbar-track {
+  background: rgba(var(--md-sys-color-surface-variant, 73, 69, 79), 0.3);
+}
+
+/* Book Grid Item */
+.book-grid-item {
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 2px solid transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgb(var(--md-sys-color-surface-container, 243, 237, 247));
+}
+
+[data-theme="dark"] .book-grid-item,
+.dark .book-grid-item {
+  background: rgb(var(--md-sys-color-surface-container, 46, 43, 50));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.book-grid-item:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 16px rgba(103, 80, 164, 0.25);
+  border-color: rgba(103, 80, 164, 0.4);
+  z-index: 10;
+}
+
+.book-grid-item:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Book Cover */
+.book-grid-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Book Placeholder */
+.book-grid-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #6750A4 0%, #7C4DFF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.book-grid-placeholder-text {
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Book Overlay (hover info) */
+.book-grid-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.8) 60%,
+    transparent 100%
+  );
+  padding: 12px 8px 8px;
+  transform: translateY(100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-grid-item:hover .book-grid-overlay {
+  transform: translateY(0);
+}
+
+.book-grid-title {
+  margin: 0 0 4px 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.book-grid-author {
+  margin: 0;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.book-carousel-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+}
+
+[data-theme="dark"] .book-carousel-empty,
+.dark .book-carousel-empty {
+  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
+}
+
+.book-carousel-empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.book-carousel-empty-text {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Drag State */
+.book-grid-item.dragging {
+  opacity: 0.5;
+  transform: rotate(3deg) scale(0.95);
+  cursor: grabbing;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .book-grid-scrollable {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-grid-scrollable {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .book-carousel-container {
+    padding: 16px;
+  }
+
+  .book-carousel-title {
+    font-size: 1rem;
+  }
+
+  .book-carousel-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
+/* Larger screens - show 4 columns */
+@media (min-width: 1200px) {
+  .book-grid-scrollable {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .book-grid-item,
+  .book-grid-overlay {
+    transition: none;
+    animation: none;
+  }
+
+  .book-grid-item:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .book-grid-item {
+    border: 2px solid var(--md-sys-color-outline);
+  }
+
+  .book-grid-item:focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Focus Management */
+.book-grid-item:focus-visible {
+  outline: 2px solid rgba(103, 80, 164, 0.8);
+  outline-offset: 2px;
+  border-color: rgba(103, 80, 164, 0.6);
+}

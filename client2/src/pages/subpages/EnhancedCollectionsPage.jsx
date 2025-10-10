@@ -11,6 +11,7 @@ import {
   MD3FloatingActionButton
 } from '../../components/Material3';
 import { createDefaultCollections, loadCollectionsFromStorage, migrateDuplicateCollections } from '../../utils/collections';
+import BookCarousel from '../../components/BookCarousel';
 import './EnhancedCollectionsPage.css';
 
 const EnhancedCollectionsPage = ({
@@ -525,50 +526,15 @@ const EnhancedCollectionsPage = ({
             )}
           </div>
           
-          {/* Draggable Book Library */}
+          {/* Book Carousel - Replaces the old stacked book grid */}
           {!batchMode && (
             <div className="book-library-sidebar">
-              <div className="book-library-card">
-                <div className="book-library-header">
-                  <h3 className="book-library-title">
-                    📚 Select Books
-                  </h3>
-                  <p className="book-library-subtitle">
-                    Drag books to collections
-                  </p>
-                </div>
-
-                <div className="book-library-grid">
-                  {books.map(book => (
-                    <div
-                      key={book.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, book)}
-                      className="draggable-book"
-                      title={`Drag "${book.title}" to a collection`}
-                    >
-                      {book.cover_url ? (
-                        <img
-                          src={book.cover_url}
-                          alt={book.title}
-                          className="draggable-book-cover"
-                        />
-                      ) : (
-                        <div className="draggable-book-placeholder">
-                          {book.title.slice(0, 20)}...
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {books.length === 0 && (
-                  <div className="book-library-empty">
-                    <div className="book-library-empty-icon">📚</div>
-                    <p className="book-library-empty-text">No books available</p>
-                  </div>
-                )}
-              </div>
+              <BookCarousel
+                books={books}
+                onDragStart={handleDragStart}
+                title="📚 Select Books"
+                subtitle="Drag books to collections"
+              />
             </div>
           )}
         </div>
