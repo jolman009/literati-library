@@ -2,27 +2,63 @@
 import React, { useState, useEffect } from 'react';
 import { MD3Card, MD3Button, MD3Progress, MD3Chip } from '../../components/Material3';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { useReadingSession } from '../../contexts/ReadingSessionContext';
 import { useNavigate } from 'react-router-dom';
+import styles from './ReadingPage.module.css';
 
-const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
+const ReadingPage = ({ books = [], onBookAction }) => {
   const { actualTheme } = useMaterial3Theme();
+  const {
+    activeSession,
+    isPaused,
+    stopReadingSession,
+    pauseReadingSession,
+    resumeReadingSession
+  } = useReadingSession();
   const navigate = useNavigate();
   const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
   const [recentSessions, setRecentSessions] = useState([]);
+  const [sessionHistory, setSessionHistory] = useState([]);
+  const [todayStats, setTodayStats] = useState({
+    timeRead: 0,
+    pagesRead: 0,
+    sessionsCompleted: 0
+  });
 
   useEffect(() => {
     // Filter currently reading books
-    const reading = books.filter(book => 
-      book.isReading || book.status === 'reading'
+    const reading = books.filter(book =>
+      book.is_reading || book.status === 'reading'
     );
     setCurrentlyReadingBooks(reading);
 
-    // Get recent reading sessions
-    const recent = readingSessions
-      ?.sort((a, b) => new Date(b.start_time) - new Date(a.start_time))
-      .slice(0, 5) || [];
+    // Get reading session history from localStorage
+    const history = JSON.parse(localStorage.getItem('readingSessionHistory') || '[]');
+    setSessionHistory(history);
+
+    // Get recent reading sessions (last 10)
+    const recent = history
+      .sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
+      .slice(0, 10);
     setRecentSessions(recent);
-  }, [books, readingSessions]);
+
+    // Calculate today's stats
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todaySessions = history.filter(session => {
+      const sessionDate = new Date(session.startTime);
+      sessionDate.setHours(0, 0, 0, 0);
+      return sessionDate.getTime() === today.getTime();
+    });
+
+    const stats = {
+      timeRead: todaySessions.reduce((sum, s) => sum + (s.duration || 0), 0),
+      pagesRead: todaySessions.reduce((sum, s) => sum + (s.pagesRead || 0), 0),
+      sessionsCompleted: todaySessions.length
+    };
+    setTodayStats(stats);
+  }, [books]);
 
   const handleContinueReading = (book) => {
     if (onBookAction) {
@@ -66,80 +102,38 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
     const totalPages = book.total_pages || 0;
 
     return (
-      <MD3Card style={{
-        padding: '20px',
-        background: actualTheme === 'dark' 
-          ? 'linear-gradient(135deg, #1e293b, #334155)'
-          : 'linear-gradient(135deg, #ffffff, #f8fafc)',
-        border: `1px solid ${actualTheme === 'dark' ? '#334155' : '#e5e7eb'}`,
-        transition: 'transform 0.2s ease',
-        cursor: 'pointer'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-4px)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}>
-        <div style={{ display: 'flex', gap: '16px' }}>
+      <MD3Card
+        variant="elevated"
+        elevation={1}
+        interactive={true}
+        onClick={() => handleContinueReading(book)}
+        className={styles.bookCard}
+      >
+        <div className={styles.bookCardContent}>
           {/* Book Cover */}
-          <div style={{
-            width: '100px',
-            height: '150px',
-            borderRadius: '8px',
-            background: book.coverUrl 
-              ? `url(${book.coverUrl}) center/cover`
-              : `linear-gradient(135deg, #667eea, #764ba2)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-          }}>
-            {!book.coverUrl && (
-              <span style={{ fontSize: '40px' }}>📖</span>
+          <div className={styles.bookCover}>
+            {book.coverUrl ? (
+              <img src={book.coverUrl} alt={book.title} className={styles.bookCoverImage} />
+            ) : (
+              <span className={styles.bookCoverPlaceholder}>📖</span>
             )}
           </div>
 
           {/* Book Details */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className={styles.bookDetails}>
             <div>
-              <h3 style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-                marginBottom: '4px'
-              }}>
-                {book.title}
-              </h3>
-              <p style={{
-                fontSize: '14px',
-                color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-              }}>
-                {book.author || 'Unknown Author'}
-              </p>
+              <h3 className={styles.bookTitle}>{book.title}</h3>
+              <p className={styles.bookAuthor}>{book.author || 'Unknown Author'}</p>
             </div>
 
             {/* Progress Bar */}
-            <div style={{ marginTop: 'auto' }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '8px',
-                fontSize: '12px',
-                color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-              }}>
+            <div className={styles.bookProgressSection}>
+              <div className={styles.bookProgressHeader}>
                 <span>Progress</span>
                 <span>{pagesRead} / {totalPages} pages</span>
               </div>
               <MD3Progress value={progress} />
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '8px',
-                fontSize: '12px',
-                color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-              }}>
+              <div className={styles.bookProgressFooter}>
                 <span>{progress}% complete</span>
                 <span>Last read: {lastRead}</span>
               </div>
@@ -149,10 +143,7 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
             <MD3Button
               variant="filled"
               onClick={() => handleContinueReading(book)}
-              style={{
-                marginTop: '12px',
-                width: 'fit-content'
-              }}
+              className={styles.continueButton}
             >
               Continue Reading
             </MD3Button>
@@ -162,80 +153,220 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
     );
   };
 
-  const SessionCard = ({ session }) => (
-    <div style={{
-      padding: '16px',
-      background: actualTheme === 'dark' ? '#334155' : '#f8fafc',
-      borderRadius: '8px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}>
-      <div>
-        <div style={{
-          fontSize: '14px',
-          fontWeight: '500',
-          color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-          marginBottom: '4px'
-        }}>
-          {session.book_title || 'Unknown Book'}
+  const SessionCard = ({ session }) => {
+    const bookTitle = session.book?.title || session.bookTitle || 'Unknown Book';
+    const sessionDate = session.startTime || session.start_time;
+    const pagesRead = session.pagesRead || session.pages_read || 0;
+
+    return (
+      <div className={styles.sessionHistoryItem}>
+        <div className={styles.sessionHistoryItemInfo}>
+          <div className={styles.sessionHistoryItemTitle}>
+            📖 {bookTitle}
+          </div>
+          <div className={styles.sessionHistoryItemDate}>
+            {sessionDate && formatDate(sessionDate)}
+          </div>
         </div>
-        <div style={{
-          fontSize: '12px',
-          color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-        }}>
-          {formatDate(session.start_time)}
-        </div>
-      </div>
-      <div style={{ textAlign: 'right' }}>
-        <div style={{
-          fontSize: '14px',
-          fontWeight: '600',
-          color: '#6750a4'
-        }}>
-          {formatDuration(session.duration || 0)}
-        </div>
-        <div style={{
-          fontSize: '12px',
-          color: actualTheme === 'dark' ? '#94a3b8' : '#64748b'
-        }}>
-          {session.pages_read || 0} pages
+        <div className={styles.sessionHistoryItemStats}>
+          <div className={styles.sessionHistoryItemDuration}>
+            ⏱️ {formatDuration(session.duration || 0)}
+          </div>
+          <div className={styles.sessionHistoryItemPages}>
+            {pagesRead} pages
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const ActiveSessionCard = () => {
+    if (!activeSession) return null;
+
+    const [elapsedTime, setElapsedTime] = useState(0);
+
+    useEffect(() => {
+      if (!isPaused) {
+        // Initial update
+        const start = new Date(activeSession.startTime);
+        const now = new Date();
+        const elapsed = Math.floor((now - start) / 1000 / 60); // minutes
+        setElapsedTime(elapsed);
+
+        // Update every 30 seconds (timer shows minutes, so 1-second updates are wasteful)
+        const interval = setInterval(() => {
+          const start = new Date(activeSession.startTime);
+          const now = new Date();
+          const elapsed = Math.floor((now - start) / 1000 / 60); // minutes
+          setElapsedTime(elapsed);
+        }, 30000); // 30 seconds = 97% fewer re-renders
+
+        return () => clearInterval(interval);
+      }
+    }, [isPaused, activeSession]);
+
+    return (
+      <MD3Card variant="filled" className={styles.activeSessionCard}>
+        <div className={styles.sessionHeader}>
+          <div className={styles.sessionInfo}>
+            <span className={styles.sessionIcon}>📚</span>
+            <div>
+              <h3 className={styles.sessionTitle}>Active Reading Session</h3>
+              <p className={styles.sessionBookTitle}>
+                {activeSession.book?.title || 'Unknown Book'}
+              </p>
+            </div>
+          </div>
+          <MD3Chip
+            label={isPaused ? 'Paused' : 'Reading'}
+            icon={isPaused ? '⏸️' : '▶️'}
+            color={isPaused ? 'warning' : 'success'}
+          />
+        </div>
+
+        <div className={styles.sessionStatsGrid}>
+          <div className={styles.sessionStat}>
+            <div className={styles.sessionStatIcon}>⏱️</div>
+            <div className={styles.sessionStatValue}>
+              {formatDuration(elapsedTime)}
+            </div>
+            <div className={styles.sessionStatLabel}>Duration</div>
+          </div>
+
+          <div className={styles.sessionStat}>
+            <div className={styles.sessionStatIcon}>📄</div>
+            <div className={styles.sessionStatValue}>
+              {activeSession.pagesRead || 0}
+            </div>
+            <div className={styles.sessionStatLabel}>Pages Read</div>
+          </div>
+        </div>
+
+        <div className={styles.sessionActions}>
+          {isPaused ? (
+            <MD3Button
+              variant="filled"
+              onClick={resumeReadingSession}
+            >
+              ▶️ Resume Reading
+            </MD3Button>
+          ) : (
+            <MD3Button
+              variant="filled"
+              onClick={pauseReadingSession}
+            >
+              ⏸️ Pause Session
+            </MD3Button>
+          )}
+          <MD3Button
+            variant="outlined"
+            onClick={stopReadingSession}
+          >
+            ⏹️ End Session
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate(`/read/${activeSession.book?.id}`)}
+          >
+            Open Book
+          </MD3Button>
+        </div>
+      </MD3Card>
+    );
+  };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <h2 style={{
-        fontSize: '28px',
-        fontWeight: 'bold',
-        color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-        marginBottom: '24px'
-      }}>
-        📖 Currently Reading
-      </h2>
+    <div className={styles.readingPage}>
+      {/* Header Section */}
+      <div className={styles.readingHeader}>
+        <h1 className={styles.pageTitle}>
+          <span className={styles.titleIcon}>📖</span>
+          Reading Sessions
+        </h1>
+
+        {/* Navigation Links */}
+        <div className={styles.headerNav}>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'library' } })}
+            className={styles.navButton}
+          >
+            📚 Library
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'stats' } })}
+            className={styles.navButton}
+          >
+            📊 Statistics
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'collections' } })}
+            className={styles.navButton}
+          >
+            📁 Collections
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'notes' } })}
+            className={styles.navButton}
+          >
+            📝 Notes
+          </MD3Button>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className={styles.readingContent}>
+        {/* Active Session Card */}
+        <div role="region" aria-label="Active reading session" aria-live="polite">
+          <ActiveSessionCard />
+        </div>
+
+      {/* Today's Reading Stats */}
+      <div role="region" aria-label="Today's reading statistics">
+        <MD3Card variant="filled" className={styles.todayStatsCard}>
+          <h3 className={styles.todayStatsTitle}>
+            <span>📅</span> Today's Reading
+          </h3>
+          <div className={styles.todayStatsGrid}>
+            <div className={styles.todayStatItem}>
+              <div className={styles.todayStatIcon}>⏱️</div>
+              <div className={styles.todayStatValue}>
+                {formatDuration(todayStats.timeRead)}
+              </div>
+              <div className={styles.todayStatLabel}>Time Read</div>
+            </div>
+
+            <div className={styles.todayStatItem}>
+              <div className={styles.todayStatIcon}>📄</div>
+              <div className={styles.todayStatValue}>
+                {todayStats.pagesRead}
+              </div>
+              <div className={styles.todayStatLabel}>Pages Read</div>
+            </div>
+
+            <div className={styles.todayStatItem}>
+              <div className={styles.todayStatIcon}>🎯</div>
+              <div className={styles.todayStatValue}>
+                {todayStats.sessionsCompleted}
+              </div>
+              <div className={styles.todayStatLabel}>Sessions</div>
+            </div>
+          </div>
+        </MD3Card>
+      </div>
+
+      <h3 className={styles.sectionTitle}>
+        Currently Reading Books
+      </h3>
 
       {currentlyReadingBooks.length === 0 ? (
-        <MD3Card style={{
-          padding: '48px',
-          textAlign: 'center',
-          background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
-        }}>
-          <div style={{ fontSize: '64px', marginBottom: '16px' }}>📚</div>
-          <h3 style={{
-            fontSize: '20px',
-            fontWeight: '600',
-            color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-            marginBottom: '8px'
-          }}>
-            No books in progress
-          </h3>
-          <p style={{
-            fontSize: '14px',
-            color: actualTheme === 'dark' ? '#94a3b8' : '#64748b',
-            marginBottom: '24px'
-          }}>
+        <MD3Card className={styles.emptyState}>
+          <div className={styles.emptyStateIcon}>📚</div>
+          <h3 className={styles.emptyStateTitle}>No books in progress</h3>
+          <p className={styles.emptyStateMessage}>
             Start reading a book from your library to see it here
           </p>
           <MD3Button
@@ -248,11 +379,7 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
       ) : (
         <>
           {/* Currently Reading Books */}
-          <div style={{
-            display: 'grid',
-            gap: '20px',
-            marginBottom: '32px'
-          }}>
+          <div className={styles.bookCardsGrid}>
             {currentlyReadingBooks.map(book => (
               <BookCard key={book.id} book={book} />
             ))}
@@ -260,19 +387,11 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
 
           {/* Recent Reading Sessions */}
           {recentSessions.length > 0 && (
-            <MD3Card style={{
-              padding: '24px',
-              background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
-            }}>
-              <h3 style={{
-                fontSize: '20px',
-                fontWeight: '600',
-                color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-                marginBottom: '20px'
-              }}>
+            <MD3Card className={styles.sessionHistoryCard}>
+              <h3 className={styles.sessionHistoryTitle}>
                 Recent Reading Sessions
               </h3>
-              <div style={{ display: 'grid', gap: '12px' }}>
+              <div className={styles.sessionHistoryList}>
                 {recentSessions.map((session, index) => (
                   <SessionCard key={session.id || index} session={session} />
                 ))}
@@ -281,99 +400,40 @@ const ReadingPage = ({ books = [], onBookAction, readingSessions = [] }) => {
           )}
 
           {/* Reading Stats Summary */}
-          <MD3Card style={{
-            padding: '24px',
-            marginTop: '32px',
-            background: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
-          }}>
-            <h3 style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937',
-              marginBottom: '20px'
-            }}>
-              Quick Stats
-            </h3>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-              gap: '16px'
-            }}>
-              <div style={{
-                padding: '16px',
-                background: actualTheme === 'dark' ? '#334155' : '#f8fafc',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>📚</div>
-                <div style={{
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  color: '#6750a4'
-                }}>
+          <MD3Card className={styles.quickStatsCard}>
+            <h3 className={styles.quickStatsTitle}>Quick Stats</h3>
+            <div className={styles.quickStatsGrid}>
+              <div className={styles.quickStatItem}>
+                <div className={styles.quickStatIcon}>📚</div>
+                <div className={styles.quickStatValue}>
                   {currentlyReadingBooks.length}
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: actualTheme === 'dark' ? '#94a3b8' : '#64748b',
-                  marginTop: '4px'
-                }}>
-                  Books in Progress
-                </div>
+                <div className={styles.quickStatLabel}>Books in Progress</div>
               </div>
 
-              <div style={{
-                padding: '16px',
-                background: actualTheme === 'dark' ? '#334155' : '#f8fafc',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>📖</div>
-                <div style={{
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  color: '#4caf50'
-                }}>
+              <div className={styles.quickStatItem}>
+                <div className={styles.quickStatIcon}>📖</div>
+                <div className={styles.quickStatValue}>
                   {Math.round(
-                    currentlyReadingBooks.reduce((sum, book) => sum + (book.progress || 0), 0) / 
+                    currentlyReadingBooks.reduce((sum, book) => sum + (book.progress || 0), 0) /
                     currentlyReadingBooks.length
                   ) || 0}%
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: actualTheme === 'dark' ? '#94a3b8' : '#64748b',
-                  marginTop: '4px'
-                }}>
-                  Average Progress
-                </div>
+                <div className={styles.quickStatLabel}>Average Progress</div>
               </div>
 
-              <div style={{
-                padding: '16px',
-                background: actualTheme === 'dark' ? '#334155' : '#f8fafc',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '24px', marginBottom: '8px' }}>⏱️</div>
-                <div style={{
-                  fontSize: '20px',
-                  fontWeight: 'bold',
-                  color: '#2196f3'
-                }}>
+              <div className={styles.quickStatItem}>
+                <div className={styles.quickStatIcon}>⏱️</div>
+                <div className={styles.quickStatValue}>
                   {recentSessions.length}
                 </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: actualTheme === 'dark' ? '#94a3b8' : '#64748b',
-                  marginTop: '4px'
-                }}>
-                  Recent Sessions
-                </div>
+                <div className={styles.quickStatLabel}>Recent Sessions</div>
               </div>
             </div>
           </MD3Card>
         </>
       )}
+      </div>
     </div>
   );
 };

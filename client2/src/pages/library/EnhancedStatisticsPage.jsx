@@ -1,5 +1,6 @@
 // src/pages/library/EnhancedStatisticsPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MD3Card, MD3Progress, MD3Chip, MD3Button } from '../../components/Material3';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useGamification } from '../../contexts/GamificationContext';
@@ -10,6 +11,7 @@ import './EnhancedStatisticsPage.css';
 
 const EnhancedStatisticsPage = ({ books = [], user }) => {
   const { actualTheme } = useMaterial3Theme();
+  const navigate = useNavigate();
   
   // Safely access context with error handling
   let gamificationStats = {};
@@ -424,23 +426,57 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
     <div className="enhanced-statistics-page">
       {/* Header */}
       <div className="statistics-header">
-        <h1 className="page-title">
-          <span className="title-icon">📊</span>
-          Statistics
-        </h1>
-        
-        {/* Time Range Selector */}
-        <div className="time-range-selector">
-          {['week', 'month', 'year', 'all'].map(range => (
-            <MD3Button
-              key={range}
-              variant={timeRange === range ? 'filled' : 'outlined'}
-              onClick={() => setTimeRange(range)}
-              size="small"
-            >
-              {range.charAt(0).toUpperCase() + range.slice(1)}
-            </MD3Button>
-          ))}
+        <div className="header-main">
+          <h1 className="page-title">
+            <span className="title-icon">📊</span>
+            Statistics
+          </h1>
+
+          {/* Time Range Selector */}
+          <div className="time-range-selector">
+            {['week', 'month', 'year', 'all'].map(range => (
+              <MD3Button
+                key={range}
+                variant={timeRange === range ? 'filled' : 'outlined'}
+                onClick={() => setTimeRange(range)}
+                size="small"
+              >
+                {range.charAt(0).toUpperCase() + range.slice(1)}
+              </MD3Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="header-nav">
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'library' } })}
+            className="nav-button"
+          >
+            📚 Library
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'reading' } })}
+            className="nav-button"
+          >
+            📖 Reading
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'collections' } })}
+            className="nav-button"
+          >
+            📁 Collections
+          </MD3Button>
+          <MD3Button
+            variant="text"
+            onClick={() => navigate('/library', { state: { page: 'notes' } })}
+            className="nav-button"
+          >
+            📝 Notes
+          </MD3Button>
         </div>
       </div>
 

@@ -24,6 +24,35 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.header-main {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.header-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav-button {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 200ms ease !important;
+}
+
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+}
+
 .page-title {
   font-size: 32px;
   font-weight: 700;

@@ -1,0 +1,709 @@
+/* ReadingPage.module.css - Material Design 3 Compliant Styles */
+
+/* ========================================
+   Page Layout
+   ======================================== */
+
+.readingPage {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--md-sys-color-surface);
+}
+
+/* Header Section - Matching Statistics Page style */
+.readingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: -24px -24px 32px -24px;
+  padding: 32px 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: linear-gradient(135deg,
+    var(--md-sys-color-primary-container),
+    var(--md-sys-color-surface-container));
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--md-sys-color-on-primary-container);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.titleIcon {
+  font-size: 32px;
+}
+
+.headerNav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.navButton {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  color: var(--md-sys-color-on-primary-container) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 200ms ease !important;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.readingContent {
+  /* Content area inside the page */
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 16px;
+}
+
+/* ========================================
+   Active Session Card
+   ======================================== */
+
+.activeSessionCard {
+  padding: 24px !important;
+  margin-bottom: 24px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.activeSessionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md3-elevation-2);
+}
+
+/* Light mode gradient overlay */
+:root:not([data-theme="dark"]) .activeSessionCard {
+  background-image: linear-gradient(135deg,
+    rgba(79, 70, 229, 0.08),
+    rgba(99, 102, 241, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(79, 70, 229, 0.4) !important;
+}
+
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sessionInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sessionIcon {
+  font-size: 32px;
+}
+
+.sessionTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 4px;
+}
+
+.sessionBookTitle {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.sessionStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.sessionStat {
+  padding: 12px;
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md3-shape-corner-medium);
+  text-align: center;
+}
+
+.sessionStatIcon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.sessionStatValue {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
+}
+
+.sessionStatLabel {
+  font-size: 11px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 4px;
+}
+
+.sessionActions {
+  display: flex;
+  gap: 12px;
+}
+
+.sessionActions button {
+  flex: 1;
+}
+
+.sessionActions button:last-child {
+  flex: 0;
+}
+
+/* ========================================
+   Today's Stats Card
+   ======================================== */
+
+.todayStatsCard {
+  padding: 24px !important;
+  margin-bottom: 24px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.todayStatsCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md3-elevation-2);
+}
+
+/* Light mode gradient overlay - green theme for today's stats */
+:root:not([data-theme="dark"]) .todayStatsCard {
+  background-image: linear-gradient(135deg,
+    rgba(16, 185, 129, 0.08),
+    rgba(5, 150, 105, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+.todayStatsTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todayStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.todayStatItem {
+  padding: 12px;
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md3-shape-corner-medium);
+  text-align: center;
+}
+
+.todayStatIcon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.todayStatValue {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--md-sys-color-secondary);
+}
+
+.todayStatLabel {
+  font-size: 10px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 2px;
+}
+
+/* ========================================
+   Book Cards
+   ======================================== */
+
+.bookCardsGrid {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.bookCard {
+  padding: 20px !important;
+  cursor: pointer;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.bookCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--md3-elevation-3);
+}
+
+.bookCardContent {
+  display: flex;
+  gap: 16px;
+}
+
+.bookCover {
+  width: 100px;
+  height: 150px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bookCoverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.bookCoverPlaceholder {
+  font-size: 40px;
+}
+
+.bookDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bookTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 4px;
+}
+
+.bookAuthor {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.bookProgressSection {
+  margin-top: auto;
+}
+
+.bookProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.bookProgressFooter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.continueButton {
+  margin-top: 12px;
+  width: fit-content;
+}
+
+/* ========================================
+   Session History
+   ======================================== */
+
+.sessionHistoryCard {
+  padding: 24px !important;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Light mode gradient overlay - orange theme for session history */
+:root:not([data-theme="dark"]) .sessionHistoryCard {
+  background-image: linear-gradient(135deg,
+    rgba(234, 88, 12, 0.08),
+    rgba(249, 115, 22, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(234, 88, 12, 0.4) !important;
+}
+
+.sessionHistoryTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 20px;
+}
+
+.sessionHistoryList {
+  display: grid;
+  gap: 12px;
+}
+
+.sessionHistoryItem {
+  padding: 16px;
+  background-color: var(--md-sys-color-surface-container-low);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.sessionHistoryItemInfo {
+  flex: 1;
+}
+
+.sessionHistoryItemTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 4px;
+}
+
+.sessionHistoryItemDate {
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.sessionHistoryItemStats {
+  text-align: right;
+}
+
+.sessionHistoryItemDuration {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--md-sys-color-primary);
+}
+
+.sessionHistoryItemPages {
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ========================================
+   Empty States
+   ======================================== */
+
+.emptyState {
+  padding: 48px !important;
+  text-align: center;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.emptyStateIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.emptyStateTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 8px;
+}
+
+.emptyStateMessage {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 24px;
+}
+
+/* ========================================
+   Quick Stats Summary
+   ======================================== */
+
+.quickStatsCard {
+  padding: 24px !important;
+  margin-top: 32px;
+  background: var(--md-sys-color-surface-container) !important;
+  border: 2px solid var(--md-sys-color-outline-variant) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
+              0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.quickStatsCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md3-elevation-2);
+}
+
+/* Light mode gradient overlay - blue theme for quick stats */
+:root:not([data-theme="dark"]) .quickStatsCard {
+  background-image: linear-gradient(135deg,
+    rgba(59, 130, 246, 0.08),
+    rgba(37, 99, 235, 0.05),
+    transparent
+  ) !important;
+  background-color: var(--md-sys-color-surface-container) !important;
+  border-left: 4px solid rgba(59, 130, 246, 0.4) !important;
+}
+
+.quickStatsTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 20px;
+}
+
+.quickStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.quickStatItem {
+  padding: 16px;
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md3-shape-corner-medium);
+  text-align: center;
+}
+
+.quickStatIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.quickStatValue {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
+}
+
+.quickStatLabel {
+  font-size: 12px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 4px;
+}
+
+/* ========================================
+   Accessibility & ARIA Regions
+   ======================================== */
+
+[role="region"] {
+  /* Ensure regions are accessible */
+  outline: none;
+}
+
+[role="region"]:focus-within {
+  /* Visual feedback when focused */
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+/* ========================================
+   Responsive Design - M3 Window Size Classes
+   ======================================== */
+
+/* Compact (< 600px) - Phone */
+@media (max-width: 599px) {
+  .readingPage {
+    padding: 16px;
+  }
+
+  .readingHeader {
+    margin: -16px -16px 24px -16px;
+    padding: 24px 16px;
+  }
+
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .titleIcon {
+    font-size: 24px;
+  }
+
+  .sessionStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .todayStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .bookCardContent {
+    flex-direction: column;
+  }
+
+  .bookCover {
+    width: 100%;
+    height: 200px;
+  }
+
+  .sessionActions {
+    flex-direction: column;
+  }
+
+  .sessionActions button {
+    width: 100%;
+  }
+}
+
+/* Medium (600-839px) - Tablet */
+@media (min-width: 600px) and (max-width: 839px) {
+  .readingPage {
+    padding: 24px;
+  }
+
+  .sessionStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .todayStatsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Expanded (≥ 840px) - Desktop */
+@media (min-width: 840px) {
+  .readingPage {
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .sessionStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bookCardsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+}
+
+/* ========================================
+   Dark Mode Specific Adjustments
+   ======================================== */
+
+:root[data-theme="dark"] .bookCover {
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+}
+
+:root[data-theme="dark"] .sessionHistoryItem {
+  background-color: var(--md-sys-color-surface-container);
+}
+
+/* ========================================
+   Interactive State Layers (MD3 Pattern)
+   ======================================== */
+
+.bookCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.bookCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--md-sys-color-on-surface);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.bookCard:hover::before {
+  opacity: 0.08;  /* MD3 hover state layer */
+}
+
+.bookCard:active::before {
+  opacity: 0.12;  /* MD3 pressed state layer */
+}
+
+.sessionHistoryItem {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+.sessionHistoryItem::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--md-sys-color-on-surface);
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.sessionHistoryItem:hover::before {
+  opacity: 0.08;
+}
+
+.sessionHistoryItem:hover {
+  transform: translateX(4px);
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .sessionActions,
+  .continueButton {
+    display: none;
+  }
+
+  .readingPage {
+    padding: 0;
+  }
+
+  .activeSessionCard,
+  .todayStatsCard,
+  .sessionHistoryCard {
+    page-break-inside: avoid;
+  }
+}
