@@ -36,61 +36,110 @@ const MD3Login = () => {
 
   return (
     <div className="md3-login-container" data-theme={actualTheme}>
-      <div className="md3-login-box">
-        <img src="/literatiLOGO.png" alt="Literati" className="md3-login-logo" />
-        <h1 className="md3-login-title">Sign In</h1>
+      {/* Decorative Background Elements */}
+      <div className="login-background">
+        <div className="login-gradient-orb orb-1"></div>
+        <div className="login-gradient-orb orb-2"></div>
+        <div className="login-gradient-orb orb-3"></div>
+      </div>
 
+      <div className="md3-login-content">
+        {/* Header Section */}
+        <div className="md3-login-header">
+          <img
+            src="/literatiLOGO.png"
+            alt="Literati"
+            className="md3-login-logo"
+          />
+          <h1 className="md3-login-title">Welcome Back</h1>
+          <p className="md3-login-subtitle">
+            Sign in to continue your reading journey
+          </p>
+        </div>
+
+        {/* Error Alert */}
         {error && (
-          <div style={{
-            padding: '0.75rem',
-            marginBottom: '1rem',
-            backgroundColor: 'var(--md-sys-color-error-container)',
-            color: 'var(--md-sys-color-on-error-container)',
-            borderRadius: '8px',
-            fontSize: '0.875rem'
-          }}>
-            {error}
+          <div className="md3-alert md3-alert-error" role="alert">
+            <span className="material-symbols-outlined md3-alert-icon">error</span>
+            <span className="md3-alert-message">{error}</span>
           </div>
         )}
 
+        {/* Login Form */}
         <form onSubmit={handleSubmit} className="md3-login-form">
-          <MD3TextField
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            disabled={submitting}
-          />
+          <div className="md3-form-row">
+            <MD3TextField
+              label="Email Address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={submitting}
+              autoFocus
+              className="md3-login-field"
+            />
+          </div>
 
-          <MD3TextField
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            disabled={submitting}
-          />
+          <div className="md3-form-row">
+            <MD3TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={submitting}
+              className="md3-login-field"
+            />
+          </div>
 
-          <MD3Button type="submit" variant="filled" disabled={submitting}>
-            {submitting ? 'Signing in...' : 'Sign In'}
+          {/* Submit Button */}
+          <MD3Button
+            type="submit"
+            variant="filled"
+            disabled={submitting}
+            className="md3-login-submit"
+          >
+            {submitting ? (
+              <>
+                <span className="md3-button-spinner"></span>
+                Signing in...
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined">login</span>
+                Sign In
+              </>
+            )}
           </MD3Button>
         </form>
 
-        <div className="md3-login-divider">or</div>
+        {/* Divider for Social Login */}
+        <div className="md3-login-divider">
+          <span className="divider-line"></span>
+          <span className="divider-text">or continue with</span>
+          <span className="divider-line"></span>
+        </div>
 
+        {/* Social Login Buttons */}
         <div className="md3-login-social">
-          <MD3Button variant="outlined">
-            Sign in with Google
+          <MD3Button variant="outlined" className="md3-social-button">
+            <span className="social-icon">🔍</span>
+            Google
           </MD3Button>
-          <MD3Button variant="outlined">
-            Sign in with Facebook
+          <MD3Button variant="outlined" className="md3-social-button">
+            <span className="social-icon">📘</span>
+            Facebook
           </MD3Button>
         </div>
 
-        <div style={{ marginTop: '1.5rem', fontSize: '0.875rem' }}>
-          Don't have an account?{' '}
-          <Link to="/signup" className="md3-login-link">Sign up</Link>
+        {/* Sign Up Link */}
+        <div className="md3-login-footer">
+          <span className="md3-login-footer-text">
+            Don't have an account?{' '}
+            <Link to="/signup" className="md3-link md3-link-bold">
+              Sign up
+            </Link>
+          </span>
         </div>
       </div>
     </div>

@@ -58,10 +58,17 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
   const handleDailyCheckIn = useCallback(async () => {
     try {
+      // Safety check: ensure showSnackbar exists
+      if (!showSnackbar || typeof showSnackbar !== 'function') {
+        console.error('Snackbar not available');
+        alert('Check-in feature is temporarily unavailable');
+        return;
+      }
+
       // Check if already checked in today
       const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
       const today = new Date().toDateString();
-      
+
       if (lastCheckIn === today) {
         showSnackbar({
           message: '✨ You\'ve already checked in today! Come back tomorrow.',
@@ -322,7 +329,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       {statCards.map((stat, index) => (
         <div key={index} className="stat-metric-card">
           <div className="stat-metric-header">
-            <span className="stat-metric-value">${stat.value}</span>
+            <span className="stat-metric-value">{stat.value}</span>
             <span className={`stat-metric-growth ${stat.trend}`}>
               {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
             </span>

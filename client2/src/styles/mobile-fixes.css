@@ -61,12 +61,13 @@ aside {
 }
 
 /* Prevent specific elements from causing overflow */
-img,
+/* Exclude logos and branded images from height:auto rule */
+img:not([class*="logo"]):not([class*="Logo"]),
 video,
 iframe,
 embed,
 object,
-svg,
+svg:not([class*="logo"]):not([class*="Logo"]),
 canvas {
   max-width: 100% !important;
   height: auto !important;
