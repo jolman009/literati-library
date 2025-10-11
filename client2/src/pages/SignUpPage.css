@@ -1,36 +1,508 @@
-/* Subtle affordances for the TOS consent text */
+/* ================================================
+   SIGNUP PAGE - MATERIAL DESIGN 3
+   Aligned with MD3 principles and landing page design
+   ================================================ */
 
-.tos-consent-text {
+/* ================================================
+   CONTAINER & BACKGROUND
+   ================================================ */
+
+.md3-signup-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--md-sys-color-surface);
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Decorative Background Elements */
+.signup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.signup-gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  animation: float-orb 20s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--md-sys-color-primary);
+  top: -10%;
+  left: -10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--md-sys-color-tertiary);
+  bottom: -10%;
+  right: -10%;
+  animation-delay: 7s;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: var(--md-sys-color-secondary);
+  top: 50%;
+  right: 10%;
+  animation-delay: 14s;
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* ================================================
+   CONTENT CARD
+   ================================================ */
+
+.md3-signup-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-extra-large, 28px);
+  padding: 3rem 2.5rem;
+  box-shadow: var(--md-sys-elevation-level2,
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 4px 12px rgba(0, 0, 0, 0.08)
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  animation: slideUpFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================
+   HEADER SECTION
+   ================================================ */
+
+.md3-signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.md3-signup-logo {
+  height: 48px;
+  width: auto;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.md3-signup-title {
+  font-size: clamp(1.75rem, 4vw, 2rem);
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.md3-signup-subtitle {
+  font-size: 0.9375rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ================================================
+   ALERTS
+   ================================================ */
+
+.md3-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  animation: alertSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.md3-alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.md3-alert-message {
+  flex: 1;
+}
+
+.md3-alert-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-error) 30%, transparent);
+}
+
+.md3-alert-error .md3-alert-icon {
+  color: var(--md-sys-color-error);
+}
+
+.md3-alert-success {
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent);
+}
+
+.md3-alert-success .md3-alert-icon {
+  color: var(--md-sys-color-tertiary);
+}
+
+/* ================================================
+   FORM LAYOUT
+   ================================================ */
+
+.md3-signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: var(--md-sys-color-on-surface-container-high);
+  padding: 1.5rem;
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  box-shadow: var(--md-sys-elevation-level2,
+    0 2px 3px rgba(0, 0, 0, 0.06),
+    0 2px 2px rgba(0, 0, 0, 0.09)
+  );
+  border: 4px solid var(--md-sys-color-outline-variant);
+}
+
+.md3-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.md3-signup-field {
+  width: 100%;
+}
+
+/* ================================================
+   PASSWORD REQUIREMENTS
+   ================================================ */
+
+.md3-password-requirements {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-secondary-container);
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+  font-size: 0.9125rem;
+  line-height: 1.4;
+  margin-top: -0.5rem;
+}
+
+.requirements-icon {
+  font-size: 1rem;
+  color: var(--md-sys-color-secondary);
+  flex-shrink: 0;
+}
+
+.requirements-text {
+  flex: 1;
+}
+
+/* ================================================
+   CHECKBOX FIELD
+   ================================================ */
+
+.md3-checkbox-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.md3-checkbox-label {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--md-sys-color-on-surface-variant);
   cursor: pointer;
   user-select: none;
+  flex: 1;
 }
 
-.tos-consent-text label {
-  cursor: pointer;
+.md3-checkbox-label:hover {
+  color: var(--md-sys-color-on-surface);
 }
 
-/* Only apply hover styles on devices that support hover */
-@media (hover: hover) {
-  .tos-consent-text label:hover {
-    text-decoration: underline;
-    color: var(--md-sys-color-primary);
+/* ================================================
+   LINKS
+   ================================================ */
+
+.md3-link {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.md3-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--md-sys-color-primary);
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.md3-link:hover::after {
+  width: 100%;
+}
+
+.md3-link:hover {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+}
+
+.md3-link:active {
+  transform: scale(0.98);
+}
+
+.md3-link-bold {
+  font-weight: 600;
+}
+
+/* ================================================
+   SUBMIT BUTTON
+   ================================================ */
+
+.md3-signup-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  height: 48px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.md3-signup-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.md3-signup-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.md3-signup-submit .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+/* Loading Spinner */
+.md3-button-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================================================
+   FOOTER
+   ================================================ */
+
+.md3-signup-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.md3-signup-footer-text {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.5;
+}
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+/* Mobile Phones (< 640px) */
+@media (max-width: 639px) {
+  .md3-signup-container {
+    padding: 1rem 0.75rem;
   }
 
-  .tos-consent-text a:hover {
-    text-decoration: underline;
+  .md3-signup-content {
+    padding: 2rem 1.5rem;
+    border-radius: var(--md-sys-shape-corner-large, 20px);
+  }
+
+  .md3-signup-logo {
+    height: 48px;
+  }
+
+  .md3-password-requirements {
+    font-size: 0.75rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .md3-checkbox-label {
+    font-size: 0.8125rem;
+  }
+
+  .md3-signup-submit {
+    height: 44px;
   }
 }
 
-/* Active/tap feedback on touch and desktop */
-.tos-consent-text label:active {
-  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
-  border-radius: 4px;
+/* Tablets (640px - 1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .md3-signup-content {
+    max-width: 520px;
+    padding: 2.5rem 2rem;
+  }
 }
 
-/* Accessibility: make focus visible if labels are focused programmatically */
-.tos-consent-text label:focus-visible {
+/* Large Screens (1024px+) */
+@media (min-width: 1024px) {
+  .md3-signup-content {
+    max-width: 560px;
+  }
+}
+
+/* ================================================
+   ACCESSIBILITY
+   ================================================ */
+
+/* Focus Visible States */
+.md3-checkbox-label:focus-visible,
+.md3-link:focus-visible {
   outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .md3-signup-content,
+  .md3-alert,
+  .md3-signup-logo,
+  .signup-gradient-orb {
+    animation: none;
+  }
+
+  .md3-link::after {
+    transition: none;
+  }
+
+  .md3-signup-submit {
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .md3-signup-content {
+    border: 2px solid var(--md-sys-color-outline);
+  }
+
+  .md3-alert {
+    border-width: 2px;
+  }
+
+  .md3-link {
+    text-decoration: underline;
+  }
+}
+
+/* ================================================
+   DARK THEME ADJUSTMENTS
+   ================================================ */
+
+.md3-signup-container[data-theme="dark"] .signup-gradient-orb {
+  opacity: 0.08;
+}
+
+.md3-signup-container[data-theme="dark"] .md3-signup-content {
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.md3-signup-container[data-theme="dark"] .md3-alert-error {
+  background: color-mix(in srgb, var(--md-sys-color-error) 15%, var(--md-sys-color-surface));
+}
+
+.md3-signup-container[data-theme="dark"] .md3-alert-success {
+  background: color-mix(in srgb, var(--md-sys-color-tertiary) 15%, var(--md-sys-color-surface));
+}

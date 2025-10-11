@@ -565,6 +565,10 @@
 .md3-book-info {
   flex: 1;
   min-width: 0;
+  background: var(--md-sys-color-primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+
 }
 
 .md3-book-title {
