@@ -1288,12 +1288,15 @@
 
 .metrics-scroll-wrapper {
   width: 100vw;
-  margin-left: -16px;  /* Escape .page-content padding */
+  margin-left: -16px;
   margin-right: -16px;
-  margin-top: -24px;   /* Escape .page-content padding-top */
+  margin-top: -24px;
   padding: 24px 24px 16px 24px;
   background: var(--md-sys-color-surface);
   margin-bottom: 16px;
+  /* DEBUG */
+  border: 3px solid red !important;
+  outline: 3px solid blue !important;
 }
 
 .stats-cards-grid {
@@ -1303,6 +1306,9 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 8px;
+  /* DEBUG */
+  border: 3px solid green !important;
+  background: yellow !important;
 }
 
 /* LEGACY - Keep for backwards compatibility but not used */
@@ -1343,6 +1349,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
   width: 180px;
+  /* DEBUG */
+  outline: 3px solid orange !important;
 }
 
 .stat-metric-card:hover {
