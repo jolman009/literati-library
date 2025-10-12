@@ -1445,14 +1445,66 @@
    POINT CATEGORY CARDS - Bottom Row
    ======================================================================== */
 
+/* Wrapper for the entire point categories section */
+.point-categories-wrapper {
+  width: 100%;
+}
+
+/* Section Header - Explains what these cards are for */
+.point-categories-section-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--md-sys-color-outline-variant);
+}
+
+.point-categories-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.03em;
+}
+
+.section-title-icon {
+  font-size: 2.25rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.point-categories-section-subtitle {
+  font-size: 1.125rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Grid for the three point category cards */
+.point-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* Responsive adjustments for point categories */
+@media (max-width: 1200px) {
+  .point-categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .point-category-card {
   background: var(--md-sys-color-surface-container);
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -1476,37 +1528,41 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--md-sys-color-outline-variant);
 }
 
 .point-category-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.125rem;
+  gap: 8px;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--md-sys-color-on-surface);
   margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .point-category-icon {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
 .point-category-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .point-action-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: rgba(0, 0, 0, 0.02);
-  border-radius: 12px;
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
@@ -1526,24 +1582,24 @@
 .point-action-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .point-action-icon {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1;
 }
 
 .point-action-name {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: var(--md-sys-color-on-surface);
 }
 
 .point-action-badge {
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
 }

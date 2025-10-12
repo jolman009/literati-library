@@ -383,37 +383,49 @@ const PointCategoriesSection = () => {
   ];
 
   return (
-    <>
-      {pointCategories.map((category, index) => (
-        <div key={index} className="point-category-card">
-          <div className="point-category-header">
-            <h3 className="point-category-title">
-              <span className="point-category-icon">{category.icon}</span>
-              {category.title}
-            </h3>
-          </div>
-          <div className="point-category-actions">
-            {category.actions.map((action, actionIndex) => (
-              <div key={actionIndex} className="point-action-item">
-                <div className="point-action-info">
-                  <span className="point-action-icon">{action.icon}</span>
-                  <span className="point-action-name">{action.action}</span>
+    <div className="point-categories-wrapper">
+      <div className="point-categories-section-header">
+        <h2 className="point-categories-section-title">
+          <span className="section-title-icon">🎮</span>
+          Ways to Earn Points
+        </h2>
+        <p className="point-categories-section-subtitle">
+          Complete these activities to level up and unlock achievements
+        </p>
+      </div>
+
+      <div className="point-categories-grid">
+        {pointCategories.map((category, index) => (
+          <div key={index} className="point-category-card">
+            <div className="point-category-header">
+              <h3 className="point-category-title">
+                <span className="point-category-icon">{category.icon}</span>
+                {category.title}
+              </h3>
+            </div>
+            <div className="point-category-actions">
+              {category.actions.map((action, actionIndex) => (
+                <div key={actionIndex} className="point-action-item">
+                  <div className="point-action-info">
+                    <span className="point-action-icon">{action.icon}</span>
+                    <span className="point-action-name">{action.action}</span>
+                  </div>
+                  <div className="point-action-badge" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
+                    +{action.points}
+                  </div>
                 </div>
-                <div className="point-action-badge" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
-                  +{action.points}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <button
+              onClick={() => navigate('/gamification-rules')}
+              className="point-category-footer-link"
+            >
+              View all rewards →
+            </button>
           </div>
-          <button
-            onClick={() => navigate('/gamification-rules')}
-            className="point-category-footer-link"
-          >
-            View all rewards →
-          </button>
-        </div>
-      ))}
-    </>
+        ))}
+      </div>
+    </div>
   );
 };
 
