@@ -143,7 +143,14 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
   const handleSync = useCallback(async () => {
-    if (!syncWithServer) {
+    // Safety check: ensure showSnackbar exists
+    if (!showSnackbar || typeof showSnackbar !== 'function') {
+      console.error('Snackbar not available');
+      alert('Sync feature is temporarily unavailable');
+      return;
+    }
+
+    if (!syncWithServer || typeof syncWithServer !== 'function') {
       console.warn('Sync function not available');
       showSnackbar({
         message: '⚠️ Sync feature is not available',
