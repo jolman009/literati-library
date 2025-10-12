@@ -1286,6 +1286,10 @@
   margin-bottom: 24px;
   position: relative;
   /* Add subtle fade gradient on right to indicate scrollability */
+  /* Ensure proper width for mobile */
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .dashboard-stats-row::after {
@@ -1300,11 +1304,13 @@
     transparent 100%);
   pointer-events: none;
   opacity: 0.8;
+  z-index: 1;
 }
 
 /* Hide gradient on hover/touch to show full content */
 .dashboard-stats-row:hover::after,
-.dashboard-stats-row:focus-within::after {
+.dashboard-stats-row:focus-within::after,
+.dashboard-stats-row:active::after {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1313,7 +1319,7 @@
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
-  overflow-x: auto;
+  overflow-x: scroll;  /* Changed from auto to scroll */
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
@@ -1321,9 +1327,14 @@
   scrollbar-color: var(--md-sys-color-primary) var(--md-sys-color-surface-variant);
   padding-bottom: 8px;
   /* Enable touch scrolling on mobile devices */
-  touch-action: pan-x;
+  touch-action: pan-x pan-y pinch-zoom;  /* Allow vertical scroll of page while horizontal scrolling cards */
   /* Ensure scroll snap for better UX */
-  scroll-snap-type: x proximity;
+  scroll-snap-type: x mandatory;  /* Changed from proximity to mandatory for better mobile UX */
+  /* Prevent elastic bounce on iOS from affecting layout */
+  overscroll-behavior-x: contain;
+  /* Ensure full width */
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
@@ -1356,10 +1367,12 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  flex: 1 1 0;
-  min-width: 150px;
+  flex: 0 0 auto;  /* Don't grow or shrink */
+  min-width: 160px;  /* Slightly wider for better mobile display */
+  width: 160px;  /* Fixed width for consistency */
   /* Snap cards when scrolling on mobile */
   scroll-snap-align: start;
+  scroll-snap-stop: always;  /* Force stop at each card */
   /* Prevent shrinking below min-width */
   flex-shrink: 0;
 }
@@ -1481,14 +1494,46 @@
 
 /* Responsive adjustments for new layout */
 @media (max-width: 1200px) {
-  .stats-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .stat-metric-card {
+    min-width: 180px;
+    width: 180px;
   }
 }
 
 @media (max-width: 900px) {
   .dashboard-main-content-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stat-metric-card {
+    min-width: 140px;
+    width: 140px;
+    padding: 12px 14px;
+  }
+
+  .stat-metric-value {
+    font-size: 1.3rem;
+  }
+
+  .stat-metric-label {
+    font-size: 0.75rem;
+  }
+
+  .stat-metric-growth {
+    font-size: 1rem;
+  }
+
+  /* Ensure scrollbar is visible on mobile */
+  .stats-cards-grid::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  /* Make the scroll gradient more visible on mobile */
+  .dashboard-stats-row::after {
+    width: 30px;
+    opacity: 0.9;
   }
 }
 

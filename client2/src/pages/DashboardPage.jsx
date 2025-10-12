@@ -149,7 +149,11 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
       // Safety check: ensure syncWithServer exists
       if (!syncWithServer || typeof syncWithServer !== 'function') {
-        throw new Error('Sync function not available');
+        showSnackbar({
+          message: '⚠️ Sync feature is currently unavailable',
+          variant: 'warning'
+        });
+        return;
       }
 
       const result = await syncWithServer();
@@ -161,15 +165,34 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
           variant: 'success'
         });
       } else {
-        showSnackbar({
-          message: `❌ Sync failed: ${result?.error || 'Unknown error'}`,
-          variant: 'error'
-        });
+        // Handle specific error cases
+        const errorMessage = result?.error || 'Unknown error';
+
+        if (errorMessage.includes('offline') || errorMessage.includes('Not authenticated')) {
+          showSnackbar({
+            message: '📡 You\'re offline. Your data will sync when you reconnect.',
+            variant: 'info'
+          });
+        } else {
+          showSnackbar({
+            message: `❌ Sync failed: ${errorMessage}`,
+            variant: 'error'
+          });
+        }
       }
     } catch (error) {
       console.error('❌ Sync error:', error);
+
+      // Provide user-friendly error messages
+      let userMessage = 'Please try again later.';
+      if (error.message?.includes('offline')) {
+        userMessage = 'You appear to be offline. Check your internet connection.';
+      } else if (error.message?.includes('network')) {
+        userMessage = 'Network error. Please check your connection.';
+      }
+
       showSnackbar({
-        message: `❌ Sync failed: ${error.message || 'Please try again.'}`,
+        message: `❌ Sync failed: ${userMessage}`,
         variant: 'error'
       });
     } finally {
