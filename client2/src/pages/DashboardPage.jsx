@@ -143,57 +143,42 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   }, [trackAction, showSnackbar, onCheckInUpdate]);
 
   const handleSync = useCallback(async () => {
+    if (!syncWithServer) {
+      console.warn('Sync function not available');
+      showSnackbar({
+        message: '⚠️ Sync feature is not available',
+        variant: 'warning'
+      });
+      return;
+    }
+
+    setIsSyncing(true);
+
     try {
-      setIsSyncing(true);
-      console.log('🔄 Manual sync initiated by user');
-
-      // Safety check: ensure syncWithServer exists
-      if (!syncWithServer || typeof syncWithServer !== 'function') {
-        showSnackbar({
-          message: '⚠️ Sync feature is currently unavailable',
-          variant: 'warning'
-        });
-        return;
-      }
-
       const result = await syncWithServer();
 
-      if (result && result.success) {
+      if (result?.success) {
         setLastSyncTime(new Date());
         showSnackbar({
-          message: `✅ Data synced! ${result.stats?.totalPoints || 0} points, ${result.achievements || 0} achievements`,
+          message: `✅ Synced! ${result.stats?.totalPoints || 0} points`,
           variant: 'success'
         });
+      } else if (result?.error?.includes('offline') || result?.error?.includes('Not authenticated')) {
+        showSnackbar({
+          message: '📡 Offline mode - data saved locally',
+          variant: 'info'
+        });
       } else {
-        // Handle specific error cases
-        const errorMessage = result?.error || 'Unknown error';
-
-        if (errorMessage.includes('offline') || errorMessage.includes('Not authenticated')) {
-          showSnackbar({
-            message: '📡 You\'re offline. Your data will sync when you reconnect.',
-            variant: 'info'
-          });
-        } else {
-          showSnackbar({
-            message: `❌ Sync failed: ${errorMessage}`,
-            variant: 'error'
-          });
-        }
+        showSnackbar({
+          message: `⚠️ ${result?.error || 'Sync unsuccessful'}`,
+          variant: 'warning'
+        });
       }
     } catch (error) {
-      console.error('❌ Sync error:', error);
-
-      // Provide user-friendly error messages
-      let userMessage = 'Please try again later.';
-      if (error.message?.includes('offline')) {
-        userMessage = 'You appear to be offline. Check your internet connection.';
-      } else if (error.message?.includes('network')) {
-        userMessage = 'Network error. Please check your connection.';
-      }
-
+      console.error('Sync error:', error);
       showSnackbar({
-        message: `❌ Sync failed: ${userMessage}`,
-        variant: 'error'
+        message: '📡 Saved locally - will sync when online',
+        variant: 'info'
       });
     } finally {
       setIsSyncing(false);
@@ -832,13 +817,13 @@ const DashboardPage = () => {
 
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
+
+      {/* ISOLATED METRICS CONTAINER - Outside dashboard-content for clean scrolling */}
+      <div className="metrics-scroll-wrapper">
+        <QuickStatsOverview checkInStreak={checkInStreak} />
+      </div>
+
       <div className="dashboard-content">
-
-        {/* Top Stats Row - 4 metric cards like the reference */}
-        <div className="dashboard-stats-row">
-          <QuickStatsOverview checkInStreak={checkInStreak} />
-        </div>
-
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
 
