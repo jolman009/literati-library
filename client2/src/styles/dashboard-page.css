@@ -1301,11 +1301,14 @@
 
 .stats-cards-grid {
   display: flex;
+  flex-wrap: nowrap !important;
   gap: 16px;
-  overflow-x: auto;
+  overflow-x: scroll !important;  /* Force scroll, not auto */
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 8px;
+  /* Force minimum width to guarantee scroll */
+  min-width: min-content !important;
   /* DEBUG */
   border: 3px solid green !important;
   background: yellow !important;
@@ -1347,8 +1350,11 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-  width: 180px;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
   /* DEBUG */
   outline: 3px solid orange !important;
 }
