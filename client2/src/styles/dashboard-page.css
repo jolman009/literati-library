@@ -1287,9 +1287,13 @@
    ======================================================================== */
 
 .metrics-scroll-wrapper {
-  width: 100%;
+  width: 100vw;
+  margin-left: -16px;  /* Escape .page-content padding */
+  margin-right: -16px;
+  margin-top: -24px;   /* Escape .page-content padding-top */
   padding: 24px 24px 16px 24px;
   background: var(--md-sys-color-surface);
+  margin-bottom: 16px;
 }
 
 .stats-cards-grid {
