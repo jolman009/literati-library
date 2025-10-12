@@ -332,6 +332,11 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         freeMode={true}
         modules={[FreeMode]}
         className="stats-cards-swiper"
+        watchSlidesProgress={true}
+        observer={true}
+        observeParents={true}
+        resistance={true}
+        resistanceRatio={0.85}
       >
         {[...Array(4)].map((_, i) => (
           <SwiperSlide key={i} className="stat-metric-slide">
@@ -351,6 +356,11 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       freeMode={true}
       modules={[FreeMode]}
       className="stats-cards-swiper"
+      watchSlidesProgress={true}
+      observer={true}
+      observeParents={true}
+      resistance={true}
+      resistanceRatio={0.85}
     >
       {statCards.map((stat, index) => (
         <SwiperSlide key={index} className="stat-metric-slide">
