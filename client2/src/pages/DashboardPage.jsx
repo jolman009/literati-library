@@ -298,31 +298,42 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       isDown = true;
       startX = e.touches[0].pageX - container.offsetLeft;
       scrollLeft = container.scrollLeft;
-      console.log('Touch start:', startX);
+
+      // STOP event from bubbling to parent dashboard-container
+      e.stopPropagation();
+
+      console.log('✅ Touch start:', startX);
     };
 
     const handleTouchMove = (e) => {
       if (!isDown) return;
+
+      // CRITICAL: Stop propagation FIRST before preventDefault
+      e.stopPropagation();
       e.preventDefault();
+
       const x = e.touches[0].pageX - container.offsetLeft;
       const walk = (startX - x) * 2;
       container.scrollLeft = scrollLeft + walk;
-      console.log('Scrolling:', walk);
+
+      console.log('✅ Scrolling to:', container.scrollLeft);
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e) => {
       isDown = false;
-      console.log('Touch end');
+      e.stopPropagation();
+      console.log('✅ Touch end');
     };
 
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd);
+    // Use capture: true to intercept events BEFORE they bubble
+    container.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
+    container.addEventListener('touchend', handleTouchEnd, { passive: false, capture: true });
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('touchstart', handleTouchStart, { capture: true });
+      container.removeEventListener('touchmove', handleTouchMove, { capture: true });
+      container.removeEventListener('touchend', handleTouchEnd, { capture: true });
     };
   }, [loading]);
 
