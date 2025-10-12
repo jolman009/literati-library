@@ -1284,6 +1284,29 @@
 /* Top Stats Row - 4 Metric Cards */
 .dashboard-stats-row {
   margin-bottom: 24px;
+  position: relative;
+  /* Add subtle fade gradient on right to indicate scrollability */
+}
+
+.dashboard-stats-row::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: calc(100% - 8px);
+  background: linear-gradient(to left,
+    var(--md-sys-color-surface) 0%,
+    transparent 100%);
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Hide gradient on hover/touch to show full content */
+.dashboard-stats-row:hover::after,
+.dashboard-stats-row:focus-within::after {
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .stats-cards-grid {
@@ -1297,6 +1320,10 @@
   scrollbar-width: thin;
   scrollbar-color: var(--md-sys-color-primary) var(--md-sys-color-surface-variant);
   padding-bottom: 8px;
+  /* Enable touch scrolling on mobile devices */
+  touch-action: pan-x;
+  /* Ensure scroll snap for better UX */
+  scroll-snap-type: x proximity;
 }
 
 /* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
@@ -1331,6 +1358,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   flex: 1 1 0;
   min-width: 150px;
+  /* Snap cards when scrolling on mobile */
+  scroll-snap-align: start;
+  /* Prevent shrinking below min-width */
+  flex-shrink: 0;
 }
 
 .stat-metric-card:hover {
