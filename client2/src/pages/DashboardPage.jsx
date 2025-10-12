@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.jsx
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Sun, Moon, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -276,6 +276,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
+  const scrollContainerRef = useRef(null);
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
@@ -283,6 +284,47 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   useEffect(() => {
     if (stats) setLoading(false);
   }, [stats]);
+
+  // Add touch scroll handlers
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    const handleTouchStart = (e) => {
+      isDown = true;
+      startX = e.touches[0].pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+      console.log('Touch start:', startX);
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.touches[0].pageX - container.offsetLeft;
+      const walk = (startX - x) * 2;
+      container.scrollLeft = scrollLeft + walk;
+      console.log('Scrolling:', walk);
+    };
+
+    const handleTouchEnd = () => {
+      isDown = false;
+      console.log('Touch end');
+    };
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [loading]);
 
   // Calculate growth percentage (mock data for now)
   const calculateGrowth = (value) => {
@@ -333,7 +375,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   }
 
   return (
-    <div className="stats-cards-grid">
+    <div className="stats-cards-grid" ref={scrollContainerRef}>
       {statCards.map((stat, index) => (
         <div key={index} className="stat-metric-card">
           <div className="stat-metric-header">
