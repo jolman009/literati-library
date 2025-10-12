@@ -134,12 +134,18 @@ pre {
 /* Constrain all containers */
 .container,
 .Container,
-[class*="container"],
+[class*="container"]:not(.simple-scroll-container),
 [class*="Container"] {
   max-width: 100vw !important;
   overflow-x: hidden !important;
   padding-left: max(16px, env(safe-area-inset-left)) !important;
   padding-right: max(16px, env(safe-area-inset-right)) !important;
+}
+
+/* Exception: Allow horizontal scroll for designated scroll containers */
+.simple-scroll-container {
+  overflow-x: auto !important;
+  max-width: none !important;
 }
 
 /* Constrain all wrappers */
