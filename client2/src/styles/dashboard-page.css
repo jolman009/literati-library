@@ -1294,6 +1294,11 @@
   gap: 16px;
   margin-bottom: 24px;
   padding-bottom: 12px; /* Space for scrollbar/touch area */
+  /* Break out of parent container's max-width constraint */
+  margin-left: -24px;
+  margin-right: -24px;
+  padding-left: 24px;
+  padding-right: 24px;
   /* Hide scrollbar but keep scrolling functionality */
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
