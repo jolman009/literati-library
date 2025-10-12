@@ -1282,29 +1282,23 @@
    ======================================================================== */
 
 /* ========================================================================
-   ISOLATED METRICS LAYOUT CONTAINER
-   This container breaks out of dashboard-content padding for full-width cards
+   HORIZONTAL SCROLL CONTAINER FOR METRIC CARDS
+   Simple CSS-only approach - no JavaScript, no libraries
    ======================================================================== */
 
-.metrics-fullwidth-container {
-  width: 100vw;
-  margin-left: -16px;
-  margin-right: -16px;
-  margin-top: -24px;
-  padding: 24px 24px 16px 24px;
-  background: var(--md-sys-color-surface);
-  margin-bottom: 16px;
-}
-
-/* Simple Scroll Container - Pure CSS Approach */
 .simple-scroll-container {
   display: flex;
   flex-wrap: nowrap; /* Prevents content from wrapping to the next line */
-  overflow-x: scroll; /* Enables horizontal scrolling */
-  scroll-behavior: smooth; /* Smooth scrolling animation */
-  touch-action: pan-x; /* Allows horizontal panning, prevents vertical scroll interference */
+  overflow-x: auto; /* Enables horizontal scrolling when content overflows */
+  overflow-y: hidden; /* Prevent vertical scrolling */
   gap: 16px;
-  padding-bottom: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 12px; /* Space for scrollbar/touch area */
+  /* Hide scrollbar but keep scrolling functionality */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  /* Prevent scroll from bubbling to parent container */
+  overscroll-behavior-x: contain;
 }
 
 /* LEGACY - Keep for backwards compatibility but not used */
@@ -1469,13 +1463,16 @@
   }
 }
 
-@media (max-width: 600px) {
-  .metrics-fullwidth-container {
-    padding: 16px;
-  }
+/* Hide scrollbar for webkit browsers (Chrome, Safari) */
+.simple-scroll-container::-webkit-scrollbar {
+  display: none;
+}
 
+@media (max-width: 600px) {
   .stat-metric-card {
-    min-width: 150px;
+    min-width: 165px; /* Fixed width on mobile to force overflow */
+    max-width: 165px;
+    flex-shrink: 0;
   }
 }
 
