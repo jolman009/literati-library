@@ -1282,11 +1282,11 @@
    ======================================================================== */
 
 /* ========================================================================
-   ISOLATED METRICS SCROLL CONTAINER
-   This container is OUTSIDE dashboard-content to avoid layout conflicts
+   ISOLATED METRICS LAYOUT CONTAINER
+   This container breaks out of dashboard-content padding for full-width cards
    ======================================================================== */
 
-.metrics-scroll-wrapper {
+.metrics-fullwidth-container {
   width: 100vw;
   margin-left: -16px;
   margin-right: -16px;
@@ -1301,7 +1301,7 @@
   display: flex;
   flex-wrap: nowrap; /* Prevents content from wrapping to the next line */
   overflow-x: scroll; /* Enables horizontal scrolling */
-  -webkit-overflow-scrolling: touch; /* Enhances touch-based scrolling on iOS */
+  scroll-behavior: smooth; /* Smooth scrolling animation */
   touch-action: pan-x; /* Allows horizontal panning, prevents vertical scroll interference */
   gap: 16px;
   padding-bottom: 8px;
@@ -1470,12 +1470,12 @@
 }
 
 @media (max-width: 600px) {
-  .metrics-scroll-wrapper {
+  .metrics-fullwidth-container {
     padding: 16px;
   }
 
   .stat-metric-card {
-    width: 150px;
+    min-width: 150px;
   }
 }
 
