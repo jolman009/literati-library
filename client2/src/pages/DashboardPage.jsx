@@ -117,21 +117,16 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
       }
       
       // Show success message with streak info
-      const streakMessage = newStreak > 1 
-        ? `🔥 ${newStreak} day streak!` 
+      const streakMessage = newStreak > 1
+        ? `🔥 ${newStreak} day streak!`
         : '';
       showSnackbar({
         message: `✅ Daily check-in complete! +10 points earned! ${streakMessage}`,
         variant: 'success'
       });
-      
-      // Optional: Try to sync with backend (but don't fail if it doesn't exist)
-      if (API && API.post) {
-        API.post('/gamification/daily-checkin').catch(() => {
-          // Silently ignore if endpoint doesn't exist
-          console.log('Daily check-in saved locally');
-        });
-      }
+
+      // Note: Backend sync removed - all check-ins stored locally
+      console.log('✅ Daily check-in saved locally:', { streak: newStreak, date: today });
       
     } catch (error) {
       console.error('Daily check-in error:', error);
