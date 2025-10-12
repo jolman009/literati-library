@@ -1281,10 +1281,15 @@
    NEW DASHBOARD LAYOUT - Reference Image Style
    ======================================================================== */
 
-/* Top Stats Row - 4 Metric Cards */
-.dashboard-stats-row {
-  margin-bottom: 24px;
+/* ========================================================================
+   ISOLATED METRICS SCROLL CONTAINER
+   This container is OUTSIDE dashboard-content to avoid layout conflicts
+   ======================================================================== */
+
+.metrics-scroll-wrapper {
   width: 100%;
+  padding: 24px 24px 16px 24px;
+  background: var(--md-sys-color-surface);
 }
 
 .stats-cards-grid {
@@ -1294,6 +1299,12 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 8px;
+}
+
+/* LEGACY - Keep for backwards compatibility but not used */
+.dashboard-stats-row {
+  margin-bottom: 24px;
+  width: 100%;
 }
 
 /* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
@@ -1446,47 +1457,19 @@
 }
 
 /* Responsive adjustments for new layout */
-@media (max-width: 1200px) {
-  .stat-metric-card {
-    min-width: 180px;
-    width: 180px;
-  }
-}
-
 @media (max-width: 900px) {
   .dashboard-main-content-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
+  .metrics-scroll-wrapper {
+    padding: 16px;
+  }
+
   .stat-metric-card {
-    min-width: 140px;
-    width: 140px;
-    padding: 12px 14px;
-  }
-
-  .stat-metric-value {
-    font-size: 1.3rem;
-  }
-
-  .stat-metric-label {
-    font-size: 0.75rem;
-  }
-
-  .stat-metric-growth {
-    font-size: 1rem;
-  }
-
-  /* Ensure scrollbar is visible on mobile */
-  .stats-cards-grid::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  /* Make the scroll gradient more visible on mobile */
-  .dashboard-stats-row::after {
-    width: 30px;
-    opacity: 0.9;
+    width: 150px;
   }
 }
 
