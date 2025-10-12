@@ -240,8 +240,37 @@ div.md3-text-field.md3-notes-search {
 .md3-dialog-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+  gap: 12px;
+  padding: 0;
+}
+
+.md3-dialog-content .md3-text-field {
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.md3-dialog-content .md3-text-field input,
+.md3-dialog-content .md3-text-field textarea {
+  color: #1c1b1f;
+  background-color: #f5f5f5;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.md3-dialog-content .md3-text-field textarea {
+  resize: vertical;
+  min-height: 200px;
+}
+
+.md3-dialog-content .md3-text-field__label {
+  color: #49454f;
+}
+
+.md3-dialog-content .md3-text-field__helper-text {
+  color: #49454f;
 }
 
 .md3-select-field {
@@ -253,23 +282,29 @@ div.md3-text-field.md3-notes-search {
 .md3-field-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--md3-on-surface-variant);
+  color: #49454f;
 }
 
 .md3-select {
   padding: 12px;
-  border: 1px solid var(--md3-outline);
+  border: 1px solid #79747e;
   border-radius: 8px;
-  background: var(--md3-surface);
-  color: var(--md3-on-surface);
+  background: white;
+  color: #1c1b1f;
   font-size: 1rem;
   transition: all 0.2s ease;
 }
 
 .md3-select:focus {
   outline: none;
-  border-color: var(--md3-primary);
+  border-color: #6750a4;
   box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.1);
+}
+
+.md3-select option {
+  background: white;
+  color: #1c1b1f;
+  padding: 8px;
 }
 
 /* Timeline View */
