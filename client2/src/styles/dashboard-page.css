@@ -1275,10 +1275,6 @@
   .dashboard-main-content-grid {
     grid-template-columns: 1fr;
   }
-
-  .dashboard-bottom-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ========================================================================
@@ -1292,20 +1288,21 @@
 
 .stats-cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .stat-metric-card {
   background: var(--md-sys-color-surface-container);
   border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: 16px;
-  padding: 20px 24px;
+  border-radius: 12px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  min-width: 0;
 }
 
 .stat-metric-card:hover {
@@ -1331,16 +1328,16 @@
 }
 
 .stat-metric-value {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--md-sys-color-on-surface);
   line-height: 1;
 }
 
 .stat-metric-growth {
-  font-size: 1.5rem;
-  padding: 4px 8px;
-  border-radius: 8px;
+  font-size: 1.1rem;
+  padding: 3px 6px;
+  border-radius: 6px;
   background: rgba(16, 185, 129, 0.1);
   color: #10b981;
   transition: all 0.3s ease;
@@ -1368,14 +1365,14 @@
 }
 
 .stat-metric-label {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--md-sys-color-on-surface-variant);
   text-transform: capitalize;
 }
 
 .stat-metric-percentage {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -1417,21 +1414,16 @@
   margin-bottom: 0;
 }
 
-/* Bottom Row - 3 Columns */
+/* Bottom Row - Container for Point Categories Section */
 .dashboard-bottom-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  display: block;
+  width: 100%;
 }
 
 /* Responsive adjustments for new layout */
 @media (max-width: 1200px) {
   .stats-cards-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-bottom-row {
-    grid-template-columns: 1fr;
   }
 }
 
