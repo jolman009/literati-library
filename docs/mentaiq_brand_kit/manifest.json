@@ -1,0 +1,27 @@
+{
+  "name": "MENTA IQ",
+  "short_name": "MentaIQ",
+  "description": "Smarter Reading. Deeper Learning.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0E141A",
+  "theme_color": "#24A8E0",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
