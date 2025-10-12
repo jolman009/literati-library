@@ -818,12 +818,9 @@ const DashboardPage = () => {
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
 
-      {/* ISOLATED METRICS CONTAINER - Full-width layout wrapper for metric cards */}
-      <div className="metrics-fullwidth-container">
-        <QuickStatsOverview checkInStreak={checkInStreak} />
-      </div>
-
       <div className="dashboard-content">
+        {/* Metric Cards - Horizontal Scroll */}
+        <QuickStatsOverview checkInStreak={checkInStreak} />
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
 
