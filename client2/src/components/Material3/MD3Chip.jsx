@@ -1,10 +1,10 @@
 import React from 'react';
 
 const VARIANTS = {
-  assist:  { bg:'#e7e0ec', fg:'#1c1b1f', selBg:'#6750a4', selFg:'#fff' },
-  filter:  { bg:'#f3edf7', fg:'#1c1b1f', selBg:'#6750a4', selFg:'#fff' },
-  input:   { bg:'#e7e0ec', fg:'#1c1b1f', selBg:'#6750a4', selFg:'#fff' },
-  suggest: { bg:'#f3edf7', fg:'#1c1b1f', selBg:'#6750a4', selFg:'#fff' },
+  assist:  { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
+  filter:  { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
+  input:   { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
+  suggest: { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
 };
 
 export default React.forwardRef(function MD3Chip(
@@ -37,13 +37,14 @@ export default React.forwardRef(function MD3Chip(
       aria-pressed={type === 'filter' ? selected : undefined}
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 8,
-        padding: pad, borderRadius: radius, border: '1px solid transparent',
+        padding: pad, borderRadius: radius,
+        border: selected ? 'none' : '1px solid rgb(var(--md-sys-color-outline-variant))',
         background: selected ? v.selBg : v.bg,
         color: selected ? v.selFg : v.fg,
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.6 : 1,
         fontSize: 14, fontWeight: 500, lineHeight: 1,
-        transition: 'filter .15s ease, transform .02s ease',
+        transition: 'filter .15s ease, transform .02s ease, border .15s ease',
         ...style
       }}
       onPointerDown={disabled ? undefined : (e)=>{ e.currentTarget.style.transform='scale(.98)'; }}
