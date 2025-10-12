@@ -802,6 +802,31 @@ const EnhancedNotesPage = () => {
                 }}
               />
               
+              {/* Create Note Button */}
+              <MD3Button
+                variant="filled"
+                onClick={() => handleOpenModal()}
+                icon={<Plus size={20} />}
+                style={{
+                  backgroundColor: 'white',
+                  color: '#6750A4',
+                  fontWeight: '600',
+                  padding: '12px 24px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                }}
+              >
+                New Note
+              </MD3Button>
+
               {/* View Mode Toggles */}
               <div style={{ display: 'flex', gap: '12px' }}>
                 {/* Grid View */}
