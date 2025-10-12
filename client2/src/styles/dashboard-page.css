@@ -1287,9 +1287,36 @@
 }
 
 .stats-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-primary) var(--md-sys-color-surface-variant);
+  padding-bottom: 8px;
+}
+
+/* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
+.stats-cards-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.stats-cards-grid::-webkit-scrollbar-track {
+  background: var(--md-sys-color-surface-variant);
+  border-radius: 4px;
+}
+
+.stats-cards-grid::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-primary);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.stats-cards-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-primary-container);
 }
 
 .stat-metric-card {
@@ -1302,7 +1329,8 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  min-width: 0;
+  flex: 1 1 0;
+  min-width: 150px;
 }
 
 .stat-metric-card:hover {
