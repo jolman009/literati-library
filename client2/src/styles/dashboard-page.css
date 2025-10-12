@@ -1284,57 +1284,16 @@
 /* Top Stats Row - 4 Metric Cards */
 .dashboard-stats-row {
   margin-bottom: 24px;
-  position: relative;
-  /* Add subtle fade gradient on right to indicate scrollability */
-  /* Ensure proper width for mobile */
   width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.dashboard-stats-row::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: calc(100% - 8px);
-  background: linear-gradient(to left,
-    var(--md-sys-color-surface) 0%,
-    transparent 100%);
-  pointer-events: none;
-  opacity: 0.8;
-  z-index: 1;
-}
-
-/* Hide gradient on hover/touch to show full content */
-.dashboard-stats-row:hover::after,
-.dashboard-stats-row:focus-within::after,
-.dashboard-stats-row:active::after {
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
 .stats-cards-grid {
   display: flex;
-  flex-wrap: nowrap;
   gap: 16px;
-  overflow-x: scroll;  /* Changed from auto to scroll */
+  overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: var(--md-sys-color-primary) var(--md-sys-color-surface-variant);
   padding-bottom: 8px;
-  /* Enable touch scrolling on mobile devices */
-  touch-action: pan-x pan-y pinch-zoom;  /* Allow vertical scroll of page while horizontal scrolling cards */
-  /* Ensure scroll snap for better UX */
-  scroll-snap-type: x mandatory;  /* Changed from proximity to mandatory for better mobile UX */
-  /* Prevent elastic bounce on iOS from affecting layout */
-  overscroll-behavior-x: contain;
-  /* Ensure full width */
-  width: 100%;
-  max-width: 100%;
 }
 
 /* Custom scrollbar for webkit browsers (Chrome, Safari, Edge) */
@@ -1367,14 +1326,8 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  flex: 0 0 auto;  /* Don't grow or shrink */
-  min-width: 160px;  /* Slightly wider for better mobile display */
-  width: 160px;  /* Fixed width for consistency */
-  /* Snap cards when scrolling on mobile */
-  scroll-snap-align: start;
-  scroll-snap-stop: always;  /* Force stop at each card */
-  /* Prevent shrinking below min-width */
   flex-shrink: 0;
+  width: 180px;
 }
 
 .stat-metric-card:hover {
