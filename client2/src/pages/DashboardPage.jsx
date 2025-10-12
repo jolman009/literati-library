@@ -11,10 +11,6 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
 import FillingArc from '../components/gamification/FillingArc';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/free-mode';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -326,59 +322,33 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
   if (loading) {
     return (
-      <Swiper
-        slidesPerView="auto"
-        spaceBetween={16}
-        freeMode={true}
-        modules={[FreeMode]}
-        className="stats-cards-swiper"
-        watchSlidesProgress={true}
-        observer={true}
-        observeParents={true}
-        resistance={true}
-        resistanceRatio={0.85}
-      >
+      <div className="simple-scroll-container">
         {[...Array(4)].map((_, i) => (
-          <SwiperSlide key={i} className="stat-metric-slide">
-            <div className="stat-metric-card">
-              <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
-            </div>
-          </SwiperSlide>
+          <div key={i} className="stat-metric-card">
+            <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
+          </div>
         ))}
-      </Swiper>
+      </div>
     );
   }
 
   return (
-    <Swiper
-      slidesPerView="auto"
-      spaceBetween={16}
-      freeMode={true}
-      modules={[FreeMode]}
-      className="stats-cards-swiper"
-      watchSlidesProgress={true}
-      observer={true}
-      observeParents={true}
-      resistance={true}
-      resistanceRatio={0.85}
-    >
+    <div className="simple-scroll-container">
       {statCards.map((stat, index) => (
-        <SwiperSlide key={index} className="stat-metric-slide">
-          <div className="stat-metric-card">
-            <div className="stat-metric-header">
-              <span className="stat-metric-value">{stat.value}</span>
-              <span className={`stat-metric-growth ${stat.trend}`}>
-                {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
-              </span>
-            </div>
-            <div className="stat-metric-footer">
-              <span className="stat-metric-label">{stat.label}</span>
-              <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
-            </div>
+        <div key={index} className="stat-metric-card">
+          <div className="stat-metric-header">
+            <span className="stat-metric-value">{stat.value}</span>
+            <span className={`stat-metric-growth ${stat.trend}`}>
+              {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
+            </span>
           </div>
-        </SwiperSlide>
+          <div className="stat-metric-footer">
+            <span className="stat-metric-label">{stat.label}</span>
+            <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
+          </div>
+        </div>
       ))}
-    </Swiper>
+    </div>
   );
 };
 

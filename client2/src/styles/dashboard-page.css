@@ -1296,21 +1296,15 @@
   margin-bottom: 16px;
 }
 
-/* Swiper container for stats cards */
-.stats-cards-swiper {
-  width: 100%;
+/* Simple Scroll Container - Pure CSS Approach */
+.simple-scroll-container {
+  display: flex;
+  flex-wrap: nowrap; /* Prevents content from wrapping to the next line */
+  overflow-x: scroll; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Enhances touch-based scrolling on iOS */
+  touch-action: pan-x; /* Allows horizontal panning, prevents vertical scroll interference */
+  gap: 16px;
   padding-bottom: 8px;
-  overflow: visible !important;
-}
-
-.stat-metric-slide {
-  width: 180px !important;
-  height: auto !important;
-}
-
-/* Ensure swiper wrapper doesn't clip content */
-.stats-cards-swiper .swiper-wrapper {
-  align-items: stretch !important;
 }
 
 /* LEGACY - Keep for backwards compatibility but not used */
@@ -1349,8 +1343,8 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  height: 100%;
-  width: 100%;
+  min-width: 180px; /* Fixed minimum width to force horizontal overflow */
+  flex-shrink: 0; /* Prevent cards from shrinking to fit container */
 }
 
 .stat-metric-card:hover {
