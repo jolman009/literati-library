@@ -17,12 +17,12 @@ import {
 } from '../components/Material3';
 import AIReadingCompanion from '../components/AIReadingCompanion';
 import ReadingAssistant from '../services/ReadingAssistant';
-import { 
-  PlusCircle, 
-  Search, 
-  Edit, 
-  Trash2, 
-  FileText, 
+import {
+  PlusCircle,
+  Search,
+  Edit,
+  Trash2,
+  FileText,
   BookOpen,
   Tag,
   Plus,
@@ -35,7 +35,8 @@ import {
   TrendingUp,
   Hash,
   Clock,
-  Book
+  Book,
+  X
 } from 'lucide-react';
 import './EnhancedNotesPage.css';
 
@@ -764,9 +765,38 @@ const EnhancedNotesPage = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 leadingIcon={<Search className="md3-icon" />}
+                trailingIcon={
+                  searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'rgba(255,255,255,0.7)',
+                        borderRadius: '50%',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = 'rgba(255,255,255,0.7)';
+                      }}
+                      title="Clear search"
+                    >
+                      <X size={18} />
+                    </button>
+                  )
+                }
                 className="md3-notes-search"
                 style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
                   borderRadius: '12px',
                   minWidth: '300px'
                 }}

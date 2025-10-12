@@ -55,8 +55,16 @@
   max-width: 400px;
 }
 
+/* Remove background from search field */
+div.md3-text-field.md3-notes-search {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 .md3-notes-search input {
   color: white !important;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .md3-notes-search input::placeholder {
