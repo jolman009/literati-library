@@ -165,6 +165,8 @@ export const MD3TextField = React.forwardRef(({
   leadingIcon,
   trailingIcon,
   type = 'text',
+  multiline = false,
+  rows = 3,
   disabled = false,
   className = '',
   ...props
@@ -174,13 +176,16 @@ export const MD3TextField = React.forwardRef(({
 
   const containerClass = `md3-text-field ${focused ? 'md3-text-field--focused' : ''} ${error ? 'md3-text-field--error' : ''} ${disabled ? 'md3-text-field--disabled' : ''} ${className}`;
 
+  const InputElement = multiline ? 'textarea' : 'input';
+
   return (
     <div className={containerClass}>
       {leadingIcon && <span className="md3-text-field__leading-icon">{leadingIcon}</span>}
       <div className="md3-text-field__input-wrapper">
-        <input
+        <InputElement
           ref={ref}
-          type={type}
+          type={multiline ? undefined : type}
+          rows={multiline ? rows : undefined}
           value={value}
           onChange={onChange}
           disabled={disabled}
@@ -330,7 +335,7 @@ MD3FAB.displayName = 'MD3FAB';
 // Alias for backward compatibility
 export const MD3FloatingActionButton = MD3FAB;
 
-// Dialog Component
+// Dialog Component - Simple working version
 export const MD3Dialog = React.forwardRef(({
   open,
   onClose,
@@ -343,16 +348,36 @@ export const MD3Dialog = React.forwardRef(({
   if (!open) return null;
 
   return (
-    <>
-      <div className="md3-dialog-scrim" onClick={onClose} />
-      <div ref={ref} className={`md3-dialog ${className}`} {...props}>
-        <div className="md3-dialog__container">
-          {title && <div className="md3-dialog__header">{title}</div>}
-          <div className="md3-dialog__content">{children}</div>
-          {actions && <div className="md3-dialog__actions">{actions}</div>}
-        </div>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)'
+        }}
+        onClick={onClose}
+      />
+      <div
+        ref={ref}
+        style={{
+          position: 'relative',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '18px',
+          width: '400px',
+          maxWidth: '90vw',
+          maxHeight: '70vh',
+          overflow: 'auto',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+        }}
+        className={className}
+        {...props}
+      >
+        {title && <h2 style={{ margin: '0 0 16px 0', fontSize: '24px', color: '#1c1b1f' }}>{title}</h2>}
+        <div style={{ backgroundColor: 'white' }}>{children}</div>
+        {actions && <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '8px', backgroundColor: 'white' }}>{actions}</div>}
       </div>
-    </>
+    </div>
   );
 });
 MD3Dialog.displayName = 'MD3Dialog';

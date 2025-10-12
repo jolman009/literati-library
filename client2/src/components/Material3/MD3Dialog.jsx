@@ -24,11 +24,13 @@ const MD3Dialog = memo(({
 
   // Handle dialog open/close animations
   useEffect(() => {
+    console.log('🎭 MD3Dialog useEffect triggered:', { open, isVisible });
     if (open) {
+      console.log('🎭 Dialog opening - setting isVisible to true');
       setIsVisible(true);
       setIsAnimating(true);
       previousFocusRef.current = document.activeElement;
-      
+
       // Focus trap setup
       setTimeout(() => {
         if (dialogRef.current) {
@@ -40,6 +42,7 @@ const MD3Dialog = memo(({
         setIsAnimating(false);
       }, 50);
     } else if (isVisible) {
+      console.log('🎭 Dialog closing - setting isVisible to false');
       setIsAnimating(true);
       setTimeout(() => {
         setIsVisible(false);
@@ -78,7 +81,11 @@ const MD3Dialog = memo(({
     }
   };
 
-  if (!isVisible) return null;
+  console.log('🎭 MD3Dialog render - isVisible:', isVisible, 'open:', open);
+  if (!isVisible) {
+    console.log('🎭 Dialog not rendering - isVisible is false');
+    return null;
+  }
 
   const dialogClasses = [
     'md3-dialog',

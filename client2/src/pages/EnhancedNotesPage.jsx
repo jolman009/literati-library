@@ -420,6 +420,11 @@ const EnhancedNotesPage = () => {
     tags: ''
   });
   
+  // Debug: Watch modal state changes
+  useEffect(() => {
+    console.log('🔍 Modal state changed:', isModalOpen);
+  }, [isModalOpen]);
+
   // Load data
   useEffect(() => {
     if (user) {
@@ -462,6 +467,7 @@ const EnhancedNotesPage = () => {
   
   // Note management functions
   const handleOpenModal = (note = null) => {
+    console.log('📝 handleOpenModal called with note:', note);
     if (note) {
       setEditingNote(note);
       setNoteForm({
@@ -479,7 +485,9 @@ const EnhancedNotesPage = () => {
         tags: ''
       });
     }
+    console.log('✅ About to set isModalOpen to true');
     setIsModalOpen(true);
+    console.log('✅ setIsModalOpen(true) called');
   };
   
   const handleCloseModal = () => {
@@ -803,15 +811,23 @@ const EnhancedNotesPage = () => {
               />
               
               {/* Create Note Button */}
-              <MD3Button
-                variant="filled"
-                onClick={() => handleOpenModal()}
-                icon={<Plus size={20} />}
+              <button
+                onClick={() => {
+                  console.log('New Note button clicked!');
+                  handleOpenModal();
+                }}
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   backgroundColor: 'white',
                   color: '#6750A4',
                   fontWeight: '600',
                   padding: '12px 24px',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   transition: 'all 0.3s ease'
                 }}
@@ -824,8 +840,9 @@ const EnhancedNotesPage = () => {
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
                 }}
               >
+                <Plus size={20} />
                 New Note
-              </MD3Button>
+              </button>
 
               {/* View Mode Toggles */}
               <div style={{ display: 'flex', gap: '12px' }}>
@@ -1231,7 +1248,7 @@ const EnhancedNotesPage = () => {
                 label="Content"
                 required
                 multiline
-                rows={6}
+                rows={12}
                 fullWidth
                 value={noteForm.content}
                 onChange={e => setNoteForm({...noteForm, content: e.target.value})}
