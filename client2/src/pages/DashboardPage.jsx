@@ -285,55 +285,64 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     if (stats) setLoading(false);
   }, [stats]);
 
-  // Add touch scroll handlers
+  // Add touch scroll handlers with horizontal-only detection
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+    let startX, startY, scrollLeft;
+    let isHorizontalScroll = false;
 
     const handleTouchStart = (e) => {
-      isDown = true;
-      startX = e.touches[0].pageX - container.offsetLeft;
+      const touch = e.touches[0];
+      startX = touch.pageX;
+      startY = touch.pageY;
       scrollLeft = container.scrollLeft;
+      isHorizontalScroll = false;
 
-      // STOP event from bubbling to parent dashboard-container
-      e.stopPropagation();
-
-      console.log('✅ Touch start:', startX);
+      console.log('✅ Touch start at:', startX, startY);
     };
 
     const handleTouchMove = (e) => {
-      if (!isDown) return;
+      const touch = e.touches[0];
+      const deltaX = Math.abs(touch.pageX - startX);
+      const deltaY = Math.abs(touch.pageY - startY);
 
-      // CRITICAL: Stop propagation FIRST before preventDefault
-      e.stopPropagation();
-      e.preventDefault();
+      // Determine if this is a horizontal or vertical gesture
+      if (!isHorizontalScroll && (deltaX > 5 || deltaY > 5)) {
+        isHorizontalScroll = deltaX > deltaY;
+        console.log('Gesture detected:', isHorizontalScroll ? 'HORIZONTAL' : 'VERTICAL');
+      }
 
-      const x = e.touches[0].pageX - container.offsetLeft;
-      const walk = (startX - x) * 2;
-      container.scrollLeft = scrollLeft + walk;
+      // Only handle horizontal scrolls
+      if (isHorizontalScroll) {
+        // CRITICAL: Prevent page scroll and stop propagation
+        e.preventDefault();
+        e.stopPropagation();
 
-      console.log('✅ Scrolling to:', container.scrollLeft);
+        const x = touch.pageX;
+        const walk = (startX - x) * 1.5;
+        container.scrollLeft = scrollLeft + walk;
+
+        console.log('✅ Horizontal scroll to:', container.scrollLeft);
+      }
     };
 
     const handleTouchEnd = (e) => {
-      isDown = false;
-      e.stopPropagation();
+      if (isHorizontalScroll) {
+        e.stopPropagation();
+      }
       console.log('✅ Touch end');
     };
 
-    // Use capture: true to intercept events BEFORE they bubble
-    container.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
-    container.addEventListener('touchend', handleTouchEnd, { passive: false, capture: true });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart, { capture: true });
-      container.removeEventListener('touchmove', handleTouchMove, { capture: true });
-      container.removeEventListener('touchend', handleTouchEnd, { capture: true });
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
     };
   }, [loading]);
 
