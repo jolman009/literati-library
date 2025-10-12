@@ -11,6 +11,10 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
 import FillingArc from '../components/gamification/FillingArc';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -271,12 +275,11 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 };
 
 
-// Quick Stats Overview Component - Top 4 Stats Cards (like reference image)
+// Quick Stats Overview Component - Top 4 Stats Cards with Swiper
 const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
-  const scrollContainerRef = useRef(null);
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
@@ -284,67 +287,6 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   useEffect(() => {
     if (stats) setLoading(false);
   }, [stats]);
-
-  // Add touch scroll handlers with horizontal-only detection
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    let startX, startY, scrollLeft;
-    let isHorizontalScroll = false;
-
-    const handleTouchStart = (e) => {
-      const touch = e.touches[0];
-      startX = touch.pageX;
-      startY = touch.pageY;
-      scrollLeft = container.scrollLeft;
-      isHorizontalScroll = false;
-
-      console.log('✅ Touch start at:', startX, startY);
-    };
-
-    const handleTouchMove = (e) => {
-      const touch = e.touches[0];
-      const deltaX = Math.abs(touch.pageX - startX);
-      const deltaY = Math.abs(touch.pageY - startY);
-
-      // Determine if this is a horizontal or vertical gesture
-      if (!isHorizontalScroll && (deltaX > 5 || deltaY > 5)) {
-        isHorizontalScroll = deltaX > deltaY;
-        console.log('Gesture detected:', isHorizontalScroll ? 'HORIZONTAL' : 'VERTICAL');
-      }
-
-      // Only handle horizontal scrolls
-      if (isHorizontalScroll) {
-        // CRITICAL: Prevent page scroll and stop propagation
-        e.preventDefault();
-        e.stopPropagation();
-
-        const x = touch.pageX;
-        const walk = (startX - x) * 1.5;
-        container.scrollLeft = scrollLeft + walk;
-
-        console.log('✅ Horizontal scroll to:', container.scrollLeft);
-      }
-    };
-
-    const handleTouchEnd = (e) => {
-      if (isHorizontalScroll) {
-        e.stopPropagation();
-      }
-      console.log('✅ Touch end');
-    };
-
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-    return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [loading]);
 
   // Calculate growth percentage (mock data for now)
   const calculateGrowth = (value) => {
@@ -384,33 +326,49 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
   if (loading) {
     return (
-      <div className="stats-cards-grid">
+      <Swiper
+        slidesPerView="auto"
+        spaceBetween={16}
+        freeMode={true}
+        modules={[FreeMode]}
+        className="stats-cards-swiper"
+      >
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="stat-metric-card">
-            <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
-          </div>
+          <SwiperSlide key={i} className="stat-metric-slide">
+            <div className="stat-metric-card">
+              <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
+            </div>
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     );
   }
 
   return (
-    <div className="stats-cards-grid" ref={scrollContainerRef}>
+    <Swiper
+      slidesPerView="auto"
+      spaceBetween={16}
+      freeMode={true}
+      modules={[FreeMode]}
+      className="stats-cards-swiper"
+    >
       {statCards.map((stat, index) => (
-        <div key={index} className="stat-metric-card">
-          <div className="stat-metric-header">
-            <span className="stat-metric-value">{stat.value}</span>
-            <span className={`stat-metric-growth ${stat.trend}`}>
-              {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
-            </span>
+        <SwiperSlide key={index} className="stat-metric-slide">
+          <div className="stat-metric-card">
+            <div className="stat-metric-header">
+              <span className="stat-metric-value">{stat.value}</span>
+              <span className={`stat-metric-growth ${stat.trend}`}>
+                {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
+              </span>
+            </div>
+            <div className="stat-metric-footer">
+              <span className="stat-metric-label">{stat.label}</span>
+              <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
+            </div>
           </div>
-          <div className="stat-metric-footer">
-            <span className="stat-metric-label">{stat.label}</span>
-            <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
-          </div>
-        </div>
+        </SwiperSlide>
       ))}
-    </div>
+    </Swiper>
   );
 };
 

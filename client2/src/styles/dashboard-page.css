@@ -1294,36 +1294,16 @@
   padding: 24px 24px 16px 24px;
   background: var(--md-sys-color-surface);
   margin-bottom: 16px;
-  /* Force touch events */
-  pointer-events: auto !important;
-  touch-action: pan-x !important;
-  /* DEBUG */
-  border: 3px solid red !important;
-  outline: 3px solid blue !important;
 }
 
-.stats-cards-grid {
-  display: flex;
-  flex-wrap: nowrap !important;
-  gap: 16px;
-  overflow-x: scroll !important;
-  overflow-y: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
+/* Swiper container for stats cards */
+.stats-cards-swiper {
+  width: 100%;
   padding-bottom: 8px;
-  /* Force minimum width to guarantee scroll */
-  min-width: min-content !important;
-  /* Force touch to work */
-  pointer-events: auto !important;
-  touch-action: pan-x !important;
-  -ms-touch-action: pan-x !important;
-  cursor: grab !important;
-  /* DEBUG */
-  border: 3px solid green !important;
-  background: yellow !important;
 }
 
-.stats-cards-grid:active {
-  cursor: grabbing !important;
+.stat-metric-slide {
+  width: 180px !important;
 }
 
 /* LEGACY - Keep for backwards compatibility but not used */
@@ -1362,20 +1342,8 @@
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  width: 180px !important;
-  min-width: 180px !important;
-  max-width: 180px !important;
-  /* Prevent cards from blocking scroll */
-  pointer-events: none !important;
-  /* DEBUG */
-  outline: 3px solid orange !important;
-}
-
-/* Allow clicks on card content */
-.stat-metric-card * {
-  pointer-events: auto !important;
+  height: 100%;
+  width: 100%;
 }
 
 .stat-metric-card:hover {
