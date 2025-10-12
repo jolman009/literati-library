@@ -1,20 +1,20 @@
 {
-  "id": "literati-pwa",
-  "name": "Literati - Your Digital Bookshelf",
-  "short_name": "Literati",
+  "id": "menta-iq-pwa",
+  "name": "Menta IQ",
+  "short_name": "Menta",
   "description": "A progressive web app for managing your digital library with reading tracking and annotations",
   "start_url": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
   "background_color": "#fff7fe",
-  "theme_color": "#6750a4",
+  "theme_color": "##24A8E0",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
   "categories": ["books", "education", "productivity"],
   "protocol_handlers": [
     {
-      "protocol": "web+literati",
+      "protocol": "web+menta",
       "url": "/book?id=%s"
     }
   ],
