@@ -40,8 +40,15 @@ API.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.warn('⚠️ 401 Unauthorized - Token may be expired:', error.config.url);
+    } else if (error.response?.status === 404 && error.config?.url?.includes('/gamification/')) {
+      // Suppress 404 console errors for gamification endpoints that may not be implemented yet
+      // This allows frontend to work with localStorage fallback without console noise
+      // When backend endpoints are ready, they'll work automatically
+      console.log(`ℹ️ Gamification endpoint not available: ${error.config.url} - using local storage`);
+      // Don't show the red error in console
+      return Promise.reject(error);
     }
-    
+
     return Promise.reject(error);
   }
 );
