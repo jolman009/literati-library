@@ -773,35 +773,114 @@ const EnhancedNotesPage = () => {
               />
               
               {/* View Mode Toggles */}
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <MD3IconButton
-                  icon={<Grid size={20} />}
-                  selected={viewMode === 'grid'}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {/* Grid View */}
+                <div
                   onClick={() => setViewMode('grid')}
-                  title="Grid View"
-                  style={{ color: viewMode === 'grid' ? 'white' : 'rgba(255,255,255,0.7)' }}
-                />
-                <MD3IconButton
-                  icon={<Calendar size={20} />}
-                  selected={viewMode === 'timeline'}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    backgroundColor: viewMode === 'grid' ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    transition: 'all 0.3s ease',
+                    border: viewMode === 'grid' ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'
+                  }}
+                >
+                  <Grid size={24} style={{ color: viewMode === 'grid' ? 'white' : 'rgba(255,255,255,0.7)' }} />
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    color: viewMode === 'grid' ? 'white' : 'rgba(255,255,255,0.7)',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    Grid
+                  </span>
+                </div>
+
+                {/* Timeline View */}
+                <div
                   onClick={() => setViewMode('timeline')}
-                  title="Timeline View"
-                  style={{ color: viewMode === 'timeline' ? 'white' : 'rgba(255,255,255,0.7)' }}
-                />
-                <MD3IconButton
-                  icon={<Cloud size={20} />}
-                  selected={viewMode === 'cloud'}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    backgroundColor: viewMode === 'timeline' ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    transition: 'all 0.3s ease',
+                    border: viewMode === 'timeline' ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'
+                  }}
+                >
+                  <Calendar size={24} style={{ color: viewMode === 'timeline' ? 'white' : 'rgba(255,255,255,0.7)' }} />
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    color: viewMode === 'timeline' ? 'white' : 'rgba(255,255,255,0.7)',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    Timeline
+                  </span>
+                </div>
+
+                {/* Word Cloud View */}
+                <div
                   onClick={() => setViewMode('cloud')}
-                  title="Word Cloud"
-                  style={{ color: viewMode === 'cloud' ? 'white' : 'rgba(255,255,255,0.7)' }}
-                />
-                <MD3IconButton
-                  icon={<BarChart3 size={20} />}
-                  selected={viewMode === 'stats'}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    backgroundColor: viewMode === 'cloud' ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    transition: 'all 0.3s ease',
+                    border: viewMode === 'cloud' ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'
+                  }}
+                >
+                  <Cloud size={24} style={{ color: viewMode === 'cloud' ? 'white' : 'rgba(255,255,255,0.7)' }} />
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    color: viewMode === 'cloud' ? 'white' : 'rgba(255,255,255,0.7)',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    Word Cloud
+                  </span>
+                </div>
+
+                {/* Statistics View */}
+                <div
                   onClick={() => setViewMode('stats')}
-                  title="Statistics"
-                  style={{ color: viewMode === 'stats' ? 'white' : 'rgba(255,255,255,0.7)' }}
-                />
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    backgroundColor: viewMode === 'stats' ? 'rgba(255,255,255,0.2)' : 'transparent',
+                    transition: 'all 0.3s ease',
+                    border: viewMode === 'stats' ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'
+                  }}
+                >
+                  <BarChart3 size={24} style={{ color: viewMode === 'stats' ? 'white' : 'rgba(255,255,255,0.7)' }} />
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '500',
+                    color: viewMode === 'stats' ? 'white' : 'rgba(255,255,255,0.7)',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    Statistics
+                  </span>
+                </div>
               </div>
             </div>
           </div>
