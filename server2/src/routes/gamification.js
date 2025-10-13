@@ -377,6 +377,64 @@ export const gamificationRouter = (authenticateToken) => {
     }
   });
 
+  // GET /api/gamification/actions/breakdown - Get points broken down by action type
+  router.get('/actions/breakdown', async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      const { data, error } = await supabase
+        .from('user_actions')
+        .select('action, points')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      // Group by action type and sum points
+      const breakdown = (data || []).reduce((acc, row) => {
+        const action = row.action;
+        if (!acc[action]) {
+          acc[action] = {
+            action,
+            totalPoints: 0,
+            count: 0
+          };
+        }
+        acc[action].totalPoints += row.points || 0;
+        acc[action].count += 1;
+        return acc;
+      }, {});
+
+      // Calculate category totals
+      const categoryTotals = {
+        reading: 0,
+        notes: 0,
+        library: 0,
+        total: 0
+      };
+
+      Object.values(breakdown).forEach(item => {
+        categoryTotals.total += item.totalPoints;
+
+        // Categorize actions
+        if (['reading_session_started', 'reading_session_completed', 'page_read', 'pages_read', 'reading_time', 'book_completed'].includes(item.action)) {
+          categoryTotals.reading += item.totalPoints;
+        } else if (['note_created', 'highlight_created'].includes(item.action)) {
+          categoryTotals.notes += item.totalPoints;
+        } else if (['book_uploaded', 'daily_login', 'daily_checkin'].includes(item.action)) {
+          categoryTotals.library += item.totalPoints;
+        }
+      });
+
+      res.json({
+        breakdown: Object.values(breakdown),
+        categories: categoryTotals
+      });
+    } catch (e) {
+      console.error('Error fetching action breakdown:', e);
+      res.status(500).json({ error: 'Failed to fetch action breakdown' });
+    }
+  });
+
   // GET /api/gamification/actions/history - Get recent point-earning actions
   router.get('/actions/history', async (req, res) => {
     try {

@@ -286,14 +286,41 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 };
 
 
-// Quick Stats Overview Component - Top 4 Stats Cards with Swiper
+// Quick Stats Overview Component - Top 5 Stats Cards with Swiper (includes Notes Points)
 const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
+  const [notesPoints, setNotesPoints] = useState(0);
+  const [notesCount, setNotesCount] = useState(0);
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
+
+  // Fetch notes-specific points from breakdown API
+  useEffect(() => {
+    const fetchNotesPoints = async () => {
+      try {
+        const response = await API.get('/gamification/actions/breakdown');
+        const { categories, breakdown } = response.data;
+
+        // Get total notes category points
+        setNotesPoints(categories?.notes || 0);
+
+        // Count number of note_created actions
+        const noteActions = breakdown.find(b => b.action === 'note_created');
+        setNotesCount(noteActions?.count || 0);
+      } catch (error) {
+        console.error('Failed to fetch notes points:', error);
+        setNotesPoints(0);
+        setNotesCount(0);
+      }
+    };
+
+    if (stats) {
+      fetchNotesPoints();
+    }
+  }, [stats]);
 
   useEffect(() => {
     if (stats) setLoading(false);
@@ -308,7 +335,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     {
       icon: '📚',
       value: stats?.booksRead || 0,
-      label: 'Total Books',
+      label: 'Books in Library',
+      subtitle: `${stats?.booksCompleted || 0} completed`,
       growth: calculateGrowth(stats?.booksRead || 0),
       trend: 'up'
     },
@@ -318,6 +346,14 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       label: 'Total Points',
       growth: calculateGrowth(stats?.totalPoints || 0),
       trend: 'up'
+    },
+    {
+      icon: '📋',
+      value: notesPoints,
+      label: 'Notes Points',
+      subtitle: `${notesCount} notes`,
+      growth: notesCount > 0 ? `${notesCount} notes` : '+0',
+      trend: notesCount > 0 ? 'up' : 'neutral'
     },
     {
       icon: '📖',
@@ -359,6 +395,9 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
           </div>
           <div className="stat-metric-footer">
             <span className="stat-metric-label">{stat.label}</span>
+            {stat.subtitle && (
+              <span className="stat-metric-subtitle">{stat.subtitle}</span>
+            )}
             <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
           </div>
         </div>
