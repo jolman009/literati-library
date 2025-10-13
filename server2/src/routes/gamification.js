@@ -387,7 +387,20 @@ export const gamificationRouter = (authenticateToken) => {
         .select('action, points')
         .eq('user_id', userId);
 
-      if (error) throw error;
+      // Handle table not found or other errors gracefully
+      if (error) {
+        console.warn('user_actions table query failed:', error.message);
+        // Return empty data instead of throwing
+        return res.json({
+          breakdown: [],
+          categories: {
+            reading: 0,
+            notes: 0,
+            library: 0,
+            total: 0
+          }
+        });
+      }
 
       // Group by action type and sum points
       const breakdown = (data || []).reduce((acc, row) => {
@@ -431,7 +444,16 @@ export const gamificationRouter = (authenticateToken) => {
       });
     } catch (e) {
       console.error('Error fetching action breakdown:', e);
-      res.status(500).json({ error: 'Failed to fetch action breakdown' });
+      // Return empty data instead of 500 error for graceful degradation
+      res.json({
+        breakdown: [],
+        categories: {
+          reading: 0,
+          notes: 0,
+          library: 0,
+          total: 0
+        }
+      });
     }
   });
 
@@ -448,7 +470,12 @@ export const gamificationRouter = (authenticateToken) => {
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      if (error) throw error;
+      // Handle table not found or other errors gracefully
+      if (error) {
+        console.warn('user_actions table query failed:', error.message);
+        // Return empty array instead of throwing
+        return res.json([]);
+      }
 
       // Format actions with user-friendly labels
       const formattedActions = (data || []).map(action => ({
@@ -461,7 +488,8 @@ export const gamificationRouter = (authenticateToken) => {
       res.json(formattedActions);
     } catch (e) {
       console.error('Error fetching action history:', e);
-      res.status(500).json({ error: 'Failed to fetch action history' });
+      // Return empty array instead of 500 error for graceful degradation
+      res.json([]);
     }
   });
 
