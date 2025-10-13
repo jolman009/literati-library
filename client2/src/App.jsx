@@ -55,6 +55,7 @@ import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
 import GamificationOnboarding from './components/gamification/GamificationOnboarding';
 import CookieConsent from './components/legal/CookieConsent';
+import NoteSyncListener from './components/NoteSyncListener';
 
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
@@ -265,6 +266,7 @@ const App = () => {
             <GamificationProvider>
               <ReadingSessionProvider>
                 <NetworkStatus isOnline={isOnline} isReconnecting={isReconnecting} />
+                <NoteSyncListener />
                 <AppRoutes />
                 <ReadingSessionTimer />
                 <PerformanceMonitor />
