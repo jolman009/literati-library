@@ -4,6 +4,7 @@ import API from "../config/api";
 import { useSnackbar } from "./Material3";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
+import { useGamification } from "../contexts/GamificationContext";
 // No longer using FloatingNotepad.css - using inline Material3 styles
 
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
@@ -12,6 +13,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
+  const { trackAction } = useGamification();
 
   // Get book_id from either the passed book prop or activeSession
   const bookId = book?.id || activeSession?.book?.id || null;
@@ -137,6 +139,23 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         timeout: 10000 // 10 second timeout
       });
       console.log('✅ Note saved successfully:', response.data);
+
+      // Track gamification action for note creation (+15 points)
+      if (trackAction) {
+        try {
+          await trackAction('note_created', {
+            book_id: bookId,
+            note_id: response.data.id,
+            page: currentPage,
+            timestamp: new Date().toISOString()
+          });
+          console.log('🎮 Gamification: note_created action tracked (+15 points)');
+        } catch (trackError) {
+          console.warn('⚠️ Failed to track note creation for gamification:', trackError);
+          // Don't fail the note save if tracking fails
+        }
+      }
+
       showSnackbar({ message: "Note saved successfully! ✓", variant: "success" });
       setContent("");
       setIsSaving(false);

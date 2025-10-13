@@ -11,6 +11,7 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import LiteraryMentorUI from '../components/LiteraryMentorUI';
 import FillingArc from '../components/gamification/FillingArc';
+import PointsHistory from '../components/gamification/PointsHistory';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -846,6 +847,11 @@ const DashboardPage = () => {
           {/* Right Column - Currently Reading Sessions (replaces Open Projects) */}
           <div className="dashboard-content-right">
             <CurrentlyReading />
+
+            {/* Points History - Show recent point-earning actions */}
+            <div style={{ marginTop: '20px' }}>
+              <PointsHistory limit={10} />
+            </div>
           </div>
 
         </div>
