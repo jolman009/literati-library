@@ -222,10 +222,10 @@
   --md-sys-color-surface-dim: #0a0e13;
   --md-sys-color-surface-bright: #374151;
   --md-sys-color-surface-container-lowest: #000000;
-  --md-sys-color-surface-container-low: #111827;
+  --md-sys-color-surface-container-low: #418cfd;
   --md-sys-color-surface-container: #1f2937;
   --md-sys-color-surface-container-high: #374151;
-  --md-sys-color-surface-container-highest: #4b5563;
+  --md-sys-color-surface-container-highest: #001431;
 
   /* Outline Colors */
   --md-sys-color-outline: var(--md-ref-palette-neutralvariant60);

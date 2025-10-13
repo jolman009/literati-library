@@ -3,13 +3,15 @@ import React, { useEffect, useRef, useState } from "react";
 import API from "../config/api";
 import { useSnackbar } from "./Material3";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
-import "./FloatingNotepad.css";
+import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
+// No longer using FloatingNotepad.css - using inline Material3 styles
 
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
 const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage = null, currentLocator = null }) => {
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
+  const { actualTheme } = useMaterial3Theme();
 
   // Get book_id from either the passed book prop or activeSession
   const bookId = book?.id || activeSession?.book?.id || null;
@@ -151,27 +153,70 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     }
   };
 
+  const isDark = actualTheme === 'dark';
+
   return (
     <div
       ref={noteRef}
-      className={`floating-notepad ${dragging ? "dragging" : ""}`}
-      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        transform: `translate(${pos.x}px, ${pos.y}px)`,
+        zIndex: 9999,
+        width: '320px',
+        minHeight: '280px',
+        background: isDark ? '#1e293b' : '#ffffff',
+        border: `2px solid ${isDark ? '#8b5cf6' : '#7c3aed'}`,
+        borderRadius: '16px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        cursor: dragging ? 'grabbing' : 'default',
+        opacity: dragging ? 0.95 : 1,
+        transition: dragging ? 'none' : 'box-shadow 0.2s ease'
+      }}
       aria-label="Floating Notepad"
     >
+      {/* Header - Draggable */}
       <div
-        className="notepad-header"
         role="button"
         onPointerDown={onPointerDown}
         aria-grabbed={dragging}
+        style={{
+          background: isDark
+            ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
+            : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+          color: 'white',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          cursor: dragging ? 'grabbing' : 'grab',
+          borderRadius: '14px 14px 0 0',
+          userSelect: 'none'
+        }}
       >
-        <h3>{title}</h3>
-        <span className="hint">
-          {currentPage
-            ? `Page ${currentPage}`
-            : "Drag me"}
-        </span>
+        <div>
+          <h3 style={{
+            margin: 0,
+            fontSize: '16px',
+            fontWeight: '600'
+          }}>
+            {title}
+          </h3>
+          <span style={{
+            fontSize: '10px',
+            opacity: 0.85
+          }}>
+            {currentPage ? `Page ${currentPage}` : "Drag to move"}
+          </span>
+        </div>
       </div>
 
+      {/* Textarea */}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -181,25 +226,90 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             : "Write your notes here…"
         }
         aria-label="Notepad content"
+        style={{
+          flex: 1,
+          padding: '16px',
+          border: 'none',
+          outline: 'none',
+          resize: 'none',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          color: isDark ? '#f1f5f9' : '#1a1d20',
+          background: isDark ? '#1e293b' : '#ffffff',
+          userSelect: 'text'
+        }}
       />
 
-      <div className="notepad-actions">
+      {/* Actions */}
+      <div style={{
+        display: 'flex',
+        gap: '8px',
+        padding: '12px 16px',
+        background: isDark ? '#0f172a' : '#f8f9fa',
+        borderTop: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`
+      }}>
         <button
           onClick={handleSave}
           disabled={!content.trim() || isSaving}
           style={{
-            opacity: isSaving ? 0.7 : 1,
-            cursor: isSaving ? 'wait' : 'pointer'
+            flex: 1,
+            padding: '10px 16px',
+            border: 'none',
+            borderRadius: '20px',
+            background: (!content.trim() || isSaving)
+              ? (isDark ? '#334155' : '#e9ecef')
+              : (isDark ? '#7c3aed' : '#8b5cf6'),
+            color: (!content.trim() || isSaving)
+              ? (isDark ? '#64748b' : '#6c757d')
+              : 'white',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: isSaving ? 'wait' : ((!content.trim() || isSaving) ? 'not-allowed' : 'pointer'),
+            transition: 'all 0.2s ease',
+            opacity: isSaving ? 0.7 : 1
+          }}
+          onMouseEnter={(e) => {
+            if (!(!content.trim() || isSaving)) {
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.15)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = 'none';
           }}
         >
-          {isSaving ? '⏳ Saving...' : '💾 Save Note'}
+          {isSaving ? '⏳ Saving...' : '💾 Save'}
         </button>
         <button
           onClick={() => setContent('')}
           disabled={!content.trim() || isSaving}
           style={{
-            background: 'var(--md-sys-color-secondary, #7c3aed)',
-            color: 'var(--md-sys-color-on-secondary, #ffffff)'
+            flex: 1,
+            padding: '10px 16px',
+            border: 'none',
+            borderRadius: '20px',
+            background: (!content.trim() || isSaving)
+              ? (isDark ? '#334155' : '#e9ecef')
+              : (isDark ? '#dc2626' : '#ef4444'),
+            color: (!content.trim() || isSaving)
+              ? (isDark ? '#64748b' : '#6c757d')
+              : 'white',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: (!content.trim() || isSaving) ? 'not-allowed' : 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            if (!(!content.trim() || isSaving)) {
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.15)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = 'none';
           }}
         >
           🗑️ Clear
