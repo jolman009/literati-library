@@ -77,8 +77,27 @@ export const ReadingSessionProvider = ({ children }) => {
         startTime: new Date().toISOString(),
         sessionId: Date.now().toString(),
         pagesRead: 0,
-        notes: ''
+        notes: '',
+        backendSessionId: null
       };
+
+      // ✅ CRITICAL FIX: Create backend reading session record
+      if (token) {
+        try {
+          const { data: backendSession } = await API.post('/api/reading/sessions/start', {
+            book_id: book.id,
+            page: book.current_page || 1,
+            position: null
+          });
+
+          sessionData.backendSessionId = backendSession.id;
+          console.log('✅ Backend reading session created:', backendSession.id);
+        } catch (error) {
+          console.warn('⚠️ Failed to create backend session (continuing with local only):', error);
+          // Continue with local session even if backend fails - graceful degradation
+        }
+      }
+
       // Update book's is_reading status in database
       try {
         await API.patch(`/books/${book.id}`, {
@@ -129,7 +148,7 @@ export const ReadingSessionProvider = ({ children }) => {
       console.error('Failed to start reading session:', error);
       return { success: false, error: error.message };
     }
-  }, [token]);
+  }, [token, trackAction]);
 
   // Stop the current reading session
   const pauseReadingSession = useCallback(() => {
@@ -184,6 +203,22 @@ export const ReadingSessionProvider = ({ children }) => {
       const endTime = new Date();
       const startTime = new Date(activeSession.startTime);
       const durationMinutes = Math.floor((endTime - startTime) / 60000);
+
+      // ✅ CRITICAL FIX: End backend reading session if it exists
+      if (activeSession.backendSessionId && token) {
+        try {
+          await API.post(`/api/reading/sessions/${activeSession.backendSessionId}/end`, {
+            end_page: activeSession.pagesRead || 0,
+            end_position: null,
+            notes: activeSession.notes || null
+          });
+          console.log('✅ Backend reading session ended:', activeSession.backendSessionId);
+        } catch (error) {
+          console.warn('⚠️ Failed to end backend session:', error);
+          // Continue with local cleanup even if backend fails
+        }
+      }
+
       // Update book's is_reading status in database
       try {
         await API.patch(`/books/${activeSession.book.id}`, {
@@ -240,7 +275,7 @@ export const ReadingSessionProvider = ({ children }) => {
       console.error('Failed to stop reading session:', error);
       return { success: false, error: error.message };
     }
-  }, [activeSession, token]);
+  }, [activeSession, token, trackAction]);
 
   // Update progress without ending session
   const updateProgress = useCallback(async (pagesRead, notes) => {
