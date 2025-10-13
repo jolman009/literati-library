@@ -8,7 +8,7 @@
 /* Dark mode overrides for text fields */
 [data-theme="dark"] .md3-text-field__container,
 .dark .md3-text-field__container {
-  background-color: var(--md-sys-color-surface-container) !important;
+  background-color: var(--md-sys-color-surface-container-highest) !important;
 }
 
 [data-theme="dark"] .md3-text-field__input,
