@@ -453,7 +453,7 @@ const ReadBookEnhanced = () => {
             offlineMode={isOffline}
           />
 
-          <FloatingTimer />
+          {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
 
           {/* Offline indicator at bottom */}
           {isOffline && (

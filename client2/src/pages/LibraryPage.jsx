@@ -754,8 +754,7 @@ const LibraryPage = () => {
         <span className="material-symbols-outlined">add</span>
       </button>
 
-      {/* Floating Reading Timer */}
-      <FloatingTimer />
+      {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
     </div>
   );
 };
