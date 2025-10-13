@@ -133,7 +133,9 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     });
 
     try {
-      const response = await API.post("/notes", noteData);
+      const response = await API.post("/notes", noteData, {
+        timeout: 10000 // 10 second timeout
+      });
       console.log('✅ Note saved successfully:', response.data);
       showSnackbar({ message: "Note saved successfully! ✓", variant: "success" });
       setContent("");
@@ -145,10 +147,69 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         response: error.response?.data,
         status: error.response?.status
       });
-      showSnackbar({
-        message: `Failed to save note: ${error.response?.data?.error || error.message}`,
-        variant: "error"
-      });
+
+      // Graceful degradation: Save locally if backend fails
+      const isAuthError = error.response?.status === 401 || error.response?.status === 403;
+      const isNetworkError = !error.response || error.code === 'ECONNABORTED';
+
+      if (isAuthError) {
+        // Auth token expired - save locally and notify user
+        try {
+          const localNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
+          localNotes.push({
+            ...noteData,
+            timestamp: new Date().toISOString(),
+            status: 'pending_auth'
+          });
+          localStorage.setItem('pendingNotes', JSON.stringify(localNotes));
+
+          showSnackbar({
+            message: "⚠️ Session expired. Note saved locally - will sync after login ✓",
+            variant: "warning"
+          });
+
+          console.log('📦 Note saved to localStorage (auth expired)');
+          setContent(""); // Clear content since it's saved locally
+        } catch (localError) {
+          console.error('Failed to save locally:', localError);
+          showSnackbar({
+            message: "⚠️ Session expired. Please copy your note and log in again",
+            variant: "error"
+          });
+        }
+      } else if (isNetworkError) {
+        // Network issue - save locally
+        try {
+          const localNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
+          localNotes.push({
+            ...noteData,
+            timestamp: new Date().toISOString(),
+            status: 'pending_network'
+          });
+          localStorage.setItem('pendingNotes', JSON.stringify(localNotes));
+
+          showSnackbar({
+            message: "⚠️ Network error. Note saved locally - will sync when online ✓",
+            variant: "warning"
+          });
+
+          console.log('📦 Note saved to localStorage (network error)');
+          setContent(""); // Clear content since it's saved locally
+        } catch (localError) {
+          console.error('Failed to save locally:', localError);
+          showSnackbar({
+            message: "⚠️ Network error. Please copy your note before closing",
+            variant: "error"
+          });
+        }
+      } else {
+        // Other error - show error message but don't clear content
+        showSnackbar({
+          message: `Failed to save note: ${error.response?.data?.error || error.message}`,
+          variant: "error"
+        });
+      }
+
       setIsSaving(false);
     }
   };

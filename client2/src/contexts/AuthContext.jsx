@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import environmentConfig from '../config/environment.js';
+import { syncPendingNotes } from '../utils/noteSyncUtil.js';
 
 /**
  * Storage keys (single source of truth) - Using centralized config
@@ -292,6 +293,31 @@ export const AuthProvider = ({ children }) => {
         } catch (loginTrackError) {
           console.warn('Failed to track daily login:', loginTrackError);
           // Don't fail login if tracking fails
+        }
+
+        // Sync any pending notes that were saved locally while offline/logged out
+        try {
+          const syncResults = await syncPendingNotes();
+
+          if (syncResults.synced > 0) {
+            console.log(`✅ Synced ${syncResults.synced} pending notes after login`);
+
+            // Dispatch event so UI can show notification
+            window.dispatchEvent(new CustomEvent('pendingNotesSynced', {
+              detail: {
+                synced: syncResults.synced,
+                failed: syncResults.failed,
+                timestamp: new Date().toISOString()
+              }
+            }));
+          }
+
+          if (syncResults.failed > 0) {
+            console.warn(`⚠️ Failed to sync ${syncResults.failed} notes - will retry later`);
+          }
+        } catch (syncError) {
+          console.warn('Failed to sync pending notes:', syncError);
+          // Don't fail login if sync fails
         }
 
         console.log('✅ Login successful - token stored in localStorage');
