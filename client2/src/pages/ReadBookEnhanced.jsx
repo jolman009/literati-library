@@ -8,7 +8,7 @@ import { useOfflineReading } from "../hooks/useOfflineReading";
 import { useNetworkStatus } from "../hooks/useOfflineDetection";
 import ReadestReader from "../components/ReadestReader";
 import FloatingNotepad from "../components/FloatingNotepad";
-import FloatingTimer from "../components/FloatingTimer";
+// ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
 import { Download, Trash2, WifiOff, Wifi, CheckCircle } from "lucide-react";
 
