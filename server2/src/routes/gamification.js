@@ -156,6 +156,54 @@ const checkAchievements = async (userId, currentStats) => {
   return newlyUnlocked;
 };
 
+// Helper: Format action names into user-friendly labels
+const formatActionLabel = (action) => {
+  const labels = {
+    'note_created': 'Created Note',
+    'highlight_created': 'Created Highlight',
+    'book_uploaded': 'Uploaded Book',
+    'page_read': 'Read Page',
+    'pages_read': 'Read Pages',
+    'reading_session_started': 'Started Reading Session',
+    'reading_session_completed': 'Completed Reading Session',
+    'reading_time': 'Reading Time',
+    'book_completed': 'Completed Book',
+    'daily_login': 'Daily Login',
+    'daily_checkin': 'Daily Check-in'
+  };
+  return labels[action] || action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+};
+
+// Helper: Get icon for action type
+const getActionIcon = (action) => {
+  const icons = {
+    'note_created': '📋',
+    'highlight_created': '✏️',
+    'book_uploaded': '📤',
+    'page_read': '📄',
+    'pages_read': '📖',
+    'reading_session_started': '🚀',
+    'reading_session_completed': '✅',
+    'reading_time': '⏱️',
+    'book_completed': '🎉',
+    'daily_login': '🌅',
+    'daily_checkin': '✔️'
+  };
+  return icons[action] || '⭐';
+};
+
+// Helper: Calculate time ago in human-readable format
+const getTimeAgo = (date) => {
+  const seconds = Math.floor((new Date() - date) / 1000);
+
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+
+  return date.toLocaleDateString();
+};
+
 export const gamificationRouter = (authenticateToken) => {
   const router = Router();
   router.use(authenticateToken);
@@ -326,6 +374,36 @@ export const gamificationRouter = (authenticateToken) => {
     } catch (e) {
       console.error('Error fetching goals:', e);
       res.status(500).json({ error: 'Failed to fetch goals' });
+    }
+  });
+
+  // GET /api/gamification/actions/history - Get recent point-earning actions
+  router.get('/actions/history', async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const limit = parseInt(req.query.limit) || 20; // Default to 20 recent actions
+
+      const { data, error } = await supabase
+        .from('user_actions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+
+      // Format actions with user-friendly labels
+      const formattedActions = (data || []).map(action => ({
+        ...action,
+        label: formatActionLabel(action.action),
+        icon: getActionIcon(action.action),
+        timeAgo: getTimeAgo(new Date(action.created_at))
+      }));
+
+      res.json(formattedActions);
+    } catch (e) {
+      console.error('Error fetching action history:', e);
+      res.status(500).json({ error: 'Failed to fetch action history' });
     }
   });
 
