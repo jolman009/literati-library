@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
 import ReadestReader from "../components/ReadestReader";
 import FloatingNotepad from "../components/FloatingNotepad";
-import FloatingTimer from "../components/FloatingTimer";
+// ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
 
 const ReadBook = () => {
@@ -262,7 +262,7 @@ const ReadBook = () => {
             currentPage={currentPage}
             currentLocator={currentLocator}
           />
-          <FloatingTimer />
+          {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
         </>
       )}
     </>
