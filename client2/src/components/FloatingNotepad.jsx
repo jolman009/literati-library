@@ -29,15 +29,17 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
   // Start dragging when user presses on header
   const onPointerDown = (e) => {
-    // Only start drag if the header itself is clicked
-    if (!e.currentTarget.matches(".notepad-header")) return;
-
+    // Start drag immediately - the handler is only attached to the header
     setDragging(true);
     const clientX = e.clientX ?? e.touches?.[0]?.clientX;
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     dragStart.current = { x: clientX, y: clientY };
     startPos.current = { ...pos };
-    e.currentTarget.setPointerCapture?.(e.pointerId);
+
+    // Capture pointer events for smooth dragging
+    if (e.currentTarget.setPointerCapture) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
   };
 
   const onPointerMove = (e) => {
@@ -262,9 +264,12 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     >
       {/* Header - Draggable */}
       <div
+        className="notepad-header"
         role="button"
         onPointerDown={onPointerDown}
+        onPointerUp={endDrag}
         aria-grabbed={dragging}
+        tabIndex={0}
         style={{
           background: isDark
             ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
