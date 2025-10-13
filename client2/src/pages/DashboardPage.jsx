@@ -337,7 +337,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   if (loading) {
     return (
       <div className="simple-scroll-container">
-        {[...Array(4)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <div key={i} className="stat-metric-card">
             <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
           </div>
