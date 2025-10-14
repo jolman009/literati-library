@@ -2,6 +2,74 @@
 import { Router } from 'express';
 import { supabase } from '../config/supabaseClient.js';
 
+const NOTE_CREATION_POINTS = 15;
+const LEVEL_THRESHOLDS = [
+  { level: 10, points: 10000 },
+  { level: 9, points: 6000 },
+  { level: 8, points: 4000 },
+  { level: 7, points: 2500 },
+  { level: 6, points: 1500 },
+  { level: 5, points: 1000 },
+  { level: 4, points: 600 },
+  { level: 3, points: 300 },
+  { level: 2, points: 100 },
+  { level: 1, points: 0 },
+];
+
+const deriveLevelFromPoints = (totalPoints) => {
+  for (const threshold of LEVEL_THRESHOLDS) {
+    if (totalPoints >= threshold.points) return threshold.level;
+  }
+  return 1;
+};
+
+const buildGamificationSnapshot = async (userId) => {
+  const snapshot = {
+    pointsAwarded: NOTE_CREATION_POINTS,
+    totalPoints: null,
+    level: null,
+    notesCreated: null,
+  };
+
+  try {
+    const { data: statsRow, error: statsError } = await supabase
+      .from('user_stats')
+      .select('total_points, level, notes_created')
+      .eq('user_id', userId)
+      .single();
+
+    if (statsError) {
+      if (statsError.code !== 'PGRST116') {
+        console.warn('⚠️ Unable to load gamification stats from user_stats:', statsError.message);
+      }
+    } else if (statsRow) {
+      snapshot.totalPoints = statsRow.total_points ?? null;
+      snapshot.level = statsRow.level ?? null;
+      snapshot.notesCreated = statsRow.notes_created ?? null;
+    }
+
+    if (snapshot.totalPoints == null) {
+      const { data: totalPointsData, error: totalPointsError } = await supabase
+        .rpc('get_user_total_points', { p_user_id: userId });
+
+      if (totalPointsError) {
+        console.warn('⚠️ Unable to fetch total points via RPC:', totalPointsError.message);
+      } else if (typeof totalPointsData === 'number') {
+        snapshot.totalPoints = totalPointsData;
+        if (!snapshot.level) {
+          snapshot.level = deriveLevelFromPoints(totalPointsData);
+        }
+      }
+    } else if (!snapshot.level && typeof snapshot.totalPoints === 'number') {
+      snapshot.level = deriveLevelFromPoints(snapshot.totalPoints);
+    }
+  } catch (statsErr) {
+    console.warn('⚠️ Gamification snapshot collection failed:', statsErr.message || statsErr);
+  }
+
+  return snapshot;
+};
+
 export const notesRouter = (authenticateToken) => {
   const router = Router();
 
@@ -89,7 +157,11 @@ export const notesRouter = (authenticateToken) => {
       }
 
       console.log('✅ Note created successfully:', note.id);
-      res.status(201).json(note);
+
+      res.status(201).json({
+        ...note,
+        gamification: await buildGamificationSnapshot(req.user.id),
+      });
     } catch (e) {
       console.error('Create note error:', e);
       res.status(500).json({ error: 'Internal server error' });
@@ -171,7 +243,10 @@ export const notesRouter = (authenticateToken) => {
         return res.status(500).json({ error: 'Failed to create note' });
       }
 
-      res.status(201).json(note);
+      res.status(201).json({
+        ...note,
+        gamification: await buildGamificationSnapshot(req.user.id),
+      });
     } catch (e) {
       console.error('Create book note error:', e);
       res.status(500).json({ error: 'Internal server error' });

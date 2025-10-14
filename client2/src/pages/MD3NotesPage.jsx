@@ -197,6 +197,11 @@ const openAtLocation = (note) => {
       } else {
         const response = await API.post('/notes', noteData, { timeout: 30000 });
 
+        const serverGamification = response.data?.gamification;
+        if (serverGamification) {
+          console.log('🎯 Server gamification snapshot received:', serverGamification);
+        }
+
         // Track note creation for gamification
         try {
           await trackAction('note_created', {
@@ -204,15 +209,19 @@ const openAtLocation = (note) => {
             bookId: noteData.book_id,
             noteLength: noteData.content.length,
             hasTags: noteData.tags.length > 0
-          });
+          }, { serverSnapshot: serverGamification });
           console.log('✅ Note creation tracked - 15 points awarded');
         } catch (trackError) {
           console.error('Failed to track note creation:', trackError);
           // Don't fail note creation if tracking fails
         }
 
+        const successMessage = serverGamification?.totalPoints != null
+          ? `Note created successfully! ⭐ Total points: ${serverGamification.totalPoints}`
+          : 'Note created successfully! +15 points earned!';
+
         showSnackbar({
-          message: 'Note created successfully! +15 points earned!',
+          message: successMessage,
           variant: 'success'
         });
       }

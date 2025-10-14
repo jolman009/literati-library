@@ -142,6 +142,11 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       });
       console.log('✅ Note saved successfully:', response.data);
 
+      const serverGamification = response.data?.gamification;
+      if (serverGamification) {
+        console.log('🎯 Server gamification snapshot received:', serverGamification);
+      }
+
       // Track gamification action for note creation (+15 points)
       if (trackAction) {
         try {
@@ -150,7 +155,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             note_id: response.data.id,
             page: currentPage,
             timestamp: new Date().toISOString()
-          });
+          }, { serverSnapshot: serverGamification });
           console.log('🎮 Gamification: note_created action tracked (+15 points)');
         } catch (trackError) {
           console.warn('⚠️ Failed to track note creation for gamification:', trackError);
@@ -158,7 +163,11 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         }
       }
 
-      showSnackbar({ message: "Note saved successfully! ✓", variant: "success" });
+      const snackbarMessage = serverGamification?.totalPoints != null
+        ? `Note saved successfully! ⭐ Total points: ${serverGamification.totalPoints}`
+        : "Note saved successfully! ✓";
+
+      showSnackbar({ message: snackbarMessage, variant: "success" });
       setContent("");
       setIsSaving(false);
     } catch (error) {
