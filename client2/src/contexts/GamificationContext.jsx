@@ -316,7 +316,7 @@ export const GamificationProvider = ({ children }) => {
   }, [fetchData]);
 
   // Track user action and award points
-  const trackAction = useCallback(async (actionType, data = {}) => {
+  const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
     if (!user) return;
 
     console.log(`🎯 Tracking action: ${actionType}`, data);
@@ -337,14 +337,25 @@ export const GamificationProvider = ({ children }) => {
     };
 
     const points = pointValues[actionType] || 0;
+    const serverSnapshot = options?.serverSnapshot;
 
     // Update local stats immediately for responsive UI
     setStats(prevStats => {
+      const snapshotPoints = typeof serverSnapshot?.totalPoints === 'number'
+        ? serverSnapshot.totalPoints
+        : prevStats.totalPoints + points;
+
+      const snapshotLevel = typeof serverSnapshot?.level === 'number'
+        ? serverSnapshot.level
+        : calculateLevel(snapshotPoints);
+
       const newStats = {
         ...prevStats,
-        totalPoints: prevStats.totalPoints + points,
-        level: calculateLevel(prevStats.totalPoints + points)
+        totalPoints: snapshotPoints,
+        level: snapshotLevel,
       };
+
+      const snapshotNotes = typeof serverSnapshot?.notesCreated === 'number' ? serverSnapshot.notesCreated : null;
 
       // Update specific stats based on action type
       switch (actionType) {
@@ -355,7 +366,7 @@ export const GamificationProvider = ({ children }) => {
           newStats.pagesRead += (data.pages || 1);
           break;
         case 'note_created':
-          newStats.notesCreated += 1;
+          newStats.notesCreated = snapshotNotes ?? (newStats.notesCreated + 1);
           break;
         case 'highlight_created':
           newStats.highlightsCreated += 1;
@@ -370,9 +381,14 @@ export const GamificationProvider = ({ children }) => {
           break;
       }
 
+      // If snapshot provided but didn't include notesCreated, ensure we persist derived total
+      if (snapshotNotes !== null) {
+        newStats.notesCreated = snapshotNotes;
+      }
+
       // Save to localStorage
       localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(newStats));
-      
+
       return newStats;
     });
 
