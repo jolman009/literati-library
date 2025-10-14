@@ -371,16 +371,22 @@ export const GamificationProvider = ({ children }) => {
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
     if (!offlineMode && token && !localOnlyActions.includes(actionType)) {
       try {
-        await makeSafeApiCall('/gamification/actions', {
+        // ✅ Fixed: Backend expects 'action', not 'actionType'
+        const response = await makeSafeApiCall('/gamification/actions', {
           method: 'POST',
           body: JSON.stringify({
-            actionType,
-            points,
-            data
+            action: actionType,  // ✅ Changed from 'actionType' to 'action'
+            data,
+            timestamp: new Date().toISOString()
           })
         });
+
+        if (response) {
+          console.log(`✅ Action synced to server: ${actionType} (+${points} points)`);
+        }
       } catch (error) {
-        console.warn('Failed to sync action with server:', error);
+        // ✅ Don't let gamification errors break the app
+        console.warn(`⚠️ Failed to sync action with server (continuing anyway):`, error);
       }
     }
 

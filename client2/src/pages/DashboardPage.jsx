@@ -286,20 +286,21 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 };
 
 
-// Quick Stats Overview Component - Top 5 Stats Cards with Swiper (includes Notes Points)
+// Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
 const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
+  const [readingSessionsCount, setReadingSessionsCount] = useState(0);
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
-  // Fetch notes-specific points from breakdown API
+  // Fetch notes-specific points and reading sessions count from breakdown API
   useEffect(() => {
-    const fetchNotesPoints = async () => {
+    const fetchGamificationData = async () => {
       try {
         const response = await API.get('/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
@@ -310,15 +311,20 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         // Count number of note_created actions
         const noteActions = breakdown.find(b => b.action === 'note_created');
         setNotesCount(noteActions?.count || 0);
+
+        // Count number of completed reading sessions
+        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
+        setReadingSessionsCount(sessionActions?.count || 0);
       } catch (error) {
-        console.error('Failed to fetch notes points:', error);
+        console.error('Failed to fetch gamification data:', error);
         setNotesPoints(0);
         setNotesCount(0);
+        setReadingSessionsCount(0);
       }
     };
 
     if (stats) {
-      fetchNotesPoints();
+      fetchGamificationData();
     }
   }, [stats]);
 
@@ -356,6 +362,14 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       trend: notesCount > 0 ? 'up' : 'neutral'
     },
     {
+      icon: '📚',
+      value: readingSessionsCount,
+      label: 'Reading Sessions',
+      subtitle: 'completed',
+      growth: readingSessionsCount > 0 ? `${readingSessionsCount} sessions` : '+0',
+      trend: readingSessionsCount > 0 ? 'up' : 'neutral'
+    },
+    {
       icon: '📖',
       value: stats?.pagesRead || 0,
       label: 'Pages Read',
@@ -374,7 +388,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   if (loading) {
     return (
       <div className="simple-scroll-container">
-        {[...Array(5)].map((_, i) => (
+        {[...Array(6)].map((_, i) => (
           <div key={i} className="stat-metric-card">
             <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
           </div>
