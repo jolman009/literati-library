@@ -96,20 +96,30 @@ export const GamificationProvider = ({ children }) => {
   const makeSafeApiCall = async (endpoint, options = {}) => {
     try {
       if (!token) {
-        throw new Error('No authentication token available');
+        console.warn('🔒 No auth token available - working offline');
+        setOfflineMode(true);
+        return null;
       }
 
-      return await makeApiCall(endpoint, options);
+      const response = await makeApiCall(endpoint, options);
+      return response;
     } catch (error) {
-      console.warn(`🎯 GamificationContext API error:`, error);
-      
+      console.warn(`🎯 GamificationContext API error for ${endpoint}:`, error.message || error);
+
       // If it's a 401, don't propagate it up - just go offline
-      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
         console.log('🔄 Switching to offline mode due to auth issues');
         setOfflineMode(true);
         return null;
       }
-      
+
+      // For 500 errors, backend might not be ready yet
+      if (error.message?.includes('500') || error.message?.includes('Internal Server Error')) {
+        console.log('⚠️ Backend error - continuing in offline mode');
+        setOfflineMode(true);
+        return null;
+      }
+
       // For other errors, still go offline but log differently
       console.log('🔄 Switching to offline mode due to API issues');
       setOfflineMode(true);
@@ -370,24 +380,32 @@ export const GamificationProvider = ({ children }) => {
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
     if (!offlineMode && token && !localOnlyActions.includes(actionType)) {
-      try {
-        // ✅ Fixed: Backend expects 'action', not 'actionType'
-        const response = await makeSafeApiCall('/gamification/actions', {
-          method: 'POST',
-          body: JSON.stringify({
-            action: actionType,  // ✅ Changed from 'actionType' to 'action'
-            data,
-            timestamp: new Date().toISOString()
-          })
-        });
+      // ✅ Wrap in Promise to ensure async errors don't bubble up
+      Promise.resolve().then(async () => {
+        try {
+          // ✅ Fixed: Backend expects 'action', not 'actionType'
+          const response = await makeSafeApiCall('/gamification/actions', {
+            method: 'POST',
+            body: JSON.stringify({
+              action: actionType,  // ✅ Changed from 'actionType' to 'action'
+              data,
+              timestamp: new Date().toISOString()
+            })
+          });
 
-        if (response) {
-          console.log(`✅ Action synced to server: ${actionType} (+${points} points)`);
+          if (response) {
+            console.log(`✅ Action synced to server: ${actionType} (+${points} points)`);
+          } else {
+            console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
+          }
+        } catch (error) {
+          // ✅ Triple-layer error handling: catch ANY error
+          console.warn(`⚠️ Failed to sync action with server (continuing anyway):`, error);
         }
-      } catch (error) {
-        // ✅ Don't let gamification errors break the app
-        console.warn(`⚠️ Failed to sync action with server (continuing anyway):`, error);
-      }
+      }).catch(err => {
+        // ✅ Catch promise rejections that escape the try-catch
+        console.warn(`⚠️ Unhandled promise rejection in trackAction:`, err);
+      });
     }
 
     // Check for achievement unlocks
