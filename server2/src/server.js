@@ -224,6 +224,21 @@ app.get('/health', handleHealthCheck);
 app.head('/', (_req, res) => res.sendStatus(200));
 app.head('/health', (_req, res) => res.sendStatus(200));
 
+// CORS Debug endpoint - helps verify allowed origins
+app.get('/cors-test', (req, res) => {
+  res.json({
+    origin: req.headers.origin,
+    allowedOrigins: [
+      'https://literati.pro',
+      'https://www.literati.pro',
+      'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app',
+      'localhost (all ports)'
+    ],
+    corsEnabled: true,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ----- Enhanced Authentication Routes -----
 app.use('/auth/secure', secureAuthRouter);
 
