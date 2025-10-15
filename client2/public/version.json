@@ -1,10 +1,11 @@
 {
-  "version": "1.0.1-snackbar-fix",
-  "commit": "8a3aa05",
-  "deployed": "2025-10-15T10:30:00Z",
+  "version": "1.1.0-rls-fix",
+  "commit": "dc685ed",
+  "deployed": "2025-10-15T11:30:00Z",
   "fixes": [
-    "MD3Snackbar handles both API styles",
-    "CORS allows all Vercel deployments",
-    "Event system for dashboard updates"
+    "Fixed RLS policies for gamification tracking",
+    "Pointed production domains to correct deployment",
+    "Added comprehensive logging for debugging",
+    "Service worker cache updated"
   ]
 }
