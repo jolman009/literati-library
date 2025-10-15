@@ -16,6 +16,8 @@ const PointsHistory = ({ limit = 10 }) => {
 
   // 🔔 Listen for gamification updates and auto-refresh history
   useEffect(() => {
+    console.log('🔧 PointsHistory: Setting up gamificationUpdate event listener');
+
     const handleGamificationUpdate = (event) => {
       console.log('🔔 PointsHistory: Received gamificationUpdate event', event.detail);
       console.log('📊 PointsHistory: Auto-refreshing history after action:', event.detail.action);

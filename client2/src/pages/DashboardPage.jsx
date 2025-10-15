@@ -339,6 +339,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
   // 🔔 Listen for gamification updates and refresh data automatically
   useEffect(() => {
+    console.log('🔧 QuickStatsOverview: Setting up gamificationUpdate event listener');
+
     const handleGamificationUpdate = async (event) => {
       console.log('🔔 QuickStatsOverview: Received gamificationUpdate event', event.detail);
 
