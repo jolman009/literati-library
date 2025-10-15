@@ -97,8 +97,11 @@ setupSentryMiddleware(app);
 app.use(securitySuite.headers);
 
 // ----- Body Parser (must be before sanitization) -----
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// ✅ MEMORY FIX: Reduced from 10mb to 2mb to prevent memory spikes
+// Notes, sessions, and most API data are typically <100kb
+// File uploads use multipart/form-data (handled separately by multer)
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 // ----- Request Logging -----
 app.use(securitySuite.logging);
