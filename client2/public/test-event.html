@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Gamification Event</title>
+</head>
+<body>
+    <h1>Gamification Event Test</h1>
+    <button onclick="testEvent()">Dispatch Test Event</button>
+    <div id="output"></div>
+
+    <script>
+        // Listen for the event
+        window.addEventListener('gamificationUpdate', (event) => {
+            console.log('✅ Event received!', event.detail);
+            document.getElementById('output').innerHTML = `
+                <p style="color: green;">✅ Event received!</p>
+                <pre>${JSON.stringify(event.detail, null, 2)}</pre>
+            `;
+        });
+
+        // Dispatch test event
+        function testEvent() {
+            console.log('📤 Dispatching test event...');
+            window.dispatchEvent(new CustomEvent('gamificationUpdate', {
+                detail: {
+                    action: 'test_action',
+                    points: 15,
+                    totalPoints: 100,
+                    timestamp: new Date().toISOString()
+                }
+            }));
+        }
+    </script>
+</body>
+</html>

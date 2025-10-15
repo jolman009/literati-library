@@ -317,9 +317,13 @@ export const GamificationProvider = ({ children }) => {
 
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
-    if (!user) return;
+    if (!user) {
+      console.warn('⚠️ GamificationContext: trackAction called but no user found');
+      return;
+    }
 
-    console.log(`🎯 Tracking action: ${actionType}`, data);
+    console.log(`🎯 GamificationContext: Tracking action: ${actionType}`, data);
+    console.log(`🎯 GamificationContext: User ID: ${user.id}, Token exists: ${!!token}`);
 
     // Point values for different actions
     const pointValues = {
@@ -390,15 +394,24 @@ export const GamificationProvider = ({ children }) => {
       localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(newStats));
 
       // 🔔 Dispatch event to notify all components of gamification update
-      console.log(`🔔 Broadcasting gamificationUpdate event for action: ${actionType}`);
-      window.dispatchEvent(new CustomEvent('gamificationUpdate', {
+      console.log(`🔔 GamificationContext: Broadcasting gamificationUpdate event for action: ${actionType}`);
+      console.log(`🔔 GamificationContext: Event detail:`, {
+        action: actionType,
+        points,
+        totalPoints: newStats.totalPoints,
+        timestamp: new Date().toISOString()
+      });
+
+      const event = new CustomEvent('gamificationUpdate', {
         detail: {
           action: actionType,
           points,
           totalPoints: newStats.totalPoints,
           timestamp: new Date().toISOString()
         }
-      }));
+      });
+      window.dispatchEvent(event);
+      console.log(`✅ GamificationContext: Event dispatched successfully`);
 
       return newStats;
     });
