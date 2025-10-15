@@ -144,22 +144,27 @@ app.use(cors({
       return callback(null, true);
     }
 
+    // ✅ FIX: Allow ALL Vercel preview deployments (they have dynamic URLs)
+    if (origin && origin.includes('.vercel.app')) {
+      console.log(`✅ CORS allowed for Vercel deployment: ${origin}`);
+      return callback(null, true);
+    }
+
     // Allow production domains from environment variable
     const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
       : [];
 
-    // ✅ ADD YOUR VERCEL DOMAIN HERE
+    // ✅ Production domains (static URLs only)
     const defaultAllowedOrigins = [
       'https://literati.pro',
       'https://www.literati.pro',
-      'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app', // Replace with actual Vercel URL
-      'https://your-app-git-main.vercel.app' // Preview deployments
     ];
 
     const allAllowed = [...new Set([...allowedOrigins, ...defaultAllowedOrigins])];
 
     if (allAllowed.includes(origin)) {
+      console.log(`✅ CORS allowed for production domain: ${origin}`);
       return callback(null, true);
     }
 
