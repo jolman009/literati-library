@@ -64,9 +64,28 @@ const MD3SnackbarContext = createContext();
 export const MD3SnackbarProvider = ({ children }) => {
   const [snackbars, setSnackbars] = useState([]);
 
-  const showSnackbar = useCallback((message, options = {}) => {
+  const showSnackbar = useCallback((messageOrConfig, options = {}) => {
+    // ✅ FIX: Handle both calling styles:
+    // 1. showSnackbar("message", { variant: "success" })  <- old style
+    // 2. showSnackbar({ message: "text", variant: "success" }) <- new style
+    let message, config;
+
+    if (typeof messageOrConfig === 'string') {
+      // Old style: positional arguments
+      message = messageOrConfig;
+      config = options;
+    } else if (typeof messageOrConfig === 'object' && messageOrConfig !== null) {
+      // New style: object with message property
+      message = messageOrConfig.message;
+      config = { ...messageOrConfig };
+      delete config.message; // Remove message from config to avoid duplication
+    } else {
+      console.error('Invalid showSnackbar call:', messageOrConfig);
+      return;
+    }
+
     const id = Date.now() + Math.random();
-    setSnackbars(prev => [...prev, { id, message, ...options }]);
+    setSnackbars(prev => [...prev, { id, message, ...config }]);
     return id;
   }, []);
 
