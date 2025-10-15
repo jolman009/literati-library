@@ -1,0 +1,10 @@
+{
+  "version": "1.0.1-snackbar-fix",
+  "commit": "8a3aa05",
+  "deployed": "2025-10-15T10:30:00Z",
+  "fixes": [
+    "MD3Snackbar handles both API styles",
+    "CORS allows all Vercel deployments",
+    "Event system for dashboard updates"
+  ]
+}
