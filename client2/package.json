@@ -2,6 +2,7 @@
   "name": "client2",
   "version": "0.1.0",
   "private": true,
+   "packageManager": "pnpm@8.15.4",
   "dependencies": {
     "@sentry/react": "^10.15.0",
     "@supabase/supabase-js": "^2.55.0",
