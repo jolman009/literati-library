@@ -22,7 +22,9 @@
       "Bash(pnpm list:*)",
       "Bash(gh api:*)",
       "Bash(cmd:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(npx vercel domains:*)",
+      "Bash(npx vercel inspect:*)"
     ],
     "deny": [],
     "ask": []
