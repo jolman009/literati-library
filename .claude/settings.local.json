@@ -21,7 +21,8 @@
       "Bash(curl:*)",
       "Bash(pnpm list:*)",
       "Bash(gh api:*)",
-      "Bash(cmd:*)"
+      "Bash(cmd:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []
