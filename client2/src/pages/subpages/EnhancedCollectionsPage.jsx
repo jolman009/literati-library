@@ -23,7 +23,7 @@ const EnhancedCollectionsPage = ({
   const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   
-  // collections
+  // collections books setup
   // State management
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(false);
