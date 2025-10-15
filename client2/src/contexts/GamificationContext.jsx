@@ -389,6 +389,17 @@ export const GamificationProvider = ({ children }) => {
       // Save to localStorage
       localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(newStats));
 
+      // 🔔 Dispatch event to notify all components of gamification update
+      console.log(`🔔 Broadcasting gamificationUpdate event for action: ${actionType}`);
+      window.dispatchEvent(new CustomEvent('gamificationUpdate', {
+        detail: {
+          action: actionType,
+          points,
+          totalPoints: newStats.totalPoints,
+          timestamp: new Date().toISOString()
+        }
+      }));
+
       return newStats;
     });
 
@@ -638,6 +649,41 @@ export const GamificationProvider = ({ children }) => {
     }
   }, [user, token, offlineMode, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
 
+  // Manual refresh function - useful for forcing UI updates after mutations
+  const refreshStats = useCallback(async () => {
+    if (!user || !token) {
+      console.warn('⚠️ Cannot refresh stats: user not authenticated');
+      return { success: false, error: 'Not authenticated' };
+    }
+
+    console.log('🔄 GamificationContext: Manual stats refresh requested');
+
+    try {
+      // Fetch fresh stats from server
+      const statsData = await makeSafeApiCall('/gamification/stats');
+
+      if (statsData) {
+        const enhancedStats = {
+          ...statsData,
+          level: calculateLevel(statsData.totalPoints || 0),
+          readingStreak: calculateReadingStreak() // Always recalculate from local sessions
+        };
+
+        setStats(enhancedStats);
+        localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(enhancedStats));
+        console.log('✅ GamificationContext: Stats refreshed successfully', enhancedStats);
+
+        return { success: true, stats: enhancedStats };
+      } else {
+        console.warn('⚠️ GamificationContext: Stats refresh returned no data');
+        return { success: false, error: 'No data returned' };
+      }
+    } catch (error) {
+      console.error('❌ GamificationContext: Stats refresh failed', error);
+      return { success: false, error: error.message };
+    }
+  }, [user, token, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
+
   const value = {
     // State
     stats,
@@ -653,6 +699,7 @@ export const GamificationProvider = ({ children }) => {
     createGoal,
     updateGoalProgress,
     syncWithServer,
+    refreshStats,
     clearRecentAchievement: () => setRecentAchievement(null),
 
     // Utilities

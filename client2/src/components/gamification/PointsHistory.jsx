@@ -14,14 +14,33 @@ const PointsHistory = ({ limit = 10 }) => {
     fetchHistory();
   }, [limit]);
 
+  // 🔔 Listen for gamification updates and auto-refresh history
+  useEffect(() => {
+    const handleGamificationUpdate = (event) => {
+      console.log('🔔 PointsHistory: Received gamificationUpdate event', event.detail);
+      console.log('📊 PointsHistory: Auto-refreshing history after action:', event.detail.action);
+      fetchHistory();
+    };
+
+    window.addEventListener('gamificationUpdate', handleGamificationUpdate);
+    console.log('👂 PointsHistory: Listening for gamificationUpdate events');
+
+    return () => {
+      window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
+      console.log('👋 PointsHistory: Stopped listening for gamificationUpdate events');
+    };
+  }, [limit]);
+
   const fetchHistory = async () => {
     try {
       setLoading(true);
       setError(null);
+      console.log(`📊 PointsHistory: Fetching history (limit: ${limit})...`);
       const response = await API.get(`/gamification/actions/history?limit=${limit}`);
       setHistory(response.data || []);
+      console.log(`✅ PointsHistory: Fetched ${response.data?.length || 0} history entries`);
     } catch (err) {
-      console.error('Failed to fetch points history:', err);
+      console.error('❌ PointsHistory: Failed to fetch points history:', err);
       setError(err.message);
       setHistory([]);
     } finally {

@@ -89,20 +89,22 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   }, [dragging]);
 
   const handleSave = async () => {
-    console.log('💾 Save button clicked');
+    // ⚠️ CRITICAL: Wrap entire function to catch ALL errors (prevent error boundary navigation)
+    try {
+      console.log('💾 FloatingNotepad: Save button clicked');
 
-    if (!content.trim()) {
-      console.warn('⚠️ Cannot save empty note');
-      return;
-    }
+      if (!content.trim()) {
+        console.warn('⚠️ FloatingNotepad: Cannot save empty note');
+        return;
+      }
 
-    // Prevent double-clicking
-    if (isSaving) {
-      console.log('⏳ Already saving, ignoring duplicate click');
-      return;
-    }
+      // Prevent double-clicking
+      if (isSaving) {
+        console.log('⏳ FloatingNotepad: Already saving, ignoring duplicate click');
+        return;
+      }
 
-    setIsSaving(true);
+      setIsSaving(true);
 
     // Determine location prefix and metadata based on file type
     let locationPrefix = "";
@@ -137,28 +139,35 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     });
 
     try {
+      console.log('💾 FloatingNotepad: Starting note save...');
       const response = await API.post("/notes", noteData, {
         timeout: 10000 // 10 second timeout
       });
-      console.log('✅ Note saved successfully:', response.data);
+      console.log('✅ FloatingNotepad: Note saved successfully to server:', {
+        noteId: response.data.id,
+        hasGamification: !!response.data?.gamification
+      });
 
       const serverGamification = response.data?.gamification;
       if (serverGamification) {
-        console.log('🎯 Server gamification snapshot received:', serverGamification);
+        console.log('🎯 FloatingNotepad: Server gamification snapshot received:', serverGamification);
       }
 
       // Track gamification action for note creation (+15 points)
+      // ⚠️ CRITICAL: Wrap in try-catch to prevent errors from bubbling to error boundary
       if (trackAction) {
         try {
+          console.log('🎮 FloatingNotepad: Tracking gamification action...');
           await trackAction('note_created', {
             book_id: bookId,
             note_id: response.data.id,
             page: currentPage,
             timestamp: new Date().toISOString()
           }, { serverSnapshot: serverGamification });
-          console.log('🎮 Gamification: note_created action tracked (+15 points)');
+          console.log('✅ FloatingNotepad: Gamification action tracked successfully (+15 points)');
         } catch (trackError) {
-          console.warn('⚠️ Failed to track note creation for gamification:', trackError);
+          // ⚠️ CRITICAL: Log but don't throw - note is already saved
+          console.warn('⚠️ FloatingNotepad: Failed to track gamification (note still saved):', trackError);
           // Don't fail the note save if tracking fails
         }
       }
@@ -170,6 +179,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       showSnackbar({ message: snackbarMessage, variant: "success" });
       setContent("");
       setIsSaving(false);
+      console.log('✅ FloatingNotepad: Save workflow completed successfully');
     } catch (error) {
       console.error('❌ Failed to save note:', {
         error,
@@ -240,6 +250,15 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         });
       }
 
+      setIsSaving(false);
+    }
+    } catch (outerError) {
+      // ⚠️ FINAL SAFETY NET: Catch any errors that escaped inner try-catch
+      console.error('❌ FloatingNotepad: Critical error in handleSave (outer catch):', outerError);
+      showSnackbar({
+        message: '❌ An unexpected error occurred. Please try again.',
+        variant: 'error'
+      });
       setIsSaving(false);
     }
   };
