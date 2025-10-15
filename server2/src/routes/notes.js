@@ -158,13 +158,23 @@ export const notesRouter = (authenticateToken) => {
 
       console.log('✅ Note created successfully:', note.id);
 
+      // ✅ FIX: Make gamification snapshot optional to prevent 500 errors
+      let gamificationSnapshot = null;
+      try {
+        gamificationSnapshot = await buildGamificationSnapshot(req.user.id);
+        console.log('✅ Gamification snapshot generated:', gamificationSnapshot);
+      } catch (gamError) {
+        console.warn('⚠️ Gamification snapshot failed (note still saved):', gamError.message);
+        // Note is already saved, just return without gamification data
+      }
+
       res.status(201).json({
         ...note,
-        gamification: await buildGamificationSnapshot(req.user.id),
+        gamification: gamificationSnapshot,
       });
     } catch (e) {
-      console.error('Create note error:', e);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error('❌ Create note error:', e);
+      res.status(500).json({ error: 'Internal server error', details: e.message });
     }
   });
 
@@ -243,13 +253,24 @@ export const notesRouter = (authenticateToken) => {
         return res.status(500).json({ error: 'Failed to create note' });
       }
 
+      console.log('✅ Book note created successfully:', note.id);
+
+      // ✅ FIX: Make gamification snapshot optional to prevent 500 errors
+      let gamificationSnapshot = null;
+      try {
+        gamificationSnapshot = await buildGamificationSnapshot(req.user.id);
+        console.log('✅ Gamification snapshot generated:', gamificationSnapshot);
+      } catch (gamError) {
+        console.warn('⚠️ Gamification snapshot failed (note still saved):', gamError.message);
+      }
+
       res.status(201).json({
         ...note,
-        gamification: await buildGamificationSnapshot(req.user.id),
+        gamification: gamificationSnapshot,
       });
     } catch (e) {
-      console.error('Create book note error:', e);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error('❌ Create book note error:', e);
+      res.status(500).json({ error: 'Internal server error', details: e.message });
     }
   });
 
