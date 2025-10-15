@@ -291,6 +291,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
+  const [refreshing, setRefreshing] = useState(false);
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
@@ -302,6 +303,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   useEffect(() => {
     const fetchGamificationData = async () => {
       try {
+        console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
         const response = await API.get('/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
 
@@ -315,8 +317,15 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         // Count number of completed reading sessions
         const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
         setReadingSessionsCount(sessionActions?.count || 0);
+
+        console.log('✅ QuickStatsOverview: Data updated', {
+          notesPoints: categories?.notes || 0,
+          notesCount: noteActions?.count || 0,
+          sessionCount: sessionActions?.count || 0,
+          timestamp: new Date().toISOString()
+        });
       } catch (error) {
-        console.error('Failed to fetch gamification data:', error);
+        console.error('❌ Failed to fetch gamification data:', error);
         setNotesPoints(0);
         setNotesCount(0);
         setReadingSessionsCount(0);
@@ -327,6 +336,46 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       fetchGamificationData();
     }
   }, [stats]);
+
+  // 🔔 Listen for gamification updates and refresh data automatically
+  useEffect(() => {
+    const handleGamificationUpdate = async (event) => {
+      console.log('🔔 QuickStatsOverview: Received gamificationUpdate event', event.detail);
+
+      // Re-fetch breakdown data when gamification updates occur
+      try {
+        setRefreshing(true);
+        console.log('📊 QuickStatsOverview: Auto-refreshing after gamification update...');
+        const response = await API.get('/gamification/actions/breakdown');
+        const { categories, breakdown } = response.data;
+
+        setNotesPoints(categories?.notes || 0);
+        const noteActions = breakdown.find(b => b.action === 'note_created');
+        setNotesCount(noteActions?.count || 0);
+        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
+        setReadingSessionsCount(sessionActions?.count || 0);
+
+        console.log('✅ QuickStatsOverview: Auto-refresh completed', {
+          action: event.detail.action,
+          notesPoints: categories?.notes || 0,
+          notesCount: noteActions?.count || 0,
+          sessionCount: sessionActions?.count || 0
+        });
+      } catch (error) {
+        console.error('❌ QuickStatsOverview: Auto-refresh failed:', error);
+      } finally {
+        setRefreshing(false);
+      }
+    };
+
+    window.addEventListener('gamificationUpdate', handleGamificationUpdate);
+    console.log('👂 QuickStatsOverview: Listening for gamificationUpdate events');
+
+    return () => {
+      window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
+      console.log('👋 QuickStatsOverview: Stopped listening for gamificationUpdate events');
+    };
+  }, []);
 
   useEffect(() => {
     if (stats) setLoading(false);
@@ -398,9 +447,20 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   }
 
   return (
-    <div className="simple-scroll-container">
+    <div className="simple-scroll-container" style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
       {statCards.map((stat, index) => (
-        <div key={index} className="stat-metric-card">
+        <div key={index} className="stat-metric-card" style={{ position: 'relative' }}>
+          {refreshing && index === 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              fontSize: '12px',
+              opacity: 0.6
+            }}>
+              🔄
+            </div>
+          )}
           <div className="stat-metric-header">
             <span className="stat-metric-value">{stat.value}</span>
             <span className={`stat-metric-growth ${stat.trend}`}>
