@@ -21,13 +21,14 @@ const useSafeSnackbar = () => {
     };
   }
 };
-
-const BookCard = ({ 
-  book, 
-  view = 'grid', // 'grid' or 'list'
-  onRead,
-  onEdit, 
-  onDelete,
+## BookCard Component
+const BookCard = (
+  {
+    book,
+    view = 'grid', // 'grid' or 'list'
+    onRead,
+    onEdit,
+    onDelete,
   onStatusChange,
   batchMode = false,
   selected = false,
