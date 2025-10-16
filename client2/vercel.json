@@ -1,13 +1,17 @@
 {
-  "buildCommand": "cd client2 && pnpm install --frozen-lockfile && pnpm run build",
-  "installCommand": "cd client2 && pnpm install --frozen-lockfile",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "builds": [
-    { "src": "client2/package.json", "use": "@vercel/static-build" }
-  ],
+  "version": 2,
   "routes": [
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "client2/dist/index.html" }
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*)\\.(js|css|svg|png|jpg|woff2)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
   ]
 }
