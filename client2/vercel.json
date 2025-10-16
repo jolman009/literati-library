@@ -1,7 +1,7 @@
 {
   "buildCommand": "cd client2 && pnpm install --frozen-lockfile && pnpm run build",
   "installCommand": "cd client2 && pnpm install --frozen-lockfile",
-  "outputDirectory": "client2/dist",
+  "outputDirectory": "dist",
   "framework": "vite",
   "builds": [
     { "src": "client2/package.json", "use": "@vercel/static-build" }
