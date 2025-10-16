@@ -2,16 +2,32 @@
   "version": 2,
   "routes": [
     { "handle": "filesystem" },
+
+    { "src": "/sw\\.js", "dest": "/sw.js" },
+    { "src": "/workbox-(.*)\\.js", "dest": "/workbox-$1.js" },
+    { "src": "/manifest\\.webmanifest", "dest": "/manifest.webmanifest" },
+
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
       "source": "/(.*)\\.(js|css|svg|png|jpg|woff2)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     }
   ]
 }
