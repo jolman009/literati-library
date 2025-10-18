@@ -312,7 +312,7 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                   color: 'rgb(var(--md-sys-color-on-surface))',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -320,13 +320,14 @@ export default function EnhancedBookCard({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                  transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)',
+                  borderRadius: '0'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant) / 0.12)';
+                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant))';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>📖</span>
@@ -344,7 +345,7 @@ export default function EnhancedBookCard({
                     width: '100%',
                     padding: '12px 16px',
                     border: 'none',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                     color: 'rgb(var(--md-sys-color-primary))',
                     textAlign: 'left',
                     cursor: 'pointer',
@@ -355,10 +356,12 @@ export default function EnhancedBookCard({
                     transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'rgb(var(--md-sys-color-primary-container) / 0.12)';
+                    e.target.style.backgroundColor = 'rgb(var(--md-sys-color-primary-container))';
+                    e.target.style.color = 'rgb(var(--md-sys-color-on-primary-container))';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                    e.target.style.color = 'rgb(var(--md-sys-color-primary))';
                   }}
                 >
                   <span style={{ fontSize: '18px' }}>⏱️</span>
@@ -375,7 +378,7 @@ export default function EnhancedBookCard({
                       width: '100%',
                       padding: '12px 16px',
                       border: 'none',
-                      backgroundColor: 'transparent',
+                      backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                       color: 'rgb(var(--md-sys-color-on-surface))',
                       textAlign: 'left',
                       cursor: 'pointer',
@@ -386,10 +389,10 @@ export default function EnhancedBookCard({
                       transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant) / 0.12)';
+                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant))';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
                     }}
                   >
                     <span style={{ fontSize: '18px' }}>{activeSession?.isPaused ? '▶️' : '⏸️'}</span>
@@ -405,7 +408,7 @@ export default function EnhancedBookCard({
                       width: '100%',
                       padding: '12px 16px',
                       border: 'none',
-                      backgroundColor: 'transparent',
+                      backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                       color: 'rgb(var(--md-sys-color-error))',
                       textAlign: 'left',
                       cursor: 'pointer',
@@ -416,10 +419,12 @@ export default function EnhancedBookCard({
                       transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error-container) / 0.12)';
+                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error-container))';
+                      e.target.style.color = 'rgb(var(--md-sys-color-on-error-container))';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                      e.target.style.color = 'rgb(var(--md-sys-color-error))';
                     }}
                   >
                     <span style={{ fontSize: '18px' }}>⏹️</span>
@@ -444,7 +449,7 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                   color: 'rgb(var(--md-sys-color-on-surface))',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -458,7 +463,7 @@ export default function EnhancedBookCard({
                   e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant) / 0.12)';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>✏️</span>
@@ -481,7 +486,7 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                   color: 'rgb(var(--md-sys-color-error))',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -492,10 +497,12 @@ export default function EnhancedBookCard({
                   transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error) / 0.08)';
+                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error-container))';
+                  e.target.style.color = 'rgb(var(--md-sys-color-on-error-container))';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                  e.target.style.color = 'rgb(var(--md-sys-color-error))';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>🗑️</span>
