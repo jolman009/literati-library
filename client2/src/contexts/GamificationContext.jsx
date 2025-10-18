@@ -90,7 +90,18 @@ export const GamificationProvider = ({ children }) => {
   const [offlineMode, setOfflineMode] = useState(false);
 
   // Get auth context
-  const { user, token, makeApiCall } = useAuth();
+  const { user, token: authToken, makeApiCall } = useAuth();
+
+  // 🔧 FIX: Get token directly from storage as fallback if AuthContext doesn't provide it
+  const token = authToken || localStorage.getItem('literati_token') || sessionStorage.getItem('literati_token');
+
+  // 🔧 FIX: Reset offline mode when we have a valid token
+  useEffect(() => {
+    if (token && offlineMode) {
+      console.log('✅ GamificationContext: Token detected, resetting offline mode to false');
+      setOfflineMode(false);
+    }
+  }, [token, offlineMode]);
 
   // 🔧 FIXED: Safe API helper that handles 401s gracefully
   const makeSafeApiCall = async (endpoint, options = {}) => {
@@ -428,10 +439,15 @@ export const GamificationProvider = ({ children }) => {
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
+
+    console.log(`🔍 GamificationContext: Sync check - offlineMode: ${offlineMode}, hasToken: ${!!token}, isLocalOnly: ${localOnlyActions.includes(actionType)}`);
+
     if (!offlineMode && token && !localOnlyActions.includes(actionType)) {
+      console.log(`🌐 GamificationContext: Starting server sync for ${actionType}...`);
       // ✅ Wrap in Promise to ensure async errors don't bubble up
       Promise.resolve().then(async () => {
         try {
+          console.log(`📤 GamificationContext: Calling /gamification/actions API...`);
           // ✅ Fixed: Backend expects 'action', not 'actionType'
           const response = await makeSafeApiCall('/gamification/actions', {
             method: 'POST',
@@ -443,18 +459,20 @@ export const GamificationProvider = ({ children }) => {
           });
 
           if (response) {
-            console.log(`✅ Action synced to server: ${actionType} (+${points} points)`);
+            console.log(`✅ Action synced to server: ${actionType} (+${points} points)`, response);
           } else {
             console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
           }
         } catch (error) {
           // ✅ Triple-layer error handling: catch ANY error
-          console.warn(`⚠️ Failed to sync action with server (continuing anyway):`, error);
+          console.error(`❌ Failed to sync action with server:`, error);
         }
       }).catch(err => {
         // ✅ Catch promise rejections that escape the try-catch
-        console.warn(`⚠️ Unhandled promise rejection in trackAction:`, err);
+        console.error(`❌ Unhandled promise rejection in trackAction:`, err);
       });
+    } else {
+      console.log(`⏭️ GamificationContext: Skipping server sync for ${actionType} (offline: ${offlineMode}, token: ${!!token}, localOnly: ${localOnlyActions.includes(actionType)})`);
     }
 
     // Check for achievement unlocks
