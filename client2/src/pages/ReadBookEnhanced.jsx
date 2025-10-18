@@ -21,7 +21,7 @@ const ReadBookEnhanced = () => {
 
   // Get auth context
   const { user, loading: authLoading, isAuthenticated } = useAuth();
-  const { activeSession, hasActiveSession } = useReadingSession();
+  const { activeSession, hasActiveSession, stopReadingSession, isPaused } = useReadingSession();
 
   // Get network status
   const networkStatus = useNetworkStatus();
@@ -345,6 +345,18 @@ const ReadBookEnhanced = () => {
               </span>
               {isCached && <CheckCircle className="w-4 h-4" />}
             </div>
+
+            {/* Stop Reading Session button */}
+            {hasActiveSession && (
+              <button
+                onClick={stopReadingSession}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all text-sm font-medium flex items-center gap-2"
+                title="End current reading session"
+              >
+                <span>⏹️</span>
+                <span>Stop Session</span>
+              </button>
+            )}
 
             {/* Download/Remove button */}
             {isOnline && serverReachable && (
