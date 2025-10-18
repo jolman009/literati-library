@@ -309,16 +309,26 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         const response = await API.get('/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
 
-        // Get total notes category points
-        setNotesPoints(categories?.notes || 0);
+        // Prefer server values but never below local fallbacks
+        const serverNotesPoints = categories?.notes || 0;
+        const localNotesCount = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
+        const localNotesPoints = localNotesCount * NOTES_POINTS_PER;
 
-        // Count number of note_created actions
         const noteActions = breakdown.find(b => b.action === 'note_created');
-        setNotesCount(noteActions?.count || 0);
+        const serverNotesCount = noteActions?.count || 0;
 
-        // Count number of completed reading sessions
         const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
-        setReadingSessionsCount(sessionActions?.count || 0);
+        const serverSessionCount = sessionActions?.count || 0;
+
+        let localSessionCount = 0;
+        try {
+          const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
+          localSessionCount = rs?.totalSessions || 0;
+        } catch {}
+
+        setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
+        setNotesCount(Math.max(serverNotesCount, localNotesCount));
+        setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
 
         console.log('✅ QuickStatsOverview: Data updated', {
           notesPoints: categories?.notes || 0,
@@ -353,11 +363,24 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         const response = await API.get('/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
 
-        setNotesPoints(categories?.notes || 0);
-        const noteActions = breakdown.find(b => b.action === 'note_created');
-        setNotesCount(noteActions?.count || 0);
-        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
-        setReadingSessionsCount(sessionActions?.count || 0);
+        const serverNotesPoints2 = categories?.notes || 0;
+        const localNotesCount2 = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
+        const localNotesPoints2 = localNotesCount2 * NOTES_POINTS_PER;
+
+        const noteActions2 = breakdown.find(b => b.action === 'note_created');
+        const serverNotesCount2 = noteActions2?.count || 0;
+        const sessionActions2 = breakdown.find(b => b.action === 'reading_session_completed');
+        const serverSessionCount2 = sessionActions2?.count || 0;
+
+        let localSessionCount2 = 0;
+        try {
+          const rs2 = typeof getReadingStats === 'function' ? getReadingStats() : null;
+          localSessionCount2 = rs2?.totalSessions || 0;
+        } catch {}
+
+        setNotesPoints(Math.max(serverNotesPoints2, localNotesPoints2));
+        setNotesCount(Math.max(serverNotesCount2, localNotesCount2));
+        setReadingSessionsCount(Math.max(serverSessionCount2, localSessionCount2));
 
         console.log('✅ QuickStatsOverview: Auto-refresh completed', {
           action: event.detail.action,
