@@ -43,6 +43,8 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [userBooks, setUserBooks] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState(null);
+  const [smartInsights, setSmartInsights] = useState([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   
   // Ref to maintain focus on textarea
   const textareaRef = useRef(null);
@@ -53,6 +55,13 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
     initializeMentor();
     loadUserBooks();
   }, [user]);
+
+  // Load smart insights when books or API keys change
+  useEffect(() => {
+    if (userBooks.length > 0) {
+      loadSmartInsights();
+    }
+  }, [userBooks, hasApiKeys]);
 
   const checkApiKeys = () => {
     // Direct check of localStorage for API keys
@@ -142,12 +151,12 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
 
   const initializeMentor = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       const data = await LiteraryMentor.initializeMentor(user.id);
       setMentorData(data);
-      
+
       // Set initial discussion question if in discussion mode
       if (currentBook && discussionMode) {
         const discussion = await LiteraryMentor.startBookClubDiscussion(currentBook.id);
@@ -157,6 +166,53 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
       console.error('Failed to initialize mentor:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Load enhanced AI insights for the current reading book
+  const loadSmartInsights = async () => {
+    if (!hasApiKeys) {
+      // No API keys - show fallback insights
+      setSmartInsights([
+        {
+          type: 'setup',
+          icon: '🔑',
+          message: 'Configure AI keys to unlock personalized content analysis and deep insights about your reading!',
+        }
+      ]);
+      return;
+    }
+
+    setInsightsLoading(true);
+    try {
+      // Find the current reading book
+      const readingBook = userBooks.find(b => b.is_reading);
+
+      if (!readingBook) {
+        setSmartInsights([
+          {
+            type: 'start',
+            icon: '📚',
+            message: 'Mark a book as "currently reading" to get AI-powered insights about themes, patterns, and your reading progress!',
+          }
+        ]);
+        return;
+      }
+
+      // Use the enhanced AI insights
+      const insights = await LiteraryMentor.generateSmartInsights(user.id, readingBook);
+      setSmartInsights(insights || []);
+    } catch (error) {
+      console.error('Failed to load smart insights:', error);
+      setSmartInsights([
+        {
+          type: 'error',
+          icon: '💡',
+          message: 'Your AI reading companion is ready to analyze your reading journey!',
+        }
+      ]);
+    } finally {
+      setInsightsLoading(false);
     }
   };
 
@@ -205,28 +261,80 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
   };
 
   // ===== INSIGHTS TAB =====
-  
+
   const InsightsPanel = () => (
     <div className="mentor-insights-panel">
       <div className="insights-header">
         <Sparkles className="insights-icon" />
-        <h3>Your Daily Insights</h3>
+        <h3>AI-Powered Reading Insights</h3>
+        <button
+          onClick={loadSmartInsights}
+          className="refresh-insights-button"
+          disabled={insightsLoading}
+          style={{
+            marginLeft: 'auto',
+            padding: '6px 12px',
+            fontSize: '13px',
+            borderRadius: '8px',
+            border: '1px solid var(--md-sys-color-outline)',
+            background: 'var(--md-sys-color-surface-container)',
+            color: 'var(--md-sys-color-on-surface)',
+            cursor: insightsLoading ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          {insightsLoading ? '⟳ Loading...' : '↻ Refresh'}
+        </button>
       </div>
-      
-      {mentorData?.currentInsights?.map((insight, index) => (
-        <div key={index} className={`insight-card insight-${insight.type}`}>
-          <span className="insight-icon">{insight.icon}</span>
-          <div className="insight-content">
-            <p className="insight-message">{insight.message}</p>
-            {insight.action && (
-              <button className="insight-action">
-                {insight.action}
-                <ChevronRight size={16} />
-              </button>
-            )}
-          </div>
+
+      {insightsLoading ? (
+        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--md-sys-color-on-surface-variant)' }}>
+          <Brain className="loading-icon" size={32} style={{ animation: 'spin 2s linear infinite' }} />
+          <p style={{ marginTop: '12px' }}>Analyzing your reading patterns...</p>
         </div>
-      ))}
+      ) : smartInsights.length > 0 ? (
+        smartInsights.map((insight, index) => (
+          <div key={index} className={`insight-card insight-${insight.type}`}>
+            <span className="insight-icon" style={{ fontSize: '2rem' }}>{insight.icon}</span>
+            <div className="insight-content">
+              <p className="insight-message">{insight.message}</p>
+              {insight.metadata && (
+                <div style={{
+                  marginTop: '8px',
+                  fontSize: '0.85rem',
+                  color: 'var(--md-sys-color-on-surface-variant)',
+                  display: 'flex',
+                  gap: '12px',
+                  flexWrap: 'wrap'
+                }}>
+                  {insight.metadata.progress !== undefined && (
+                    <span>📊 {insight.metadata.progress}% complete</span>
+                  )}
+                  {insight.metadata.highlights !== undefined && (
+                    <span>✍️ {insight.metadata.highlights} highlights</span>
+                  )}
+                </div>
+              )}
+              {insight.action && (
+                <button
+                  className="insight-action"
+                  onClick={() => handleActionClick(insight.action)}
+                >
+                  {insight.action}
+                  <ChevronRight size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+        ))
+      ) : (
+        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--md-sys-color-on-surface-variant)' }}>
+          <BookOpen size={48} opacity={0.5} />
+          <p style={{ marginTop: '12px' }}>No insights available yet. Start reading to unlock AI-powered analysis!</p>
+        </div>
+      )}
       
       <div className="reading-stats">
         <h4>Your Reading Profile</h4>
