@@ -1,6 +1,6 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Sun, Moon, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
@@ -9,15 +9,15 @@ import { useSnackbar } from '../components/Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
-import FillingArc from '../components/gamification/FillingArc';
 import PointsHistory from '../components/gamification/PointsHistory';
+import MentorPreviewCard from '../components/MentorPreviewCard';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
   const { stats, achievements, syncWithServer, trackAction } = useGamification();
-  const { actualTheme, toggleTheme } = useMaterial3Theme();
+  const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
@@ -37,12 +37,14 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
     const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
     setCheckInStreak(streak);
   }, []);
-  
+
+  // Calculate level progress percentage
   const levelProgress = useMemo(() => {
     if (!stats) return 0;
     const currentLevelMin = (stats.level - 1) * 100;
     const currentLevelMax = stats.level * 100;
-    return ((stats.totalPoints - currentLevelMin) / (currentLevelMax - currentLevelMin)) * 100;
+    const progress = ((stats.totalPoints - currentLevelMin) / (currentLevelMax - currentLevelMin)) * 100;
+    return Math.min(Math.max(progress, 0), 100); // Clamp between 0-100
   }, [stats]);
 
   const getMotivationalMessage = () => {
@@ -201,85 +203,67 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
   return (
     <div className="welcome-section-compact">
-      {/* Theme Toggle Button - Top Right */}
-      <button
-        onClick={toggleTheme}
-        className="theme-toggle-button"
-        aria-label={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
-        title={`Switch to ${actualTheme === 'dark' ? 'light' : 'dark'} mode`}
-      >
-        {actualTheme === 'dark' ? (<Sun size={20} aria-hidden="true" />) : (<Moon size={20} aria-hidden="true" />)}
-        <span className="sr-only">
-          {actualTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        </span>
-      </button>
-
-      <div className="welcome-content-grid">
-        {/* Left: Greeting & Level Arc */}
+      <div className="welcome-content">
+        {/* Greeting & Actions */}
         <div className="welcome-info">
           <h1 className="welcome-title-compact">
             {getMotivationalMessage()}
           </h1>
 
-          <p className="welcome-subtitle-compact">
-            {user?.name || 'Reader'} • Level {stats?.level || 1}
-            {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
-          </p>
+          {/* Subtitle with Inline Action Buttons */}
+          <div className="welcome-subtitle-row">
+            <p className="welcome-subtitle-compact">
+              {user?.name || 'Reader'} • Level {stats?.level || 1}
+              {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
+            </p>
 
-          {/* Daily Check-in Button - Prominent */}
-          <button
-            onClick={handleDailyCheckIn}
-            disabled={hasCheckedInToday}
-            className="checkin-button-compact"
-          >
-            {hasCheckedInToday ? '✓ Checked In Today' : '✅ Daily Check-in'}
-            {!hasCheckedInToday && checkInStreak > 0 && (
-              <span className="checkin-streak-badge-compact">
-                🔥 {checkInStreak} days
-              </span>
-            )}
-          </button>
+            {/* Compact Inline Buttons */}
+            <div className="welcome-inline-buttons">
+              {/* Daily Check-in Button - Compact */}
+              <button
+                onClick={handleDailyCheckIn}
+                disabled={hasCheckedInToday}
+                className="checkin-button-inline"
+                title={hasCheckedInToday ? 'Already checked in today' : 'Daily check-in for points'}
+              >
+                {hasCheckedInToday ? '✓' : '✅'}
+              </button>
 
-          {/* Manual Sync Button */}
-          <button
-            onClick={handleSync}
-            disabled={isSyncing}
-            className={`sync-button ${isSyncing ? 'syncing' : ''} ${lastSyncTime ? 'synced' : ''}`}
-            aria-label={isSyncing ? 'Syncing data with server' : 'Sync data with server'}
-            aria-busy={isSyncing}
-            title="Sync your data with the server to ensure consistency across devices"
-          >
-            <RefreshCw
-              className={`sync-icon ${isSyncing ? 'spinning' : ''}`}
-              size={16}
-            />
-            <span className="sync-button-text">
-              {isSyncing ? 'Syncing...' : lastSyncTime ? 'Synced' : 'Sync Data'}
+              {/* Manual Sync Button - Compact */}
+              <button
+                onClick={handleSync}
+                disabled={isSyncing}
+                className={`sync-button-inline ${isSyncing ? 'syncing' : ''} ${lastSyncTime ? 'synced' : ''}`}
+                aria-label={isSyncing ? 'Syncing data with server' : 'Sync data with server'}
+                aria-busy={isSyncing}
+                title={isSyncing ? 'Syncing...' : lastSyncTime ? `Last synced: ${new Date(lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Sync data with server'}
+              >
+                <RefreshCw
+                  className={`sync-icon ${isSyncing ? 'spinning' : ''}`}
+                  size={14}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Level Progress Bar */}
+          <div className="level-progress-container">
+            <div className="level-progress-bar">
+              <div
+                className="level-progress-fill"
+                style={{ width: `${levelProgress}%` }}
+                aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
+              />
+            </div>
+            <span className="level-progress-text">
+              {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
             </span>
-            {lastSyncTime && !isSyncing && (
-              <span className="sync-time-badge">
-                {new Date(lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Right: Level Progress Arc - Smaller */}
-        <div className="welcome-arc-container">
-          <FillingArc
-            progress={levelProgress}
-            level={stats?.level || 1}
-            variant="detailed"
-            size="medium"
-            showStats={true}
-            stats={{
-              totalPoints: stats?.totalPoints || 0,
-              nextLevelPoints: (stats?.level || 1) * 100,
-              currentLevelPoints: ((stats?.level || 1) - 1) * 100
-            }}
-          />
+          </div>
         </div>
       </div>
+
+      {/* Mentor Preview Card - Bottom of Welcome Section */}
+      <MentorPreviewCard />
     </div>
   );
 };

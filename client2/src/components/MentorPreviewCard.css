@@ -1,0 +1,348 @@
+/* MentorPreviewCard.css - Styling for dashboard mentor preview */
+
+.mentor-preview-card {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-secondary-container) 100%);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.mentor-preview-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.mentor-preview-card.dark {
+  background: linear-gradient(135deg,
+    rgba(103, 80, 164, 0.15) 0%,
+    rgba(187, 134, 252, 0.1) 100%);
+  border: 1px solid rgba(187, 134, 252, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mentor-preview-card.dark:hover {
+  box-shadow: 0 4px 12px rgba(187, 134, 252, 0.2);
+}
+
+/* Header */
+.mentor-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.mentor-preview-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.mentor-icon {
+  color: var(--md-sys-color-primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.sparkle-icon {
+  color: var(--md-sys-color-tertiary);
+  animation: sparkle 3s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Content */
+.mentor-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insight-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--md-sys-color-surface);
+  padding: 6px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mentor-preview-card.dark .insight-badge {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.insight-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.insight-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+}
+
+.insight-message {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--md-sys-color-on-primary-container);
+  margin: 0;
+  font-weight: 500;
+}
+
+.mentor-preview-card.dark .insight-message {
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Current Book Info */
+.current-book-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: var(--md-sys-color-surface);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: var(--md-sys-color-on-surface);
+}
+
+.mentor-preview-card.dark .current-book-info {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.book-icon {
+  font-size: 1.1rem;
+}
+
+.book-title {
+  flex: 1;
+  min-width: 200px;
+}
+
+.book-title strong {
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+}
+
+.book-progress {
+  padding: 2px 8px;
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Actions */
+.mentor-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
+
+.action-button.primary {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.action-button.primary:hover {
+  background: var(--md-sys-color-primary);
+  filter: brightness(1.1);
+}
+
+.action-button.secondary {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.action-button.secondary:hover {
+  background: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
+}
+
+/* Quick Access Row */
+.quick-access-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.action-button.quick-access {
+  flex: 1;
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-container-high) 0%,
+    var(--md-sys-color-surface-container) 100%
+  );
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.mentor-preview-card.dark .action-button.quick-access {
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.action-button.quick-access:hover {
+  background: linear-gradient(135deg,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-secondary-container) 100%
+  );
+  border-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.mentor-preview-card.dark .action-button.quick-access:hover {
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(139, 92, 246, 0.2) 100%
+  );
+  border-color: var(--md-sys-color-primary);
+}
+
+.action-button.view-full {
+  background: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.action-button.view-full:hover {
+  background: var(--md-sys-color-tertiary);
+  filter: brightness(1.15);
+  gap: 8px;
+}
+
+/* Loading State */
+.mentor-preview-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 500;
+}
+
+.loading-icon {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mentor-preview-card {
+    padding: 16px;
+  }
+
+  .mentor-preview-title {
+    font-size: 0.95rem;
+  }
+
+  .insight-message {
+    font-size: 0.9rem;
+  }
+
+  .current-book-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .book-title {
+    min-width: auto;
+  }
+
+  .mentor-preview-actions {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .action-button.view-full {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .mentor-preview-card {
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .insight-badge {
+    padding: 4px 10px;
+  }
+
+  .insight-label {
+    font-size: 0.8rem;
+  }
+}

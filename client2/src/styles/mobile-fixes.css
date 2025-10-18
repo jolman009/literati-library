@@ -291,10 +291,10 @@ button {
   }
 
   /* Full width buttons on mobile */
-  button:not(.theme-toggle-button),
+  button,
   .button,
   .Button,
-  [class*="button"]:not(.theme-toggle-button),
+  [class*="button"],
   [class*="Button"],
   .btn,
   .Btn,
@@ -302,15 +302,6 @@ button {
   [class*="Btn"] {
     width: 100% !important;
     max-width: 100% !important;
-  }
-
-  /* Exception: Keep theme toggle button fixed size */
-  .theme-toggle-button {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    max-width: 40px !important;
-    flex-shrink: 0 !important;
   }
 
   /* Adjust font sizes for mobile */
