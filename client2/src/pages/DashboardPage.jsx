@@ -298,6 +298,12 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const { getReadingStats } = useReadingSession();
   const NOTES_POINTS_PER = 15;
 
+  // 🔍 DEBUG: Log stats on every render
+  console.log('🔍 QuickStatsOverview: Component rendering');
+  console.log('🔍 QuickStatsOverview: stats =', stats);
+  console.log('🔍 QuickStatsOverview: loading =', loading);
+  console.log('🔍 QuickStatsOverview: notesPoints =', notesPoints);
+
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
