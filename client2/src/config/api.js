@@ -127,7 +127,7 @@ export const gamificationAPI = {
   // Track gamification actions
   trackAction: async (token, action, data) => {
     try {
-      const response = await API.post('/gamification/actions', {
+      const response = await API.post('/api/gamification/actions', {
         action,
         data,
         timestamp: new Date().toISOString()
@@ -143,7 +143,7 @@ export const gamificationAPI = {
   // Get gamification stats
   getStats: async (token) => {
     try {
-      const response = await API.get('/gamification/stats');
+      const response = await API.get('/api/gamification/stats');
       return response.data;
     } catch (error) {
       console.error('❌ Failed to fetch stats:', error);
@@ -154,7 +154,7 @@ export const gamificationAPI = {
   // Get achievements
   getAchievements: async (token) => {
     try {
-      const response = await API.get('/gamification/achievements');
+      const response = await API.get('/api/gamification/achievements');
       return response.data;
     } catch (error) {
       console.error('❌ Failed to fetch achievements:', error);
@@ -165,7 +165,7 @@ export const gamificationAPI = {
   // Get goals
   getGoals: async (token) => {
     try {
-      const response = await API.get('/gamification/goals');
+      const response = await API.get('/api/gamification/goals');
       return response.data;
     } catch (error) {
       console.error('❌ Failed to fetch goals:', error);
