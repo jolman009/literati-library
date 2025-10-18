@@ -265,6 +265,16 @@ export const ReadingSessionProvider = ({ children }) => {
         startTime: null
       });
       console.log('📖 Reading session ended');
+      
+      // 🔧 FIX: Dispatch event to notify dashboard of reading session completion
+      window.dispatchEvent(new CustomEvent('readingSessionCompleted', {
+        detail: {
+          session: completedSession,
+          duration: durationMinutes,
+          pages: activeSession.pagesRead || 0
+        }
+      }));
+      
       return {
         success: true,
         duration: durationMinutes,
