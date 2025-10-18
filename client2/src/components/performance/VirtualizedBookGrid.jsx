@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Grid } from 'react-window';
 import { LazyBookCover } from './LazyImage';
 import './VirtualizedBookGrid.css';
+import '../EnhancedBookCard.css';
 
 const VirtualizedBookGrid = ({
   books = [],
@@ -139,7 +140,7 @@ const VirtualizedBookGrid = ({
                   onClick={() => onBookMenuClick(null)}
                 />
 
-                <div className="book-menu-dropdown">
+                <div className="book-actions-menu">
                   {hasActiveSession ? (
                     <>
                       {isPaused ? (
@@ -148,9 +149,9 @@ const VirtualizedBookGrid = ({
                             e.stopPropagation();
                             onResumeSession();
                           }}
-                          className="menu-item"
+                          className="book-menu-item"
                         >
-                          <span className="material-symbols-outlined">play_arrow</span>
+                          <span className="material-symbols-outlined book-menu-item__icon">play_arrow</span>
                           Resume Reading
                         </button>
                       ) : (
@@ -159,9 +160,9 @@ const VirtualizedBookGrid = ({
                             e.stopPropagation();
                             onPauseSession();
                           }}
-                          className="menu-item"
+                          className="book-menu-item"
                         >
-                          <span className="material-symbols-outlined">pause</span>
+                          <span className="material-symbols-outlined book-menu-item__icon">pause</span>
                           Pause Reading
                         </button>
                       )}
@@ -170,9 +171,9 @@ const VirtualizedBookGrid = ({
                           e.stopPropagation();
                           onEndSession();
                         }}
-                        className="menu-item danger"
+                        className="book-menu-item book-menu-item--error"
                       >
-                        <span className="material-symbols-outlined">stop</span>
+                        <span className="material-symbols-outlined book-menu-item__icon">stop</span>
                         End Session
                       </button>
                     </>
@@ -182,23 +183,23 @@ const VirtualizedBookGrid = ({
                         e.stopPropagation();
                         onBookClick(book);
                       }}
-                      className="menu-item"
+                      className="book-menu-item book-menu-item--primary"
                     >
-                      <span className="material-symbols-outlined">menu_book</span>
+                      <span className="material-symbols-outlined book-menu-item__icon">menu_book</span>
                       Start Reading
                     </button>
                   )}
 
-                  <div className="menu-divider" />
+                  <div className="book-menu-divider" />
 
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       // Handle mark as completed
                     }}
-                    className="menu-item"
+                    className="book-menu-item"
                   >
-                    <span className="material-symbols-outlined">check_circle</span>
+                    <span className="material-symbols-outlined book-menu-item__icon">check_circle</span>
                     Mark as Completed
                   </button>
 
@@ -207,9 +208,9 @@ const VirtualizedBookGrid = ({
                       e.stopPropagation();
                       // Handle add to collection
                     }}
-                    className="menu-item"
+                    className="book-menu-item"
                   >
-                    <span className="material-symbols-outlined">collections_bookmark</span>
+                    <span className="material-symbols-outlined book-menu-item__icon">collections_bookmark</span>
                     Add to Collection
                   </button>
                 </div>
