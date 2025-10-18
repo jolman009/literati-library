@@ -345,7 +345,12 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     };
 
     if (stats) {
-      fetchGamificationData();
+      // Add a small delay to ensure server has processed the action
+      const timer = setTimeout(() => {
+        fetchGamificationData();
+      }, 500);
+
+      return () => clearTimeout(timer);
     }
   }, [stats]);
 
@@ -355,6 +360,9 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
     const handleGamificationUpdate = async (event) => {
       console.log('🔔 QuickStatsOverview: Received gamificationUpdate event', event.detail);
+
+      // Wait a bit for server to process the action before fetching
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Re-fetch breakdown data when gamification updates occur
       try {
@@ -385,8 +393,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         console.log('✅ QuickStatsOverview: Auto-refresh completed', {
           action: event.detail.action,
           notesPoints: categories?.notes || 0,
-          notesCount: noteActions?.count || 0,
-          sessionCount: sessionActions?.count || 0
+          notesCount: noteActions2?.count || 0,
+          sessionCount: sessionActions2?.count || 0
         });
       } catch (error) {
         console.error('❌ QuickStatsOverview: Auto-refresh failed:', error);
