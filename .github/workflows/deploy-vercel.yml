@@ -20,16 +20,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: 8
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install dependencies
         working-directory: ./client2
