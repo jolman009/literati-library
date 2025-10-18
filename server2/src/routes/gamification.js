@@ -518,19 +518,28 @@ export const gamificationRouter = (authenticateToken) => {
         default: points = 1;
       }
 
-      // Non-blocking log insert (errors are tolerated)
-      try {
-        await supabase.from('user_actions').insert({
-          user_id: userId,
+      // Insert action to database
+      const { data: insertedData, error: insertError } = await supabase.from('user_actions').insert({
+        user_id: userId,
+        action,
+        points,
+        data: data || {},
+        created_at: timestamp || new Date().toISOString(),
+      }).select();
+
+      if (insertError) {
+        console.error('❌ Failed to save action to database:', insertError);
+        // Return success anyway for offline support, but log the error
+        return res.json({
+          success: true,
           action,
           points,
-          data: data || {},
-          created_at: timestamp || new Date().toISOString(),
+          message: `${action} tracked successfully (local only)`,
+          warning: 'Database insert failed - action not persisted'
         });
-      } catch (dbErr) {
-        console.warn('Failed to save action to database:', dbErr?.message || dbErr);
       }
 
+      console.log('✅ Action saved to database:', insertedData);
       res.json({ success: true, action, points, message: `${action} tracked successfully!` });
     } catch (e) {
       console.error('Error tracking action:', e);

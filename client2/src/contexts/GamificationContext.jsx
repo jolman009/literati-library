@@ -475,7 +475,12 @@ export const GamificationProvider = ({ children }) => {
           });
 
           if (response) {
-            console.log(`✅ Action synced to server: ${actionType} (+${points} points)`, response);
+            if (response.warning) {
+              console.error(`⚠️ DATABASE INSERT FAILED: ${actionType}`, response.warning);
+              console.error('👉 This action will NOT appear after refresh!');
+            } else {
+              console.log(`✅ Action synced to server: ${actionType} (+${points} points)`, response);
+            }
           } else {
             console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
           }

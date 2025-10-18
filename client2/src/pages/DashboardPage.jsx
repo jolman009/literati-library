@@ -344,6 +344,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
           notesCount: noteActions?.count || 0,
           sessionCount: sessionActions?.count || 0,
           totalPoints: categories?.total || 0,
+          rawCategories: categories,
+          rawBreakdown: breakdown,
           timestamp: new Date().toISOString()
         });
       } catch (error) {
@@ -392,7 +394,10 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         console.log('🔄 QuickStatsOverview: Auto-poll refresh completed', {
           serverSessionCount,
           localSessionCount,
-          finalSessionCount: Math.max(serverSessionCount, localSessionCount)
+          finalSessionCount: Math.max(serverSessionCount, localSessionCount),
+          totalPoints: categories?.total || 0,
+          rawCategories: categories,
+          rawBreakdown: breakdown
         });
       } catch (error) {
         console.error('❌ Auto-poll refresh failed:', error);
