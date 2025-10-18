@@ -537,15 +537,21 @@ const EnhancedNotesPage = () => {
 
         // Track locally so Dashboard stats refresh without waiting for server breakdown
         try {
+          console.log('🎯 EnhancedNotesPage: About to call trackAction for note_created');
           const serverGamification = response?.data?.gamification;
+          console.log('📊 EnhancedNotesPage: Server gamification snapshot:', serverGamification);
+          console.log('🎮 EnhancedNotesPage: trackAction function exists?', typeof trackAction);
+
           await trackAction('note_created', {
             noteId: response?.data?.id,
             bookId: noteData.book_id,
             noteLength: (noteData.content || '').length,
             hasTags: Array.isArray(noteData.tags) && noteData.tags.length > 0
           }, { serverSnapshot: serverGamification });
+
+          console.log('✅ EnhancedNotesPage: trackAction completed successfully');
         } catch (trackErr) {
-          console.warn('note_created local tracking failed (non-fatal):', trackErr);
+          console.error('❌ EnhancedNotesPage: note_created local tracking failed:', trackErr);
         }
         showSnackbar({
           message: 'Note created successfully!',

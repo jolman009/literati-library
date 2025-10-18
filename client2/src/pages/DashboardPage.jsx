@@ -357,9 +357,10 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   // 🔔 Listen for gamification updates and refresh data automatically
   useEffect(() => {
     console.log('🔧 QuickStatsOverview: Setting up gamificationUpdate event listener');
+    console.log('🔧 QuickStatsOverview: Component mounted and listening on window object');
 
     const handleGamificationUpdate = async (event) => {
-      console.log('🔔 QuickStatsOverview: Received gamificationUpdate event', event.detail);
+      console.log('🔔 QuickStatsOverview: *** RECEIVED GAMIFICATION UPDATE EVENT ***', event.detail);
 
       // Wait a bit for server to process the action before fetching
       await new Promise(resolve => setTimeout(resolve, 1000));
