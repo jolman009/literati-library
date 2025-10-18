@@ -464,6 +464,17 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     return value > 0 ? `+${Math.min(Math.floor(value / 10) * 4, 15)}%` : '+0%';
   };
 
+  // 🔍 DEBUG: Log what we're about to display
+  console.log('📊 QuickStatsOverview: Preparing stat cards with:', {
+    booksRead: stats?.booksRead,
+    totalPoints: stats?.totalPoints,
+    notesPoints,
+    notesCount,
+    readingSessionsCount,
+    pagesRead: stats?.pagesRead,
+    displayStreak
+  });
+
   const statCards = [
     {
       icon: '📚',
@@ -511,6 +522,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       trend: displayStreak > 0 ? 'up' : 'neutral'
     }
   ];
+
+  console.log('📊 QuickStatsOverview: Final stat cards:', statCards);
 
   if (loading) {
     return (
