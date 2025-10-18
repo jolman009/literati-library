@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { MD3TextField, MD3Button } from '../components/Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
-import '../styles/md3-login.css';
+import '../styles/login.css';
 
 const MD3Login = () => {
   const navigate = useNavigate();
