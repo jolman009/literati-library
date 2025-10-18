@@ -6,19 +6,58 @@
 }
 
 .text-on-surface {
-  color: var(--md-sys-color-on-surface);
+  color: #1c1b1f;
 }
 
 .text-on-surface-variant {
-  color: var(--md-sys-color-on-surface-variant);
+  color: #49454f;
 }
 
 .text-error {
-  color: var(--md-sys-color-error);
+  color: #ba1a1a;
 }
 
 .text-primary {
-  color: var(--md-sys-color-primary);
+  color: #6750a4;
+}
+
+/* Dark mode text colors */
+@media (prefers-color-scheme: dark) {
+  .text-on-surface {
+    color: #e6e1e5;
+  }
+
+  .text-on-surface-variant {
+    color: #b0b0b0;
+  }
+
+  .text-error {
+    color: #ffb4ab;
+  }
+
+  .text-primary {
+    color: #d0bcff;
+  }
+}
+
+[data-theme="dark"] .text-on-surface,
+.dark .text-on-surface {
+  color: #e6e1e5;
+}
+
+[data-theme="dark"] .text-on-surface-variant,
+.dark .text-on-surface-variant {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .text-error,
+.dark .text-error {
+  color: #ffb4ab;
+}
+
+[data-theme="dark"] .text-primary,
+.dark .text-primary {
+  color: #d0bcff;
 }
 
 .text-sm {
