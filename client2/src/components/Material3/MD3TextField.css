@@ -371,9 +371,42 @@
   .md3-text-field__container {
     min-height: 52px; /* Slightly larger touch targets on mobile */
   }
-  
+
   .md3-text-field__input {
     font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Dark mode overrides for mobile */
+  @media (prefers-color-scheme: dark) {
+    .md3-text-field__container {
+      background-color: #3c3c3e !important;
+    }
+
+    .md3-text-field__input,
+    .md3-text-field input {
+      color: #e0e0e0 !important;
+    }
+
+    .md3-text-field__label {
+      color: #b0b0b0 !important;
+    }
+  }
+
+  [data-theme="dark"] .md3-text-field__container,
+  .dark .md3-text-field__container {
+    background-color: #3c3c3e !important;
+  }
+
+  [data-theme="dark"] .md3-text-field__input,
+  [data-theme="dark"] .md3-text-field input,
+  .dark .md3-text-field__input,
+  .dark .md3-text-field input {
+    color: #e0e0e0 !important;
+  }
+
+  [data-theme="dark"] .md3-text-field__label,
+  .dark .md3-text-field__label {
+    color: #b0b0b0 !important;
   }
 }
 

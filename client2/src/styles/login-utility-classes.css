@@ -222,3 +222,44 @@
     display: block;
   }
 }
+
+/* Mobile-specific dark mode overrides */
+@media (max-width: 640px) {
+  @media (prefers-color-scheme: dark) {
+    .text-on-surface {
+      color: #e6e1e5 !important;
+    }
+
+    .text-on-surface-variant {
+      color: #b0b0b0 !important;
+    }
+
+    .text-error {
+      color: #ffb4ab !important;
+    }
+
+    .text-primary {
+      color: #d0bcff !important;
+    }
+  }
+
+  [data-theme="dark"] .text-on-surface,
+  .dark .text-on-surface {
+    color: #e6e1e5 !important;
+  }
+
+  [data-theme="dark"] .text-on-surface-variant,
+  .dark .text-on-surface-variant {
+    color: #b0b0b0 !important;
+  }
+
+  [data-theme="dark"] .text-error,
+  .dark .text-error {
+    color: #ffb4ab !important;
+  }
+
+  [data-theme="dark"] .text-primary,
+  .dark .text-primary {
+    color: #d0bcff !important;
+  }
+}
