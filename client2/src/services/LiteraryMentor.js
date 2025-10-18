@@ -623,7 +623,7 @@ class LiteraryMentor {
     if (peakHour < 6) return 'early_morning';
     if (peakHour < 12) return 'morning';
     if (peakHour < 17) return 'afternoon';
-    if (peakHour < 21) return 'evening';
+    if (peakHour < 21) return 'EVENING';
     return 'night';
   }
 

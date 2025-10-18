@@ -295,6 +295,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
+  const { getReadingStats } = useReadingSession();
+  const NOTES_POINTS_PER = 15;
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
@@ -382,6 +384,42 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   useEffect(() => {
     if (stats) setLoading(false);
   }, [stats]);
+
+  // Fallback: keep reading sessions count in sync with local history
+  useEffect(() => {
+    const updateFromLocal = () => {
+      try {
+        const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
+        setReadingSessionsCount(rs?.totalSessions || 0);
+      } catch {}
+    };
+
+    // Initialize from local on mount
+    updateFromLocal();
+
+    // Update when reading session history changes (cross-tab via storage)
+    const onStorage = (e) => {
+      if (!e || e.key === 'readingSessionHistory') updateFromLocal();
+    };
+
+    // Also update when gamification events fire
+    const onGamification = () => updateFromLocal();
+
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('gamificationUpdate', onGamification);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('gamificationUpdate', onGamification);
+    };
+  }, [getReadingStats]);
+
+  // Fallback sync: ensure notes metrics reflect local stats when API breakdown is unavailable or delayed
+  useEffect(() => {
+    if (typeof stats?.notesCreated === 'number') {
+      setNotesCount(stats.notesCreated);
+      setNotesPoints(stats.notesCreated * NOTES_POINTS_PER);
+    }
+  }, [stats?.notesCreated]);
 
   // Calculate growth percentage (mock data for now)
   const calculateGrowth = (value) => {
@@ -754,7 +792,7 @@ const CurrentlyReading = () => {
   return (
     <div className="section-card">
       <h3 className="section-title">
-        📖 Currently Reading ({currentlyReading.length})
+        📖 Currently READING ({currentlyReading.length})
       </h3>
       <div className="books-grid">
         {currentlyReading.slice(0, 4).map((book) => (
