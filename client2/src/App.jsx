@@ -67,6 +67,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 // TEMPORARY: Import LibraryPage directly to debug loading issue
 import LibraryPage from './pages/LibraryPage';
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
+const MentorPage = lazy(() => import('./pages/MentorPage'));
 
 // Lazy load secondary pages with error handling
 const LibraryPageWrapper = lazy(() =>
@@ -206,6 +207,13 @@ const AppRoutes = () => {
               </Suspense>
             </ReaderErrorBoundary>
           </>
+        } />
+        <Route path="/mentor" element={
+          <ErrorBoundary fallbackComponent="mentor" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading Literary Mentor..." />}>
+              <MentorPage />
+            </Suspense>
+          </ErrorBoundary>
         } />
         <Route path="/collections" element={
           <ErrorBoundary fallbackComponent="collections" variant="full">

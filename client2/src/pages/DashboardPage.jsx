@@ -9,7 +9,6 @@ import { useSnackbar } from '../components/Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
-import LiteraryMentorUI from '../components/LiteraryMentorUI';
 import FillingArc from '../components/gamification/FillingArc';
 import PointsHistory from '../components/gamification/PointsHistory';
 import '../styles/dashboard-page.css';

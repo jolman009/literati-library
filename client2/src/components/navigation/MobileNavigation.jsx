@@ -38,16 +38,16 @@ const MobileNavigation = () => {
       path: '/library'
     },
     {
+      key: 'mentor',
+      icon: 'psychology',
+      label: 'Mentor',
+      path: '/mentor'
+    },
+    {
       key: 'notes',
       icon: 'note',
       label: 'Notes',
       path: '/notes'
-    },
-    {
-      key: 'upload',
-      icon: 'upload_file',
-      label: 'Upload',
-      path: '/upload'
     },
   ];
 
