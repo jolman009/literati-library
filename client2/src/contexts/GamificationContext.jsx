@@ -1,5 +1,5 @@
 // src/contexts/GamificationContext.jsx - FIXED VERSION
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import API from '../config/api';
 
@@ -328,10 +328,27 @@ export const GamificationProvider = ({ children }) => {
     }
   }, [user, token, offlineMode, calculateReadingStreak]);
 
-  // Load data when user or token changes
-  useEffect(() => {
+  // Add debouncing and caching for fetchData
+  const lastFetchTime = useRef(0);
+  const fetchDataDebounced = useCallback(() => {
+    const now = Date.now();
+    const timeSinceLastFetch = now - lastFetchTime.current;
+
+    // Prevent fetching more than once every 5 seconds
+    if (timeSinceLastFetch < 5000) {
+      console.log(`⏱️ Skipping fetchData - last fetch was ${timeSinceLastFetch}ms ago`);
+      return;
+    }
+
+    lastFetchTime.current = now;
     fetchData();
   }, [fetchData]);
+
+  // Load data when user or token changes
+  useEffect(() => {
+    if (!user) return;
+    fetchDataDebounced();
+  }, [user?.id, token]); // Only depend on user ID and token, not fetchData
 
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
