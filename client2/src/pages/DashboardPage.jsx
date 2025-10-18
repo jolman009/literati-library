@@ -310,53 +310,81 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
   // Fetch notes-specific points and reading sessions count from breakdown API
-  useEffect(() => {
-    const fetchGamificationData = async () => {
+  const fetchGamificationData = useCallback(async () => {
+    try {
+      console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
+      const response = await API.get('/api/gamification/actions/breakdown');
+      const { categories, breakdown } = response.data;
+
+      // Prefer server values but never below local fallbacks
+      const serverNotesPoints = categories?.notes || 0;
+      const localNotesCount = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
+      const localNotesPoints = localNotesCount * NOTES_POINTS_PER;
+
+      const noteActions = breakdown.find(b => b.action === 'note_created');
+      const serverNotesCount = noteActions?.count || 0;
+
+      const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
+      const serverSessionCount = sessionActions?.count || 0;
+
+      let localSessionCount = 0;
       try {
-        console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
-        const response = await API.get('/api/gamification/actions/breakdown');
-        const { categories, breakdown } = response.data;
+        const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
+        localSessionCount = rs?.totalSessions || 0;
+      } catch {}
 
-        // Prefer server values but never below local fallbacks
-        const serverNotesPoints = categories?.notes || 0;
-        const localNotesCount = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
-        const localNotesPoints = localNotesCount * NOTES_POINTS_PER;
+      setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
+      setNotesCount(Math.max(serverNotesCount, localNotesCount));
+      setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
+      setTotalPointsFromServer(categories?.total || 0);
 
-        const noteActions = breakdown.find(b => b.action === 'note_created');
-        const serverNotesCount = noteActions?.count || 0;
-
-        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
-        const serverSessionCount = sessionActions?.count || 0;
-
-        let localSessionCount = 0;
-        try {
-          const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
-          localSessionCount = rs?.totalSessions || 0;
-        } catch {}
-
-        setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
-        setNotesCount(Math.max(serverNotesCount, localNotesCount));
-        setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
-        setTotalPointsFromServer(categories?.total || 0);
-
-        console.log('✅ QuickStatsOverview: Data updated', {
-          notesPoints: categories?.notes || 0,
-          notesCount: noteActions?.count || 0,
-          sessionCount: sessionActions?.count || 0,
-          totalPoints: categories?.total || 0,
-          rawCategories: categories,
-          rawBreakdown: breakdown,
-          timestamp: new Date().toISOString()
-        });
-      } catch (error) {
-        console.error('❌ Failed to fetch gamification data:', error);
-        setNotesPoints(0);
-        setNotesCount(0);
-        setReadingSessionsCount(0);
-        setTotalPointsFromServer(0);
+      console.log('✅ QuickStatsOverview: Data updated', {
+        notesPoints: categories?.notes || 0,
+        notesCount: noteActions?.count || 0,
+        sessionCount: sessionActions?.count || 0,
+        totalPoints: categories?.total || 0,
+        rawCategories: categories,
+        rawBreakdown: breakdown,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Failed to fetch gamification data, using local fallbacks:', error);
+      
+      // 🔧 FIX: Use local fallbacks instead of setting to 0
+      const localNotesCount = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
+      const localNotesPoints = localNotesCount * NOTES_POINTS_PER;
+      
+      let localSessionCount = 0;
+      try {
+        const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
+        localSessionCount = rs?.totalSessions || 0;
+      } catch {}
+      
+      // Also try to get reading sessions from localStorage directly
+      try {
+        const sessionHistory = JSON.parse(localStorage.getItem('readingSessionHistory') || '[]');
+        if (Array.isArray(sessionHistory) && sessionHistory.length > 0) {
+          localSessionCount = Math.max(localSessionCount, sessionHistory.length);
+        }
+      } catch (localError) {
+        console.warn('Could not read from localStorage:', localError);
       }
-    };
+      
+      setNotesPoints(localNotesPoints);
+      setNotesCount(localNotesCount);
+      setReadingSessionsCount(localSessionCount);
+      setTotalPointsFromServer(stats?.totalPoints || 0);
+      
+      console.log('📊 QuickStatsOverview: Using local fallback data', {
+        notesPoints: localNotesPoints,
+        notesCount: localNotesCount,
+        sessionCount: localSessionCount,
+        totalPoints: stats?.totalPoints || 0
+      });
+    }
+  }, [stats, getReadingStats]);
 
+  useEffect(() => {
     if (stats) {
       // Add a small delay to ensure server has processed the action
       const timer = setTimeout(() => {
@@ -365,7 +393,24 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
       return () => clearTimeout(timer);
     }
-  }, [stats]);
+  }, [stats, fetchGamificationData]);
+
+  // Listen for reading session completion events to refresh stats
+  useEffect(() => {
+    const handleReadingSessionCompleted = () => {
+      console.log('📊 Reading session completed, refreshing stats...');
+      // Refresh the gamification data when a reading session is completed
+      setTimeout(() => {
+        fetchGamificationData();
+      }, 1000); // Small delay to ensure server has processed the action
+    };
+
+    window.addEventListener('readingSessionCompleted', handleReadingSessionCompleted);
+    
+    return () => {
+      window.removeEventListener('readingSessionCompleted', handleReadingSessionCompleted);
+    };
+  }, [fetchGamificationData]);
 
   // 🔄 Auto-refresh data from server every 30 seconds (cross-device sync)
   useEffect(() => {
