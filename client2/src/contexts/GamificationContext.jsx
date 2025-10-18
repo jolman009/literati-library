@@ -226,7 +226,7 @@ export const GamificationProvider = ({ children }) => {
         console.log('🌐 Attempting API fetch...');
         
         // Fetch stats - if this fails, we'll go offline
-        const statsData = await makeSafeApiCall('/gamification/stats');
+        const statsData = await makeSafeApiCall('/api/gamification/stats');
         if (statsData) {
           const enhancedStats = {
             ...statsData,
@@ -238,7 +238,7 @@ export const GamificationProvider = ({ children }) => {
         }
 
         // Fetch achievements
-        const achievementsData = await makeSafeApiCall('/gamification/achievements');
+        const achievementsData = await makeSafeApiCall('/api/gamification/achievements');
         if (achievementsData) {
           setAchievements(achievementsData);
           setUnlockedAchievements(new Set(achievementsData.map(a => a.id)));
@@ -247,7 +247,7 @@ export const GamificationProvider = ({ children }) => {
         }
 
         // Fetch goals
-        const goalsData = await makeSafeApiCall('/gamification/goals');
+        const goalsData = await makeSafeApiCall('/api/gamification/goals');
         if (goalsData) {
           setGoals(goalsData);
           console.log('✅ Goals loaded from API');
@@ -465,7 +465,7 @@ export const GamificationProvider = ({ children }) => {
         try {
           console.log(`📤 GamificationContext: Calling /gamification/actions API...`);
           // ✅ Fixed: Backend expects 'action', not 'actionType'
-          const response = await makeSafeApiCall('/gamification/actions', {
+          const response = await makeSafeApiCall('/api/gamification/actions', {
             method: 'POST',
             body: JSON.stringify({
               action: actionType,  // ✅ Changed from 'actionType' to 'action'
@@ -610,7 +610,7 @@ export const GamificationProvider = ({ children }) => {
     // Try to sync with API
     if (!offlineMode && token) {
       try {
-        await makeSafeApiCall('/gamification/goals', {
+        await makeSafeApiCall('/api/gamification/goals', {
           method: 'POST',
           body: JSON.stringify(newGoal)
         });
@@ -635,7 +635,7 @@ export const GamificationProvider = ({ children }) => {
     // Try to sync with API
     if (!offlineMode && token) {
       try {
-        await makeSafeApiCall(`/gamification/goals/${goalId}`, {
+        await makeSafeApiCall(`/api/gamification/goals/${goalId}`, {
           method: 'PUT',
           body: JSON.stringify({ progress })
         });
