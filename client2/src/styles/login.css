@@ -66,7 +66,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 2rem 1rem;
+  padding: 3rem 2rem;
   animation: slideInUp 0.6s cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -83,7 +83,37 @@
 
 .login-content-wrapper {
   width: 100%;
-  max-width: 28rem;
+  max-width: 26rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Constrain the card itself */
+.login-card,
+.login-card-enhanced {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Desktop and larger - keep it compact */
+@media (min-width: 768px) {
+  .login-content-wrapper {
+    max-width: 24rem;
+  }
+}
+
+/* Large screens - even more focused */
+@media (min-width: 1024px) {
+  .login-content-wrapper {
+    max-width: 22rem;
+  }
+}
+
+/* Extra large screens - maintain compact centered layout */
+@media (min-width: 1440px) {
+  .login-content-wrapper {
+    max-width: 20rem;
+  }
 }
 
 /* ================================================
@@ -609,13 +639,19 @@
    RESPONSIVE DESIGN
    ================================================ */
 
+/* Mobile phones */
 @media (max-width: 640px) {
   .login-container {
-    padding: 1rem 0.75rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .login-content-wrapper {
+    max-width: 100%;
+    padding: 0 0.5rem;
   }
 
   .login-card-content {
-    padding: 1.5rem;
+    padding: 1.5rem 1.25rem;
   }
 
   .login-card-enhanced {
@@ -631,6 +667,26 @@
   .login-button-primary {
     height: 3rem;
     font-size: 1rem;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .brand-subtitle {
+    font-size: 1rem;
+  }
+}
+
+/* Small tablets */
+@media (min-width: 641px) and (max-width: 768px) {
+  .login-container {
+    padding: 2rem 1.5rem;
+  }
+
+  .login-content-wrapper {
+    max-width: 480px;
+    padding: 0 1rem;
   }
 }
 
