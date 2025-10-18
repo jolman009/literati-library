@@ -38,7 +38,7 @@ const PointsHistory = ({ limit = 10 }) => {
       setLoading(true);
       setError(null);
       console.log(`📊 PointsHistory: Fetching history (limit: ${limit})...`);
-      const response = await API.get(`/gamification/actions/history?limit=${limit}`);
+      const response = await API.get(`/api/gamification/actions/history?limit=${limit}`);
       setHistory(response.data || []);
       console.log(`✅ PointsHistory: Fetched ${response.data?.length || 0} history entries`);
     } catch (err) {

@@ -128,7 +128,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
       // Sync with backend using the /actions endpoint
       if (API && API.post) {
-        API.post('/gamification/actions', {
+        API.post('/api/gamification/actions', {
           action: 'daily_checkin',
           data: { streak: newStreak },
           timestamp: new Date().toISOString()
@@ -312,7 +312,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     const fetchGamificationData = async () => {
       try {
         console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
-        const response = await API.get('/gamification/actions/breakdown');
+        const response = await API.get('/api/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
 
         // Prefer server values but never below local fallbacks
@@ -375,7 +375,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       try {
         setRefreshing(true);
         console.log('📊 QuickStatsOverview: Auto-refreshing after gamification update...');
-        const response = await API.get('/gamification/actions/breakdown');
+        const response = await API.get('/api/gamification/actions/breakdown');
         const { categories, breakdown } = response.data;
 
         const serverNotesPoints2 = categories?.notes || 0;
