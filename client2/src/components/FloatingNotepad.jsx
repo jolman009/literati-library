@@ -20,12 +20,65 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
   const noteRef = useRef(null);
   const [content, setContent] = useState(initialContent);
-  const [pos, setPos] = useState({ x: 20, y: 20 });
-  const [dragging, setDragging] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const startPos = useRef({ x: 0, y: 0 });
 
+  // Mobile-responsive state
+  const [isMobile, setIsMobile] = useState(false);
+  const [widgetSize, setWidgetSize] = useState({ width: 320, height: 280 });
+
+  // Initialize position based on viewport size
+  const getInitialPosition = () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const isMobileView = viewportWidth <= 640;
+
+    if (isMobileView) {
+      // Mobile: Position in bottom-right corner with padding
+      const width = viewportWidth <= 480 ? 240 : 280;
+      const height = 220;
+      return {
+        x: viewportWidth - width - 16,  // 16px from right edge
+        y: viewportHeight - height - 16  // 16px from bottom edge
+      };
+    } else {
+      // Desktop: Top-left as before
+      return { x: 20, y: 20 };
+    }
+  };
+
+  const [pos, setPos] = useState(getInitialPosition());
+
+  // Update mobile state and widget size on mount and resize
+  useEffect(() => {
+    const updateResponsiveState = () => {
+      const viewportWidth = window.innerWidth;
+      const isMobileView = viewportWidth <= 640;
+
+      setIsMobile(isMobileView);
+
+      if (isMobileView) {
+        // Mobile breakpoints: adjust widget size
+        if (viewportWidth <= 480) {
+          setWidgetSize({ width: 240, height: 220 });
+        } else {
+          setWidgetSize({ width: 280, height: 240 });
+        }
+      } else {
+        // Desktop size
+        setWidgetSize({ width: 320, height: 280 });
+      }
+    };
+
+    // Initial check
+    updateResponsiveState();
+
+    // Listen for viewport resize
+    window.addEventListener('resize', updateResponsiveState);
+    return () => window.removeEventListener('resize', updateResponsiveState);
+  }, []);
 
   // Start dragging when user presses on header
   const onPointerDown = (e) => {
@@ -48,21 +101,23 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     const clientY = e.clientY ?? e.touches?.[0]?.clientY;
     if (clientX == null || clientY == null) return;
 
-    // Prevent page scroll on touch while dragging
+    // Prevent page scroll on touch while dragging (only when actually dragging)
     if (e.cancelable) e.preventDefault();
 
     const dx = clientX - dragStart.current.x;
     const dy = clientY - dragStart.current.y;
 
-    // Constrain within viewport
+    // Constrain within viewport using actual or fallback dimensions
     const node = noteRef.current;
-    const w = node?.offsetWidth ?? 280;
-    const h = node?.offsetHeight ?? 220;
+    const w = node?.offsetWidth ?? widgetSize.width;
+    const h = node?.offsetHeight ?? widgetSize.height;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    const nextX = clamp(startPos.current.x + dx, 0, vw - w);
-    const nextY = clamp(startPos.current.y + dy, 0, vh - h);
+    // On mobile, add extra padding to keep widget visible
+    const padding = isMobile ? 8 : 0;
+    const nextX = clamp(startPos.current.x + dx, padding, vw - w - padding);
+    const nextY = clamp(startPos.current.y + dy, padding, vh - h - padding);
 
     setPos({ x: nextX, y: nextY });
   };
@@ -274,19 +329,23 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         left: 0,
         transform: `translate(${pos.x}px, ${pos.y}px)`,
         zIndex: 9999,
-        width: '320px',
-        minHeight: '280px',
+        width: `${widgetSize.width}px`,
+        minHeight: `${widgetSize.height}px`,
         background: isDark ? '#1e293b' : '#ffffff',
         border: `2px solid ${isDark ? '#8b5cf6' : '#7c3aed'}`,
-        borderRadius: '16px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+        borderRadius: isMobile ? '12px' : '16px',
+        boxShadow: isMobile
+          ? '0 4px 16px rgba(0,0,0,0.15)'
+          : '0 8px 32px rgba(0,0,0,0.12)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         cursor: dragging ? 'grabbing' : 'default',
         opacity: dragging ? 0.95 : 1,
-        transition: dragging ? 'none' : 'box-shadow 0.2s ease'
+        transition: dragging ? 'none' : 'box-shadow 0.2s ease, width 0.3s ease, min-height 0.3s ease',
+        // On mobile, add touch-action to improve scrolling elsewhere
+        touchAction: 'none'
       }}
       aria-label="Floating Notepad"
     >
@@ -303,25 +362,25 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
             : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
           color: 'white',
-          padding: '12px 16px',
+          padding: isMobile ? '10px 12px' : '12px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           cursor: dragging ? 'grabbing' : 'grab',
-          borderRadius: '14px 14px 0 0',
+          borderRadius: isMobile ? '10px 10px 0 0' : '14px 14px 0 0',
           userSelect: 'none'
         }}
       >
         <div>
           <h3 style={{
             margin: 0,
-            fontSize: '16px',
+            fontSize: isMobile ? '14px' : '16px',
             fontWeight: '600'
           }}>
             {title}
           </h3>
           <span style={{
-            fontSize: '10px',
+            fontSize: isMobile ? '9px' : '10px',
             opacity: 0.85
           }}>
             {currentPage ? `Page ${currentPage}` : "Drag to move"}
@@ -341,24 +400,26 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         aria-label="Notepad content"
         style={{
           flex: 1,
-          padding: '16px',
+          padding: isMobile ? '12px' : '16px',
           border: 'none',
           outline: 'none',
           resize: 'none',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-          fontSize: '14px',
+          fontSize: isMobile ? '13px' : '14px',
           lineHeight: '1.5',
           color: isDark ? '#f1f5f9' : '#1a1d20',
           background: isDark ? '#1e293b' : '#ffffff',
-          userSelect: 'text'
+          userSelect: 'text',
+          // Allow normal touch scrolling in textarea
+          touchAction: 'pan-y'
         }}
       />
 
       {/* Actions */}
       <div style={{
         display: 'flex',
-        gap: '8px',
-        padding: '12px 16px',
+        gap: isMobile ? '6px' : '8px',
+        padding: isMobile ? '10px 12px' : '12px 16px',
         background: isDark ? '#0f172a' : '#f8f9fa',
         borderTop: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`
       }}>
@@ -367,20 +428,21 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
           disabled={!content.trim() || isSaving}
           style={{
             flex: 1,
-            padding: '10px 16px',
+            padding: isMobile ? '8px 12px' : '10px 16px',
             border: 'none',
-            borderRadius: '20px',
+            borderRadius: isMobile ? '16px' : '20px',
             background: (!content.trim() || isSaving)
               ? (isDark ? '#334155' : '#e9ecef')
               : (isDark ? '#7c3aed' : '#8b5cf6'),
             color: (!content.trim() || isSaving)
               ? (isDark ? '#64748b' : '#6c757d')
               : 'white',
-            fontSize: '14px',
+            fontSize: isMobile ? '13px' : '14px',
             fontWeight: '500',
             cursor: isSaving ? 'wait' : ((!content.trim() || isSaving) ? 'not-allowed' : 'pointer'),
             transition: 'all 0.2s ease',
-            opacity: isSaving ? 0.7 : 1
+            opacity: isSaving ? 0.7 : 1,
+            minHeight: '44px' // Ensure touch target size on mobile
           }}
           onMouseEnter={(e) => {
             if (!(!content.trim() || isSaving)) {
@@ -393,26 +455,27 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             e.target.style.boxShadow = 'none';
           }}
         >
-          {isSaving ? '⏳ Saving...' : '💾 Save'}
+          {isSaving ? (isMobile ? '⏳ Saving...' : '⏳ Saving...') : (isMobile ? '💾 Save' : '💾 Save')}
         </button>
         <button
           onClick={() => setContent('')}
           disabled={!content.trim() || isSaving}
           style={{
             flex: 1,
-            padding: '10px 16px',
+            padding: isMobile ? '8px 12px' : '10px 16px',
             border: 'none',
-            borderRadius: '20px',
+            borderRadius: isMobile ? '16px' : '20px',
             background: (!content.trim() || isSaving)
               ? (isDark ? '#334155' : '#e9ecef')
               : (isDark ? '#dc2626' : '#ef4444'),
             color: (!content.trim() || isSaving)
               ? (isDark ? '#64748b' : '#6c757d')
               : 'white',
-            fontSize: '14px',
+            fontSize: isMobile ? '13px' : '14px',
             fontWeight: '500',
             cursor: (!content.trim() || isSaving) ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s ease'
+            transition: 'all 0.2s ease',
+            minHeight: '44px' // Ensure touch target size on mobile
           }}
           onMouseEnter={(e) => {
             if (!(!content.trim() || isSaving)) {
