@@ -343,6 +343,10 @@ export const GamificationProvider = ({ children }) => {
     const points = pointValues[actionType] || 0;
     const serverSnapshot = options?.serverSnapshot;
 
+    // Calculate new stats first
+    let newTotalPoints = 0;
+    let updatedStats = null;
+
     // Update local stats immediately for responsive UI
     setStats(prevStats => {
       const snapshotPoints = typeof serverSnapshot?.totalPoints === 'number'
@@ -393,28 +397,33 @@ export const GamificationProvider = ({ children }) => {
       // Save to localStorage
       localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(newStats));
 
-      // 🔔 Dispatch event to notify all components of gamification update
-      console.log(`🔔 GamificationContext: Broadcasting gamificationUpdate event for action: ${actionType}`);
-      console.log(`🔔 GamificationContext: Event detail:`, {
-        action: actionType,
-        points,
-        totalPoints: newStats.totalPoints,
-        timestamp: new Date().toISOString()
-      });
-
-      const event = new CustomEvent('gamificationUpdate', {
-        detail: {
-          action: actionType,
-          points,
-          totalPoints: newStats.totalPoints,
-          timestamp: new Date().toISOString()
-        }
-      });
-      window.dispatchEvent(event);
-      console.log(`✅ GamificationContext: Event dispatched successfully`);
+      // Store for event dispatch
+      newTotalPoints = newStats.totalPoints;
+      updatedStats = newStats;
 
       return newStats;
     });
+
+    // 🔔 Dispatch event AFTER state update (outside setStats callback)
+    // This ensures the event fires after React has committed the state
+    console.log(`🔔 GamificationContext: Broadcasting gamificationUpdate event for action: ${actionType}`);
+    console.log(`🔔 GamificationContext: Event detail:`, {
+      action: actionType,
+      points,
+      totalPoints: newTotalPoints,
+      timestamp: new Date().toISOString()
+    });
+
+    const event = new CustomEvent('gamificationUpdate', {
+      detail: {
+        action: actionType,
+        points,
+        totalPoints: newTotalPoints,
+        timestamp: new Date().toISOString()
+      }
+    });
+    window.dispatchEvent(event);
+    console.log(`✅ GamificationContext: Event dispatched successfully`);
 
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices

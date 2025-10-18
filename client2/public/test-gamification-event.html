@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Gamification Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #4CAF50;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Gamification Event Test</h1>
+    <p>This page tests if the gamificationUpdate event system works correctly.</p>
+
+    <div>
+        <button onclick="setupListener()">1. Setup Listener</button>
+        <button onclick="dispatchTestEvent()">2. Dispatch Event</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        function log(message, data = null) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            if (data) {
+                entry.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function setupListener() {
+            log('Setting up gamificationUpdate event listener...');
+
+            window.addEventListener('gamificationUpdate', (event) => {
+                log('✅ Event received!', event.detail);
+            });
+
+            log('Listener setup complete');
+        }
+
+        function dispatchTestEvent() {
+            log('Dispatching gamificationUpdate event...');
+
+            const customEvent = new CustomEvent('gamificationUpdate', {
+                detail: {
+                    action: 'note_created',
+                    points: 15,
+                    totalPoints: 150,
+                    timestamp: new Date().toISOString()
+                }
+            });
+
+            log('Event object created:', customEvent);
+            const result = window.dispatchEvent(customEvent);
+            log('Event dispatched. Return value: ' + result);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        // Auto-setup on load
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded. Click "Setup Listener" then "Dispatch Event" to test.');
+        });
+    </script>
+</body>
+</html>
