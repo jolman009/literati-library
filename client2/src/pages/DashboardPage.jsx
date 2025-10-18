@@ -384,39 +384,27 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     }
   }, [stats, getReadingStats]);
 
+  // 🔄 Consolidated effect for auto-refresh and event handling
   useEffect(() => {
-    if (stats) {
-      // Add a small delay to ensure server has processed the action
-      const timer = setTimeout(() => {
-        fetchGamificationData();
-      }, 500);
+    let pollInterval = null;
+    let isMounted = true;
+    let lastFetchTime = 0;
 
-      return () => clearTimeout(timer);
-    }
-  }, [stats, fetchGamificationData]);
+    const fetchLatestData = async (source = 'auto-poll') => {
+      // Debounce: Prevent fetching more than once every 3 seconds
+      const now = Date.now();
+      if (now - lastFetchTime < 3000) {
+        console.log(`⏱️ Skipping fetch - last fetch was ${now - lastFetchTime}ms ago`);
+        return;
+      }
+      lastFetchTime = now;
 
-  // Listen for reading session completion events to refresh stats
-  useEffect(() => {
-    const handleReadingSessionCompleted = () => {
-      console.log('📊 Reading session completed, refreshing stats...');
-      // Refresh the gamification data when a reading session is completed
-      setTimeout(() => {
-        fetchGamificationData();
-      }, 1000); // Small delay to ensure server has processed the action
-    };
-
-    window.addEventListener('readingSessionCompleted', handleReadingSessionCompleted);
-    
-    return () => {
-      window.removeEventListener('readingSessionCompleted', handleReadingSessionCompleted);
-    };
-  }, [fetchGamificationData]);
-
-  // 🔄 Auto-refresh data from server every 30 seconds (cross-device sync)
-  useEffect(() => {
-    const fetchLatestData = async () => {
       try {
+        console.log(`🔄 QuickStatsOverview: Fetching data (${source})...`);
         const response = await API.get('/api/gamification/actions/breakdown');
+
+        if (!isMounted) return; // Component unmounted, don't update state
+
         const { categories, breakdown } = response.data;
 
         const serverNotesPoints = categories?.notes || 0;
@@ -436,86 +424,49 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
         setTotalPointsFromServer(categories?.total || 0);
 
-        console.log('🔄 QuickStatsOverview: Auto-poll refresh completed', {
+        console.log(`✅ QuickStatsOverview: ${source} refresh completed`, {
           serverSessionCount,
           localSessionCount,
           finalSessionCount: Math.max(serverSessionCount, localSessionCount),
-          totalPoints: categories?.total || 0,
-          rawCategories: categories,
-          rawBreakdown: breakdown
+          totalPoints: categories?.total || 0
         });
       } catch (error) {
-        console.error('❌ Auto-poll refresh failed:', error);
+        console.error(`❌ ${source} refresh failed:`, error);
       }
     };
 
-    // Poll every 30 seconds
-    const pollInterval = setInterval(fetchLatestData, 30000);
+    // Event handler for reading session completion
+    const handleReadingSessionCompleted = () => {
+      console.log('📊 Reading session completed, refreshing stats...');
+      setTimeout(() => fetchLatestData('session-completed'), 1000);
+    };
 
-    // Also fetch immediately on mount
-    fetchLatestData();
-
-    return () => clearInterval(pollInterval);
-  }, [stats, getReadingStats]);
-
-  // 🔔 Listen for gamification updates and refresh data automatically
-  useEffect(() => {
-    console.log('🔧 QuickStatsOverview: Setting up gamificationUpdate event listener');
-    console.log('🔧 QuickStatsOverview: Component mounted and listening on window object');
-
-    const handleGamificationUpdate = async (event) => {
+    // Event handler for gamification updates
+    const handleGamificationUpdate = (event) => {
       console.log('🔔 QuickStatsOverview: *** RECEIVED GAMIFICATION UPDATE EVENT ***', event.detail);
-
-      // Wait a bit for server to process the action before fetching
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Re-fetch breakdown data when gamification updates occur
-      try {
-        setRefreshing(true);
-        console.log('📊 QuickStatsOverview: Auto-refreshing after gamification update...');
-        const response = await API.get('/api/gamification/actions/breakdown');
-        const { categories, breakdown } = response.data;
-
-        const serverNotesPoints2 = categories?.notes || 0;
-        const localNotesCount2 = typeof stats?.notesCreated === 'number' ? stats.notesCreated : 0;
-        const localNotesPoints2 = localNotesCount2 * NOTES_POINTS_PER;
-
-        const noteActions2 = breakdown.find(b => b.action === 'note_created');
-        const serverNotesCount2 = noteActions2?.count || 0;
-        const sessionActions2 = breakdown.find(b => b.action === 'reading_session_completed');
-        const serverSessionCount2 = sessionActions2?.count || 0;
-
-        let localSessionCount2 = 0;
-        try {
-          const rs2 = typeof getReadingStats === 'function' ? getReadingStats() : null;
-          localSessionCount2 = rs2?.totalSessions || 0;
-        } catch {}
-
-        setNotesPoints(Math.max(serverNotesPoints2, localNotesPoints2));
-        setNotesCount(Math.max(serverNotesCount2, localNotesCount2));
-        setReadingSessionsCount(Math.max(serverSessionCount2, localSessionCount2));
-
-        console.log('✅ QuickStatsOverview: Auto-refresh completed', {
-          action: event.detail.action,
-          notesPoints: categories?.notes || 0,
-          notesCount: noteActions2?.count || 0,
-          sessionCount: sessionActions2?.count || 0
-        });
-      } catch (error) {
-        console.error('❌ QuickStatsOverview: Auto-refresh failed:', error);
-      } finally {
-        setRefreshing(false);
-      }
+      setTimeout(() => fetchLatestData('gamification-update'), 1000);
     };
 
+    // Register event listeners
+    window.addEventListener('readingSessionCompleted', handleReadingSessionCompleted);
     window.addEventListener('gamificationUpdate', handleGamificationUpdate);
-    console.log('👂 QuickStatsOverview: Listening for gamificationUpdate events');
 
+    // Initial fetch on mount
+    fetchLatestData('mount');
+
+    // Poll every 60 seconds (reduced from 30 to prevent rate limiting)
+    pollInterval = setInterval(() => fetchLatestData('auto-poll'), 60000);
+
+    // Cleanup function
     return () => {
+      isMounted = false;
+      clearInterval(pollInterval);
+      window.removeEventListener('readingSessionCompleted', handleReadingSessionCompleted);
       window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
-      console.log('👋 QuickStatsOverview: Stopped listening for gamificationUpdate events');
     };
-  }, []);
+  }, []); // Empty dependency array - only run once on mount
+
+  // ✅ REMOVED DUPLICATE: The event listener is now handled in the consolidated useEffect above
 
   useEffect(() => {
     if (stats) setLoading(false);
