@@ -631,7 +631,7 @@ const RecentAchievements = () => {
           <div className="achievement-placeholder">
             <span style={{ fontSize: '2rem', opacity: 0.5 }}>🎯</span>
             <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>
-              Complete actions to unlock achievements!
+              COMPLETE ACTIONS TO UNLOCK ACHIEVEMENTS!
             </span>
           </div>
         )}
