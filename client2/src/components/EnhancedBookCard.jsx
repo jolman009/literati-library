@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 // Import all MD3 components from the Material3 index
 import { 
   MD3Card, 
@@ -31,14 +31,15 @@ export default function EnhancedBookCard({
   view = 'grid'
 }) {
   const { actualTheme } = useMaterial3Theme();
-  const { 
-    startReadingSession, 
+  const {
+    startReadingSession,
     stopReadingSession,
     pauseReadingSession,
     resumeReadingSession,
-    activeSession 
+    activeSession
   } = useReadingSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef(null);
 
   // Debug logging to help with troubleshooting
   React.useEffect(() => {
@@ -224,6 +225,7 @@ export default function EnhancedBookCard({
 
       {/* Menu Button - Positioned outside the cover container to avoid clipping */}
       <button
+          ref={menuButtonRef}
           className="book-menu-button"
           onClick={(e) => {
             e.stopPropagation();
@@ -277,9 +279,8 @@ export default function EnhancedBookCard({
               style={{
                 position: 'fixed',
                 inset: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                zIndex: 105,
-                backdropFilter: 'blur(2px)'
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                zIndex: 105
               }}
               onClick={() => setMenuOpen(false)}
             />
@@ -288,18 +289,20 @@ export default function EnhancedBookCard({
             <div
               className="book-actions-menu book-menu-dropdown"
               style={{
-                position: 'absolute',
-                top: '50px',
-                right: '8px',
+                position: 'fixed',
+                top: `${menuButtonRef.current?.getBoundingClientRect().bottom + 10 || 60}px`,
+                right: `${window.innerWidth - (menuButtonRef.current?.getBoundingClientRect().right || window.innerWidth - 8)}px`,
                 minWidth: '200px',
-                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                background: 'rgb(var(--md-sys-color-surface-container))',
-                borderRadius: 'var(--md-sys-shape-corner-large)',
-                boxShadow: 'var(--md-sys-elevation-level4)',
-                border: '1px solid rgb(var(--md-sys-color-outline-variant))',
+                backgroundColor: '#2c2c2e',
+                background: '#2c2c2e',
+                borderRadius: '16px',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 overflow: 'hidden',
                 zIndex: 110,
-                animation: 'md3-scale-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards',
+                isolation: 'isolate',
+                willChange: 'transform',
+                transform: 'translateZ(0)',
                 opacity: 1
               }}
             >
@@ -313,22 +316,22 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                  color: 'rgb(var(--md-sys-color-on-surface))',
+                  backgroundColor: '#2c2c2e',
+                  color: '#ffffff',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)',
+                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)',
                   borderRadius: '0'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant))';
+                  e.target.style.backgroundColor = '#3c3c3e';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                  e.target.style.backgroundColor = '#2c2c2e';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>📖</span>
@@ -346,23 +349,23 @@ export default function EnhancedBookCard({
                     width: '100%',
                     padding: '12px 16px',
                     border: 'none',
-                    backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                    color: 'rgb(var(--md-sys-color-primary))',
+                    backgroundColor: '#2c2c2e',
+                    color: '#6200ee',
                     textAlign: 'left',
                     cursor: 'pointer',
-                    fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                    fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '12px',
-                    transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                    transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'rgb(var(--md-sys-color-primary-container))';
-                    e.target.style.color = 'rgb(var(--md-sys-color-on-primary-container))';
+                    e.target.style.backgroundColor = '#3c3c3e';
+                    e.target.style.color = '#bb86fc';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
-                    e.target.style.color = 'rgb(var(--md-sys-color-primary))';
+                    e.target.style.backgroundColor = '#2c2c2e';
+                    e.target.style.color = '#6200ee';
                   }}
                 >
                   <span style={{ fontSize: '18px' }}>⏱️</span>
@@ -379,21 +382,21 @@ export default function EnhancedBookCard({
                       width: '100%',
                       padding: '12px 16px',
                       border: 'none',
-                      backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                      color: 'rgb(var(--md-sys-color-on-surface))',
+                      backgroundColor: '#2c2c2e',
+                      color: '#ffffff',
                       textAlign: 'left',
                       cursor: 'pointer',
-                      fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                      fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                      transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant))';
+                      e.target.style.backgroundColor = '#3c3c3e';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                      e.target.style.backgroundColor = '#2c2c2e';
                     }}
                   >
                     <span style={{ fontSize: '18px' }}>{activeSession?.isPaused ? '▶️' : '⏸️'}</span>
@@ -409,23 +412,23 @@ export default function EnhancedBookCard({
                       width: '100%',
                       padding: '12px 16px',
                       border: 'none',
-                      backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                      color: 'rgb(var(--md-sys-color-error))',
+                      backgroundColor: '#2c2c2e',
+                      color: '#cf6679',
                       textAlign: 'left',
                       cursor: 'pointer',
-                      fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                      fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '12px',
-                      transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                      transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error-container))';
-                      e.target.style.color = 'rgb(var(--md-sys-color-on-error-container))';
+                      e.target.style.backgroundColor = '#3c3c3e';
+                      e.target.style.color = '#ff8a80';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
-                      e.target.style.color = 'rgb(var(--md-sys-color-error))';
+                      e.target.style.backgroundColor = '#2c2c2e';
+                      e.target.style.color = '#cf6679';
                     }}
                   >
                     <span style={{ fontSize: '18px' }}>⏹️</span>
@@ -436,7 +439,7 @@ export default function EnhancedBookCard({
 
               <div style={{
                 height: '1px',
-                backgroundColor: 'rgb(var(--md-sys-color-outline-variant))',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 margin: '4px 0'
               }} />
 
@@ -450,21 +453,21 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                  color: 'rgb(var(--md-sys-color-on-surface))',
+                  backgroundColor: '#2c2c2e',
+                  color: '#ffffff',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-variant) / 0.12)';
+                  e.target.style.backgroundColor = '#3c3c3e';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
+                  e.target.style.backgroundColor = '#2c2c2e';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>✏️</span>
@@ -473,7 +476,7 @@ export default function EnhancedBookCard({
 
               <div style={{
                 height: '1px',
-                backgroundColor: 'rgb(var(--md-sys-color-outline-variant))',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 margin: '4px 0'
               }} />
 
@@ -487,23 +490,23 @@ export default function EnhancedBookCard({
                   width: '100%',
                   padding: '12px 16px',
                   border: 'none',
-                  backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                  color: 'rgb(var(--md-sys-color-error))',
+                  backgroundColor: '#2c2c2e',
+                  color: '#cf6679',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size)',
+                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)'
+                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-error-container))';
-                  e.target.style.color = 'rgb(var(--md-sys-color-on-error-container))';
+                  e.target.style.backgroundColor = '#3c3c3e';
+                  e.target.style.color = '#ff8a80';
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'rgb(var(--md-sys-color-surface-container))';
-                  e.target.style.color = 'rgb(var(--md-sys-color-error))';
+                  e.target.style.backgroundColor = '#2c2c2e';
+                  e.target.style.color = '#cf6679';
                 }}
               >
                 <span style={{ fontSize: '18px' }}>🗑️</span>
