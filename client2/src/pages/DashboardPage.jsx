@@ -365,6 +365,49 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     }
   }, [stats]);
 
+  // 🔄 Auto-refresh data from server every 30 seconds (cross-device sync)
+  useEffect(() => {
+    const fetchLatestData = async () => {
+      try {
+        const response = await API.get('/api/gamification/actions/breakdown');
+        const { categories, breakdown } = response.data;
+
+        const serverNotesPoints = categories?.notes || 0;
+        const noteActions = breakdown.find(b => b.action === 'note_created');
+        const serverNotesCount = noteActions?.count || 0;
+        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
+        const serverSessionCount = sessionActions?.count || 0;
+
+        let localSessionCount = 0;
+        try {
+          const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
+          localSessionCount = rs?.totalSessions || 0;
+        } catch {}
+
+        setNotesPoints(Math.max(serverNotesPoints, stats?.notesCreated * NOTES_POINTS_PER || 0));
+        setNotesCount(Math.max(serverNotesCount, stats?.notesCreated || 0));
+        setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
+        setTotalPointsFromServer(categories?.total || 0);
+
+        console.log('🔄 QuickStatsOverview: Auto-poll refresh completed', {
+          serverSessionCount,
+          localSessionCount,
+          finalSessionCount: Math.max(serverSessionCount, localSessionCount)
+        });
+      } catch (error) {
+        console.error('❌ Auto-poll refresh failed:', error);
+      }
+    };
+
+    // Poll every 30 seconds
+    const pollInterval = setInterval(fetchLatestData, 30000);
+
+    // Also fetch immediately on mount
+    fetchLatestData();
+
+    return () => clearInterval(pollInterval);
+  }, [stats, getReadingStats]);
+
   // 🔔 Listen for gamification updates and refresh data automatically
   useEffect(() => {
     console.log('🔧 QuickStatsOverview: Setting up gamificationUpdate event listener');
