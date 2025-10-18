@@ -1015,6 +1015,182 @@ class LiteraryMentor {
   selectQuestionsByDepth(questions, depth, context) {
     return questions.clarification.slice(0, 2);
   }
+
+  // ===== ENHANCED AI-POWERED INSIGHTS =====
+
+  /**
+   * Generate AI-powered summary of current reading progress
+   */
+  async generateBookSummary(bookId, currentProgress) {
+    try {
+      if (!AIKeyManager.hasAnyProvider()) {
+        return {
+          summary: `You're ${currentProgress}% through this book. Keep reading to unlock AI-powered insights!`,
+          type: 'progress'
+        };
+      }
+
+      const LLMProvider = await this.getLLMProvider();
+
+      // Fetch book details and user's highlights
+      const bookResponse = await API.get(`/books/${bookId}`);
+      const book = bookResponse.data;
+
+      // Get user's notes/highlights for this book
+      let highlights = [];
+      try {
+        const notesResponse = await API.get(`/notes?bookId=${bookId}`);
+        highlights = Array.isArray(notesResponse.data) ? notesResponse.data : notesResponse.data.notes || [];
+      } catch (error) {
+        console.log('No highlights found for book');
+      }
+
+      // Construct privacy-preserving AI prompt (no book metadata sent)
+      const prompt = `You are a literary mentor analyzing a reader's progress through their current book.
+
+The reader is ${currentProgress}% through their current read.
+
+${highlights.length > 0 ? `
+They have made ${highlights.length} highlights. Here are some examples:
+${highlights.slice(0, 5).map(h => `- "${h.content?.substring(0, 100) || h.text?.substring(0, 100)}"`).join('\n')}
+` : 'They haven\'t made any highlights yet.'}
+
+Generate a brief, insightful observation (2-3 sentences) that:
+1. Acknowledges their reading progress
+2. ${highlights.length > 0 ? 'Identifies themes or patterns in their highlighted passages' : 'Encourages active reading with highlights'}
+3. Suggests a next step for deeper engagement
+
+Keep it conversational and encouraging. Do NOT mention specific book titles or authors.`;
+
+      const aiResponse = await LLMProvider.generateCompletion(prompt, {
+        taskType: 'creative',
+        maxTokens: 150,
+        temperature: 0.7
+      });
+
+      return {
+        summary: aiResponse,
+        type: 'ai-generated',
+        bookTitle: book.title, // Kept locally for display, NOT sent to AI
+        progress: currentProgress,
+        highlightCount: highlights.length
+      };
+
+    } catch (error) {
+      console.error('AI summary generation failed:', error);
+      return {
+        summary: `You're making progress on your current book! ${currentProgress}% complete.`,
+        type: 'fallback'
+      };
+    }
+  }
+
+  /**
+   * Analyze user's highlights with AI to identify themes
+   */
+  async analyzeHighlights(bookId) {
+    try {
+      if (!AIKeyManager.hasAnyProvider()) {
+        return null;
+      }
+
+      const LLMProvider = await this.getLLMProvider();
+
+      // Fetch highlights
+      const notesResponse = await API.get(`/notes?bookId=${bookId}`);
+      const highlights = Array.isArray(notesResponse.data) ? notesResponse.data : notesResponse.data.notes || [];
+
+      if (highlights.length === 0) {
+        return {
+          insight: "Start highlighting key passages to unlock AI-powered theme analysis!",
+          type: 'prompt'
+        };
+      }
+
+      // Analyze highlights with AI
+      const highlightTexts = highlights.map(h => h.content || h.text).filter(Boolean).slice(0, 10);
+
+      const prompt = `Analyze these passages a reader has highlighted and identify the main theme or pattern:
+
+${highlightTexts.map((text, i) => `${i + 1}. "${text.substring(0, 150)}..."`).join('\n')}
+
+In 1-2 sentences, what themes or interests do these highlighted passages reveal about the reader's focus? Focus on analyzing the content patterns, not identifying the source material.`;
+
+      const aiResponse = await LLMProvider.generateCompletion(prompt, {
+        taskType: 'analytical',
+        maxTokens: 100,
+        temperature: 0.6
+      });
+
+      return {
+        insight: aiResponse,
+        type: 'theme-analysis',
+        highlightCount: highlights.length
+      };
+
+    } catch (error) {
+      console.error('Highlight analysis failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Generate personalized reading insights based on actual content
+   */
+  async generateSmartInsights(userId, currentBook) {
+    try {
+      const insights = [];
+
+      if (!currentBook) {
+        return [{
+          type: 'start',
+          icon: '📚',
+          message: 'Start reading a book to unlock personalized AI insights!',
+        }];
+      }
+
+      // Get AI summary of current reading
+      const bookSummary = await this.generateBookSummary(currentBook.id, currentBook.progress || 0);
+
+      if (bookSummary.type === 'ai-generated') {
+        insights.push({
+          type: 'ai-summary',
+          icon: '🧠',
+          message: bookSummary.summary,
+          metadata: {
+            progress: bookSummary.progress,
+            highlights: bookSummary.highlightCount
+          }
+        });
+      }
+
+      // Get highlight theme analysis
+      const highlightAnalysis = await this.analyzeHighlights(currentBook.id);
+
+      if (highlightAnalysis && highlightAnalysis.type === 'theme-analysis') {
+        insights.push({
+          type: 'theme',
+          icon: '💡',
+          message: highlightAnalysis.insight,
+        });
+      }
+
+      // Fallback to basic insights if AI fails
+      if (insights.length === 0) {
+        insights.push({
+          type: 'progress',
+          icon: '📖',
+          message: `You're ${currentBook.progress || 0}% through "${currentBook.title}". Keep going!`,
+        });
+      }
+
+      return insights;
+
+    } catch (error) {
+      console.error('Smart insights generation failed:', error);
+      return await this.generateDailyInsights(); // Fallback to original method
+    }
+  }
 }
 
 export default new LiteraryMentor();

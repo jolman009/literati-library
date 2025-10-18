@@ -35,24 +35,22 @@ const MentorPreviewCard = () => {
       const readingBook = books.find(b => b.is_reading);
       setCurrentBook(readingBook);
 
-      // Get today's insight
-      if (hasKeys && readingBook) {
+      // Get AI-powered smart insights
+      if (readingBook) {
         try {
-          const mentorData = await LiteraryMentor.initializeMentor(readingBook.id);
+          // Use new smart insights that analyze CONTENT, not just stats
+          const smartInsights = await LiteraryMentor.generateSmartInsights(null, readingBook);
 
-          // Extract the most relevant insight
-          if (mentorData.currentInsights && mentorData.currentInsights.length > 0) {
-            setInsight(mentorData.currentInsights[0]);
+          if (smartInsights && smartInsights.length > 0) {
+            // Show AI-generated content analysis first (not stats!)
+            const aiInsight = smartInsights.find(i => i.type === 'ai-summary' || i.type === 'theme');
+            setInsight(aiInsight || smartInsights[0]);
           } else {
-            setInsight({
-              type: 'welcome',
-              icon: '👋',
-              message: 'Start reading to unlock personalized insights!',
-            });
+            setInsight(generateFallbackInsight());
           }
         } catch (error) {
-          console.log('Using fallback insight');
-          setInsight(generateFallbackInsight(readingBook));
+          console.log('Using fallback insight:', error);
+          setInsight(generateFallbackInsight());
         }
       } else if (!hasKeys) {
         setInsight({
@@ -80,7 +78,7 @@ const MentorPreviewCard = () => {
     }
   };
 
-  const generateFallbackInsight = (book) => {
+  const generateFallbackInsight = () => {
     const tips = [
       { icon: '📖', message: 'Reading regularly improves comprehension by up to 50%!' },
       { icon: '🎯', message: 'Set a daily reading goal to build momentum!' },
