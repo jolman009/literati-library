@@ -131,11 +131,11 @@ pre {
    CONTAINER & WRAPPER FIXES
    ================================================ */
 
-/* Constrain all containers */
-.container,
-.Container,
-[class*="container"]:not(.simple-scroll-container),
-[class*="Container"] {
+/* Constrain all containers (except login container) */
+.container:not(.login-container),
+.Container:not(.login-container),
+[class*="container"]:not(.simple-scroll-container):not([class*="login"]):not(.login-container),
+[class*="Container"]:not([class*="login"]):not(.login-container) {
   max-width: 100vw !important;
   overflow-x: hidden !important;
   padding-left: max(16px, env(safe-area-inset-left)) !important;
@@ -148,11 +148,11 @@ pre {
   max-width: none !important;
 }
 
-/* Constrain all wrappers */
-.wrapper,
-.Wrapper,
-[class*="wrapper"],
-[class*="Wrapper"] {
+/* Constrain all wrappers (except login content wrapper) */
+.wrapper:not(.login-content-wrapper),
+.Wrapper:not(.login-content-wrapper),
+[class*="wrapper"]:not([class*="login"]):not(.login-content-wrapper),
+[class*="Wrapper"]:not([class*="login"]):not(.login-content-wrapper) {
   max-width: 100vw !important;
   overflow-x: hidden !important;
 }
@@ -188,11 +188,11 @@ nav ol,
    CARD & MODAL FIXES
    ================================================ */
 
-/* Constrain all cards */
-[class*="card"],
-[class*="Card"],
-.card,
-.Card {
+/* Constrain all cards (except login cards which have their own constraints) */
+[class*="card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced),
+[class*="Card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced),
+.card:not(.login-card):not(.login-card-enhanced),
+.Card:not(.login-card):not(.login-card-enhanced) {
   max-width: 100% !important;
   overflow-x: hidden !important;
 }

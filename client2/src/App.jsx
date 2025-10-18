@@ -59,7 +59,7 @@ import NoteSyncListener from './components/NoteSyncListener';
 
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
-import MD3Login from './pages/MD3Login';
+import Login from './pages/Login';
 
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
@@ -161,7 +161,7 @@ const AppRoutes = () => {
           </Suspense>
         </ErrorBoundary>
       } />
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <MD3Login />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
 
       <Route element={<ProtectedAppLayout />}>
         <Route path="/dashboard" element={
