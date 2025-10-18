@@ -193,8 +193,7 @@ app.use('/api/auth', rateLimitSuite.auth, slowDownSuite.auth);
 app.use('/notes', notesRouter(authenticateTokenEnhanced));
 app.use('/reading', readingRouter(authenticateTokenEnhanced));
 // Gamification endpoints with specialized rate limiting
-app.use('/api/gamification', rateLimitSuite.gamification);
-app.use('/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
+app.use('/api/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
 
 // Optional: preserve your older client that calls POST /api/reading-session
 registerLegacyReadingEndpoints(app, authenticateTokenEnhanced);
