@@ -8,10 +8,8 @@ import {
   MD3Dialog,
   useSnackbar
 } from './Material3';
-import '../styles/library-menu-fix.css';
 import { MD3StatusBadge } from './Material3/MD3StatusBadge';
 import { BookCoverManager } from './BookCoverManager';
-import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import './EnhancedBookCard.css';
 
@@ -30,7 +28,6 @@ export default function EnhancedBookCard({
   onSelect,
   view = 'grid'
 }) {
-  const { actualTheme } = useMaterial3Theme();
   const {
     startReadingSession,
     stopReadingSession,
@@ -40,20 +37,6 @@ export default function EnhancedBookCard({
   } = useReadingSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef(null);
-
-  // Theme-aware menu colors
-  const menuColors = {
-    background: actualTheme === 'dark' ? '#2c2c2e' : '#f5f5f5',
-    backgroundHover: actualTheme === 'dark' ? '#3c3c3e' : '#e8e8e8',
-    text: actualTheme === 'dark' ? '#ffffff' : '#000000',
-    textSecondary: actualTheme === 'dark' ? '#b0b0b0' : '#666666',
-    primary: actualTheme === 'dark' ? '#bb86fc' : '#6200ee',
-    primaryHover: actualTheme === 'dark' ? '#d0a9ff' : '#7c4dff',
-    error: actualTheme === 'dark' ? '#cf6679' : '#b00020',
-    errorHover: actualTheme === 'dark' ? '#ff8a80' : '#cf6679',
-    border: actualTheme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.12)',
-    divider: actualTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
-  };
 
   // Debug logging to help with troubleshooting
   React.useEffect(() => {
@@ -290,240 +273,92 @@ export default function EnhancedBookCard({
             {/* Backdrop to close menu */}
             <div
               className="menu-backdrop"
-              style={{
-                position: 'fixed',
-                inset: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                zIndex: 105
-              }}
               onClick={() => setMenuOpen(false)}
             />
-            
+
             {/* Menu Items */}
             <div
-              className="book-actions-menu book-menu-dropdown"
+              className="book-actions-menu"
               style={{
-                position: 'fixed',
                 top: `${menuButtonRef.current?.getBoundingClientRect().bottom + 10 || 60}px`,
-                right: `${window.innerWidth - (menuButtonRef.current?.getBoundingClientRect().right || window.innerWidth - 8)}px`,
-                minWidth: '200px',
-                backgroundColor: menuColors.background,
-                background: menuColors.background,
-                borderRadius: '16px',
-                boxShadow: actualTheme === 'dark' ? '0 8px 32px rgba(0, 0, 0, 0.6)' : '0 8px 32px rgba(0, 0, 0, 0.15)',
-                border: `1px solid ${menuColors.border}`,
-                overflow: 'hidden',
-                zIndex: 110,
-                isolation: 'isolate',
-                willChange: 'transform',
-                transform: 'translateZ(0)',
-                opacity: 1
+                right: `${window.innerWidth - (menuButtonRef.current?.getBoundingClientRect().right || window.innerWidth - 8)}px`
               }}
             >
               <button
+                className="book-menu-item"
                 onClick={(e) => {
                   e.stopPropagation();
                   setMenuOpen(false);
                   onRead?.(book) || onOpen?.(book);
                 }}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: 'none',
-                  backgroundColor: menuColors.background,
-                  color: menuColors.text,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)',
-                  borderRadius: '0'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = menuColors.backgroundHover;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = menuColors.background;
-                }}
               >
-                <span style={{ fontSize: '18px' }}>📖</span>
+                <span className="book-menu-item__icon">📖</span>
                 Open Book
               </button>
 
               {/* Reading Session Controls Section */}
               {!activeSession || activeSession.book.id !== book.id ? (
                 <button
+                  className="book-menu-item book-menu-item--primary"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleStartReadingSession();
                   }}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: 'none',
-                    backgroundColor: menuColors.background,
-                    color: menuColors.primary,
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = menuColors.backgroundHover;
-                    e.target.style.color = menuColors.primaryHover;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = menuColors.background;
-                    e.target.style.color = menuColors.primary;
-                  }}
                 >
-                  <span style={{ fontSize: '18px' }}>⏱️</span>
+                  <span className="book-menu-item__icon">⏱️</span>
                   Start Reading Session
                 </button>
               ) : (
                 <>
                   <button
+                    className="book-menu-item"
                     onClick={(e) => {
                       e.stopPropagation();
                       handlePauseResumeSession();
                     }}
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      border: 'none',
-                      backgroundColor: menuColors.background,
-                      color: menuColors.text,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = menuColors.backgroundHover;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = menuColors.background;
-                    }}
                   >
-                    <span style={{ fontSize: '18px' }}>{activeSession?.isPaused ? '▶️' : '⏸️'}</span>
+                    <span className="book-menu-item__icon">{activeSession?.isPaused ? '▶️' : '⏸️'}</span>
                     {activeSession?.isPaused ? 'Resume Session' : 'Pause Session'}
                   </button>
 
                   <button
+                    className="book-menu-item book-menu-item--error"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEndReadingSession();
                     }}
-                    style={{
-                      width: '100%',
-                      padding: '12px 16px',
-                      border: 'none',
-                      backgroundColor: menuColors.background,
-                      color: menuColors.error,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = menuColors.backgroundHover;
-                      e.target.style.color = menuColors.errorHover;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = menuColors.background;
-                      e.target.style.color = menuColors.error;
-                    }}
                   >
-                    <span style={{ fontSize: '18px' }}>⏹️</span>
+                    <span className="book-menu-item__icon">⏹️</span>
                     End Reading Session
                   </button>
                 </>
               )}
 
-              <div style={{
-                height: '1px',
-                backgroundColor: menuColors.divider,
-                margin: '4px 0'
-              }} />
+              <div className="book-menu-divider" />
 
               <button
+                className="book-menu-item"
                 onClick={(e) => {
                   e.stopPropagation();
                   setMenuOpen(false);
                   onEdit?.(book);
                 }}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: 'none',
-                  backgroundColor: menuColors.background,
-                  color: menuColors.text,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = menuColors.backgroundHover;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = menuColors.background;
-                }}
               >
-                <span style={{ fontSize: '18px' }}>✏️</span>
+                <span className="book-menu-item__icon">✏️</span>
                 Edit Book
               </button>
 
-              <div style={{
-                height: '1px',
-                backgroundColor: menuColors.divider,
-                margin: '4px 0'
-              }} />
+              <div className="book-menu-divider" />
 
               <button
+                className="book-menu-item book-menu-item--error"
                 onClick={(e) => {
                   e.stopPropagation();
                   setMenuOpen(false);
                   onDelete?.(book);
                 }}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: 'none',
-                  backgroundColor: menuColors.background,
-                  color: menuColors.error,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  fontSize: 'var(--md-sys-typescale-body-medium-font-size, 14px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  transition: 'background-color var(--md-sys-motion-duration-short3, 200ms) var(--md-sys-motion-easing-standard, ease)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = menuColors.backgroundHover;
-                  e.target.style.color = menuColors.errorHover;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = menuColors.background;
-                  e.target.style.color = menuColors.error;
-                }}
               >
-                <span style={{ fontSize: '18px' }}>🗑️</span>
+                <span className="book-menu-item__icon">🗑️</span>
                 Delete Book
               </button>
             </div>
