@@ -5,7 +5,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates';
 import API from '../config/api';
-import '../styles/library-menu-fix.css';
+import '../components/EnhancedBookCard.css';
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
@@ -576,21 +576,11 @@ const LibraryPage = () => {
                           
                           {/* Menu */}
                           <div
-                            className="book-menu-dropdown"
+                            className="book-actions-menu"
                             style={{
                               position: 'absolute',
                               top: '50px',
-                              right: '8px',
-                              minWidth: '200px',
-                              backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
-                              background: 'rgb(var(--md-sys-color-surface-container))',
-                              borderRadius: 'var(--md3-shape-corner-large)',
-                              boxShadow: 'var(--md3-elevation-3)',
-                              border: '1px solid var(--md3-outline-variant)',
-                              overflow: 'hidden',
-                              zIndex: 110,
-                              animation: 'fadeIn 0.2s ease',
-                              opacity: 1
+                              right: '8px'
                             }}
                           >
                             {/* Reading Session Controls */}
@@ -598,164 +588,64 @@ const LibraryPage = () => {
                               <>
                                 {isPaused ? (
                                   <button
+                                    className="book-menu-item"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleResumeSession();
                                     }}
-                                    style={{
-                                      width: '100%',
-                                      padding: '12px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'var(--md3-surface-container)',
-                                      color: 'var(--md3-on-surface)',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '12px',
-                                      fontSize: '14px',
-                                      transition: 'background-color 0.15s ease',
-                                      borderRadius: '0'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.target.style.backgroundColor = 'var(--md3-surface-variant)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.target.style.backgroundColor = 'var(--md3-surface-container)';
-                                    }}
                                   >
-                                    ▶️ Resume Reading
+                                    <span className="book-menu-item__icon">▶️</span>
+                                    Resume Reading
                                   </button>
                                 ) : (
                                   <button
+                                    className="book-menu-item"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handlePauseSession();
                                     }}
-                                    style={{
-                                      width: '100%',
-                                      padding: '12px 16px',
-                                      border: 'none',
-                                      backgroundColor: 'var(--md3-surface-container)',
-                                      color: 'var(--md3-on-surface)',
-                                      textAlign: 'left',
-                                      cursor: 'pointer',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '12px',
-                                      fontSize: '14px',
-                                      transition: 'background-color 0.15s ease',
-                                      borderRadius: '0'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.target.style.backgroundColor = 'var(--md3-surface-variant)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.target.style.backgroundColor = 'var(--md3-surface-container)';
-                                    }}
                                   >
-                                    ⏸️ Pause Reading
+                                    <span className="book-menu-item__icon">⏸️</span>
+                                    Pause Reading
                                   </button>
                                 )}
                                 <button
+                                  className="book-menu-item book-menu-item--error"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleEndSession();
                                   }}
-                                  style={{
-                                    width: '100%',
-                                    padding: '12px 16px',
-                                    border: 'none',
-                                    backgroundColor: 'var(--md3-surface-container)',
-                                    color: 'var(--md3-error)',
-                                    textAlign: 'left',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px',
-                                    fontSize: '14px',
-                                    transition: 'background-color 0.15s ease',
-                                    borderRadius: '0'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.target.style.backgroundColor = 'var(--md3-error-container)';
-                                    e.target.style.color = 'var(--md3-on-error-container)';
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.target.style.backgroundColor = 'var(--md3-surface-container)';
-                                    e.target.style.color = 'var(--md3-error)';
-                                  }}
                                 >
-                                  ⏹️ End Session
+                                  <span className="book-menu-item__icon">⏹️</span>
+                                  End Session
                                 </button>
                               </>
                             ) : (
                               <button
+                                className="book-menu-item book-menu-item--primary"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleStartSession(book);
                                 }}
-                                style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
-                                  border: 'none',
-                                  backgroundColor: 'var(--md3-surface-container)',
-                                  color: 'var(--md3-primary)',
-                                  textAlign: 'left',
-                                  cursor: 'pointer',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '12px',
-                                  fontSize: '14px',
-                                  fontWeight: '500',
-                                  transition: 'background-color 0.15s ease',
-                                  borderRadius: '0'
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.target.style.backgroundColor = 'var(--md3-primary-container)';
-                                  e.target.style.color = 'var(--md3-on-primary-container)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.target.style.backgroundColor = 'var(--md3-surface-container)';
-                                  e.target.style.color = 'var(--md3-primary)';
-                                }}
                               >
-                                📖 Start Reading Session
+                                <span className="book-menu-item__icon">📖</span>
+                                Start Reading Session
                               </button>
                             )}
-                            
-                            <div style={{ height: '1px', backgroundColor: 'var(--md3-outline-variant)', margin: '8px 0' }} />
-                            
+
+                            <div className="book-menu-divider" />
+
                             {/* Other actions */}
                             <button
+                              className="book-menu-item"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleRead(book);
                                 setOpenMenuBookId(null);
                               }}
-                              style={{
-                                width: '100%',
-                                padding: '12px 16px',
-                                border: 'none',
-                                backgroundColor: 'var(--md3-surface-container)',
-                                color: 'var(--md3-on-surface)',
-                                textAlign: 'left',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                fontSize: '14px',
-                                transition: 'background-color 0.15s ease',
-                                borderRadius: '0'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = 'var(--md3-surface-variant)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = 'var(--md3-surface-container)';
-                              }}
                             >
-                              📚 Open Book
+                              <span className="book-menu-item__icon">📚</span>
+                              Open Book
                             </button>
                           </div>
                         </>
