@@ -8,6 +8,7 @@ import {
   MD3Dialog,
   useSnackbar
 } from './Material3';
+import '../styles/library-menu-fix.css';
 import { MD3StatusBadge } from './Material3/MD3StatusBadge';
 import { BookCoverManager } from './BookCoverManager';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
@@ -285,21 +286,21 @@ export default function EnhancedBookCard({
             
             {/* Menu Items */}
             <div
-              className="book-actions-menu"
+              className="book-actions-menu book-menu-dropdown"
               style={{
                 position: 'absolute',
                 top: '50px',
                 right: '8px',
                 minWidth: '200px',
                 backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
+                background: 'rgb(var(--md-sys-color-surface-container))',
                 borderRadius: 'var(--md-sys-shape-corner-large)',
                 boxShadow: 'var(--md-sys-elevation-level4)',
                 border: '1px solid rgb(var(--md-sys-color-outline-variant))',
                 overflow: 'hidden',
                 zIndex: 110,
                 animation: 'md3-scale-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized) forwards',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)'
+                opacity: 1
               }}
             >
               <button
@@ -1069,7 +1070,7 @@ const EnhancedBookCardWithCollections = ({
                 width: '100%',
                 padding: '12px 16px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontSize: '14px',
@@ -1087,7 +1088,7 @@ const EnhancedBookCardWithCollections = ({
                 width: '100%',
                 padding: '12px 16px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontSize: '14px',
@@ -1107,7 +1108,7 @@ const EnhancedBookCardWithCollections = ({
                 width: '100%',
                 padding: '12px 16px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontSize: '14px',
@@ -1125,7 +1126,7 @@ const EnhancedBookCardWithCollections = ({
                 width: '100%',
                 padding: '12px 16px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontSize: '14px',
@@ -1145,7 +1146,7 @@ const EnhancedBookCardWithCollections = ({
                 width: '100%',
                 padding: '12px 16px',
                 border: 'none',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontSize: '14px',

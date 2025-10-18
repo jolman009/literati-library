@@ -5,6 +5,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates';
 import API from '../config/api';
+import '../styles/library-menu-fix.css';
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
@@ -575,18 +576,21 @@ const LibraryPage = () => {
                           
                           {/* Menu */}
                           <div
+                            className="book-menu-dropdown"
                             style={{
                               position: 'absolute',
                               top: '50px',
                               right: '8px',
                               minWidth: '200px',
-                              backgroundColor: 'var(--md3-surface-container)',
+                              backgroundColor: 'rgb(var(--md-sys-color-surface-container))',
+                              background: 'rgb(var(--md-sys-color-surface-container))',
                               borderRadius: 'var(--md3-shape-corner-large)',
                               boxShadow: 'var(--md3-elevation-3)',
                               border: '1px solid var(--md3-outline-variant)',
                               overflow: 'hidden',
                               zIndex: 110,
-                              animation: 'fadeIn 0.2s ease'
+                              animation: 'fadeIn 0.2s ease',
+                              opacity: 1
                             }}
                           >
                             {/* Reading Session Controls */}
