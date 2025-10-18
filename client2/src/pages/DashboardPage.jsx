@@ -640,7 +640,7 @@ const RecentAchievements = () => {
   );
 };
 
-// Currently Reading Section Component
+// Currently Reading Section Componentss
 const CurrentlyReading = () => {
   const { activeSession } = useReadingSession(); // Listen to session changes
   const navigate = useNavigate();
