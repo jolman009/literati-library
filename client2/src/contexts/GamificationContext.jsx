@@ -1,6 +1,7 @@
 // src/contexts/GamificationContext.jsx - FIXED VERSION
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import API from '../config/api';
 
 // 🔧 ADDITIONAL IMPORT CHECK - Make sure React hooks are available
 if (!useEffect) {
@@ -121,6 +122,12 @@ export const GamificationProvider = ({ children }) => {
       if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
         console.log('🔄 Switching to offline mode due to auth issues');
         setOfflineMode(true);
+        return null;
+      }
+
+      // For 429 (rate limit), don't go offline - just skip this request
+      if (error.message?.includes('429') || error.message?.includes('Too Many Requests')) {
+        console.log('⏸️ Rate limited - skipping this request but staying online');
         return null;
       }
 
@@ -333,6 +340,12 @@ export const GamificationProvider = ({ children }) => {
       return;
     }
 
+    // 🔧 FIX: Force offline mode to false if we have a token when tracking
+    if (token && offlineMode) {
+      console.log('🔧 GamificationContext: Forcing offline mode to false (have token)');
+      setOfflineMode(false);
+    }
+
     console.log(`🎯 GamificationContext: Tracking action: ${actionType}`, data);
     console.log(`🎯 GamificationContext: User ID: ${user.id}, Token exists: ${!!token}`);
 
@@ -440,9 +453,12 @@ export const GamificationProvider = ({ children }) => {
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
 
-    console.log(`🔍 GamificationContext: Sync check - offlineMode: ${offlineMode}, hasToken: ${!!token}, isLocalOnly: ${localOnlyActions.includes(actionType)}`);
+    // 🔧 FIX: Use a variable to track if we should sync, don't rely on state
+    const shouldSyncToServer = token && !localOnlyActions.includes(actionType);
 
-    if (!offlineMode && token && !localOnlyActions.includes(actionType)) {
+    console.log(`🔍 GamificationContext: Sync check - offlineMode: ${offlineMode}, hasToken: ${!!token}, isLocalOnly: ${localOnlyActions.includes(actionType)}, willSync: ${shouldSyncToServer}`);
+
+    if (shouldSyncToServer) {
       console.log(`🌐 GamificationContext: Starting server sync for ${actionType}...`);
       // ✅ Wrap in Promise to ensure async errors don't bubble up
       Promise.resolve().then(async () => {
@@ -472,7 +488,7 @@ export const GamificationProvider = ({ children }) => {
         console.error(`❌ Unhandled promise rejection in trackAction:`, err);
       });
     } else {
-      console.log(`⏭️ GamificationContext: Skipping server sync for ${actionType} (offline: ${offlineMode}, token: ${!!token}, localOnly: ${localOnlyActions.includes(actionType)})`);
+      console.log(`⏭️ GamificationContext: Skipping server sync for ${actionType} (hasToken: ${!!token}, localOnly: ${localOnlyActions.includes(actionType)})`);
     }
 
     // Check for achievement unlocks
