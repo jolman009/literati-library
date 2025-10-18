@@ -730,6 +730,15 @@ export const GamificationProvider = ({ children }) => {
     LEVEL_THRESHOLDS
   };
 
+  // 🔍 DEBUG: Log context value on every render
+  console.log('🎮 GamificationContext: Providing value:', {
+    stats,
+    loading,
+    offlineMode,
+    hasUser: !!user,
+    hasToken: !!token
+  });
+
   return (
     <GamificationContext.Provider value={value}>
       {children}
