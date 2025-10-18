@@ -29,7 +29,7 @@ jobs:
         if: matrix.component != 'ai-service'
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version-file: '.nvmrc'
 
       - name: Setup Python (for ai-service)
         if: matrix.component == 'ai-service'
@@ -37,11 +37,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Setup pnpm
+      - name: Enable Corepack (pnpm)
         if: matrix.component != 'ai-service'
-        uses: pnpm/action-setup@v2
-        with:
-          version: '8.x'
+        run: corepack enable && corepack prepare pnpm@8.15.6 --activate
 
       - name: Update Node.js Dependencies
         if: matrix.component != 'ai-service'
@@ -127,12 +125,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version-file: '.nvmrc'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: '8.x'
+      - name: Enable Corepack (pnpm)
+        run: corepack enable && corepack prepare pnpm@8.15.6 --activate
 
       - name: Audit Client Dependencies
         working-directory: ./client2

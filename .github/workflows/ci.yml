@@ -30,12 +30,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: client2/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: ${{ env.PNPM_VERSION }}
 
@@ -104,12 +104,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: server2/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: ${{ env.PNPM_VERSION }}
 

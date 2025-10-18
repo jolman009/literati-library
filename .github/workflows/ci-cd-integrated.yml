@@ -45,16 +45,16 @@ jobs:
           fetch-depth: 0
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: ${{ env.PNPM_VERSION }}
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       # Client Testing & Security
       - name: 📦 Install Client Dependencies
@@ -166,16 +166,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: ${{ env.PNPM_VERSION }}
 
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install Dependencies
         working-directory: ./client2
@@ -221,7 +221,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: ${{ env.PNPM_VERSION }}
 

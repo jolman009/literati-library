@@ -1,0 +1,30 @@
+name: Node Version Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  verify-nvmrc:
+    name: Verify .nvmrc uses Node 22
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check .nvmrc version
+        shell: bash
+        run: |
+          if [ ! -f .nvmrc ]; then
+            echo ".nvmrc not found at repo root" >&2
+            exit 1
+          fi
+          V=$(tr -d '\r' < .nvmrc)
+          echo "Detected .nvmrc: $V"
+          if [[ ! "$V" =~ ^22(\.|$) ]]; then
+            echo "Expected Node 22.x in .nvmrc, got: $V" >&2
+            exit 1
+          fi
+          echo "Node 22.x enforced by .nvmrc"

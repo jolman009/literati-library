@@ -28,16 +28,16 @@ jobs:
           git config --global init.defaultBranch main
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: latest
           
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install client dependencies
         working-directory: ./client2
@@ -68,16 +68,16 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: 🔧 Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: ./.github/actions/setup-pnpm-corepack
         with:
           version: latest
           
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
-          cache-dependency-path: 'client2/pnpm-lock.yaml'
+          cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: 📦 Install dependencies
         working-directory: ./client2
@@ -225,7 +225,7 @@ jobs:
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
 
       - name: 📦 Install Lighthouse CI
         run: npm install -g @lhci/cli@0.12.x
