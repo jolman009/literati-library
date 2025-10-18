@@ -86,13 +86,129 @@
   outline-offset: 2px;
 }
 
-/* Menu dropdown styling */
+/* ===== Menu Dropdown Styling ===== */
+
+/* Menu backdrop */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 105;
+}
+
+/* Menu container - LIGHT MODE */
 .book-actions-menu {
-  /* Ensure proper stacking */
-  z-index: 20;
-  
-  /* Smooth animation */
+  position: fixed;
+  min-width: 200px;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 110;
+  isolation: isolate;
+  will-change: transform;
+  transform: translateZ(0);
+  opacity: 1;
   transform-origin: top right;
+}
+
+/* Menu container - DARK MODE */
+@media (prefers-color-scheme: dark) {
+  .book-actions-menu {
+    background-color: #2c2c2e;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Menu item buttons - LIGHT MODE */
+.book-menu-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #000000;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 200ms ease;
+  border-radius: 0;
+}
+
+.book-menu-item:hover {
+  background-color: #e8e8e8;
+}
+
+/* Menu item buttons - DARK MODE */
+@media (prefers-color-scheme: dark) {
+  .book-menu-item {
+    background-color: #2c2c2e;
+    color: #ffffff;
+  }
+
+  .book-menu-item:hover {
+    background-color: #3c3c3e;
+  }
+}
+
+/* Primary action items (Start Reading Session) */
+.book-menu-item--primary {
+  color: #6200ee;
+}
+
+.book-menu-item--primary:hover {
+  color: #7c4dff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .book-menu-item--primary {
+    color: #bb86fc;
+  }
+
+  .book-menu-item--primary:hover {
+    color: #d0a9ff;
+  }
+}
+
+/* Error/destructive action items (Delete, End Session) */
+.book-menu-item--error {
+  color: #b00020;
+}
+
+.book-menu-item--error:hover {
+  color: #cf6679;
+}
+
+@media (prefers-color-scheme: dark) {
+  .book-menu-item--error {
+    color: #cf6679;
+  }
+
+  .book-menu-item--error:hover {
+    color: #ff8a80;
+  }
+}
+
+/* Menu dividers */
+.book-menu-divider {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.08);
+  margin: 4px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .book-menu-divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Menu item icon */
+.book-menu-item__icon {
+  font-size: 18px;
 }
 
 /* Progress bar enhancements */
