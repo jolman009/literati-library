@@ -172,3 +172,6 @@ workbox-*.js.map
 stats.html
 bundle-analyzer-report.html
 .env*.local
+
+# MD cleanup backup folder
+.md-cleanup-backup/
