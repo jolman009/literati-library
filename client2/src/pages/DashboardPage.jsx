@@ -295,6 +295,8 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
+  const [totalPointsFromServer, setTotalPointsFromServer] = useState(0);
+  const [totalMinutesRead, setTotalMinutesRead] = useState(0);
   const { getReadingStats } = useReadingSession();
   const NOTES_POINTS_PER = 15;
 
@@ -335,11 +337,13 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
         setNotesCount(Math.max(serverNotesCount, localNotesCount));
         setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
+        setTotalPointsFromServer(categories?.total || 0);
 
         console.log('✅ QuickStatsOverview: Data updated', {
           notesPoints: categories?.notes || 0,
           notesCount: noteActions?.count || 0,
           sessionCount: sessionActions?.count || 0,
+          totalPoints: categories?.total || 0,
           timestamp: new Date().toISOString()
         });
       } catch (error) {
@@ -347,6 +351,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         setNotesPoints(0);
         setNotesCount(0);
         setReadingSessionsCount(0);
+        setTotalPointsFromServer(0);
       }
     };
 
@@ -429,6 +434,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       try {
         const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
         setReadingSessionsCount(rs?.totalSessions || 0);
+        setTotalMinutesRead(rs?.totalMinutes || 0);
       } catch {}
     };
 
@@ -464,14 +470,29 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     return value > 0 ? `+${Math.min(Math.floor(value / 10) * 4, 15)}%` : '+0%';
   };
 
+  // Format minutes into readable time (e.g., "2h 30m" or "45m")
+  const formatTimeRead = (minutes) => {
+    if (minutes === 0) return '0m';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0 && mins > 0) {
+      return `${hours}h ${mins}m`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else {
+      return `${mins}m`;
+    }
+  };
+
   // 🔍 DEBUG: Log what we're about to display
   console.log('📊 QuickStatsOverview: Preparing stat cards with:', {
     booksRead: stats?.booksRead,
     totalPoints: stats?.totalPoints,
+    totalPointsFromServer,
     notesPoints,
     notesCount,
     readingSessionsCount,
-    pagesRead: stats?.pagesRead,
+    totalMinutesRead,
     displayStreak
   });
 
@@ -486,9 +507,9 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     },
     {
       icon: '⭐',
-      value: stats?.totalPoints || 0,
+      value: totalPointsFromServer || stats?.totalPoints || 0,
       label: 'Total Points',
-      growth: calculateGrowth(stats?.totalPoints || 0),
+      growth: calculateGrowth(totalPointsFromServer || stats?.totalPoints || 0),
       trend: 'up'
     },
     {
@@ -508,11 +529,12 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       trend: readingSessionsCount > 0 ? 'up' : 'neutral'
     },
     {
-      icon: '📖',
-      value: stats?.pagesRead || 0,
-      label: 'Pages Read',
-      growth: calculateGrowth(stats?.pagesRead || 0),
-      trend: 'up'
+      icon: '⏱️',
+      value: formatTimeRead(totalMinutesRead),
+      label: 'Time Read',
+      subtitle: totalMinutesRead > 0 ? `${totalMinutesRead} minutes` : '',
+      growth: totalMinutesRead > 0 ? `${totalMinutesRead}m` : '+0',
+      trend: totalMinutesRead > 0 ? 'up' : 'neutral'
     },
     {
       icon: '🔥',
