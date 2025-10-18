@@ -8,7 +8,7 @@
 /* Dark mode overrides for text fields */
 [data-theme="dark"] .md3-text-field__container,
 .dark .md3-text-field__container {
-  background-color: var(--md-sys-color-surface-container-highest) !important;
+  background-color: #3c3c3e !important;
 }
 
 [data-theme="dark"] .md3-text-field__input,
@@ -17,13 +17,13 @@
 .dark .md3-text-field input,
 [data-theme="dark"] .md3-text-field textarea,
 .dark .md3-text-field textarea {
-  color: var(--md-sys-color-on-surface-container) !important;
+  color: #e0e0e0 !important;
   background: transparent !important;
 }
 
 [data-theme="dark"] .md3-text-field__label,
 .dark .md3-text-field__label {
-  color: var(--md-sys-color-on-surface-variant) !important;
+  color: #b0b0b0 !important;
 }
 
 .md3-text-field {
@@ -411,18 +411,29 @@
    =============================================== */
 
 @media (prefers-color-scheme: dark) {
-  .md3-text-field--filled .md3-text-field__container {
-    background-color: rgb(var(--md-sys-color-surface-container-highest, 54 52 59));
+  .md3-text-field--filled .md3-text-field__container,
+  .md3-text-field__container {
+    background-color: #3c3c3e;
   }
-  
+
+  .md3-text-field__input,
+  .md3-text-field input,
+  .md3-text-field textarea {
+    color: #e0e0e0;
+  }
+
+  .md3-text-field__label {
+    color: #b0b0b0;
+  }
+
   .md3-text-field__input::-webkit-autofill,
   .md3-text-field__input::-webkit-autofill:hover,
   .md3-text-field__input::-webkit-autofill:focus {
-    -webkit-box-shadow: 0 0 0 1000px rgb(var(--md-sys-color-surface-container-highest, 54 52 59)) inset;
-    -webkit-text-fill-color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+    -webkit-box-shadow: 0 0 0 1000px #3c3c3e inset;
+    -webkit-text-fill-color: #e0e0e0;
   }
-  
+
   .md3-text-field--outlined .md3-text-field__label {
-    background-color: rgb(var(--md-sys-color-surface, 28 27 31));
+    background-color: #1c1b1f;
   }
 }
