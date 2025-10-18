@@ -657,9 +657,9 @@ export const GamificationProvider = ({ children }) => {
 
     try {
       // Fetch fresh data from server
-      const statsData = await makeSafeApiCall('/gamification/stats');
-      const achievementsData = await makeSafeApiCall('/gamification/achievements');
-      const goalsData = await makeSafeApiCall('/gamification/goals');
+      const statsData = await makeSafeApiCall('/api/gamification/stats');
+      const achievementsData = await makeSafeApiCall('/api/gamification/achievements');
+      const goalsData = await makeSafeApiCall('/api/gamification/goals');
 
       if (statsData) {
         const enhancedStats = {
@@ -716,7 +716,7 @@ export const GamificationProvider = ({ children }) => {
 
     try {
       // Fetch fresh stats from server
-      const statsData = await makeSafeApiCall('/gamification/stats');
+      const statsData = await makeSafeApiCall('/api/gamification/stats');
 
       if (statsData) {
         const enhancedStats = {
