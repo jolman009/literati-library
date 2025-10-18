@@ -5,6 +5,7 @@
   "private": true,
   "packageManager": "pnpm@8.15.6",
   "scripts": {
+    "preinstall": "node -e \"const ua=process.env.npm_config_user_agent||''; const ep=process.env.npm_execpath||''; if(!/pnpm/i.test(ua) && !/pnpm/i.test(ep)){console.error('This repository uses pnpm. Please run:'); console.error('  corepack enable && pnpm install'); process.exit(1)}\"",
     "test": "pnpm run test:all",
     "test:all": "pnpm run test:client && pnpm run test:server && pnpm run test:ai-service",
     "test:client": "cd client2 && pnpm run test:coverage",
@@ -42,6 +43,9 @@
     "overrides": {
       "pdfjs-dist": "5.3.93"
     }
+  },
+  "engines": {
+    "node": ">=22.19.0"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
