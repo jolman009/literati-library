@@ -83,7 +83,7 @@
 
 .login-content-wrapper {
   width: 100%;
-  max-width: 26rem;
+  max-width: 26rem !important;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -98,21 +98,21 @@
 /* Desktop and larger - keep it compact */
 @media (min-width: 768px) {
   .login-content-wrapper {
-    max-width: 24rem;
+    max-width: 24rem !important;
   }
 }
 
 /* Large screens - even more focused */
 @media (min-width: 1024px) {
   .login-content-wrapper {
-    max-width: 22rem;
+    max-width: 22rem !important;
   }
 }
 
 /* Extra large screens - maintain compact centered layout */
 @media (min-width: 1440px) {
   .login-content-wrapper {
-    max-width: 20rem;
+    max-width: 20rem !important;
   }
 }
 
@@ -646,7 +646,7 @@
   }
 
   .login-content-wrapper {
-    max-width: 100%;
+    max-width: 100% !important;
     padding: 0 0.5rem;
   }
 
@@ -685,7 +685,7 @@
   }
 
   .login-content-wrapper {
-    max-width: 480px;
+    max-width: 480px !important;
     padding: 0 1rem;
   }
 }
