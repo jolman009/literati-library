@@ -38,7 +38,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     if (isMobileView) {
       // Mobile: Position in bottom-right corner with padding
       const width = viewportWidth <= 480 ? 240 : 280;
-      const height = 220;
+      const height = viewportWidth <= 480 ? 200 : 220; // Smaller heights on mobile
       return {
         x: viewportWidth - width - 16,  // 16px from right edge
         y: viewportHeight - height - 16  // 16px from bottom edge
@@ -61,10 +61,11 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
       if (isMobileView) {
         // Mobile breakpoints: adjust widget size
+        // Smaller heights on mobile due to compact header (42px vs 52px)
         if (viewportWidth <= 480) {
-          setWidgetSize({ width: 240, height: 220 });
+          setWidgetSize({ width: 240, height: 200 });
         } else {
-          setWidgetSize({ width: 280, height: 240 });
+          setWidgetSize({ width: 280, height: 220 });
         }
       } else {
         // Desktop size
@@ -362,26 +363,39 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
             : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
           color: 'white',
-          padding: isMobile ? '10px 12px' : '12px 16px',
+          padding: isMobile ? '8px 10px' : '12px 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           cursor: dragging ? 'grabbing' : 'grab',
           borderRadius: isMobile ? '10px 10px 0 0' : '14px 14px 0 0',
-          userSelect: 'none'
+          userSelect: 'none',
+          minHeight: isMobile ? '42px' : '52px',
+          maxHeight: isMobile ? '42px' : '52px'
         }}
       >
-        <div>
+        <div style={{
+          overflow: 'hidden',
+          flex: 1,
+          minWidth: 0
+        }}>
           <h3 style={{
             margin: 0,
-            fontSize: isMobile ? '14px' : '16px',
-            fontWeight: '600'
+            fontSize: isMobile ? '11px' : '16px',
+            fontWeight: '600',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            lineHeight: isMobile ? '1.2' : '1.4'
           }}>
             {title}
           </h3>
           <span style={{
-            fontSize: isMobile ? '9px' : '10px',
-            opacity: 0.85
+            fontSize: isMobile ? '8px' : '10px',
+            opacity: 0.85,
+            lineHeight: '1.2',
+            display: 'block',
+            marginTop: isMobile ? '2px' : '4px'
           }}>
             {currentPage ? `Page ${currentPage}` : "Drag to move"}
           </span>
