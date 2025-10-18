@@ -602,14 +602,22 @@ const LibraryPage = () => {
                                       width: '100%',
                                       padding: '12px 16px',
                                       border: 'none',
-                                      backgroundColor: 'transparent',
+                                      backgroundColor: 'var(--md3-surface-container)',
                                       color: 'var(--md3-on-surface)',
                                       textAlign: 'left',
                                       cursor: 'pointer',
                                       display: 'flex',
                                       alignItems: 'center',
                                       gap: '12px',
-                                      fontSize: '14px'
+                                      fontSize: '14px',
+                                      transition: 'background-color 0.15s ease',
+                                      borderRadius: '0'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.target.style.backgroundColor = 'var(--md3-surface-variant)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.target.style.backgroundColor = 'var(--md3-surface-container)';
                                     }}
                                   >
                                     ▶️ Resume Reading
@@ -624,14 +632,22 @@ const LibraryPage = () => {
                                       width: '100%',
                                       padding: '12px 16px',
                                       border: 'none',
-                                      backgroundColor: 'transparent',
+                                      backgroundColor: 'var(--md3-surface-container)',
                                       color: 'var(--md3-on-surface)',
                                       textAlign: 'left',
                                       cursor: 'pointer',
                                       display: 'flex',
                                       alignItems: 'center',
                                       gap: '12px',
-                                      fontSize: '14px'
+                                      fontSize: '14px',
+                                      transition: 'background-color 0.15s ease',
+                                      borderRadius: '0'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.target.style.backgroundColor = 'var(--md3-surface-variant)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.target.style.backgroundColor = 'var(--md3-surface-container)';
                                     }}
                                   >
                                     ⏸️ Pause Reading
@@ -646,14 +662,24 @@ const LibraryPage = () => {
                                     width: '100%',
                                     padding: '12px 16px',
                                     border: 'none',
-                                    backgroundColor: 'transparent',
+                                    backgroundColor: 'var(--md3-surface-container)',
                                     color: 'var(--md3-error)',
                                     textAlign: 'left',
                                     cursor: 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '12px',
-                                    fontSize: '14px'
+                                    fontSize: '14px',
+                                    transition: 'background-color 0.15s ease',
+                                    borderRadius: '0'
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = 'var(--md3-error-container)';
+                                    e.target.style.color = 'var(--md3-on-error-container)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = 'var(--md3-surface-container)';
+                                    e.target.style.color = 'var(--md3-error)';
                                   }}
                                 >
                                   ⏹️ End Session
@@ -669,7 +695,7 @@ const LibraryPage = () => {
                                   width: '100%',
                                   padding: '12px 16px',
                                   border: 'none',
-                                  backgroundColor: 'transparent',
+                                  backgroundColor: 'var(--md3-surface-container)',
                                   color: 'var(--md3-primary)',
                                   textAlign: 'left',
                                   cursor: 'pointer',
@@ -677,7 +703,17 @@ const LibraryPage = () => {
                                   alignItems: 'center',
                                   gap: '12px',
                                   fontSize: '14px',
-                                  fontWeight: '500'
+                                  fontWeight: '500',
+                                  transition: 'background-color 0.15s ease',
+                                  borderRadius: '0'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.backgroundColor = 'var(--md3-primary-container)';
+                                  e.target.style.color = 'var(--md3-on-primary-container)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.backgroundColor = 'var(--md3-surface-container)';
+                                  e.target.style.color = 'var(--md3-primary)';
                                 }}
                               >
                                 📖 Start Reading Session
@@ -697,14 +733,22 @@ const LibraryPage = () => {
                                 width: '100%',
                                 padding: '12px 16px',
                                 border: 'none',
-                                backgroundColor: 'transparent',
+                                backgroundColor: 'var(--md3-surface-container)',
                                 color: 'var(--md3-on-surface)',
                                 textAlign: 'left',
                                 cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '12px',
-                                fontSize: '14px'
+                                fontSize: '14px',
+                                transition: 'background-color 0.15s ease',
+                                borderRadius: '0'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'var(--md3-surface-variant)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'var(--md3-surface-container)';
                               }}
                             >
                               📚 Open Book
