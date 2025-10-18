@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { gamificationAPI } from '../../config/api';
+import { useGamification } from '../../contexts/GamificationContext';
 import ContextDiagnostic from './components/ContextDiagnostic';
 
 
@@ -62,6 +63,7 @@ const useNoteForm = () => {
 
 // Custom hook for notes management
 const useNotes = (selectedBook, token) => {
+  const { trackAction } = useGamification();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -103,7 +105,7 @@ const useNotes = (selectedBook, token) => {
 
       // 🔧 NEW: Track note creation for gamification
       try {
-        await gamificationAPI.trackAction(token, 'note_created', {
+        await trackAction('note_created', {
           noteType: noteData.type,
           bookId: selectedBook.id,
           bookTitle: selectedBook.title
