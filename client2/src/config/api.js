@@ -70,7 +70,7 @@ export const gamificationAPI = {
         tags: data.tags || []
       };
 
-      const response = await API.post(`/books/${book_id}/notes`, backendData);
+      const response = await API.post(`/notes/book/${book_id}`, backendData);
       return response.data;
     } catch (error) {
       console.error('❌ Failed to create note:', error);
@@ -85,7 +85,7 @@ export const gamificationAPI = {
         return [];
       }
       
-      const response = await API.get(`/books/${bookId}/notes`);
+      const response = await API.get(`/notes/book/${bookId}`);
       return response.data || [];
     } catch (error) {
       console.error('❌ Failed to fetch notes:', error);
