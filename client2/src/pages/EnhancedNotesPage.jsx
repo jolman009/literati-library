@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
+import { useGamification } from '../contexts/GamificationContext';
 import { 
   MD3Card, 
   MD3Button,
@@ -501,6 +502,9 @@ const EnhancedNotesPage = () => {
     });
   };
   
+  // Ensure Dashboard stats update immediately after note creation
+  const { trackAction } = useGamification();
+
   const handleSaveNote = async (e) => {
     e.preventDefault();
     
@@ -529,7 +533,20 @@ const EnhancedNotesPage = () => {
           variant: 'success'
         });
       } else {
-        await API.post('/notes', noteData, { timeout: 30000 });
+        const response = await API.post('/notes', noteData, { timeout: 30000 });
+
+        // Track locally so Dashboard stats refresh without waiting for server breakdown
+        try {
+          const serverGamification = response?.data?.gamification;
+          await trackAction('note_created', {
+            noteId: response?.data?.id,
+            bookId: noteData.book_id,
+            noteLength: (noteData.content || '').length,
+            hasTags: Array.isArray(noteData.tags) && noteData.tags.length > 0
+          }, { serverSnapshot: serverGamification });
+        } catch (trackErr) {
+          console.warn('note_created local tracking failed (non-fatal):', trackErr);
+        }
         showSnackbar({
           message: 'Note created successfully!',
           variant: 'success'
