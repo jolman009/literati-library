@@ -1,5 +1,6 @@
 // Fixed BookStatus.jsx with proper exports for EnhancedBookLibraryApp integration
 import React, { useState } from 'react';
+import API from '../config/api';
 
 // Icons (you can replace these with your preferred icon library)
 const BookIcon = ({ className }) => (
@@ -140,9 +141,28 @@ export const BookStatusDropdown = ({ book, onStatusChange, className = "" }) => 
           break;
       }
 
-      if (onStatusChange) {
-        onStatusChange(updatedBook);
-      }
+      // Attempt to persist to backend so Dashboard/Currently Reading reflect changes
+      (async () => {
+        try {
+          await API.patch(`/books/${book.id}`, {
+            is_reading: updatedBook.is_reading,
+            completed: updatedBook.completed,
+            progress: updatedBook.progress ?? book.progress ?? 0,
+            last_opened: updatedBook.is_reading ? new Date().toISOString() : (book.last_opened || new Date().toISOString()),
+            status: newStatus
+          });
+          // Notify other parts of the app
+          window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'status_change', status: newStatus } }));
+          localStorage.setItem('books_updated', Date.now().toString());
+        } catch (e) {
+          // Non-fatal: keep UI responsive
+          console.warn('Failed to persist book status change:', e?.message || e);
+        } finally {
+          if (onStatusChange) {
+            onStatusChange(updatedBook);
+          }
+        }
+      })();
       
       setIsUpdating(false);
       setIsOpen(false);
@@ -235,9 +255,26 @@ export const QuickStatusActions = ({ book, onStatusChange, className = "" }) => 
         break;
     }
     
-    if (onStatusChange) {
-      onStatusChange(updatedBook);
-    }
+    // Try to persist quick action to backend too
+    (async () => {
+      try {
+        await API.patch(`/books/${book.id}`, {
+          is_reading: updatedBook.is_reading,
+          completed: updatedBook.completed,
+          progress: updatedBook.progress ?? book.progress ?? 0,
+          last_opened: updatedBook.is_reading ? new Date().toISOString() : (book.last_opened || new Date().toISOString()),
+          status: newStatus
+        });
+        window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'quick_status', status: newStatus } }));
+        localStorage.setItem('books_updated', Date.now().toString());
+      } catch (e) {
+        console.warn('Failed to persist quick status change:', e?.message || e);
+      } finally {
+        if (onStatusChange) {
+          onStatusChange(updatedBook);
+        }
+      }
+    })();
   };
 
   return (

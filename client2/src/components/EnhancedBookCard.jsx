@@ -221,49 +221,7 @@ export default function EnhancedBookCard({
       </div>
 
       {/* Menu Button - Positioned outside the cover container to avoid clipping */}
-      <button
-          ref={menuButtonRef}
-          className="book-menu-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(!menuOpen);
-          }}
-          aria-label="Book actions menu"
-          style={{
-            position: 'absolute',
-            top: '4px',
-            right: '4px',
-            width: '80px',
-            height: '40px',
-            borderRadius: '8px',
-            backgroundColor: '#ff0000',
-            border: '4px solid #ffffff',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            color: 'white',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            transition: 'all var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard)',
-            zIndex: 100,
-            opacity: 1,
-            visibility: 'visible'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = 'rgb(var(--md-sys-color-primary))';
-            e.target.style.transform = 'scale(1.1)';
-            e.target.style.boxShadow = '0 6px 16px rgba(0,0,0,0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            e.target.style.transform = 'scale(1)';
-            e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)';
-          }}
-        >
+      {/* Removed debug book-menu-button to avoid overlapping the play button */}
           MENU
         </button>
 
