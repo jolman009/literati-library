@@ -11,6 +11,7 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import PointsHistory from '../components/gamification/PointsHistory';
 import MentorPreviewCard from '../components/MentorPreviewCard';
+import { BookStatusBadge } from '../components/BookStatus';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -270,7 +271,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
 
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
-const QuickStatsOverview = ({ checkInStreak = 0 }) => {
+const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBooks = null, inProgressBooks = null }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const [loading, setLoading] = useState(!stats);
@@ -556,13 +557,18 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
     displayStreak
   });
 
+  // Prefer explicit props from Dashboard (books API), fallback to gamification stats
+  const booksCount = (typeof totalBooks === 'number') ? totalBooks : (stats?.booksRead || 0);
+  const booksCompleted = (typeof completedBooks === 'number') ? completedBooks : (stats?.booksCompleted || 0);
+  const booksInProgress = (typeof inProgressBooks === 'number') ? inProgressBooks : 0;
+
   const statCards = [
     {
       icon: '📚',
-      value: stats?.booksRead || 0,
+      value: booksCount,
       label: 'Books in Library',
-      subtitle: `${stats?.booksCompleted || 0} completed`,
-      growth: calculateGrowth(stats?.booksRead || 0),
+      subtitle: `${booksCompleted} completed • ${booksInProgress} in progress`,
+      growth: calculateGrowth(booksCount),
       trend: 'up'
     },
     {
@@ -821,21 +827,21 @@ const CurrentlyReading = () => {
   useEffect(() => {
     const fetchCurrentlyReading = async () => {
       try {
-        const token = localStorage.getItem('shelfquest_token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        // Use the API config for consistency
+        // Use the API config for consistency (auth via cookies supported)
         const response = await API.get('/books');
         const data = response.data;
 
         // Handle both array and object responses
         const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
 
-        // Filter for currently reading books
-        const readingBooks = booksArray.filter(book => book.is_reading);
+        // Filter for currently reading books (active or paused)
+        const readingBooks = booksArray.filter(book =>
+          book?.is_reading === true ||
+          book?.status === 'reading' ||
+          book?.status === 'in_progress' ||
+          book?.status === 'paused' ||
+          (!!book?.progress && !book?.completed && book?.status !== 'completed')
+        );
 
         // Also check localStorage for active reading session to ensure sync
         const savedSession = localStorage.getItem('active_reading_session');
@@ -871,20 +877,20 @@ const CurrentlyReading = () => {
   // Also listen for storage events to sync across tabs
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (e.key === 'active_reading_session') {
-        // Re-fetch data when reading session changes in another tab
+      if (!e || e.key === 'active_reading_session' || e.key === 'books_updated') {
+        // Re-fetch data when reading session or books update in another tab
         const fetchCurrentlyReading = async () => {
           try {
-            const token = localStorage.getItem('shelfquest_token');
-            if (!token) {
-              setLoading(false);
-              return;
-            }
-
             const response = await API.get('/books');
             const data = response.data;
             const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
-            const readingBooks = booksArray.filter(book => book.is_reading);
+            const readingBooks = booksArray.filter(book =>
+              book?.is_reading === true ||
+              book?.status === 'reading' ||
+              book?.status === 'in_progress' ||
+              book?.status === 'paused' ||
+              (!!book?.progress && !book?.completed && book?.status !== 'completed')
+            );
 
             const savedSession = localStorage.getItem('active_reading_session');
             if (savedSession) {
@@ -914,7 +920,13 @@ const CurrentlyReading = () => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    // Also refresh when direct book updates happen within this tab
+    const handleBookUpdated = () => handleStorageChange({ key: 'books_updated' });
+    window.addEventListener('bookUpdated', handleBookUpdated);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('bookUpdated', handleBookUpdated);
+    };
   }, []);
   
   if (loading) return <div className="section-card"><h3>Loading currently reading...</h3></div>;
@@ -933,7 +945,12 @@ const CurrentlyReading = () => {
             key={book.id}
             onClick={() => navigate(`/read/${book.id}`)}
             className="book-card"
+            style={{ position: 'relative' }}
           >
+            {/* Status badge (Reading / Paused / Completed) – moved to left */}
+            <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 2 }}>
+              <BookStatusBadge book={book} size="xs" />
+            </div>
             <div className="book-title">
               {book.title}
             </div>
@@ -1105,7 +1122,8 @@ const DashboardPage = () => {
       try {
         const response = await API.get('/books');
         const data = response.data;
-        const booksArray = Array.isArray(data.books) ? data.books : [];
+        // Handle both array and wrapped object response shapes
+        const booksArray = Array.isArray(data) ? data : (Array.isArray(data?.books) ? data.books : []);
         setBooks(booksArray);
       } catch (error) {
         console.error('Error loading books for dashboard:', error);
@@ -1121,7 +1139,12 @@ const DashboardPage = () => {
 
       <div className="dashboard-content">
         {/* Metric Cards - Horizontal Scroll */}
-        <QuickStatsOverview checkInStreak={checkInStreak} />
+        <QuickStatsOverview
+          checkInStreak={checkInStreak}
+          totalBooks={Array.isArray(books) ? books.length : 0}
+          completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
+          inProgressBooks={(Array.isArray(books) ? books : []).filter(b => (b.is_reading === true) || b.status === 'reading' || b.status === 'in_progress' || (!!b.progress && !b.completed && b.status !== 'completed')).length}
+        />
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
 

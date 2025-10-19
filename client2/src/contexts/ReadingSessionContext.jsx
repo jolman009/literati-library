@@ -219,12 +219,19 @@ export const ReadingSessionProvider = ({ children }) => {
         }
       }
 
-      // Update book's is_reading status in database
+      // Keep the book marked as currently reading when stopping the timer
+      // so it remains in the "Currently Reading" list until explicitly changed/completed.
       try {
         await API.patch(`/books/${activeSession.book.id}`, {
-          is_reading: false,
+          is_reading: true,
+          status: 'paused',
           last_opened: new Date().toISOString()
         });
+        // Notify other parts of the app so Dashboard refreshes immediately
+        window.dispatchEvent(new CustomEvent('bookUpdated', {
+          detail: { bookId: activeSession.book.id, action: 'stop_reading', status: 'paused' }
+        }));
+        localStorage.setItem('books_updated', Date.now().toString());
       } catch (error) {
         console.warn('Failed to update book reading status on stop:', error);
       }

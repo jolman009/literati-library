@@ -14,6 +14,32 @@ const PointsHistory = ({ limit = 10 }) => {
     fetchHistory();
   }, [limit]);
 
+  // Local fallback mapping for display label/icon
+  const getDisplayIcon = (action) => {
+    try {
+      if (action?.action === 'achievement_unlocked') return '🏆';
+      return action?.icon || '✨';
+    } catch {
+      return '✨';
+    }
+  };
+
+  const getDisplayLabel = (action) => {
+    try {
+      if (action?.action === 'achievement_unlocked') {
+        const title = action?.data?.title;
+        return title ? `Achievement: ${title}` : 'Achievement Unlocked';
+      }
+      if (action?.label) return action.label;
+      const name = String(action?.action || '')
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+      return name || 'Activity';
+    } catch {
+      return 'Activity';
+    }
+  };
+
   // 🔔 Listen for gamification updates and auto-refresh history
   useEffect(() => {
     console.log('🔧 PointsHistory: Setting up gamificationUpdate event listener');
@@ -138,11 +164,11 @@ const PointsHistory = ({ limit = 10 }) => {
               {actions.map((action, index) => (
                 <div key={action.id || index} className="points-history-item">
                   <div className="points-history-item-icon">
-                    {action.icon}
+                    {getDisplayIcon(action)}
                   </div>
                   <div className="points-history-item-content">
                     <div className="points-history-item-label">
-                      {action.label}
+                      {getDisplayLabel(action)}
                     </div>
                     <div className="points-history-item-time">
                       {action.timeAgo}

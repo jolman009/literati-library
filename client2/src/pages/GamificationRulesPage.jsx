@@ -306,6 +306,48 @@ const GamificationRulesPage = () => {
     </div>
   );
 
+  const renderBehavior = () => (
+    <div className="gamification-behavior-section">
+      <div className="gamification-section-header-container">
+        <h2 className="gamification-section-header">⏱️ Reading Session Behavior</h2>
+        <p className="gamification-section-subtitle">
+          How starting, stopping, and resuming sessions affect points and your Currently Reading list
+        </p>
+      </div>
+
+      <MD3Card className="gamification-feature-card">
+        <h3 className="gamification-feature-title">▶️ Start Reading</h3>
+        <p className="gamification-feature-description">
+          Starting a session marks the book as <strong>currently reading</strong> and begins tracking time. You earn +5 points on start, and you’ll keep earning points as you read (1 point per minute, 1 per page if tracked).
+        </p>
+      </MD3Card>
+
+      <MD3Card className="gamification-feature-card">
+        <h3 className="gamification-feature-title">⏸️ Stop (Pause) Reading</h3>
+        <p className="gamification-feature-description">
+          Stopping a session ends the timer but keeps the book marked as <strong>currently reading</strong> (status: paused). This way it remains in your Dashboard’s <em>Currently Reading</em> list until you resume or mark it completed.
+        </p>
+        <p className="gamification-feature-description">
+          You earn +10 points for completing a session plus time read points. No points accrue while paused.
+        </p>
+      </MD3Card>
+
+      <MD3Card className="gamification-feature-card">
+        <h3 className="gamification-feature-title">🔁 Resume Reading</h3>
+        <p className="gamification-feature-description">
+          Resuming starts a new session and continues awarding time/page points. The book stays in <em>Currently Reading</em> the entire time.
+        </p>
+      </MD3Card>
+
+      <MD3Card className="gamification-feature-card">
+        <h3 className="gamification-feature-title">🏁 Complete Book</h3>
+        <p className="gamification-feature-description">
+          Marking a book as completed removes it from <em>Currently Reading</em> and awards +100 points.
+        </p>
+      </MD3Card>
+    </div>
+  );
+
   const renderAchievements = () => (
     <div className="gamification-achievements-section">
       <div className="gamification-section-header-container">
@@ -419,6 +461,7 @@ const GamificationRulesPage = () => {
       case 'points': return renderPoints();
       case 'levels': return renderLevels();
       case 'achievements': return renderAchievements();
+      case 'behavior': return renderBehavior();
       case 'tips': return renderTips();
       default: return renderOverview();
     }
