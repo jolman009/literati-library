@@ -103,6 +103,50 @@
       ]
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshot-dashboard.png",
+      "sizes": "1877x865",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "ShelfQuest Dashboard - Track your reading progress and stats"
+    },
+    {
+      "src": "/screenshot-library.png",
+      "sizes": "1850x879",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Browse Your Book Library - Manage your personal collection"
+    },
+    {
+      "src": "/screenshot-reading.png",
+      "sizes": "1853x878",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Reading Sessions - Continue where you left off"
+    },
+    {
+      "src": "/screenshot-statistics.png",
+      "sizes": "1855x849",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Reading Statistics - Analyze your reading habits and achievements"
+    },
+    {
+      "src": "/screenshot-notes.png",
+      "sizes": "1885x891",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Notes Hub - Organize your reading notes and highlights"
+    },
+    {
+      "src": "/screenshot-mentor.png",
+      "sizes": "1833x871",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "AI Reading Mentor - Get personalized insights and recommendations"
+    }
+  ],
   "prefer_related_applications": false,
   "related_applications": []
 }
