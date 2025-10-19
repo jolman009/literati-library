@@ -280,7 +280,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
   const [totalPointsFromServer, setTotalPointsFromServer] = useState(0);
   const [totalMinutesRead, setTotalMinutesRead] = useState(0);
-  const { getReadingStats } = useReadingSession();
+  const { getReadingStats, activeSession, sessionStats } = useReadingSession();
   const NOTES_POINTS_PER = 15;
 
   // 🔍 DEBUG: Log stats on every render
@@ -326,11 +326,17 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       setNotesCount(Math.max(serverNotesCount, localNotesCount));
       setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
       // Prefer server totals from /stats when available, fallback to breakdown categories total
-      const serverTotals = statsResp?.data?.totalPoints ?? categories?.total ?? 0;
+      const statsData = statsResp?.data || null;
+      const serverTotals = statsData?.totalPoints ?? categories?.total ?? 0;
       setTotalPointsFromServer(serverTotals);
       // Time read pulled from stats when available; otherwise leave local value
-      if (typeof statsResp?.data?.totalReadingTime === 'number') {
-        setTotalMinutesRead(statsResp.data.totalReadingTime);
+      if (typeof statsData?.totalReadingTime === 'number') {
+        setTotalMinutesRead(statsData.totalReadingTime);
+      }
+      // Notes count/points from stats when available (covers cases where user_actions lacks entries)
+      if (typeof statsData?.notesCreated === 'number') {
+        setNotesCount(Math.max(serverNotesCount, statsData.notesCreated));
+        setNotesPoints(Math.max(serverNotesPoints, statsData.notesCreated * NOTES_POINTS_PER));
       }
 
       console.log('✅ QuickStatsOverview: Data updated', {
@@ -369,7 +375,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       setNotesCount(localNotesCount);
       setReadingSessionsCount(localSessionCount);
       setTotalPointsFromServer(stats?.totalPoints || 0);
-    
+
       console.log('📊 QuickStatsOverview: Using local fallback data', {
         notesPoints: localNotesPoints,
         notesCount: localNotesCount,
@@ -426,6 +432,10 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         if (typeof statsResp?.data?.totalReadingTime === 'number') {
           setTotalMinutesRead(statsResp.data.totalReadingTime);
         }
+        if (typeof statsResp?.data?.notesCreated === 'number') {
+          setNotesCount(prev => Math.max(prev, statsResp.data.notesCreated));
+          setNotesPoints(prev => Math.max(prev, (statsResp.data.notesCreated * NOTES_POINTS_PER)));
+        }
 
         console.log(`✅ QuickStatsOverview: ${source} refresh completed`, {
           serverSessionCount,
@@ -481,7 +491,10 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       try {
         const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
         setReadingSessionsCount(rs?.totalSessions || 0);
-        setTotalMinutesRead(rs?.totalMinutes || 0);
+        const activeExtra = activeSession && sessionStats?.readingTime
+          ? Math.floor((sessionStats.readingTime || 0) / 60)
+          : 0;
+        setTotalMinutesRead((rs?.totalMinutes || 0) + activeExtra);
       } catch {}
     };
 
@@ -502,7 +515,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       window.removeEventListener('storage', onStorage);
       window.removeEventListener('gamificationUpdate', onGamification);
     };
-  }, [getReadingStats]);
+  }, [getReadingStats, activeSession, sessionStats?.readingTime]);
 
   // Fallback sync: ensure notes metrics reflect local stats when API breakdown is unavailable or delayed
   useEffect(() => {
