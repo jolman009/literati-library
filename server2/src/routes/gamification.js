@@ -141,14 +141,27 @@ const checkAchievements = async (userId, currentStats) => {
 
     if (shouldUnlock) {
       try {
+        const unlockedAt = new Date().toISOString();
+        // Record unlock in achievements table (idempotency handled at DB or by the absence of prior record)
         await supabase.from('user_achievements').insert({
           user_id: userId,
           achievement_id: achievement.id,
-          unlocked_at: new Date().toISOString()
+          unlocked_at: unlockedAt
         });
+
+        // Also award points by creating a user_actions entry so totals/breakdowns include it
+        // This keeps frontend stat cards and history in sync across devices
+        await supabase.from('user_actions').insert({
+          user_id: userId,
+          action: 'achievement_unlocked',
+          points: achievement.points || 0,
+          data: { id: achievement.id, title: achievement.title },
+          created_at: unlockedAt
+        });
+
         newlyUnlocked.push(achievement);
       } catch (dbErr) {
-        console.warn('Failed to save achievement:', dbErr?.message || dbErr);
+        console.warn('Failed to persist achievement unlock:', dbErr?.message || dbErr);
       }
     }
   }
