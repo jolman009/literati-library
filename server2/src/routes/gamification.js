@@ -494,7 +494,7 @@ export const gamificationRouter = (authenticateToken) => {
       const formattedActions = (data || []).map(action => ({
         ...action,
         label: formatActionLabel(action.action),
-        icon: getActionIcon(action.action),
+        icon: action.action === 'achievement_unlocked' ? '🏆' : getActionIcon(action.action),
         timeAgo: getTimeAgo(new Date(action.created_at))
       }));
 

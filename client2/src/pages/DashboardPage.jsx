@@ -292,12 +292,18 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
-  // Fetch notes-specific points and reading sessions count from breakdown API
+  // Fetch notes-specific points, reading sessions count, total points and time read from APIs
   const fetchGamificationData = useCallback(async () => {
     try {
       console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
-      const response = await API.get('/api/gamification/actions/breakdown');
-      const { categories, breakdown } = response.data;
+      const [breakdownResp, statsResp] = await Promise.all([
+        API.get('/api/gamification/actions/breakdown'),
+        API.get('/api/gamification/stats').catch((e) => {
+          console.warn('⚠️ Stats endpoint unavailable, will use local fallbacks for time/points', e?.message || e);
+          return null;
+        })
+      ]);
+      const { categories, breakdown } = breakdownResp.data;
 
       // Prefer server values but never below local fallbacks
       const serverNotesPoints = categories?.notes || 0;
@@ -319,7 +325,13 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
       setNotesCount(Math.max(serverNotesCount, localNotesCount));
       setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
-      setTotalPointsFromServer(categories?.total || 0);
+      // Prefer server totals from /stats when available, fallback to breakdown categories total
+      const serverTotals = statsResp?.data?.totalPoints ?? categories?.total ?? 0;
+      setTotalPointsFromServer(serverTotals);
+      // Time read pulled from stats when available; otherwise leave local value
+      if (typeof statsResp?.data?.totalReadingTime === 'number') {
+        setTotalMinutesRead(statsResp.data.totalReadingTime);
+      }
 
       console.log('✅ QuickStatsOverview: Data updated', {
         notesPoints: categories?.notes || 0,
@@ -357,7 +369,7 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       setNotesCount(localNotesCount);
       setReadingSessionsCount(localSessionCount);
       setTotalPointsFromServer(stats?.totalPoints || 0);
-      
+    
       console.log('📊 QuickStatsOverview: Using local fallback data', {
         notesPoints: localNotesPoints,
         notesCount: localNotesCount,
@@ -384,11 +396,13 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
 
       try {
         console.log(`🔄 QuickStatsOverview: Fetching data (${source})...`);
-        const response = await API.get('/api/gamification/actions/breakdown');
-
+        const [breakdownResp, statsResp] = await Promise.all([
+          API.get('/api/gamification/actions/breakdown'),
+          API.get('/api/gamification/stats').catch(() => null)
+        ]);
         if (!isMounted) return; // Component unmounted, don't update state
 
-        const { categories, breakdown } = response.data;
+        const { categories, breakdown } = breakdownResp.data;
 
         const serverNotesPoints = categories?.notes || 0;
         const noteActions = breakdown.find(b => b.action === 'note_created');
@@ -405,7 +419,13 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
         setNotesPoints(Math.max(serverNotesPoints, stats?.notesCreated * NOTES_POINTS_PER || 0));
         setNotesCount(Math.max(serverNotesCount, stats?.notesCreated || 0));
         setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
-        setTotalPointsFromServer(categories?.total || 0);
+        const pointsFromStats = statsResp?.data?.totalPoints;
+        setTotalPointsFromServer(
+          typeof pointsFromStats === 'number' ? pointsFromStats : (categories?.total || 0)
+        );
+        if (typeof statsResp?.data?.totalReadingTime === 'number') {
+          setTotalMinutesRead(statsResp.data.totalReadingTime);
+        }
 
         console.log(`✅ QuickStatsOverview: ${source} refresh completed`, {
           serverSessionCount,
