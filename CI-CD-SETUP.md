@@ -1,6 +1,6 @@
 # 🚀 CI/CD Pipeline Setup Guide
 
-This guide will help you set up the complete CI/CD pipeline for your Literati digital library application.
+This guide will help you set up the complete CI/CD pipeline for your ShelfQuest digital library application.
 
 ## 📋 Prerequisites
 
@@ -21,7 +21,7 @@ git add .
 git commit -m "Initial commit with CI/CD pipeline"
 
 # Add your GitHub repository
-git remote add origin https://github.com/yourusername/literati-library.git
+git remote add origin https://github.com/yourusername/shelfquest-library.git
 git branch -M main
 git push -u origin main
 ```
@@ -87,9 +87,9 @@ LHCI_GITHUB_APP_TOKEN=your-lighthouse-github-token
 ### 4. **Docker Hub Setup**
 
 1. Create repositories on Docker Hub:
-   - `your-username/literati-client`
-   - `your-username/literati-server` 
-   - `your-username/literati-ai`
+   - `your-username/shelfquest-client`
+   - `your-username/shelfquest-server` 
+   - `your-username/shelfquest-ai`
 
 2. Generate access token:
    - Docker Hub → Account Settings → Security → Access Tokens
@@ -170,12 +170,12 @@ main (production)
 
 ### **Staging:**
 - Branch: `develop`
-- URL: `https://literati-staging.vercel.app`
+- URL: `https://shelfquest-staging.vercel.app`
 - Purpose: Feature testing and QA
 
 ### **Production:**
 - Branch: `main` 
-- URL: `https://literati.pro`
+- URL: `https://shelfquest.pro`
 - Purpose: Live user environment
 
 ## 🛠️ Manual Commands
@@ -200,7 +200,7 @@ vercel --prod
 vercel rollback
 
 # Rollback Docker images
-docker pull your-username/literati-client:previous-tag
+docker pull your-username/shelfquest-client:previous-tag
 ```
 
 ## 🔍 Troubleshooting

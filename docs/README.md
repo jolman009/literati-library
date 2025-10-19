@@ -1,6 +1,6 @@
-# 📚 Literati Documentation
+# 📚 ShelfQuest Documentation
 
-Welcome to the comprehensive documentation for the Literati Digital Library. This documentation covers everything from development setup to production deployment and maintenance.
+Welcome to the comprehensive documentation for the ShelfQuest Digital Library. This documentation covers everything from development setup to production deployment and maintenance.
 
 ## 📋 **Documentation Overview**
 
@@ -211,7 +211,7 @@ When creating issues, include:
 
 ## 🔒 **Security Overview**
 
-Your Literati application implements **enterprise-grade security**:
+Your ShelfQuest application implements **enterprise-grade security**:
 
 - 🛡️ **4-tier rate limiting** (General/Auth/Upload/Gaming)
 - 🔐 **Advanced JWT security** with token families
@@ -235,7 +235,7 @@ For complete security details, see **[Security Documentation](../server2/SECURIT
 
 ### **Specialized Documentation**
 - **[Security Documentation](../server2/SECURITY_DOCUMENTATION.md)** - Security implementation details
-- **[Production Readiness Review](../Literati-Production_Readiness_Review.md)** - Production assessment
+- **[Production Readiness Review](../ShelfQuest-Production_Readiness_Review.md)** - Production assessment
 - **[CI/CD Setup Guide](../DEPLOYMENT_AUTOMATION_SETUP.md)** - Automated deployment setup
 
 ### **Project Files**
@@ -244,7 +244,7 @@ For complete security details, see **[Security Documentation](../server2/SECURIT
 
 ---
 
-**Welcome to Literati! Happy reading and coding! 📚🚀**
+**Welcome to ShelfQuest! Happy reading and coding! 📚🚀**
 
 *Last updated: December 2024*
 *Documentation version: 1.0.0*

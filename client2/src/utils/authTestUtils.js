@@ -45,7 +45,7 @@ export function checkAuthStatus() {
   }, {});
 
   // Note: HttpOnly cookies won't be visible here, but we can check other indicators
-  const userDataRaw = localStorage.getItem('literati_user');
+  const userDataRaw = localStorage.getItem('shelfquest_user');
   const userData = userDataRaw ? JSON.parse(userDataRaw) : null;
 
   console.log('🔍 Auth Status Check:');

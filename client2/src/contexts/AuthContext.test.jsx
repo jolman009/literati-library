@@ -62,8 +62,8 @@ describe('AuthContext', () => {
 
     // Mock localStorage to return both token and user
     mockLocalStorage.getItem.mockImplementation((key) => {
-      if (key === 'literati_token') return mockToken
-      if (key === 'literati_user') return JSON.stringify(mockUser)
+      if (key === 'shelfquest_token') return mockToken
+      if (key === 'shelfquest_user') return JSON.stringify(mockUser)
       return null
     })
 
@@ -95,7 +95,7 @@ describe('AuthContext', () => {
     expect(result.current.isAuthenticated).toBe(true)
     expect(result.current.error).toBeNull()
 
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('literati_token', mockResponse.token)
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('shelfquest_token', mockResponse.token)
   })
 
   test('handles login failure', async () => {
@@ -167,7 +167,7 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull()
     expect(result.current.token).toBeNull()
     expect(result.current.isAuthenticated).toBe(false)
-    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
+    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('shelfquest_token')
   })
 
   test('clears error when clearError is called', async () => {
@@ -197,8 +197,8 @@ describe('AuthContext', () => {
 
     // Mock localStorage to return both token and user initially
     mockLocalStorage.getItem.mockImplementation((key) => {
-      if (key === 'literati_token') return mockToken
-      if (key === 'literati_user') return JSON.stringify(mockUser)
+      if (key === 'shelfquest_token') return mockToken
+      if (key === 'shelfquest_user') return JSON.stringify(mockUser)
       return null
     })
 
@@ -213,7 +213,7 @@ describe('AuthContext', () => {
 
     expect(result.current.token).toBe(mockToken) // Token stays the same
     expect(result.current.user).toEqual(mockUser)
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('literati_user', JSON.stringify(mockUser))
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('shelfquest_user', JSON.stringify(mockUser))
   })
 
   test('handles token expiration', async () => {
@@ -222,8 +222,8 @@ describe('AuthContext', () => {
 
     // Mock localStorage to have token and user initially
     mockLocalStorage.getItem.mockImplementation((key) => {
-      if (key === 'literati_token') return expiredToken
-      if (key === 'literati_user') return JSON.stringify(mockUser)
+      if (key === 'shelfquest_token') return expiredToken
+      if (key === 'shelfquest_user') return JSON.stringify(mockUser)
       return null
     })
 
@@ -242,7 +242,7 @@ describe('AuthContext', () => {
       expect(result.current.token).toBeNull()
       expect(result.current.user).toBeNull()
       expect(result.current.isAuthenticated).toBe(false)
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('shelfquest_token')
     })
   })
 
@@ -365,7 +365,7 @@ describe('AuthContext', () => {
     expect(result.current.user).toBeNull()
     expect(result.current.token).toBeNull()
     expect(result.current.isAuthenticated).toBe(false)
-    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('literati_token')
+    expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('shelfquest_token')
   })
 
   test('throws error when useAuth is used outside AuthProvider', () => {

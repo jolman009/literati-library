@@ -4,7 +4,7 @@ This guide explains how to configure Sentry for error tracking and performance m
 
 ## Overview
 
-Literati uses **Sentry** for:
+ShelfQuest uses **Sentry** for:
 - **Error tracking**: Automatic capture of JavaScript errors and exceptions
 - **Performance monitoring**: Track API response times, database queries, and render performance
 - **Session replay**: Understand user interactions leading to errors
@@ -14,14 +14,14 @@ Literati uses **Sentry** for:
 
 1. Create a Sentry account at [https://sentry.io](https://sentry.io)
 2. Create two projects:
-   - **Frontend**: `literati-frontend` (React)
-   - **Backend**: `literati-backend` (Node.js)
+   - **Frontend**: `shelfquest-frontend` (React)
+   - **Backend**: `shelfquest-backend` (Node.js)
 
 ## Frontend Setup (Client)
 
 ### Step 1: Get Your DSN
 
-1. Go to Sentry Dashboard → Projects → `literati-frontend`
+1. Go to Sentry Dashboard → Projects → `shelfquest-frontend`
 2. Navigate to **Settings** → **Client Keys (DSN)**
 3. Copy the DSN (looks like: `https://xxxxx@xxxxx.ingest.sentry.io/xxxxx`)
 
@@ -80,7 +80,7 @@ After deploying with the DSN configured:
 
 ### Step 1: Get Your Backend DSN
 
-1. Go to Sentry Dashboard → Projects → `literati-backend`
+1. Go to Sentry Dashboard → Projects → `shelfquest-backend`
 2. Navigate to **Settings** → **Client Keys (DSN)**
 3. Copy the DSN
 
@@ -96,7 +96,7 @@ SENTRY_DSN=https://your-backend-dsn@sentry.io/project-id
 APP_VERSION=1.0.0
 
 # Server identifier
-SERVER_NAME=literati-api
+SERVER_NAME=shelfquest-api
 
 # Node environment
 NODE_ENV=production

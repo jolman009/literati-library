@@ -1,5 +1,5 @@
 -- =====================================================
--- Literati Database Migration 003
+-- ShelfQuest Database Migration 003
 -- Fix RLS Policies for Server-Side Authentication
 -- =====================================================
 

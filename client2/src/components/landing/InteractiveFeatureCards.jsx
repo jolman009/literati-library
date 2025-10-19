@@ -107,7 +107,7 @@ const InteractiveFeatureCards = () => {
   return (
     <section className="features-section">
       <div className="section-container">
-        <h2 className="section-title">Why Readers Choose Literati</h2>
+        <h2 className="section-title">Why Readers Choose ShelfQuest</h2>
         <p className="section-subtitle">
           Everything you need to build a lasting reading habit and unlock your full literary potential
           <br /><small>(Click any card to see more details)</small>

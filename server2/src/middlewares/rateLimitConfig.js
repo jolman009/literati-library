@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 
 /**
- * Production-ready rate limiting configuration for Literati API
+ * Production-ready rate limiting configuration for ShelfQuest API
  * Following Priority 1.2 from PRODUCTION_DEPLOYMENT_GUIDE.md
  */
 

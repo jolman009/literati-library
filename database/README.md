@@ -1,7 +1,7 @@
 # 🗄️ Database Setup & Migrations
 
 ## Overview
-This directory contains SQL migration files for setting up the Literati database schema in Supabase.
+This directory contains SQL migration files for setting up the ShelfQuest database schema in Supabase.
 
 ## Quick Setup
 

@@ -1,10 +1,10 @@
-# 👋 Welcome to Literati Development Team!
+# 👋 Welcome to ShelfQuest Development Team!
 
-Complete onboarding guide for new developers joining the Literati Digital Library project.
+Complete onboarding guide for new developers joining the ShelfQuest Digital Library project.
 
 ## 🎯 **What You're Building**
 
-**Literati** is a modern, full-stack digital library application that helps users:
+**ShelfQuest** is a modern, full-stack digital library application that helps users:
 - 📚 **Manage** personal book collections
 - 📖 **Track** reading progress and sessions
 - 📝 **Take notes** with AI-powered summarization
@@ -55,8 +55,8 @@ Before you begin, ensure you have:
 ### **2. Repository Setup**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/literati-monorepo.git
-cd literati-monorepo
+git clone https://github.com/yourusername/shelfquest-monorepo.git
+cd shelfquest-monorepo
 
 # Install all dependencies
 pnpm install
@@ -554,7 +554,7 @@ As you get comfortable, explore these advanced areas:
 
 ## 🎉 **Welcome to the Team!**
 
-You're now ready to contribute to Literati! Remember:
+You're now ready to contribute to ShelfQuest! Remember:
 
 - **Don't hesitate to ask questions** - everyone was new once
 - **Quality over speed** - we value well-tested, secure code

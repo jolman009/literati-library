@@ -254,7 +254,7 @@ export class CacheManager {
   async getFromIndexedDB(key) {
     try {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('LiteratiCache', 1);
+        const request = indexedDB.open('ShelfQuestCache', 1);
         
         request.onerror = () => resolve(null);
         
@@ -295,7 +295,7 @@ export class CacheManager {
   async setInIndexedDB(key, value, ttl) {
     try {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('LiteratiCache', 1);
+        const request = indexedDB.open('ShelfQuestCache', 1);
         
         request.onerror = () => resolve(false);
         
@@ -454,7 +454,7 @@ export class CacheManager {
     keysToRemove.forEach(key => localStorage.removeItem(key));
     
     // Clear IndexedDB
-    indexedDB.deleteDatabase('LiteratiCache');
+    indexedDB.deleteDatabase('ShelfQuestCache');
     
     console.log('🗑️ All cache data cleared');
     this.metrics = { hits: 0, misses: 0, stores: 0, invalidations: 0 };

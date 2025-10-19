@@ -536,7 +536,7 @@ test.describe('Security Testing', () => {
 
       // Should have proper CORS configuration
       if (corsHeaders['access-control-allow-origin']) {
-        expect(corsHeaders['access-control-allow-origin']).toMatch(/localhost|literati/)
+        expect(corsHeaders['access-control-allow-origin']).toMatch(/localhost|shelfquest/)
       }
     })
   })

@@ -1,7 +1,7 @@
 // Utility to clear expired tokens - run this once to fix the immediate issue
 export const clearExpiredToken = () => {
   try {
-    const token = localStorage.getItem('literati_token');
+    const token = localStorage.getItem('shelfquest_token');
     
     if (token) {
       // Try to decode the token to check expiration
@@ -11,8 +11,8 @@ export const clearExpiredToken = () => {
       
       if (now >= exp) {
         console.log('Token is expired, clearing...');
-        localStorage.removeItem('literati_token');
-        localStorage.removeItem('literati_user');
+        localStorage.removeItem('shelfquest_token');
+        localStorage.removeItem('shelfquest_user');
         
         // Reload the page to reset the app state
         window.location.reload();
@@ -24,8 +24,8 @@ export const clearExpiredToken = () => {
   } catch (error) {
     console.error('Error checking token:', error);
     // If we can't parse the token, it's probably invalid
-    localStorage.removeItem('literati_token');
-    localStorage.removeItem('literati_user');
+    localStorage.removeItem('shelfquest_token');
+    localStorage.removeItem('shelfquest_user');
     window.location.reload();
     return true;
   }

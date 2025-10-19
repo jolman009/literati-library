@@ -2,7 +2,7 @@
 import { generateDevelopmentCertificates, checkHTTPSStatus } from '../config/httpsConfig.js';
 
 async function main() {
-  console.log('🔒 Literati Development HTTPS Certificate Generator');
+  console.log('🔒 ShelfQuest Development HTTPS Certificate Generator');
   console.log('==================================================');
 
   try {

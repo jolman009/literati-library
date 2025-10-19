@@ -91,7 +91,7 @@ const EnhancedWelcomeComponent = ({
     if (totalBooks > 0) {
       return `Welcome back! Ready to dive into your next great read? 📚`;
     }
-    return `Welcome to Literati! Start building your personal digital library today! 🌟`;
+    return `Welcome to ShelfQuest! Start building your personal digital library today! 🌟`;
   };
 
   // Quick action cards data

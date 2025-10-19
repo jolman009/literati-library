@@ -1,6 +1,6 @@
-# 🔧 Literati Troubleshooting & Maintenance Guide
+# 🔧 ShelfQuest Troubleshooting & Maintenance Guide
 
-Comprehensive troubleshooting guide and maintenance procedures for the Literati Digital Library.
+Comprehensive troubleshooting guide and maintenance procedures for the ShelfQuest Digital Library.
 
 ## 🚨 **Emergency Response**
 
@@ -552,7 +552,7 @@ alerts:
 # scripts/monitoring/health-check.sh
 
 # Service health check script
-echo "=== Literati Health Check ==="
+echo "=== ShelfQuest Health Check ==="
 echo "Date: $(date)"
 
 # Check frontend
@@ -754,7 +754,7 @@ vercel rollback  # Frontend
 - **Vercel Dashboard**: https://vercel.com/dashboard
 - **Render Dashboard**: https://dashboard.render.com/
 
-Your Literati application now has comprehensive troubleshooting and maintenance procedures! 🚀
+Your ShelfQuest application now has comprehensive troubleshooting and maintenance procedures! 🚀
 
 ---
 

@@ -41,21 +41,21 @@ class EnvironmentConfig {
 
       // Security settings
       security: {
-        tokenKey: import.meta.env.VITE_TOKEN_KEY || 'literati_token',
+        tokenKey: import.meta.env.VITE_TOKEN_KEY || 'shelfquest_token',
         useSecureCookies: import.meta.env.VITE_USE_SECURE_COOKIES === 'true',
         enforceHttps: import.meta.env.VITE_ENFORCE_HTTPS !== 'false' // Default true for prod
       },
 
       // Storage configuration
       storage: {
-        indexedDbName: 'literati-books',
+        indexedDbName: 'shelfquest-books',
         indexedDbVersion: 2,
-        cachePrefix: 'literati_cache_'
+        cachePrefix: 'shelfquest_cache_'
       },
 
       // App metadata
       app: {
-        name: import.meta.env.VITE_APP_NAME || 'Literati',
+        name: import.meta.env.VITE_APP_NAME || 'ShelfQuest',
         version: import.meta.env.VITE_APP_VERSION || '1.0.0',
         buildHash: import.meta.env.VITE_BUILD_HASH || 'dev'
       }

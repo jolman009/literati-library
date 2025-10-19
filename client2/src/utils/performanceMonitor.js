@@ -1,8 +1,8 @@
 // src/utils/performanceMonitor.js
-// Performance monitoring utility for Literati app
+// Performance monitoring utility for ShelfQuest app
 // Tracks the specific metrics mentioned in your console performance data
 
-class LiteratiPerformanceMonitor {
+class ShelfQuestPerformanceMonitor {
   constructor() {
     this.interactions = [];
     this.metrics = {
@@ -190,7 +190,7 @@ class LiteratiPerformanceMonitor {
     });
   }
 
-  // Setup custom metrics for Literati app
+  // Setup custom metrics for ShelfQuest app
   setupCustomMetrics() {
     // Track React component render times
     this.measureComponentRender = (componentName, renderFn) => {
@@ -391,14 +391,14 @@ class LiteratiPerformanceMonitor {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `literati-performance-${Date.now()}.json`;
+    a.download = `shelfquest-performance-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
   // Console logging with performance data
   logPerformanceReport() {
-    console.group('📊 Literati Performance Report');
+    console.group('📊 ShelfQuest Performance Report');
     console.log('Current Metrics:', this.metrics);
     console.log('Recent Interactions:', this.interactions.slice(-10));
     console.log('Summary:', this.getPerformanceSummary());
@@ -407,7 +407,7 @@ class LiteratiPerformanceMonitor {
 
   // Start monitoring specific to your console issues
   startConsoleMonitoring() {
-    console.log('🚀 Literati Performance Monitor Started');
+    console.log('🚀 ShelfQuest Performance Monitor Started');
     console.log('Monitoring button interactions, keyboard input, and pointer events...');
     
     // Log performance every 30 seconds
@@ -421,14 +421,14 @@ class LiteratiPerformanceMonitor {
 }
 
 // Export singleton instance
-const performanceMonitor = new LiteratiPerformanceMonitor();
+const performanceMonitor = new ShelfQuestPerformanceMonitor();
 
 // Start monitoring immediately
 if (typeof window !== 'undefined') {
   performanceMonitor.startConsoleMonitoring();
   
   // Expose to window for debugging
-  window.literatiPerf = performanceMonitor;
+  window.shelfquestPerf = performanceMonitor;
   
   // Add keyboard shortcut for quick performance report
   document.addEventListener('keydown', (e) => {

@@ -1,5 +1,5 @@
 -- =====================================================
--- Literati Database Migration 002
+-- ShelfQuest Database Migration 002
 -- Create User Stats Aggregation Table
 -- =====================================================
 

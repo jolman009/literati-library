@@ -28,7 +28,7 @@ function ErrorButton() {
 // Test various Sentry features
 function SentryTestPanel() {
   const handleMessageTest = () => {
-    Sentry.captureMessage('Test message from Literati!', 'info');
+    Sentry.captureMessage('Test message from ShelfQuest!', 'info');
     alert('Test message sent to Sentry!');
   };
 
@@ -44,7 +44,7 @@ function SentryTestPanel() {
   const handleUserContextTest = () => {
     Sentry.setUser({
       id: 'test-user-123',
-      email: 'test@literati.pro',
+      email: 'test@shelfquest.pro',
       username: 'test_reader'
     });
     alert('User context set! Future errors will include this user info.');

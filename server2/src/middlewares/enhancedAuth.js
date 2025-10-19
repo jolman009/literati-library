@@ -104,14 +104,14 @@ export const generateTokens = (user, parentRefreshToken = null) => {
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRY,
-    issuer: 'literati-api',
-    audience: 'literati-client'
+    issuer: 'shelfquest-api',
+    audience: 'shelfquest-client'
   });
 
   const refreshToken = jwt.sign(refreshPayload, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
     expiresIn: REFRESH_TOKEN_EXPIRY,
-    issuer: 'literati-api',
-    audience: 'literati-client'
+    issuer: 'shelfquest-api',
+    audience: 'shelfquest-client'
   });
 
   // Track the refresh token family
@@ -142,15 +142,15 @@ export const verifyAccessToken = (token) => {
     try {
       // First try to verify with audience requirement (new tokens)
       decoded = jwt.verify(token, process.env.JWT_SECRET, {
-        issuer: 'literati-api',
-        audience: 'literati-client'
+        issuer: 'shelfquest-api',
+        audience: 'shelfquest-client'
       });
     } catch (audienceError) {
       // If audience verification fails, try without audience (legacy tokens)
       if (audienceError.message.includes('audience invalid') || audienceError.message.includes('aud invalid')) {
         console.warn('⚠️ Legacy token detected (no audience claim) - user should refresh token');
         decoded = jwt.verify(token, process.env.JWT_SECRET, {
-          issuer: 'literati-api'
+          issuer: 'shelfquest-api'
           // No audience requirement for backward compatibility
         });
 
@@ -186,15 +186,15 @@ export const verifyRefreshToken = (token) => {
     try {
       // First try to verify with audience requirement (new tokens)
       decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
-        issuer: 'literati-api',
-        audience: 'literati-client'
+        issuer: 'shelfquest-api',
+        audience: 'shelfquest-client'
       });
     } catch (audienceError) {
       // If audience verification fails, try without audience (legacy tokens)
       if (audienceError.message.includes('audience invalid') || audienceError.message.includes('aud invalid')) {
         console.warn('⚠️ Legacy refresh token detected (no audience claim)');
         decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
-          issuer: 'literati-api'
+          issuer: 'shelfquest-api'
           // No audience requirement for backward compatibility
         });
         decoded._legacyToken = true;

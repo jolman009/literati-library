@@ -78,7 +78,7 @@ const AppRoutes = () => {
       user: user ? `${user.name} (${user.email})` : 'null',
       loading,
       isAuthenticated,
-      hasToken: !!localStorage.getItem('literati_token'),
+      hasToken: !!localStorage.getItem('shelfquest_token'),
       currentPath: window.location.pathname
     });
   }, [user, loading, isAuthenticated]);

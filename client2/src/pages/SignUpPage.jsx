@@ -78,7 +78,7 @@ const SignUpPage = () => {
     try {
       const result = await auth.register(email, password, name);
       if (result?.success) {
-        setSuccessMessage(`Welcome to Literati${result.user?.name ? `, ${result.user.name}` : ''}!`);
+        setSuccessMessage(`Welcome to ShelfQuest${result.user?.name ? `, ${result.user.name}` : ''}!`);
         setTimeout(() => navigate('/dashboard', { replace: true }), 1500);
       } else {
         setFormError(result?.error || 'Registration failed. Please try again.');
@@ -103,13 +103,13 @@ const SignUpPage = () => {
         {/* Header Section */}
         <div className="md3-signup-header">
           <img
-            src="/literatiLOGO.png"
-            alt="Literati"
+            src="/shelfquest-logo-192.png"
+            alt="ShelfQuest"
             className="md3-signup-logo"
           />
           <h1 className="md3-signup-title">Create Your Account</h1>
           <p className="md3-signup-subtitle">
-            Join Literati and start your reading journey today
+            Join ShelfQuest and start your reading journey today
           </p>
         </div>
 

@@ -95,7 +95,7 @@ describe('EnvironmentConfig Validation', () => {
 
     const config = new EnvironmentConfig();
     expect(config.apiUrl).toBe('http://localhost:5000'); // Fallback
-    expect(config.getTokenKey()).toBe('literati_token'); // Default
+    expect(config.getTokenKey()).toBe('shelfquest_token'); // Default
     expect(config.features.offlineMode).toBe(true); // Default enabled
   });
 });

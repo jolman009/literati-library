@@ -58,7 +58,7 @@ const filesToRemove = {
     'DEPLOYMENT_AUTOMATION_SETUP.md',
     'Production_Ready.md',
     'APP_Deployment_Readiness.md',
-    'Literati-Production_Readiness_Review.md',
+    'ShelfQuest-Production_Readiness_Review.md',
     'PRODUCTION_DEPLOYMENT_GUIDE.md',
   ],
   'Completed Analysis/Audit Files': [

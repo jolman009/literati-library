@@ -12,7 +12,7 @@ const MD3Footer = () => {
         {/* Brand Section */}
         <div className="md3-footer-brand">
           <h3 className="md-title-medium md3-footer-logo">
-            📚 Literati
+            📚 ShelfQuest
           </h3>
           <p className="md-body-small md3-footer-tagline">
             Your personal digital library
@@ -40,7 +40,7 @@ const MD3Footer = () => {
               <button
                 onClick={() => {
                   // Trigger cookie preferences (if you have a global function)
-                  localStorage.removeItem('literati-cookie-consent');
+                  localStorage.removeItem('shelfquest-cookie-consent');
                   window.location.reload();
                 }}
                 className="md-label-large md3-footer-link md3-footer-button"
@@ -55,7 +55,7 @@ const MD3Footer = () => {
             <h4 className="md-title-small md3-footer-column-title">Support</h4>
             <nav className="md3-footer-nav">
               <a
-                href="mailto:info@literati.pro"
+                href="mailto:info@shelfquest.org"
                 className="md-label-large md3-footer-link"
               >
                 Contact Us
@@ -83,10 +83,10 @@ const MD3Footer = () => {
                 to="/about"
                 className="md-label-large md3-footer-link"
               >
-                About Literati
+                About ShelfQuest
               </Link>
               <a
-                href="https://github.com/yourusername/literati"
+                href="https://github.com/yourusername/shelfquest"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="md-label-large md3-footer-link"
@@ -101,7 +101,7 @@ const MD3Footer = () => {
         <div className="md3-footer-bottom">
           <div className="md3-footer-bottom-content">
             <p className="md-body-small md3-footer-copyright">
-              © {currentYear} Literati. All rights reserved.
+              © {currentYear} ShelfQuest. All rights reserved.
             </p>
             <div className="md3-footer-meta">
               <span className="md-body-small md3-footer-location">
@@ -109,10 +109,10 @@ const MD3Footer = () => {
               </span>
               <span className="md-body-small md3-footer-separator">•</span>
               <a
-                href="mailto:info@literati.pro"
+                href="mailto:info@shelfquest.org"
                 className="md-body-small md3-footer-email"
               >
-                info@literati.pro
+                info@shelfquest.org
               </a>
             </div>
           </div>

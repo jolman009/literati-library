@@ -6,7 +6,7 @@ test.describe('Authentication Flow', () => {
   })
 
   test('should display landing page for unauthenticated users', async ({ page }) => {
-    await expect(page).toHaveTitle(/Literati|Library/)
+    await expect(page).toHaveTitle(/ShelfQuest|Library/)
     await expect(page.locator('[data-testid="landing-hero"]')).toBeVisible()
     await expect(page.locator('[data-testid="get-started-button"]')).toBeVisible()
   })

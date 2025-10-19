@@ -4,7 +4,7 @@
 
 ## Overview
 
-Literati is configured as a Progressive Web App (PWA) using **vite-plugin-pwa** with Workbox. This setup provides offline functionality, app-like experience, and installability across all platforms.
+ShelfQuest is configured as a Progressive Web App (PWA) using **vite-plugin-pwa** with Workbox. This setup provides offline functionality, app-like experience, and installability across all platforms.
 
 `✶ Insight ─────────────────────────────────────`
 **Why vite-plugin-pwa?**
@@ -44,10 +44,10 @@ VitePWA({
   registerType: 'autoUpdate',
   includeAssets: [
     'favicon.ico',
-    'literatiLOGO.png',
-    'literati512.png',
+    'shelfquestLOGO.png',
+    'shelfquest512.png',
     'favicon-96x96.png',
-    'literatiLOGO_144x153.png'
+    'shelfquestLOGO_144x153.png'
   ],
 
   // Use public/manifest.json directly
@@ -123,7 +123,7 @@ Comprehensive manifest with:
 - ✅ Maskable icons for Android
 - ✅ App shortcuts (Library, Upload, Dashboard)
 - ✅ Screenshots for app stores
-- ✅ Protocol handlers (`web+literati://`)
+- ✅ Protocol handlers (`web+shelfquest://`)
 
 ---
 
@@ -136,7 +136,7 @@ Comprehensive manifest with:
   urlPattern: /^https:\/\/library-server-m6gr\.onrender\.com\/api\/.*/i,
   handler: 'NetworkFirst',
   options: {
-    cacheName: 'literati-api-cache',
+    cacheName: 'shelfquest-api-cache',
     networkTimeoutSeconds: 10,
     expiration: {
       maxEntries: 100,
@@ -164,7 +164,7 @@ Comprehensive manifest with:
   },
   handler: 'CacheFirst',
   options: {
-    cacheName: 'literati-books-cache',
+    cacheName: 'shelfquest-books-cache',
     expiration: {
       maxEntries: 50, // Up to 50 books offline
       maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
@@ -193,7 +193,7 @@ Comprehensive manifest with:
   },
   handler: 'StaleWhileRevalidate',
   options: {
-    cacheName: 'literati-images-cache',
+    cacheName: 'shelfquest-images-cache',
     expiration: {
       maxEntries: 200,
       maxAgeSeconds: 60 * 60 * 24 * 14 // 14 days
@@ -217,7 +217,7 @@ Comprehensive manifest with:
   urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
   handler: 'CacheFirst',
   options: {
-    cacheName: 'literati-fonts-cache',
+    cacheName: 'shelfquest-fonts-cache',
     expiration: {
       maxEntries: 30,
       maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
@@ -241,7 +241,7 @@ Comprehensive manifest with:
     ['style', 'script', 'worker'].includes(request.destination),
   handler: 'StaleWhileRevalidate',
   options: {
-    cacheName: 'literati-assets-cache',
+    cacheName: 'shelfquest-assets-cache',
     expiration: {
       maxEntries: 100,
       maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
@@ -316,12 +316,12 @@ pnpm run preview
    - ✅ Should show "sw.js" registered
    - ✅ Status: "activated and running"
 3. Cache Storage:
-   - `literati-api-cache`
-   - `literati-books-cache`
-   - `literati-images-cache`
-   - `literati-fonts-cache`
-   - `literati-assets-cache`
-   - `workbox-precache-v2-https://literati.pro/`
+   - `shelfquest-api-cache`
+   - `shelfquest-books-cache`
+   - `shelfquest-images-cache`
+   - `shelfquest-fonts-cache`
+   - `shelfquest-assets-cache`
+   - `workbox-precache-v2-https://shelfquest.pro/`
 
 ### 3. Offline Mode Testing
 
@@ -360,8 +360,8 @@ Vercel automatically serves the generated service worker:
 
 ⚠️ **Service workers ONLY work over HTTPS** (except localhost)
 
-- ✅ Production: `https://literati.pro` (HTTPS)
-- ✅ Staging: `https://staging-literati.vercel.app` (HTTPS)
+- ✅ Production: `https://shelfquest.pro` (HTTPS)
+- ✅ Staging: `https://staging-shelfquest.vercel.app` (HTTPS)
 - ✅ Development: `http://localhost:5173` (allowed exception)
 
 ---
@@ -386,7 +386,7 @@ Based on the deployment task requirements:
 - Clean console output
 
 ### ✅ Comprehensive Manifest
-- ✅ Name: "Literati - Your Digital Bookshelf"
+- ✅ Name: "ShelfQuest - Your Digital Bookshelf"
 - ✅ Icons: 96px, 144px, 192px, 512px (including maskable)
 - ✅ Theme color: `#6750a4` (Material You primary)
 - ✅ Background color: `#fff7fe`
@@ -395,7 +395,7 @@ Based on the deployment task requirements:
 - ✅ Screenshots included
 
 ### ✅ HTTPS Served
-- Production: `https://literati.pro`
+- Production: `https://shelfquest.pro`
 - Staging: Vercel HTTPS
 - All environments secure
 

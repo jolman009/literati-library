@@ -300,7 +300,7 @@ export const generateDevelopmentCertificates = async () => {
     console.log('🔑 Generated private key');
 
     // Generate certificate
-    const certCommand = `openssl req -new -x509 -key "${keyPath}" -out "${certPath}" -days 365 -subj "/C=US/ST=Development/L=Local/O=Literati/OU=Development/CN=localhost"`;
+    const certCommand = `openssl req -new -x509 -key "${keyPath}" -out "${certPath}" -days 365 -subj "/C=US/ST=Development/L=Local/O=ShelfQuest/OU=Development/CN=localhost"`;
     execSync(certCommand, { stdio: 'inherit' });
     console.log('📜 Generated self-signed certificate');
 

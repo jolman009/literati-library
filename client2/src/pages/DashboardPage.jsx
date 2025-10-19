@@ -788,7 +788,7 @@ const CurrentlyReading = () => {
   useEffect(() => {
     const fetchCurrentlyReading = async () => {
       try {
-        const token = localStorage.getItem('literati_token');
+        const token = localStorage.getItem('shelfquest_token');
         if (!token) {
           setLoading(false);
           return;
@@ -842,7 +842,7 @@ const CurrentlyReading = () => {
         // Re-fetch data when reading session changes in another tab
         const fetchCurrentlyReading = async () => {
           try {
-            const token = localStorage.getItem('literati_token');
+            const token = localStorage.getItem('shelfquest_token');
             if (!token) {
               setLoading(false);
               return;
@@ -945,7 +945,7 @@ const RecentlyAdded = () => {
 
   const fetchRecentBooks = useCallback(async () => {
     try {
-      const token = localStorage.getItem('literati_token');
+      const token = localStorage.getItem('shelfquest_token');
       if (!token) {
         setLoading(false);
         return;

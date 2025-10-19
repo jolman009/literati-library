@@ -125,7 +125,7 @@ const UserMenu = ({ user, onLogout }) => {
               <span className="material-symbols-outlined text-xl">
                 info
               </span>
-              <span>About Literati</span>
+              <span>About ShelfQuest</span>
             </button>
 
             <button

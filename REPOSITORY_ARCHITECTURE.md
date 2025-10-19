@@ -1,8 +1,8 @@
-# Literati Multi-Repository Architecture
+# ShelfQuest Multi-Repository Architecture
 
 ## Overview
 
-The Literati digital library application uses a **microservices architecture** with separate repositories for each service. This approach enables independent deployment, development, and scaling of each component.
+The ShelfQuest digital library application uses a **microservices architecture** with separate repositories for each service. This approach enables independent deployment, development, and scaling of each component.
 
 ## 📁 Repository Structure
 
@@ -21,7 +21,7 @@ The Literati digital library application uses a **microservices architecture** w
 - **Features**: REST API, Database management, File storage
 
 ### 3. AI Service Repository
-- **GitHub**: `https://github.com/jolman009/literati-ai`
+- **GitHub**: `https://github.com/jolman009/shelfquest-ai`
 - **Directory**: `my-library-app-2/ai-service/`
 - **Technology**: FastAPI, Google Gemini API
 - **Purpose**: Note summarization and AI-powered features
@@ -41,7 +41,7 @@ The Literati digital library application uses a **microservices architecture** w
 │   Frontend      │    │    Backend      │    │   AI Service    │
 │   (React PWA)   │    │   (Express.js)  │    │   (FastAPI)     │
 │                 │    │                 │    │                 │
-│ client2 repo    │◄──►│ server2 repo    │◄──►│ literati-ai     │
+│ client2 repo    │◄──►│ server2 repo    │◄──►│ shelfquest-ai     │
 │ ↓ Vercel        │    │ ↓ Render        │    │ ↓ Independent   │
 │ Web App         │    │ API Server      │    │ AI Processing   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘

@@ -28,8 +28,8 @@ export const securityConfig = {
     refreshTokenExpiry: process.env.JWT_REFRESH_EXPIRY || '7d',
 
     options: {
-      issuer: 'literati-api',
-      audience: 'literati-client',
+      issuer: 'shelfquest-api',
+      audience: 'shelfquest-client',
       algorithm: 'HS256'
     }
   },

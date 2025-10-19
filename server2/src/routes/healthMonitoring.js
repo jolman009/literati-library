@@ -311,7 +311,7 @@ router.get('/health/ready', async (req, res) => {
 // Version and build info
 router.get('/info', (req, res) => {
   res.status(200).json({
-    service: 'Literati API',
+    service: 'ShelfQuest API',
     version: process.env.npm_package_version || '1.0.0',
     environment: process.env.NODE_ENV || 'development',
     nodeVersion: process.version,

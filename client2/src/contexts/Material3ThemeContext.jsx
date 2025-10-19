@@ -28,7 +28,7 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
   // Initialize theme from localStorage or system preference
   const [theme, setTheme] = useState(() => {
     try {
-      const stored = localStorage.getItem('literati-theme');
+      const stored = localStorage.getItem('shelfquest-theme');
       if (stored && ['light', 'dark'].includes(stored)) return stored;
       
       if (defaultTheme === 'auto') {
@@ -46,7 +46,7 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e) => {
       try {
-        if (!localStorage.getItem('literati-theme')) {
+        if (!localStorage.getItem('shelfquest-theme')) {
           setTheme(e.matches ? 'dark' : 'light');
         }
       } catch (error) {
@@ -71,7 +71,7 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
       root.classList.add(theme);
 
       // Store user preference
-      localStorage.setItem('literati-theme', theme);
+      localStorage.setItem('shelfquest-theme', theme);
 
       console.log(`🎨 Theme applied: ${theme}`);
     } catch (error) {
@@ -89,7 +89,7 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
   
   const setSystemTheme = () => {
     try {
-      localStorage.removeItem('literati-theme');
+      localStorage.removeItem('shelfquest-theme');
       setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     } catch (error) {
       console.warn('Failed to set system theme:', error);

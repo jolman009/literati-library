@@ -421,8 +421,8 @@ const monitoring = new MonitoringService();
 
 // Expose on window for debugging (development only)
 if (typeof window !== 'undefined' && environmentConfig.isDevelopment) {
-  window.literatiMonitoring = monitoring;
-  console.log('🔧 Monitoring service available at window.literatiMonitoring');
+  window.shelfquestMonitoring = monitoring;
+  console.log('🔧 Monitoring service available at window.shelfquestMonitoring');
 }
 
 export default monitoring;

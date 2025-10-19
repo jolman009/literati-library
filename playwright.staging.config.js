@@ -29,7 +29,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. */
   use: {
     /* Base URL for staging environment */
-    baseURL: process.env.STAGING_URL || 'https://staging.literati.pro',
+    baseURL: process.env.STAGING_URL || 'https://staging.shelfquest.pro',
 
     /* Collect trace when retrying the failed test. */
     trace: 'on-first-retry',

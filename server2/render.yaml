@@ -1,7 +1,7 @@
 services:
-  # Express Server for Literati
+  # Express Server for ShelfQuest
   - type: web
-    name: literati-server
+    name: shelfquest-server
     runtime: node
     plan: starter
     rootDir: server2
@@ -34,7 +34,7 @@ services:
           name: production-secrets
           envVarKey: JWT_REFRESH_SECRET
       - key: ALLOWED_ORIGINS
-        value: https://literati.pro,https://www.literati.pro,https://your-app.vercel.app
+        value: https://shelfquest.org,https://www.shelfquest.org,https://your-app.vercel.app
       - key: MAX_FILE_SIZE
         value: 50MB
       - key: UPLOAD_TIMEOUT
@@ -44,7 +44,7 @@ services:
 
   # AI Service (FastAPI)
   - type: web
-    name: literati-ai
+    name: shelfquest-ai
     runtime: python
     plan: starter
     buildCommand: pip install -r requirements.txt

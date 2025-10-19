@@ -9,7 +9,7 @@
 
 ## Overview
 
-This document describes the implementation of the data export feature for Literati, enabling users to download all their personal data in a machine-readable format as required by GDPR.
+This document describes the implementation of the data export feature for ShelfQuest, enabling users to download all their personal data in a machine-readable format as required by GDPR.
 
 ---
 
@@ -25,7 +25,7 @@ This document describes the implementation of the data export feature for Litera
    - Exports all user data in JSON format
    - Includes: account, books, notes, reading progress, sessions, gamification data, statistics
    - Sets proper headers for file download
-   - Filename format: `literati-data-export-{userId}-{timestamp}.json`
+   - Filename format: `shelfquest-data-export-{userId}-{timestamp}.json`
 
 2. **GET /api/data-export/summary**
    - Returns summary counts of exportable data
@@ -122,7 +122,7 @@ Add a link to the data export page in your app's navigation or settings menu:
 1. Navigate to Settings → Privacy & Data → Export My Data
 2. Review the summary of data to be exported
 3. Click "Export My Data" button
-4. JSON file downloads automatically with filename `literati-data-export-{userId}-{timestamp}.json`
+4. JSON file downloads automatically with filename `shelfquest-data-export-{userId}-{timestamp}.json`
 5. Open file in any text editor or JSON viewer
 
 ### For Developers
@@ -182,7 +182,7 @@ app.use('/api/data-export', rateLimitSuite.general, dataExportRouter);
 ✅ **Requirement Met**: "The data subject shall have the right to obtain from the controller confirmation as to whether or not personal data concerning him or her are being processed"
 
 **How we comply**:
-- Export includes all personal data processed by Literati
+- Export includes all personal data processed by ShelfQuest
 - Clear labeling of data categories
 - Transparent disclosure of what data is collected
 
@@ -231,7 +231,7 @@ app.use('/api/data-export', rateLimitSuite.general, dataExportRouter);
    - Useful for sensitive notes/highlights
 
 5. **Data Import**
-   - Allow users to re-import their data to another Literati account
+   - Allow users to re-import their data to another ShelfQuest account
    - Data portability to other reading apps (if API compatible)
 
 ---
@@ -298,9 +298,9 @@ When adding new tables or fields:
 - Development Team
 
 **For privacy questions**:
-- Email: info@literati.pro
-- Data Protection Officer: info@literati.pro
+- Email: info@shelfquest.pro
+- Data Protection Officer: info@shelfquest.pro
 
 ---
 
-*This implementation was completed on October 3, 2025 as part of Literati's GDPR compliance initiative.*
+*This implementation was completed on October 3, 2025 as part of ShelfQuest's GDPR compliance initiative.*

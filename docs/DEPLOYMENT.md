@@ -1,10 +1,10 @@
-# 🚀 Literati Deployment Guide
+# 🚀 ShelfQuest Deployment Guide
 
 Complete deployment documentation for production, staging, and development environments.
 
 ## 📋 **Deployment Overview**
 
-Literati uses a **modern multi-service architecture** with automated CI/CD pipelines for reliable deployments across environments.
+ShelfQuest uses a **modern multi-service architecture** with automated CI/CD pipelines for reliable deployments across environments.
 
 ### **Architecture Overview**
 ```
@@ -100,7 +100,7 @@ Your `vercel.json` is configured for optimal performance:
   ],
   "env": {
     "VITE_API_BASE_URL": "https://library-server-m6gr.onrender.com",
-    "VITE_AI_SERVICE_URL": "https://literati-ai-production.onrender.com"
+    "VITE_AI_SERVICE_URL": "https://shelfquest-ai-production.onrender.com"
   }
 }
 ```
@@ -126,7 +126,7 @@ Set in Vercel Dashboard (Settings → Environment Variables):
 **Production:**
 ```bash
 VITE_API_BASE_URL=https://library-server-m6gr.onrender.com
-VITE_AI_SERVICE_URL=https://literati-ai-production.onrender.com
+VITE_AI_SERVICE_URL=https://shelfquest-ai-production.onrender.com
 VITE_SUPABASE_URL=https://your-prod-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-prod-supabase-anon-key
 VITE_ENABLE_SERVICE_WORKER=true
@@ -135,8 +135,8 @@ VITE_APP_ENV=production
 
 **Preview (Staging):**
 ```bash
-VITE_API_BASE_URL=https://literati-server-staging.onrender.com
-VITE_AI_SERVICE_URL=https://literati-ai-staging.onrender.com
+VITE_API_BASE_URL=https://shelfquest-server-staging.onrender.com
+VITE_AI_SERVICE_URL=https://shelfquest-ai-staging.onrender.com
 VITE_SUPABASE_URL=https://your-staging-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-staging-supabase-anon-key
 VITE_ENABLE_SERVICE_WORKER=true
@@ -194,7 +194,7 @@ FINGERPRINT_SALT=random-salt-for-fingerprinting
 ENABLE_SECURITY_LOGGING=true
 
 # AI Service Integration
-AI_SERVICE_URL=https://literati-ai-production.onrender.com
+AI_SERVICE_URL=https://shelfquest-ai-production.onrender.com
 AI_SERVICE_TIMEOUT=30000
 
 # File Upload Configuration
@@ -590,7 +590,7 @@ After successful deployment:
 5. **Set up** analytics
 6. **Document** runbooks for common operations
 
-Your Literati application is now ready for production deployment! 🚀
+Your ShelfQuest application is now ready for production deployment! 🚀
 
 ---
 

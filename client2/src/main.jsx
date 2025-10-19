@@ -71,7 +71,7 @@ if (shouldRegisterSW) {
 
 // DEV diagnostics (optional)
 if (import.meta.env.DEV) {
-  window.__LITERATI_DEBUG__ = true;
+  window.__SHELFQUEST_DEBUG__ = true;
 }
 
 // Standard error boundary fallback (no Sentry)

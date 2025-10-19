@@ -1,10 +1,10 @@
 # Testing Infrastructure Guide
 
-This document provides a comprehensive guide to the testing infrastructure for the Literati application.
+This document provides a comprehensive guide to the testing infrastructure for the ShelfQuest application.
 
 ## Overview
 
-The Literati application uses a multi-layered testing approach:
+The ShelfQuest application uses a multi-layered testing approach:
 
 - **Unit Tests**: Testing individual components and functions in isolation
 - **Integration Tests**: Testing interactions between components and services

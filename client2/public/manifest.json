@@ -1,8 +1,8 @@
 {
-  "id": "menta-iq-pwa",
-  "name": "Menta IQ",
-  "short_name": "Menta",
-  "description": "A progressive web app for managing your digital library with reading tracking and annotations",
+  "id": "shelfquest-pwa",
+  "name": "ShelfQuest",
+  "short_name": "ShelfQuest",
+  "description": "ShelfQuest - Your digital library companion for managing books with reading tracking and annotations",
   "start_url": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
@@ -14,7 +14,7 @@
   "categories": ["books", "education", "productivity"],
   "protocol_handlers": [
     {
-      "protocol": "web+menta",
+      "protocol": "web+shelfquest",
       "url": "/book?id=%s"
     }
   ],
@@ -38,19 +38,19 @@
       "purpose": "any"
     },
     {
-      "src": "/literatiLOGO_144x153.png",
+      "src": "/shelfquest-logo-144.png",
       "type": "image/png",
       "sizes": "144x144",
       "purpose": "any"
     },
     {
-      "src": "/literatiLOGO.png",
+      "src": "/shelfquest-logo-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable any"
     },
     {
-      "src": "/literati512.png",
+      "src": "/shelfquest-logo-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
@@ -70,7 +70,7 @@
       "url": "/library",
       "icons": [
         {
-          "src": "/literatiLOGO.png",
+          "src": "/shelfquest-logo-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -83,7 +83,7 @@
       "url": "/upload",
       "icons": [
         {
-          "src": "/literatiLOGO.png",
+          "src": "/shelfquest-logo-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -96,7 +96,7 @@
       "url": "/dashboard",
       "icons": [
         {
-          "src": "/literatiLOGO.png",
+          "src": "/shelfquest-logo-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -109,21 +109,21 @@
       "sizes": "620x300",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Literati Splash Screen"
+      "label": "ShelfQuest Splash Screen"
     },
     {
       "src": "/screenshot-wide.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Literati Dashboard"
+      "label": "ShelfQuest Dashboard"
     },
     {
       "src": "/screenshot-narrow.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Literati Mobile View"
+      "label": "ShelfQuest Mobile View"
     }
   ],
   "prefer_related_applications": false,

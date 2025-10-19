@@ -67,7 +67,7 @@ const PremiumNavigation = ({
           <span className="material-symbols-outlined">menu</span>
         </button>
         {!collapsed && (
-          <span className="md3-rail-title">Literati</span>
+          <span className="md3-rail-title">ShelfQuest</span>
         )}
       </div>
 

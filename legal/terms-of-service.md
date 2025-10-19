@@ -1,14 +1,14 @@
-# Terms of Service for Literati
+# Terms of Service for ShelfQuest
 
 **Last Updated: October 3, 2025**
 
 ## Agreement to Terms
 
-By accessing or using Literati ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these Terms, you may not access or use our Service.
+By accessing or using ShelfQuest ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these Terms, you may not access or use our Service.
 
 ## Description of Service
 
-Literati is a digital library application that allows users to:
+ShelfQuest is a digital library application that allows users to:
 - Upload, store, and organize digital books (PDF, EPUB)
 - Track reading progress and maintain reading statistics
 - Create notes, highlights, and annotations
@@ -36,7 +36,7 @@ Literati is a digital library application that allows users to:
 ## User Content and Conduct
 
 ### Content Ownership
-- You retain ownership of content you upload to Literati
+- You retain ownership of content you upload to ShelfQuest
 - You grant us a license to store, process, and display your content to provide the Service
 - You are solely responsible for the content you upload and share
 
@@ -66,7 +66,7 @@ You agree NOT to:
 ## Intellectual Property Rights
 
 ### Our Content
-- The Literati application, including its design, features, and functionality, is owned by us
+- The ShelfQuest application, including its design, features, and functionality, is owned by us
 - Our trademarks, logos, and service marks are our property
 - You may not use our intellectual property without written permission
 
@@ -76,7 +76,7 @@ You agree NOT to:
 - We do not claim ownership of books you upload
 
 ### License to Use Service
-We grant you a limited, non-exclusive, non-transferable license to use Literati for personal, non-commercial purposes in accordance with these Terms.
+We grant you a limited, non-exclusive, non-transferable license to use ShelfQuest for personal, non-commercial purposes in accordance with these Terms.
 
 ## Privacy and Data Protection
 
@@ -170,7 +170,7 @@ If you believe content on our Service infringes your copyright:
 4. **Authorization**: Include authorization to act on behalf of the copyright owner
 
 ### DMCA Agent Contact
-**Email**: info@literati.pro
+**Email**: info@shelfquest.pro
 **Address**: 628 Montreal Court, Brownsville, Texas 78526
 
 ### Counter-Notification
@@ -254,12 +254,12 @@ You may not assign these Terms. We may assign our rights and obligations without
 ### Contact Information
 For questions about these Terms, contact us at:
 
-**Email**: info@literati.pro
+**Email**: info@shelfquest.pro
 **Address**: 628 Montreal Court, Brownsville, Texas 78526
-**Support**: info@literati.pro
+**Support**: info@shelfquest.pro
 
 ---
 
 *These Terms of Service are effective as of October 3, 2025 and were last updated on October 3, 2025.*
 
-**By using Literati, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
+**By using ShelfQuest, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.**
