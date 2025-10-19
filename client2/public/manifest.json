@@ -103,29 +103,6 @@
       ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "/SplashScreen.scale-100.png",
-      "sizes": "620x300",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "ShelfQuest Splash Screen"
-    },
-    {
-      "src": "/screenshot-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "ShelfQuest Dashboard"
-    },
-    {
-      "src": "/screenshot-narrow.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "ShelfQuest Mobile View"
-    }
-  ],
   "prefer_related_applications": false,
   "related_applications": []
 }
