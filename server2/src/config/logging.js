@@ -21,7 +21,7 @@ const consoleFormat = winston.format.combine(
   }),
   winston.format.colorize(),
   winston.format.printf(({ timestamp, level, message, service, requestId, userId, ...meta }) => {
-    let logMessage = `${timestamp} [${level}] ${service || 'literati-api'}: ${message}`;
+    let logMessage = `${timestamp} [${level}] ${service || 'shelfquest-api'}: ${message}`;
 
     if (requestId) {
       logMessage += ` [req:${requestId}]`;
@@ -118,7 +118,7 @@ const logger = winston.createLogger({
 
 // Create specialized loggers for different components
 const createComponentLogger = (component) => {
-  return logger.child({ service: `literati-api-${component}` });
+  return logger.child({ service: `shelfquest-api-${component}` });
 };
 
 // Specialized loggers

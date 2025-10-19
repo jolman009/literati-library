@@ -16,7 +16,7 @@ const CookieConsent = () => {
 
   useEffect(() => {
     // Check if user has already made a choice
-    const consentData = localStorage.getItem('literati-cookie-consent');
+    const consentData = localStorage.getItem('shelfquest-cookie-consent');
     if (!consentData) {
       // Show banner after a short delay for better UX
       const timer = setTimeout(() => {
@@ -35,7 +35,7 @@ const CookieConsent = () => {
       version: '1.0'
     };
 
-    localStorage.setItem('literati-cookie-consent', JSON.stringify(consentData));
+    localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(consentData));
     setIsVisible(false);
 
     // Initialize analytics if accepted
@@ -53,7 +53,7 @@ const CookieConsent = () => {
       version: '1.0'
     };
 
-    localStorage.setItem('literati-cookie-consent', JSON.stringify(consentData));
+    localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(consentData));
     setIsVisible(false);
   };
 
@@ -64,7 +64,7 @@ const CookieConsent = () => {
       version: '1.0'
     };
 
-    localStorage.setItem('literati-cookie-consent', JSON.stringify(consentData));
+    localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(consentData));
     setIsVisible(false);
 
     // Initialize analytics if accepted
@@ -251,7 +251,7 @@ const CookieConsent = () => {
 // Utility function to check if user has consented to specific cookie types
 export const hasConsentFor = (cookieType) => {
   try {
-    const consentData = localStorage.getItem('literati-cookie-consent');
+    const consentData = localStorage.getItem('shelfquest-cookie-consent');
     if (!consentData) return false;
 
     const consent = JSON.parse(consentData);
@@ -265,7 +265,7 @@ export const hasConsentFor = (cookieType) => {
 // Utility function to get all consent preferences
 export const getConsentPreferences = () => {
   try {
-    const consentData = localStorage.getItem('literati-cookie-consent');
+    const consentData = localStorage.getItem('shelfquest-cookie-consent');
     if (!consentData) return null;
 
     return JSON.parse(consentData);
@@ -277,7 +277,7 @@ export const getConsentPreferences = () => {
 
 // Function to show cookie preferences (for settings page)
 export const showCookiePreferences = () => {
-  localStorage.removeItem('literati-cookie-consent');
+  localStorage.removeItem('shelfquest-cookie-consent');
   window.location.reload(); // Simple way to trigger the banner again
 };
 

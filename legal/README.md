@@ -1,15 +1,15 @@
 # Legal & Compliance Documentation
-## Literati Digital Library Application
+## ShelfQuest Digital Library Application
 
 **Last Updated**: October 3, 2025
-**Organization**: Literati
-**Contact**: info@literati.pro
+**Organization**: ShelfQuest
+**Contact**: info@shelfquest.pro
 
 ---
 
 ## Overview
 
-This directory contains all legal, compliance, and regulatory documentation for the Literati application. These documents ensure compliance with privacy laws (GDPR, CCPA), content rating requirements, and provide clear terms for users.
+This directory contains all legal, compliance, and regulatory documentation for the ShelfQuest application. These documents ensure compliance with privacy laws (GDPR, CCPA), content rating requirements, and provide clear terms for users.
 
 ---
 
@@ -20,7 +20,7 @@ This directory contains all legal, compliance, and regulatory documentation for 
 **Status**: ✅ Complete and up-to-date
 **Last Updated**: October 3, 2025
 
-**Purpose**: Explains how Literati collects, uses, and protects user data.
+**Purpose**: Explains how ShelfQuest collects, uses, and protects user data.
 
 **Key Sections**:
 - Information collection (account, reading data, technical data)
@@ -40,7 +40,7 @@ This directory contains all legal, compliance, and regulatory documentation for 
 **Status**: ✅ Complete and up-to-date
 **Last Updated**: October 3, 2025
 
-**Purpose**: Legal agreement between Literati and users governing service use.
+**Purpose**: Legal agreement between ShelfQuest and users governing service use.
 
 **Key Sections**:
 - User responsibilities and prohibited activities
@@ -181,7 +181,7 @@ This directory contains all legal, compliance, and regulatory documentation for 
 - ✅ Right to delete personal information
 - ✅ No sale of personal information (and clear disclosure)
 - ✅ Non-discrimination for exercising rights
-- ✅ Contact information for privacy requests (info@literati.pro)
+- ✅ Contact information for privacy requests (info@shelfquest.pro)
 
 ---
 
@@ -218,7 +218,7 @@ This directory contains all legal, compliance, and regulatory documentation for 
 
 **Requirements Met**:
 - ✅ DMCA policy in Terms of Service
-- ✅ Designated DMCA agent (info@literati.pro)
+- ✅ Designated DMCA agent (info@shelfquest.pro)
 - ✅ Takedown procedures documented
 - ✅ Counter-notification process defined
 - ✅ Repeat infringer policy
@@ -228,13 +228,13 @@ This directory contains all legal, compliance, and regulatory documentation for 
 ## Contact Information
 
 ### General Inquiries
-**Email**: info@literati.pro
+**Email**: info@shelfquest.pro
 **Address**: 628 Montreal Court, Brownsville, Texas 78526
 
 ### Privacy & Data Protection
-**Data Protection Officer**: info@literati.pro
-**Privacy Requests**: info@literati.pro
-**DMCA Agent**: info@literati.pro
+**Data Protection Officer**: info@shelfquest.pro
+**Privacy Requests**: info@shelfquest.pro
+**DMCA Agent**: info@shelfquest.pro
 
 ### Legal
 **Governing Law**: State of Texas, United States
@@ -306,7 +306,7 @@ Priority: Low
 
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0 | October 3, 2025 | Initial creation of all legal documents | Literati Team |
+| 1.0 | October 3, 2025 | Initial creation of all legal documents | ShelfQuest Team |
 
 ---
 
@@ -334,4 +334,4 @@ Priority: Low
 
 ---
 
-*This README provides an overview of Literati's legal and compliance documentation. For detailed information, refer to individual documents listed above.*
+*This README provides an overview of ShelfQuest's legal and compliance documentation. For detailed information, refer to individual documents listed above.*

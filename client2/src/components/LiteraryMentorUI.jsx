@@ -118,7 +118,7 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
       
       // Fallback: Try to get from IndexedDB cache
       try {
-        const request = indexedDB.open('literati-books', 2);
+        const request = indexedDB.open('shelfquest-books', 2);
         
         request.onsuccess = function(event) {
           const db = event.target.result;

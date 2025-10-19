@@ -1,18 +1,18 @@
 # Data Protection Impact Assessment (DPIA)
-## For Literati Digital Library Application
+## For ShelfQuest Digital Library Application
 
-**Organization**: Literati
+**Organization**: ShelfQuest
 **Assessment Date**: October 3, 2025
 **Last Review**: October 3, 2025
 **Next Review Due**: October 3, 2026
-**Assessment Owner**: Data Protection Officer (info@literati.pro)
+**Assessment Owner**: Data Protection Officer (info@shelfquest.pro)
 **GDPR Compliance**: Article 35 DPIA Requirement
 
 ---
 
 ## Executive Summary
 
-This Data Protection Impact Assessment (DPIA) evaluates the privacy risks associated with Literati, a digital library application that allows users to upload, store, and manage their personal book collections with reading tracking and gamification features.
+This Data Protection Impact Assessment (DPIA) evaluates the privacy risks associated with ShelfQuest, a digital library application that allows users to upload, store, and manage their personal book collections with reading tracking and gamification features.
 
 **Key Findings**:
 - **Risk Level**: Medium
@@ -27,7 +27,7 @@ This Data Protection Impact Assessment (DPIA) evaluates the privacy risks associ
 
 ### 1.1 Purpose of Processing
 
-Literati processes personal data for the following purposes:
+ShelfQuest processes personal data for the following purposes:
 
 1. **Account Management**
    - User registration and authentication
@@ -351,16 +351,16 @@ Data is not kept longer than necessary:
 
 ## 5. Data Subject Rights (GDPR Chapter 3)
 
-Literati supports the following data subject rights:
+ShelfQuest supports the following data subject rights:
 
 | Right | Implementation | How Users Exercise |
 |-------|---------------|-------------------|
 | **Right to be Informed** (Art. 13-14) | ✅ Privacy Policy, clear notices | Automatic (policy available) |
-| **Right of Access** (Art. 15) | ✅ Users can view all their data in app | Request via info@literati.pro |
+| **Right of Access** (Art. 15) | ✅ Users can view all their data in app | Request via info@shelfquest.pro |
 | **Right to Rectification** (Art. 16) | ✅ Profile editing in settings | In-app profile settings |
 | **Right to Erasure** (Art. 17) | ✅ Account deletion feature | In-app account deletion + email request |
-| **Right to Restrict Processing** (Art. 18) | ⚠️ Partial (can disable features) | Contact info@literati.pro |
-| **Right to Data Portability** (Art. 20) | ⚠️ To be implemented | Request via info@literati.pro |
+| **Right to Restrict Processing** (Art. 18) | ⚠️ Partial (can disable features) | Contact info@shelfquest.pro |
+| **Right to Data Portability** (Art. 20) | ⚠️ To be implemented | Request via info@shelfquest.pro |
 | **Right to Object** (Art. 21) | ✅ Opt-out of analytics, AI features | In-app settings |
 | **Rights Related to Automated Decision-Making** (Art. 22) | ✅ N/A (no automated decisions affecting users) | Not applicable |
 
@@ -424,7 +424,7 @@ Literati supports the following data subject rights:
 
 ### 7.1 Transfer Mechanisms
 
-Literati may transfer data internationally depending on hosting configuration:
+ShelfQuest may transfer data internationally depending on hosting configuration:
 
 | Transfer | From | To | Mechanism | Status |
 |----------|------|-----|-----------|--------|
@@ -537,7 +537,7 @@ After implementing all high and medium priority recommendations, residual risks 
 ## 12. Contact Information
 
 **Data Protection Officer**
-Email: info@literati.pro
+Email: info@shelfquest.pro
 Address: 628 Montreal Court, Brownsville, Texas 78526
 
 **Supervisory Authority** (for EU users)
@@ -545,4 +545,4 @@ Identify relevant authority based on user location or establishment of controlle
 
 ---
 
-*This Data Protection Impact Assessment was completed in accordance with GDPR Article 35 and represents a good-faith effort to identify and mitigate privacy risks associated with the Literati application.*
+*This Data Protection Impact Assessment was completed in accordance with GDPR Article 35 and represents a good-faith effort to identify and mitigate privacy risks associated with the ShelfQuest application.*

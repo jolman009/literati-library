@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the comprehensive security measures implemented in the Literati API server. The security system is designed following industry best practices and includes multiple layers of protection.
+This document outlines the comprehensive security measures implemented in the ShelfQuest API server. The security system is designed following industry best practices and includes multiple layers of protection.
 
 ## 🛡️ Security Features Implemented
 

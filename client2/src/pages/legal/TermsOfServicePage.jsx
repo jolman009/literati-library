@@ -10,7 +10,7 @@ const TermsOfServicePage = () => {
       <div className="legal-page-header">
         <h1 className="md-display-small">Terms of Service</h1>
         <p className="md-body-large legal-subtitle">
-          Legal agreement for using Literati
+          Legal agreement for using ShelfQuest
         </p>
         <p className="md-body-medium legal-updated">
           Last Updated: October 3, 2025
@@ -22,14 +22,14 @@ const TermsOfServicePage = () => {
           <section className="legal-section">
             <h2 className="md-headline-medium">Agreement to Terms</h2>
             <p className="md-body-medium">
-              By accessing or using Literati ("Service"), you agree to be bound by these Terms of Service ("Terms").
+              By accessing or using ShelfQuest ("Service"), you agree to be bound by these Terms of Service ("Terms").
               If you disagree with any part of these Terms, you may not access or use our Service.
             </p>
           </section>
 
           <section className="legal-section">
             <h2 className="md-headline-medium">Description of Service</h2>
-            <p className="md-body-medium">Literati is a digital library application that allows users to:</p>
+            <p className="md-body-medium">ShelfQuest is a digital library application that allows users to:</p>
             <ul className="legal-list">
               <li>Upload, store, and organize digital books (PDF, EPUB)</li>
               <li>Track reading progress and maintain reading statistics</li>
@@ -63,7 +63,7 @@ const TermsOfServicePage = () => {
 
             <h3 className="md-title-large">Content Ownership</h3>
             <ul className="legal-list">
-              <li>You retain ownership of content you upload to Literati</li>
+              <li>You retain ownership of content you upload to ShelfQuest</li>
               <li>You grant us a license to store, process, and display your content to provide the Service</li>
               <li>You are solely responsible for the content you upload and share</li>
             </ul>
@@ -92,14 +92,14 @@ const TermsOfServicePage = () => {
 
             <h3 className="md-title-large">Our Content</h3>
             <ul className="legal-list">
-              <li>The Literati application, including its design, features, and functionality, is owned by us</li>
+              <li>The ShelfQuest application, including its design, features, and functionality, is owned by us</li>
               <li>Our trademarks, logos, and service marks are our property</li>
               <li>You may not use our intellectual property without written permission</li>
             </ul>
 
             <h3 className="md-title-large">License to Use Service</h3>
             <p className="md-body-medium">
-              We grant you a limited, non-exclusive, non-transferable license to use Literati for personal,
+              We grant you a limited, non-exclusive, non-transferable license to use ShelfQuest for personal,
               non-commercial purposes in accordance with these Terms.
             </p>
           </section>
@@ -158,7 +158,7 @@ const TermsOfServicePage = () => {
               If you believe content on our Service infringes your copyright, please contact our DMCA agent:
             </p>
             <div className="legal-contact">
-              <p><strong>Email:</strong> info@literati.pro</p>
+              <p><strong>Email:</strong> info@shelfquest.pro</p>
               <p><strong>Address:</strong> 628 Montreal Court, Brownsville, Texas 78526</p>
             </div>
           </section>
@@ -196,9 +196,9 @@ const TermsOfServicePage = () => {
               For questions about these Terms, contact us at:
             </p>
             <div className="legal-contact">
-              <p><strong>Email:</strong> info@literati.pro</p>
+              <p><strong>Email:</strong> info@shelfquest.pro</p>
               <p><strong>Address:</strong> 628 Montreal Court, Brownsville, Texas 78526</p>
-              <p><strong>Support:</strong> info@literati.pro</p>
+              <p><strong>Support:</strong> info@shelfquest.org</p>
             </div>
           </section>
 
@@ -207,7 +207,7 @@ const TermsOfServicePage = () => {
               These Terms of Service are effective as of October 3, 2025 and were last updated on October 3, 2025.
             </p>
             <p className="md-body-medium" style={{ marginTop: '16px', fontWeight: 500 }}>
-              By using Literati, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+              By using ShelfQuest, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
             </p>
           </div>
         </div>

@@ -1,15 +1,15 @@
-# 📖 Literati API Documentation
+# 📖 ShelfQuest API Documentation
 
-Complete API reference for the Literati Digital Library backend services.
+Complete API reference for the ShelfQuest Digital Library backend services.
 
 ## 🌐 **API Overview**
 
-The Literati API consists of **three main services**:
+The ShelfQuest API consists of **three main services**:
 
 | Service | Base URL | Purpose |
 |---------|----------|---------|
 | **Backend API** | `https://library-server-m6gr.onrender.com` | Main application API |
-| **AI Service** | `https://literati-ai-production.onrender.com` | AI-powered features |
+| **AI Service** | `https://shelfquest-ai-production.onrender.com` | AI-powered features |
 | **Database** | Supabase | Direct database operations |
 
 ### **API Architecture**
@@ -28,7 +28,7 @@ The Literati API consists of **three main services**:
 ## 🔐 **Authentication**
 
 ### **Authentication Flow**
-Literati uses **JWT-based authentication** with refresh token rotation:
+ShelfQuest uses **JWT-based authentication** with refresh token rotation:
 
 1. **Login** → Receive access token (15min) + refresh token (7 days)
 2. **API calls** → Include `Authorization: Bearer <access_token>`
@@ -678,7 +678,7 @@ Create a reading goal.
 
 ### **Base URL**
 ```
-https://literati-ai-production.onrender.com
+https://shelfquest-ai-production.onrender.com
 ```
 
 ### **POST /summarize-note**
@@ -800,7 +800,7 @@ RateLimit-Policy: 100;w=900
 curl https://library-server-m6gr.onrender.com/health
 
 # AI Service Health
-curl https://literati-ai-production.onrender.com/health
+curl https://shelfquest-ai-production.onrender.com/health
 
 # Database Connection Test
 curl https://library-server-m6gr.onrender.com/debug/db-connection
@@ -831,7 +831,7 @@ done
 ### **JavaScript/TypeScript Client**
 ```javascript
 // Example API client usage
-const LiteratiAPI = {
+const ShelfQuestAPI = {
   baseURL: 'https://library-server-m6gr.onrender.com',
 
   async login(email, password) {
@@ -858,7 +858,7 @@ const LiteratiAPI = {
 # Example Python client
 import requests
 
-class LiteratiAPI:
+class ShelfQuestAPI:
     def __init__(self, base_url='https://library-server-m6gr.onrender.com'):
         self.base_url = base_url
         self.token = None
@@ -886,4 +886,4 @@ For implementation details, see:
 - [Deployment Guide](./DEPLOYMENT.md) - Production deployment instructions
 - [Security Documentation](../server2/SECURITY_DOCUMENTATION.md) - Security implementation details
 
-**Your Literati API is production-ready with enterprise-grade security and comprehensive documentation!** 🚀
+**Your ShelfQuest API is production-ready with enterprise-grade security and comprehensive documentation!** 🚀

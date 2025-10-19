@@ -1,14 +1,14 @@
-# DMCA Copyright Policy for Literati
+# DMCA Copyright Policy for ShelfQuest
 
 **Last Updated: [DATE]**
 
 ## Overview
 
-Literati respects the intellectual property rights of others and expects our users to do the same. In accordance with the Digital Millennium Copyright Act ("DMCA"), we have adopted this policy for responding to claims of copyright infringement.
+ShelfQuest respects the intellectual property rights of others and expects our users to do the same. In accordance with the Digital Millennium Copyright Act ("DMCA"), we have adopted this policy for responding to claims of copyright infringement.
 
 ## Safe Harbor Compliance
 
-Literati qualifies for protection under the DMCA's "Safe Harbor" provisions. We:
+ShelfQuest qualifies for protection under the DMCA's "Safe Harbor" provisions. We:
 - Have a designated DMCA agent to receive takedown notices
 - Respond promptly to valid takedown notices
 - Have a policy for terminating repeat infringers
@@ -16,7 +16,7 @@ Literati qualifies for protection under the DMCA's "Safe Harbor" provisions. We:
 
 ## Filing a DMCA Takedown Notice
 
-If you believe that content on Literati infringes your copyright, you may submit a takedown notice. To be effective under the DMCA, your notice must include:
+If you believe that content on ShelfQuest infringes your copyright, you may submit a takedown notice. To be effective under the DMCA, your notice must include:
 
 ### Required Information
 

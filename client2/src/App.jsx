@@ -121,7 +121,7 @@ const TermsOfServicePage = lazy(() =>
 );
 
 // Enhanced Loading Component (now using imported component)
-const AppLoadingSpinner = ({ message = "Loading Literati..." }) => (
+const AppLoadingSpinner = ({ message = "Loading ShelfQuest..." }) => (
   <LoadingSpinner message={message} size="large" variant="primary" />
 );
 
@@ -142,14 +142,14 @@ const AppRoutes = () => {
       user: user ? `${user.name} (${user.email})` : 'null',
       loading,
       isAuthenticated,
-      hasToken: !!localStorage.getItem('literati_token'),
+      hasToken: !!localStorage.getItem('shelfquest_token'),
       currentPath: window.location.pathname
     });
   }, [user, loading, isAuthenticated]);
 
   if (loading) {
     console.log('🔄 Loading auth state...');
-    return <AppLoadingSpinner message="Initializing Literati..." />;
+    return <AppLoadingSpinner message="Initializing ShelfQuest..." />;
   }
 
   return (

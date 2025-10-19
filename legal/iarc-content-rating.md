@@ -1,14 +1,14 @@
-# IARC Content Rating Documentation for Literati
+# IARC Content Rating Documentation for ShelfQuest
 
-**Application Name**: Literati
+**Application Name**: ShelfQuest
 **Date Prepared**: October 3, 2025
-**Prepared By**: Literati Development Team
+**Prepared By**: ShelfQuest Development Team
 
 ## What is IARC?
 
 The International Age Rating Coalition (IARC) is a global rating system that provides age classifications and content descriptors for digital apps and games. IARC ratings are recognized by major app stores including Google Play Store, Microsoft Store, and Nintendo eShop.
 
-## Why Literati Needs IARC Rating
+## Why ShelfQuest Needs IARC Rating
 
 - **App Store Requirements**: Many app stores require IARC ratings for publication
 - **International Compliance**: Single questionnaire provides ratings for multiple regions
@@ -23,8 +23,8 @@ Visit the IARC portal at: https://www.globalratings.com/
 ### Step 2: Create Publisher Account
 - Register as a publisher
 - Provide company information:
-  - **Company Name**: Literati
-  - **Contact Email**: info@literati.pro
+  - **Company Name**: ShelfQuest
+  - **Contact Email**: info@shelfquest.pro
   - **Address**: 628 Montreal Court, Brownsville, Texas 78526
 
 ### Step 3: Complete Questionnaire
@@ -41,16 +41,16 @@ Download rating certificates for:
 
 ---
 
-## IARC Questionnaire Responses for Literati
+## IARC Questionnaire Responses for ShelfQuest
 
-Below are the recommended responses for Literati's IARC questionnaire. Review and confirm these answers match your app's actual content before submission.
+Below are the recommended responses for ShelfQuest's IARC questionnaire. Review and confirm these answers match your app's actual content before submission.
 
 ### Category 1: Violence
 
 **Q: Does your app contain violence?**
 **A: No**
 
-- Literati is a reading app with no violent content
+- ShelfQuest is a reading app with no violent content
 - Users upload and read books (content varies by user)
 - The app itself contains no violent imagery, themes, or mechanics
 
@@ -158,7 +158,7 @@ Below are the recommended responses for Literati's IARC questionnaire. Review an
 
 ## Expected IARC Ratings
 
-Based on the above responses, Literati should receive the following age ratings:
+Based on the above responses, ShelfQuest should receive the following age ratings:
 
 | Rating System | Expected Rating | Description |
 |---------------|----------------|-------------|
@@ -173,7 +173,7 @@ Based on the above responses, Literati should receive the following age ratings:
 
 Expected descriptors: **None**
 
-Since Literati contains no problematic content in the app itself, no content descriptors should apply.
+Since ShelfQuest contains no problematic content in the app itself, no content descriptors should apply.
 
 **User Content Disclaimer**: While the app itself is rated for all ages, user-uploaded books may contain varied content. Users are responsible for ensuring age-appropriate material.
 
@@ -207,9 +207,9 @@ Since Literati contains no problematic content in the app itself, no content des
 
 ### User-Uploaded Content Disclaimer
 
-Since Literati allows users to upload books, include this disclaimer in app stores and marketing:
+Since ShelfQuest allows users to upload books, include this disclaimer in app stores and marketing:
 
-> "Literati is a personal digital library app. Users upload and read their own book files. While the app interface is suitable for all ages, the content of user-uploaded books varies. Users are responsible for ensuring they have legal rights to uploaded materials and that content is age-appropriate for intended readers."
+> "ShelfQuest is a personal digital library app. Users upload and read their own book files. While the app interface is suitable for all ages, the content of user-uploaded books varies. Users are responsible for ensuring they have legal rights to uploaded materials and that content is age-appropriate for intended readers."
 
 ### Future Feature Considerations
 
@@ -252,8 +252,8 @@ legal/
 - Website: https://www.globalratings.com/
 - Email: support@globalratings.com
 
-**For Literati Questions**:
-- Email: info@literati.pro
+**For ShelfQuest Questions**:
+- Email: info@shelfquest.pro
 - Address: 628 Montreal Court, Brownsville, Texas 78526
 
 ---

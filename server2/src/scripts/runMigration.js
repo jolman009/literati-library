@@ -160,10 +160,10 @@ async function main() {
   const migrationArg = process.argv[2] || 'security';
 
   if (migrationArg === 'gamification') {
-    console.log('🚀 Literati Gamification Migration Tool');
+    console.log('🚀 ShelfQuest Gamification Migration Tool');
     console.log('=======================================');
   } else {
-    console.log('🚀 Literati Security Migration Tool');
+    console.log('🚀 ShelfQuest Security Migration Tool');
     console.log('=====================================');
   }
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the complete integration of the gamification system into the Literati application. The system tracks user actions, awards points, unlocks achievements, and provides visual feedback through an enhanced progress visualization.
+This document describes the complete integration of the gamification system into the ShelfQuest application. The system tracks user actions, awards points, unlocks achievements, and provides visual feedback through an enhanced progress visualization.
 
 ## Table of Contents
 
@@ -862,5 +862,5 @@ CREATE TABLE gamification_actions (
 
 ## License
 
-This gamification system is part of the Literati application.
+This gamification system is part of the ShelfQuest application.
 All rights reserved.

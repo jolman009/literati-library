@@ -24,7 +24,7 @@ class ServerCrashReporting {
       Sentry.init({
         dsn,
         environment,
-        release: `literati-server@${appVersion}`,
+        release: `shelfquest-server@${appVersion}`,
         debug: environment === 'development',
 
        // Integrations
@@ -53,7 +53,7 @@ integrations: [
         // Initial scope
         initialScope: {
           tags: {
-            component: 'literati-backend',
+            component: 'shelfquest-backend',
             node_version: process.version
           }
         }
@@ -511,12 +511,12 @@ integrations: [
       return;
     }
 
-    this.captureMessage('Test message from Literati server', 'info', {
+    this.captureMessage('Test message from ShelfQuest server', 'info', {
       test: true,
       timestamp: Date.now()
     });
 
-    const testError = new Error('Test error from Literati server');
+    const testError = new Error('Test error from ShelfQuest server');
     this.captureException(testError, {
       test: true,
       service: 'crash_reporting_test'

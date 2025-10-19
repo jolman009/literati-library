@@ -14,7 +14,7 @@ import { syncPendingNotes } from '../utils/noteSyncUtil.js';
  * NOTE: Tokens are now stored in HttpOnly cookies for security.
  * Only user data is kept in localStorage for quick access.
  */
-const USER_KEY = 'literati_user';
+const USER_KEY = 'shelfquest_user';
 
 /**
  * Use centralized environment configuration for API URL

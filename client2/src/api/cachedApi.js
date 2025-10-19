@@ -343,7 +343,7 @@ export class CachedApiService {
   getCurrentUserId() {
     // Try to get from localStorage token
     try {
-      const token = localStorage.getItem('literati_token');
+      const token = localStorage.getItem('shelfquest_token');
       if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.sub || payload.user_id || payload.id;

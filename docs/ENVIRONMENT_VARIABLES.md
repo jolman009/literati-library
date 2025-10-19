@@ -59,7 +59,7 @@ pnpm run dev
 # Staging
 pnpm run build --mode staging
 # → Loads: .env.staging
-# → API URL: https://literati-api-staging.onrender.com
+# → API URL: https://shelfquest-api-staging.onrender.com
 
 # Production
 pnpm run build
@@ -143,7 +143,7 @@ VITE_ENABLE_AI_FEATURES=false        # AI recommendations (future)
 # Security settings
 VITE_USE_SECURE_COOKIES=false        # true in production
 VITE_ENFORCE_HTTPS=false             # true in production
-VITE_TOKEN_KEY=literati_token        # LocalStorage key
+VITE_TOKEN_KEY=shelfquest_token        # LocalStorage key
 ```
 
 #### External Services
@@ -178,7 +178,7 @@ JWT_ACCESS_EXPIRY=15m
 JWT_REFRESH_EXPIRY=7d
 
 # CORS
-ALLOWED_ORIGINS=https://literati.pro,https://www.literati.pro
+ALLOWED_ORIGINS=https://shelfquest.pro,https://www.shelfquest.pro
 
 # Monitoring
 SENTRY_DSN=https://xxxxx@xxxxx.ingest.sentry.io/xxxxx
@@ -213,7 +213,7 @@ VITE_ENABLE_CRASH_REPORTING=true
 #### Preview/Staging Environment
 
 ```
-VITE_API_BASE_URL=https://literati-api-staging.onrender.com
+VITE_API_BASE_URL=https://shelfquest-api-staging.onrender.com
 VITE_ENVIRONMENT=staging
 VITE_ENABLE_SERVICE_WORKER=true
 VITE_SUPABASE_URL=https://your-staging-project.supabase.co
@@ -235,7 +235,7 @@ SUPABASE_URL=https://jjlxdsghmsemuparbfbh.supabase.co
 SUPABASE_SERVICE_KEY=<your-service-role-key>
 JWT_SECRET=<generate-with-openssl-rand-base64-32>
 JWT_REFRESH_SECRET=<different-strong-secret>
-ALLOWED_ORIGINS=https://literati.pro,https://www.literati.pro
+ALLOWED_ORIGINS=https://shelfquest.pro,https://www.shelfquest.pro
 SENTRY_DSN=<your-backend-sentry-dsn>
 APP_VERSION=1.0.0
 LOG_LEVEL=info

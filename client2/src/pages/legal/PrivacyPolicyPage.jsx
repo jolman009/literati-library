@@ -6,7 +6,7 @@ import './LegalPages.css';
 // Constants for better maintainability
 const PRIVACY_POLICY_VERSION = '1.0.0';
 const LAST_UPDATED = new Date('2024-01-15'); // Set a fixed date for consistency
-const CONTACT_EMAIL = 'info@literati.pro';
+const CONTACT_EMAIL = 'info@shelfquest.org';
 
 // Memoized date formatter for performance
 const formatDate = (date) => {
@@ -52,7 +52,7 @@ const PrivacyPolicyPage = () => {
       content: (
         <>
           <p className="md-body-medium">
-            Literati ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital library application ("Service").
+            ShelfQuest ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital library application ("Service").
           </p>
           <p className="md-body-medium">
             By accessing or using our Service, you agree to the collection and use of information in accordance with this Privacy Policy.

@@ -1,10 +1,10 @@
-# Privacy Policy for Literati
+# Privacy Policy for ShelfQuest
 
 **Last Updated: October 3, 2025**
 
 ## Introduction
 
-Literati ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital library application ("Service"). Please read this Privacy Policy carefully.
+ShelfQuest ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital library application ("Service"). Please read this Privacy Policy carefully.
 
 By accessing or using our Service, you agree to the collection and use of information in accordance with this Privacy Policy.
 
@@ -122,7 +122,7 @@ Depending on your location, you may have the following rights:
 - **Non-Discrimination**: No discrimination for exercising privacy rights
 
 ### How to Exercise Your Rights
-To exercise these rights, contact us at: **info@literati.pro**
+To exercise these rights, contact us at: **info@shelfquest.pro**
 
 We will respond to your request within 30 days (or as required by applicable law).
 
@@ -177,9 +177,9 @@ Your continued use of the Service after changes constitutes acceptance of the up
 
 If you have questions, concerns, or requests regarding this Privacy Policy, please contact us:
 
-**Email**: info@literati.pro
+**Email**: info@shelfquest.pro
 **Address**: 628 Montreal Court, Brownsville, Texas 78526
-**Data Protection Officer**: info@literati.pro
+**Data Protection Officer**: info@shelfquest.pro
 
 ## Legal Basis for Processing (GDPR)
 

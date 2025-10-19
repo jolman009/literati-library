@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- ShelfQuest Logo - The Quest Bookmark -->
+  <!-- Master SVG File - Full Color Version -->
+  
+  <defs>
+    <!-- Gradient for magical effect -->
+    <linearGradient id="magicalGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ad1ce3;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#c952ff;stop-opacity:0.1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle for app icon context -->
+  <circle cx="256" cy="256" r="240" fill="#fffbfe" opacity="0"/>
+  
+  <!-- Main bookmark ribbon -->
+  <path d="M 196 80 L 196 420 L 256 370 L 316 420 L 316 80 Z" 
+        fill="#5e0085" 
+        stroke="#2f004d" 
+        stroke-width="6" 
+        stroke-linejoin="round"
+        filter="url(#softShadow)"/>
+  
+  <!-- Inner bookmark detail -->
+  <path d="M 206 90 L 206 400 L 256 360 L 306 400 L 306 90 Z" 
+        fill="#7700a3" 
+        opacity="0.3"/>
+  
+  <!-- Compass rose background -->
+  <circle cx="256" cy="140" r="45" fill="url(#magicalGlow)"/>
+  <circle cx="256" cy="140" r="45" fill="none" stroke="#c952ff" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Compass points -->
+  <!-- North (top) - white for primary direction -->
+  <path d="M 256 95 L 264 120 L 256 130 L 248 120 Z" 
+        fill="#ffffff" 
+        stroke="#e5b3ff" 
+        stroke-width="2"/>
+  
+  <!-- South (bottom) -->
+  <path d="M 256 185 L 264 160 L 256 150 L 248 160 Z" 
+        fill="#7d525f" 
+        stroke="#625d66" 
+        stroke-width="2"/>
+  
+  <!-- East (right) -->
+  <path d="M 301 140 L 276 148 L 266 140 L 276 132 Z" 
+        fill="#9200c2" 
+        stroke="#7700a3" 
+        stroke-width="2"/>
+  
+  <!-- West (left) -->
+  <path d="M 211 140 L 236 148 L 246 140 L 236 132 Z" 
+        fill="#9200c2" 
+        stroke="#7700a3" 
+        stroke-width="2"/>
+  
+  <!-- Center compass pin -->
+  <circle cx="256" cy="140" r="12" fill="#5e0085" stroke="#2f004d" stroke-width="2"/>
+  <circle cx="256" cy="140" r="6" fill="#c952ff"/>
+  
+  <!-- Book page lines (suggesting pages) -->
+  <g opacity="0.6">
+    <line x1="216" y1="380" x2="216" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <line x1="226" y1="380" x2="226" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <line x1="236" y1="380" x2="236" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <line x1="276" y1="380" x2="276" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <line x1="286" y1="380" x2="286" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <line x1="296" y1="380" x2="296" y2="395" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Achievement star badge -->
+  <g filter="url(#softShadow)">
+    <!-- Star background circle -->
+    <circle cx="256" cy="310" r="28" fill="#FFA500" opacity="0.3"/>
+    
+    <!-- Star shape -->
+    <path d="M 256 285 
+             L 262 300 
+             L 278 302 
+             L 266 313 
+             L 269 329 
+             L 256 321 
+             L 243 329 
+             L 246 313 
+             L 234 302 
+             L 250 300 Z" 
+          fill="#FFD700" 
+          stroke="#FFA500" 
+          stroke-width="3" 
+          stroke-linejoin="round"/>
+    
+    <!-- Star inner highlight -->
+    <circle cx="256" cy="305" r="8" fill="#FFED4E" opacity="0.6"/>
+  </g>
+  
+  <!-- Decorative elements on bookmark sides -->
+  <circle cx="196" cy="140" r="4" fill="#c952ff" opacity="0.5"/>
+  <circle cx="316" cy="140" r="4" fill="#c952ff" opacity="0.5"/>
+  <circle cx="196" cy="310" r="4" fill="#FFD700" opacity="0.5"/>
+  <circle cx="316" cy="310" r="4" fill="#FFD700" opacity="0.5"/>
+</svg>

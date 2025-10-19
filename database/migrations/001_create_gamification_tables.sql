@@ -1,5 +1,5 @@
 -- =====================================================
--- Literati Database Migration 001
+-- ShelfQuest Database Migration 001
 -- Create Gamification System Tables
 -- =====================================================
 
@@ -279,7 +279,7 @@ ANALYZE user_preferences;
 -- Migration Complete
 -- =====================================================
 
--- This migration creates the essential tables for the Literati gamification system
+-- This migration creates the essential tables for the ShelfQuest gamification system
 -- Tables created:
 -- - user_achievements: Track unlocked achievements
 -- - user_goals: User reading goals and progress

@@ -1,6 +1,6 @@
 # 🐳 Docker Deployment Guide
 
-This guide covers running Literati using Docker for both development and production environments.
+This guide covers running ShelfQuest using Docker for both development and production environments.
 
 ## 📋 Prerequisites
 
@@ -57,25 +57,25 @@ chmod +x scripts/docker-prod.sh
 ### Build Individual Services
 ```bash
 # Client
-docker build -t literati-client ./client2
+docker build -t shelfquest-client ./client2
 
 # Server  
-docker build -t literati-server ./server2
+docker build -t shelfquest-server ./server2
 
 # AI Service
-docker build -t literati-ai ./ai-service
+docker build -t shelfquest-ai ./ai-service
 ```
 
 ### Run Individual Services
 ```bash
 # Client
-docker run -p 3000:80 literati-client
+docker run -p 3000:80 shelfquest-client
 
 # Server (requires environment variables)
-docker run -p 5000:5000 --env-file .env literati-server
+docker run -p 5000:5000 --env-file .env shelfquest-server
 
 # AI Service
-docker run -p 8000:8000 --env-file .env literati-ai
+docker run -p 8000:8000 --env-file .env shelfquest-ai
 ```
 
 ### Full Stack with Docker Compose
@@ -129,7 +129,7 @@ docker-compose --profile monitoring up -d
 # Security scanning enabled
 
 # Example security scan
-docker scan literati-client
+docker scan shelfquest-client
 ```
 
 ### Network Security
@@ -308,11 +308,11 @@ SENTRY_DSN=https://xxx@sentry.io/xxx
 #### Self-Hosted VPS
 ```bash
 # Copy files to server
-scp -r . user@server:/opt/literati
+scp -r . user@server:/opt/shelfquest
 
 # Run production deployment
 ssh user@server
-cd /opt/literati
+cd /opt/shelfquest
 ./scripts/docker-prod.sh
 ```
 

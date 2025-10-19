@@ -275,7 +275,7 @@ export const importCollections = (importData, existingCollections = []) => {
 // Collection localStorage utilities
 export const saveCollectionsToStorage = (collections) => {
   try {
-    localStorage.setItem('literati_collections', JSON.stringify(collections));
+    localStorage.setItem('shelfquest_collections', JSON.stringify(collections));
     return true;
   } catch (error) {
     console.error('Failed to save collections to localStorage:', error);
@@ -285,7 +285,7 @@ export const saveCollectionsToStorage = (collections) => {
 
 export const loadCollectionsFromStorage = () => {
   try {
-    const stored = localStorage.getItem('literati_collections');
+    const stored = localStorage.getItem('shelfquest_collections');
     return stored ? JSON.parse(stored) : null;
   } catch (error) {
     console.error('Failed to load collections from localStorage:', error);
@@ -295,7 +295,7 @@ export const loadCollectionsFromStorage = () => {
 
 export const clearCollectionsFromStorage = () => {
   try {
-    localStorage.removeItem('literati_collections');
+    localStorage.removeItem('shelfquest_collections');
     return true;
   } catch (error) {
     console.error('Failed to clear collections from localStorage:', error);

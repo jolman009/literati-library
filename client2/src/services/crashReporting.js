@@ -94,7 +94,7 @@ class CrashReportingService {
         // Custom tags
         initialScope: {
           tags: {
-            component: 'literati-frontend',
+            component: 'shelfquest-frontend',
             platform: this.getPlatform(),
             feature_flags: JSON.stringify({
               analytics: this.config.isFeatureEnabled('analytics'),
@@ -543,7 +543,7 @@ class CrashReportingService {
       return;
     }
 
-    this.captureMessage('Test message from Literati', 'info', {
+    this.captureMessage('Test message from ShelfQuest', 'info', {
       test: true,
       timestamp: Date.now()
     });
@@ -557,7 +557,7 @@ class CrashReportingService {
       return;
     }
 
-    const testError = new Error('Test error from Literati crash reporting');
+    const testError = new Error('Test error from ShelfQuest crash reporting');
     this.captureException(testError, {
       test: true,
       component: 'crash_reporting_test'

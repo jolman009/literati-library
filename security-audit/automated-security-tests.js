@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Automated Security Testing Suite for Literati
+ * Automated Security Testing Suite for ShelfQuest
  * Comprehensive security tests covering authentication, authorization, and data validation
  */
 

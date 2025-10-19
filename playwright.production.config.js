@@ -27,7 +27,7 @@ export default defineConfig({
   /* Shared settings for production testing */
   use: {
     /* Base URL for production environment */
-    baseURL: process.env.PRODUCTION_URL || 'https://literati.pro',
+    baseURL: process.env.PRODUCTION_URL || 'https://shelfquest.pro',
 
     /* Always collect trace for production failures */
     trace: 'retain-on-failure',
@@ -41,7 +41,7 @@ export default defineConfig({
     /* Production-specific headers */
     extraHTTPHeaders: {
       'Accept': 'application/json',
-      'User-Agent': 'Literati-Production-Monitor/1.0'
+      'User-Agent': 'ShelfQuest-Production-Monitor/1.0'
     },
 
     /* Be gentle on production */

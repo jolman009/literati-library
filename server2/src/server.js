@@ -160,8 +160,8 @@ app.use(cors({
 
     // ✅ Production domains (static URLs only)
     const defaultAllowedOrigins = [
-      'https://literati.pro',
-      'https://www.literati.pro',
+      'https://shelfquest.org',
+      'https://www.shelfquest.org',
     ];
 
     const allAllowed = [...new Set([...allowedOrigins, ...defaultAllowedOrigins])];
@@ -218,7 +218,7 @@ const upload = multer({
 const handleHealthCheck = (req, res) => {
   res.json({
     status: 'online',
-    message: 'Literati API Server is running',
+    message: 'ShelfQuest API Server is running',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     uptime: process.uptime(),
@@ -236,8 +236,8 @@ app.get('/cors-test', (req, res) => {
   res.json({
     origin: req.headers.origin,
     allowedOrigins: [
-      'https://literati.pro',
-      'https://www.literati.pro',
+      'https://shelfquest.org',
+      'https://www.shelfquest.org',
       'https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app',
       'localhost (all ports)'
     ],

@@ -6,7 +6,7 @@ const TestimonialsSection = () => {
       name: 'Sarah Martinez',
       role: 'Level 9 Reader, Spain',
       initials: 'SM',
-      text: 'Literati turned me from someone who read 2 books a year to 50+ books! The gamification is genius - I actually look forward to reading time now.',
+      text: 'ShelfQuest turned me from someone who read 2 books a year to 50+ books! The gamification is genius - I actually look forward to reading time now.',
     },
     {
       name: 'David Kim',
@@ -27,7 +27,7 @@ const TestimonialsSection = () => {
       <div className="section-container">
         <h2 className="section-title">Loved by Readers Worldwide</h2>
         <p className="section-subtitle">
-          Join thousands of readers who've transformed their reading habits with Literati
+          Join thousands of readers who've transformed their reading habits with ShelfQuest
         </p>
         
         <div className="testimonials-grid">

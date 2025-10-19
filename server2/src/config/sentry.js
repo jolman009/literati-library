@@ -39,7 +39,7 @@ export const initializeSentry = () => {
     release: process.env.APP_VERSION || 'unknown',
 
     // Server configuration
-    serverName: process.env.SERVER_NAME || 'literati-api',
+    serverName: process.env.SERVER_NAME || 'shelfquest-api',
 
     // Enhanced error filtering
     beforeSend(event, hint) {
@@ -90,7 +90,7 @@ export const initializeSentry = () => {
   });
 
   // Set server tags
-  Sentry.setTag('service', 'literati-api');
+  Sentry.setTag('service', 'shelfquest-api');
   Sentry.setTag('version', process.env.APP_VERSION || 'unknown');
 
   console.log('[Sentry] Initialized for environment:', environment);

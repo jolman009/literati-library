@@ -257,11 +257,11 @@ router.get('/user-data', authenticateToken, async (req, res) => {
         })),
       },
       privacy_info: {
-        data_usage: 'This data is used solely to provide you with the Literati service',
+        data_usage: 'This data is used solely to provide you with the ShelfQuest service',
         data_sharing: 'We do not sell or share your personal data with third parties',
         retention: 'Data is retained until you delete your account',
         rights: 'You have the right to access, rectify, delete, or port this data at any time',
-        contact: 'info@literati.pro',
+        contact: 'info@shelfquest.pro',
       },
     };
 
@@ -269,7 +269,7 @@ router.get('/user-data', authenticateToken, async (req, res) => {
 
     // Set headers for file download
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="literati-data-export-${userId}-${Date.now()}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="shelfquest-data-export-${userId}-${Date.now()}.json"`);
 
     return res.status(200).json(exportData);
 

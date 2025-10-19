@@ -94,7 +94,7 @@ export const GamificationProvider = ({ children }) => {
   const { user, token: authToken, makeApiCall } = useAuth();
 
   // 🔧 FIX: Get token directly from storage as fallback if AuthContext doesn't provide it
-  const token = authToken || localStorage.getItem('literati_token') || sessionStorage.getItem('literati_token');
+  const token = authToken || localStorage.getItem('shelfquest_token') || sessionStorage.getItem('shelfquest_token');
 
   // 🔧 FIX: Reset offline mode when we have a valid token
   useEffect(() => {

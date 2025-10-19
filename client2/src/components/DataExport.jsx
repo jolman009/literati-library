@@ -51,7 +51,7 @@ const DataExport = () => {
 
       // Extract filename from Content-Disposition header or use default
       const contentDisposition = response.headers['content-disposition'];
-      let filename = `literati-data-export-${Date.now()}.json`;
+      let filename = `shelfquest-data-export-${Date.now()}.json`;
 
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
@@ -173,7 +173,7 @@ const DataExport = () => {
         </div>
 
         <p className="md-body-small data-export-footer">
-          Questions about your data? Contact us at <a href="mailto:info@literati.pro">info@literati.pro</a>
+          Questions about your data? Contact us at <a href="mailto:info@shelfquest.pro">info@shelfquest.pro</a>
         </p>
       </div>
     </MD3Card>

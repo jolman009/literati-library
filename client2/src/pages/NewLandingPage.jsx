@@ -56,7 +56,7 @@ const NewLandingPage = () => {
               </span>
             </div>
             <div className="brand-identity">
-              <h1 className="brand-title">Literati</h1>
+              <h1 className="brand-title">ShelfQuest</h1>
               <p className="brand-tagline">Your Digital Bookshelf</p>
             </div>
           </div>
@@ -157,7 +157,7 @@ const NewLandingPage = () => {
 
       {/* Footer - Minimal */}
       <footer className="landing-footer">
-        <p className="footer-text">© 2024 Literati. Made with care for book lovers.</p>
+        <p className="footer-text">© 2024 ShelfQuest. Made with care for book lovers.</p>
       </footer>
     </div>
   );

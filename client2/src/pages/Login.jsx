@@ -130,7 +130,7 @@ const Login = () => {
             </div>
 
             {/* Brand Text */}
-            <h1 className="brand-title">Literati</h1>
+            <h1 className="brand-title">ShelfQuest</h1>
             <p className="brand-subtitle">Your Digital Bookshelf</p>
           </div>
 
@@ -254,7 +254,7 @@ const Login = () => {
                 >
                   {isSignUp
                     ? 'Already have an account? Sign In'
-                    : 'New to Literati? Create Account'
+                    : 'New to ShelfQuest? Create Account'
                   }
                 </Button>
 

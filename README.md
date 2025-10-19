@@ -1,6 +1,6 @@
-# Literati Digital Library
+# ShelfQuest Digital Library
 
-A modern, full-stack digital library application built with React, Express.js, and AI-powered features. Literati allows users to manage their personal book collections, track reading progress, take notes, and get AI-powered summaries.
+A modern, full-stack digital library application built with React, Express.js, and AI-powered features. ShelfQuest allows users to manage their personal book collections, track reading progress, take notes, and get AI-powered summaries.
 
 ## 🏗️ Architecture
 
@@ -36,8 +36,8 @@ This unified monorepo contains four main services managed with a single CI/CD pi
 
 ### 1. Clone and Install Dependencies
 ```bash
-git clone https://github.com/jolman009/literati-library.git
-cd literati-library
+git clone https://github.com/jolman009/shelfquest-library.git
+cd shelfquest-library
 
 # Install root dependencies
 pnpm install

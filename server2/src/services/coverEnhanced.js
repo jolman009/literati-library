@@ -157,7 +157,7 @@ async function fetchWithTimeout(url, timeout = 5000) {
     const response = await fetch(url, { 
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Literati Book Library/1.0'
+        'User-Agent': 'ShelfQuest Book Library/1.0'
       }
     });
     clearTimeout(timeoutId);

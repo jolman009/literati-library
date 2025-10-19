@@ -1,8 +1,8 @@
-# 🛡️ Literati Server Security Documentation
+# 🛡️ ShelfQuest Server Security Documentation
 
 ## 📋 **Security Status: PRODUCTION-READY**
 
-Your Literati server implements **enterprise-grade security** that exceeds industry standards for most production applications.
+Your ShelfQuest server implements **enterprise-grade security** that exceeds industry standards for most production applications.
 
 ## 🔥 **Security Architecture Overview**
 
@@ -132,8 +132,8 @@ Your JWT implementation includes **cutting-edge security** features:
 // Token structure includes:
 {
   // Standard JWT claims
-  "iss": "literati-api",
-  "aud": "literati-client",
+  "iss": "shelfquest-api",
+  "aud": "shelfquest-client",
   "iat": 1703123456,
   "exp": 1703124356,
 

@@ -1,5 +1,5 @@
 # Cookie Consent Mechanism Implementation Guide
-## For Literati Digital Library Application
+## For ShelfQuest Digital Library Application
 
 **Document Date**: October 3, 2025
 **Last Updated**: October 3, 2025
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document outlines the cookie consent implementation strategy for Literati, ensuring compliance with European GDPR/ePrivacy Directive, California CCPA, and other privacy regulations.
+This document outlines the cookie consent implementation strategy for ShelfQuest, ensuring compliance with European GDPR/ePrivacy Directive, California CCPA, and other privacy regulations.
 
 **Key Requirements**:
 - ✅ Inform users about cookie usage before placing non-essential cookies
@@ -22,7 +22,7 @@ This document outlines the cookie consent implementation strategy for Literati, 
 
 ## 1. Cookie Inventory
 
-### 1.1 Cookies Used by Literati
+### 1.1 Cookies Used by ShelfQuest
 
 | Cookie Name | Type | Purpose | Duration | Category | Consent Required? |
 |-------------|------|---------|----------|----------|-------------------|
@@ -33,7 +33,7 @@ This document outlines the cookie consent implementation strategy for Literati, 
 | `cookie_consent` | First-party | Store consent preferences | 1 year | Strictly Necessary | ❌ No |
 | `session_id` | First-party | Session management | Session | Strictly Necessary | ❌ No |
 
-**Note**: Literati currently does not use:
+**Note**: ShelfQuest currently does not use:
 - ❌ Analytics cookies (Google Analytics, etc.)
 - ❌ Advertising cookies
 - ❌ Third-party tracking cookies
@@ -43,7 +43,7 @@ This document outlines the cookie consent implementation strategy for Literati, 
 
 ### 1.2 Local Storage and IndexedDB
 
-In addition to cookies, Literati uses browser storage APIs:
+In addition to cookies, ShelfQuest uses browser storage APIs:
 
 | Storage Type | Purpose | Category | Consent Required? |
 |--------------|---------|----------|-------------------|
@@ -59,7 +59,7 @@ In addition to cookies, Literati uses browser storage APIs:
 
 **Definition**: Essential for the website to function. Cannot be disabled.
 
-**Literati Examples**:
+**ShelfQuest Examples**:
 - `auth_token` - Required for user login and authentication
 - `session_id` - Required for maintaining user session
 - `cookie_consent` - Stores the user's cookie preferences
@@ -72,7 +72,7 @@ In addition to cookies, Literati uses browser storage APIs:
 
 **Definition**: Enable enhanced functionality and personalization.
 
-**Literati Examples**:
+**ShelfQuest Examples**:
 - `theme_preference` - Remembers dark/light mode choice
 - `reading_position` - Saves reading progress across sessions
 
@@ -94,7 +94,7 @@ In addition to cookies, Literati uses browser storage APIs:
 
 **If Implemented**: Require explicit consent and provide clear disclosures.
 
-**Current Status**: Not used by Literati.
+**Current Status**: Not used by ShelfQuest.
 
 ---
 
@@ -120,11 +120,11 @@ In addition to cookies, Literati uses browser storage APIs:
 ### 3.2 CCPA Requirements
 
 **Must Have**:
-- ✅ "Do Not Sell My Personal Information" link (if selling data - Literati doesn't)
+- ✅ "Do Not Sell My Personal Information" link (if selling data - ShelfQuest doesn't)
 - ✅ Clear disclosure of data collection in Privacy Policy
-- ✅ Opt-out mechanism for data sales (N/A for Literati)
+- ✅ Opt-out mechanism for data sales (N/A for ShelfQuest)
 
-**Literati Status**: ✅ Compliant (no data selling, clear Privacy Policy)
+**ShelfQuest Status**: ✅ Compliant (no data selling, clear Privacy Policy)
 
 ### 3.3 LGPD (Brazil) Requirements
 
@@ -133,7 +133,7 @@ In addition to cookies, Literati uses browser storage APIs:
 - ✅ Consent for non-essential processing
 - ✅ Easy withdrawal of consent
 
-**Literati Status**: ✅ Compliant (same implementation as GDPR)
+**ShelfQuest Status**: ✅ Compliant (same implementation as GDPR)
 
 ---
 
@@ -156,14 +156,14 @@ In addition to cookies, Literati uses browser storage APIs:
 - ❌ Manual cookie configuration required
 - ❌ Less feature-rich than paid solutions
 
-**Option 3: Custom Implementation (Recommended for Literati)**
+**Option 3: Custom Implementation (Recommended for ShelfQuest)**
 - ✅ Full control over UI/UX
 - ✅ No third-party dependencies
 - ✅ Lightweight (minimal cookies to manage)
 - ✅ Privacy-friendly (no external tracking)
 - ❌ More development effort
 
-**Recommendation**: Given Literati's minimal cookie usage, a **custom implementation** is recommended for maximum control and privacy.
+**Recommendation**: Given ShelfQuest's minimal cookie usage, a **custom implementation** is recommended for maximum control and privacy.
 
 ---
 
@@ -389,13 +389,13 @@ Create a dedicated **Cookie Policy** page at `/legal/cookies` that includes:
 2. **Cookies We Use**: List all cookies with descriptions (use `cookieConfig.js` data)
 3. **Why We Use Cookies**: Explain purpose of each category
 4. **How to Control Cookies**: Explain how to manage preferences
-5. **Third-Party Cookies**: List any (currently none for Literati)
+5. **Third-Party Cookies**: List any (currently none for ShelfQuest)
 6. **Contact Information**: How to ask questions
 
 ### 7.2 Sample Cookie Policy Content
 
 ```markdown
-# Cookie Policy for Literati
+# Cookie Policy for ShelfQuest
 
 ## What Are Cookies?
 
@@ -428,7 +428,7 @@ You can also disable cookies in your browser settings, but this may affect funct
 
 ## Contact Us
 
-Questions about cookies? Email us at info@literati.pro
+Questions about cookies? Email us at info@shelfquest.pro
 ```
 
 ---
@@ -566,7 +566,7 @@ Questions about cookies? Email us at info@literati.pro
 ## 13. Contact and Support
 
 **Data Protection Officer**
-Email: info@literati.pro
+Email: info@shelfquest.pro
 Address: 628 Montreal Court, Brownsville, Texas 78526
 
 **For Technical Implementation Questions**
@@ -578,7 +578,7 @@ Contact: Development Team
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | October 3, 2025 | Literati Team | Initial cookie consent implementation guide |
+| 1.0 | October 3, 2025 | ShelfQuest Team | Initial cookie consent implementation guide |
 
 ---
 

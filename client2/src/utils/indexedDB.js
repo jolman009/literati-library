@@ -1,7 +1,7 @@
 // src/utils/indexedDB.js
 // IndexedDB wrapper for offline storage
 
-const DB_NAME = 'LiteratiOfflineDB';
+const DB_NAME = 'ShelfQuestOfflineDB';
 const DB_VERSION = 1;
 
 // Store names

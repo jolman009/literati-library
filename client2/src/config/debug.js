@@ -18,7 +18,7 @@ export class ConfigDebugger {
       return;
     }
 
-    console.group('🔧 Literati Configuration Report');
+    console.group('🔧 ShelfQuest Configuration Report');
 
     // Environment Info
     console.group('📍 Environment');
@@ -196,7 +196,7 @@ if (environmentConfig.isDevelopment && typeof window !== 'undefined') {
 
 // Expose on window for manual debugging
 if (typeof window !== 'undefined' && environmentConfig.isDevelopment) {
-  window.literatiDebug = {
+  window.shelfquestDebug = {
     config: environmentConfig,
     debugger: configDebugger,
     printReport: () => configDebugger.printConfigReport(),
@@ -205,7 +205,7 @@ if (typeof window !== 'undefined' && environmentConfig.isDevelopment) {
     export: () => configDebugger.exportConfig()
   };
 
-  console.log('🔧 Debug utilities available at window.literatiDebug');
+  console.log('🔧 Debug utilities available at window.shelfquestDebug');
 }
 
 export default configDebugger;

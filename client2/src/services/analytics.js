@@ -74,7 +74,7 @@ class AnalyticsService {
   }
 
   /**
-   * Initialize custom analytics for Literati-specific events
+   * Initialize custom analytics for ShelfQuest-specific events
    */
   async initializeCustomAnalytics() {
     // Set up custom analytics endpoint

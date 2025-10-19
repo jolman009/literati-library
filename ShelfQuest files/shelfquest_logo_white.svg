@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- ShelfQuest Logo - White Version -->
+  <!-- Use on dark backgrounds -->
+  
+  <!-- Main bookmark ribbon -->
+  <path d="M 196 80 L 196 420 L 256 370 L 316 420 L 316 80 Z" 
+        fill="#ffffff" 
+        opacity="0.95"/>
+  
+  <!-- Compass rose circle -->
+  <circle cx="256" cy="140" r="45" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.7"/>
+  
+  <!-- Compass points -->
+  <path d="M 256 95 L 264 120 L 256 130 L 248 120 Z" fill="#ffffff" opacity="0.9"/>
+  <path d="M 256 185 L 264 160 L 256 150 L 248 160 Z" fill="#ffffff" opacity="0.7"/>
+  <path d="M 301 140 L 276 148 L 266 140 L 276 132 Z" fill="#ffffff" opacity="0.7"/>
+  <path d="M 211 140 L 236 148 L 246 140 L 236 132 Z" fill="#ffffff" opacity="0.7"/>
+  
+  <!-- Center compass pin -->
+  <circle cx="256" cy="140" r="12" fill="#ffffff" opacity="0.9"/>
+  <circle cx="256" cy="140" r="6" fill="#1c1b1f" opacity="0.8"/>
+  
+  <!-- Achievement star -->
+  <path d="M 256 285 L 262 300 L 278 302 L 266 313 L 269 329 L 256 321 L 243 329 L 246 313 L 234 302 L 250 300 Z" 
+        fill="#ffffff" 
+        opacity="0.95"/>
+</svg>

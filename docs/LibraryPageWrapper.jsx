@@ -560,7 +560,7 @@ const LibraryPageWrapper = () => {
     
     // For now, just log to console and show browser notification if available
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Literati', {
+      new Notification('ShelfQuest', {
         body: message,
         icon: '/favicon.ico'
       });
