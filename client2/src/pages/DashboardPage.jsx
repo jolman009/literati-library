@@ -788,8 +788,8 @@ const RecentAchievements = () => {
   }
 
   return (
-    <div className="section-card">
-      <h3 className="section-title">
+    <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}>
+      <h3 className="section-title" style={{ margin: "4px 0 8px" }}>
         🏆 Recent Achievements
       </h3>
       <div className="achievements-grid">
@@ -929,17 +929,17 @@ const CurrentlyReading = () => {
     };
   }, []);
   
-  if (loading) return <div className="section-card"><h3>Loading currently reading...</h3></div>;
+  if (loading) return <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}><h3>Loading currently reading...</h3></div>;
 
   // Debug: Always show the component with information
   console.log('📖 CurrentlyReading render - books count:', currentlyReading.length);
   
   return (
-    <div className="section-card">
-      <h3 className="section-title">
+    <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}>
+      <h3 className="section-title" style={{ margin: "4px 0 8px" }}>
         📖 Currently READING ({currentlyReading.length})
       </h3>
-      <div className="books-grid">
+      <div className="books-grid" style={{ rowGap: "10px" }}>
         {currentlyReading.slice(0, 4).map((book) => (
           <div
             key={book.id}
@@ -1194,3 +1194,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
