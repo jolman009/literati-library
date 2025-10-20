@@ -1826,3 +1826,60 @@
 
 :root:not([data-theme='dark']) .cr-card { --cr-card-bg: #f1f5f9; }
 [data-theme='dark'] .cr-card { --cr-card-bg: rgba(255,255,255,0.06); }
+
+#dashboard-currently-reading .covers-scroll { gap: 12px; }
+#dashboard-currently-reading .covers-scroll .book-card { flex: 0 0 auto; box-shadow: 0 6px 14px rgba(0,0,0,.12); transition: transform .15s ease, box-shadow .15s ease; }
+#dashboard-currently-reading .covers-scroll .book-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.18); }
+#dashboard-currently-reading .covers-scroll .book-card { border-radius: 12px; overflow: hidden; }
+
+/* Subtle edge accent to make covers pop */
+:root:not([data-theme='dark']) #dashboard-currently-reading .covers-scroll .book-card {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background-color: rgba(0, 0, 0, 0.01);
+}
+[data-theme='dark'] #dashboard-currently-reading .covers-scroll .book-card {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+#dashboard-currently-reading .book-title, #dashboard-currently-reading .book-author, #dashboard-currently-reading .progress-bar-container, #dashboard-currently-reading .progress-text { display: none !important; }
+
+/* Stronger, tinted primary outline for cover cards */
+:root:not([data-theme='dark']) #dashboard-currently-reading .covers-scroll .book-card {
+  border: 1px solid rgba(var(--md-sys-color-primary), 0.25);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08), 0 0 0 1px rgba(var(--md-sys-color-primary), 0.12) inset;
+}
+[data-theme='dark'] #dashboard-currently-reading .covers-scroll .book-card {
+  border: 1px solid rgba(var(--md-sys-color-primary), 0.35);
+  box-shadow: 0 8px 20px rgba(0,0,0,.28), 0 0 0 1px rgba(var(--md-sys-color-primary), 0.2) inset;
+}
+
+/* Overlay readability improvements */
+#dashboard-currently-reading .book-title {
+  bottom: 36px;
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .01em;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  padding: 0 10px;
+}
+#dashboard-currently-reading .book-author {
+  bottom: 12px;
+  font-size: .75rem;
+  font-weight: 600;
+  opacity: .95;
+  padding: 0 10px;
+}
+#dashboard-currently-reading .book-card::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.72) 92%);
+  pointer-events: none;
+}
+
+#dashboard-currently-reading .title-banner{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.85);color:#fff;border-radius:8px;padding:6px 10px;font-weight:800;font-size:.9rem;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.4);box-shadow:0 2px 6px rgba(0,0,0,.3)}

@@ -819,7 +819,7 @@ const RecentAchievements = () => {
 
 // Currently Reading Section Componentss
 const CurrentlyReading = () => {
-  const { activeSession } = useReadingSession(); // Listen to session changes
+  const { activeSession, startReadingSession } = useReadingSession(); // Listen to session changes + resume
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -939,19 +939,26 @@ const CurrentlyReading = () => {
       <h3 className="section-title" style={{ margin: "4px 0 8px" }}>
         📖 Currently READING ({currentlyReading.length})
       </h3>
-      <div className="books-grid cr-list">
+      <div className="simple-scroll-container covers-scroll">
         {currentlyReading.slice(0, 4).map((book) => (
           <div
             key={book.id}
-            onClick={() => navigate(`/read/${book.id}`)}
+            onClick={async () => {
+              try {
+                await startReadingSession(book);
+              } catch {}
+              navigate(`/read/${book.id}`);
+            }}
             className="book-card cr-card"
             style={{
               position: 'relative',
               backgroundImage: (book.cover_url || book.cover) ? `url(${book.cover_url || book.cover})` : undefined,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              minHeight: '200px',
-              borderRadius: '12px'
+              borderRadius: '12px',
+              aspectRatio: '2 / 3',
+              height: '220px',
+              minWidth: '146px'
             }}
           >
             {/* Minimal status dot (icon-only) to avoid overlap with menus */}
