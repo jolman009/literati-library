@@ -788,7 +788,7 @@ const RecentAchievements = () => {
   }
 
   return (
-    <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}>
+    <div id="dashboard-currently-reading" className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}>
       <h3 className="section-title" style={{ margin: "4px 0 8px" }}>
         🏆 Recent Achievements
       </h3>
@@ -939,13 +939,20 @@ const CurrentlyReading = () => {
       <h3 className="section-title" style={{ margin: "4px 0 8px" }}>
         📖 Currently READING ({currentlyReading.length})
       </h3>
-      <div className="books-grid" style={{ rowGap: "10px" }}>
+      <div className="books-grid cr-list">
         {currentlyReading.slice(0, 4).map((book) => (
           <div
             key={book.id}
             onClick={() => navigate(`/read/${book.id}`)}
-            className="book-card"
-            style={{ position: 'relative' }}
+            className="book-card cr-card"
+            style={{
+              position: 'relative',
+              backgroundImage: (book.cover_url || book.cover) ? `url(${book.cover_url || book.cover})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              minHeight: '200px',
+              borderRadius: '12px'
+            }}
           >
             {/* Minimal status dot (icon-only) to avoid overlap with menus */}
             {(book.is_reading || book.status === 'reading' || book.status === 'paused') && (
@@ -1194,5 +1201,7 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
+
 
 
