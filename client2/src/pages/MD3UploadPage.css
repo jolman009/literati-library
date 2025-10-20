@@ -93,17 +93,49 @@
   min-height: 400px;
 }
 
-/* Dark mode text fixes for MD3 dropzone */
+/* ========================================
+   DARK MODE - Easier on the eyes
+   ======================================== */
+
+/* Softer background for dark mode */
+[data-theme="dark"] .md3-upload-page,
+.dark .md3-upload-page {
+  background: #0f1419;
+}
+
+[data-theme="dark"] .md3-upload-content,
+.dark .md3-upload-content {
+  background: #1a1f2e !important;
+  border-color: #2d3748 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Softer, more readable text colors */
+[data-theme="dark"] .md3-upload-header h1,
+.dark .md3-upload-header h1 {
+  color: #e8eaed !important;
+  background: linear-gradient(135deg, #7ca9ff 0%, #b8d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .md3-upload-header p,
+.dark .md3-upload-header p {
+  color: #b8bfc8 !important;
+}
+
+/* Dropzone - softer colors */
 [data-theme="dark"] .md3-dropzone .md-title-large,
 .dark .md3-dropzone .md-title-large {
-  color: var(--md-sys-color-on-surface) !important;
+  color: #e8eaed !important;
 }
 
 [data-theme="dark"] .md3-dropzone .md-body-medium,
 .dark .md3-dropzone .md-body-medium,
 [data-theme="dark"] .md3-dropzone .on-surface-variant,
 .dark .md3-dropzone .on-surface-variant {
-  color: var(--md-sys-color-on-surface-variant) !important;
+  color: #b8bfc8 !important;
 }
 
 /* Dropzone */
