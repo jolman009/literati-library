@@ -1,17 +1,6 @@
 // src/pages/DashboardPage.jsx
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { RefreshCw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useGamification } from '../contexts/GamificationContext';
-import { useReadingSession } from '../contexts/ReadingSessionContext';
-import { useSnackbar } from '../components/Material3';
-import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
-import API from '../config/api';
-import MD3Card from '../components/Material3/MD3Card';
-import PointsHistory from '../components/gamification/PointsHistory';
-import MentorPreviewCard from '../components/MentorPreviewCard';
-// Minimal status pill for Dashboard cards (icon-only to avoid layout clash)
+
+
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -984,27 +973,7 @@ const CurrentlyReading = () => {
                 {book.status === 'paused' ? '❚❚' : '▶'}
               </div>
             )}
-            <div className="book-title">
-              {book.title}
-            </div>
-            <div className="book-author">
-              by {book.author}
-            </div>
-            {book.progress !== undefined && (
-              <div>
-                <div className="progress-bar-container">
-                  <div className="progress-bar">
-                    <div
-                      className="progress-bar-fill"
-                      style={{ width: `${book.progress || 0}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="progress-text">
-                  {book.progress || 0}% complete
-                </div>
-              </div>
-            )}
+            <div className="title-banner" title={book.title}>{book.title}</div>
           </div>
         ))}
       </div>
