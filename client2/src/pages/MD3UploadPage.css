@@ -364,3 +364,115 @@
     background: rgb(var(--md-sys-color-primary-container), 0.2);
   }
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .md3-upload-page {
+    padding: 1rem;
+  }
+
+  .md3-upload-container {
+    max-width: 100%;
+  }
+
+  .md3-upload-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .md3-upload-header p {
+    font-size: 0.875rem;
+  }
+
+  /* Fix for progress steps in mobile */
+  .md3-upload-steps {
+    padding: 0 0.5rem;
+    overflow-x: auto;
+  }
+
+  .md3-step-indicator {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .md3-step-label {
+    font-size: 0.625rem;
+  }
+
+  /* Upload content padding */
+  .md3-upload-content {
+    padding: 1.5rem;
+  }
+
+  /* Dropzone mobile optimization */
+  .md3-dropzone {
+    padding: 2rem 1rem;
+  }
+
+  .md3-dropzone-icon {
+    font-size: 3rem;
+  }
+
+  /* Upload actions - CRITICAL FIX */
+  .md3-upload-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Make buttons full width and touchable in mobile */
+  .md3-upload-actions .md3-button {
+    width: 100%;
+    min-height: 48px; /* Ensure touch target is large enough */
+    padding: 0 24px;
+    touch-action: manipulation; /* Prevent double-tap zoom */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Ensure buttons are always clickable */
+  .md3-upload-actions .md3-button:not([disabled]) {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+
+  /* Form grid mobile layout */
+  .md3-form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .md3-form-grid > * {
+    grid-column: span 1 !important;
+  }
+
+  /* File info mobile */
+  .md3-file-info {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .file-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .md3-upload-page {
+    padding: 0.5rem;
+  }
+
+  .md3-upload-content {
+    padding: 1rem;
+  }
+
+  .md3-upload-header h1 {
+    font-size: 1.5rem;
+  }
+
+  /* Ensure even smaller screens have touchable buttons */
+  .md3-upload-actions .md3-button {
+    min-height: 56px; /* Even larger touch target for small phones */
+    font-size: 1rem;
+  }
+}
