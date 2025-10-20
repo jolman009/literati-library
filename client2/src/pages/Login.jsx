@@ -85,24 +85,6 @@ const Login = () => {
     setConfirmPassword('');
   };
 
-  const handleDemoLogin = async () => {
-    setError('');
-    setIsLoading(true);
-    
-    try {
-      const result = await auth.login('demo@example.com', 'Demo123456!');
-      
-      if (result.success) {
-        navigate('/dashboard', { replace: true });
-      } else {
-        setError('Demo login failed. Please try again.');
-      }
-    } catch (err) {
-      setError('Demo login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="login-background" data-theme={actualTheme}>
@@ -258,22 +240,6 @@ const Login = () => {
                   }
                 </Button>
 
-                {!isSignUp && (
-                  <Button
-                    type="button"
-                    variant="text"
-                    className="secondary-button"
-                    onClick={handleDemoLogin}
-                    disabled={isLoading}
-                  >
-                    <div className="demo-button-content">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="demo-icon">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
-                      <span>Try Demo Account</span>
-                    </div>
-                  </Button>
-                )}
               </div>
             </div>
           </Card>
