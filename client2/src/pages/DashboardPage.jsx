@@ -1,6 +1,15 @@
 // src/pages/DashboardPage.jsx
-
-
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useGamification } from '../contexts/GamificationContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useSnackbar } from '../components/Material3';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
+import PointsHistory from '../components/gamification/PointsHistory';
+import MentorPreviewCard from '../components/MentorPreviewCard';
+import { RefreshCw } from 'lucide-react';
+import API from '../config/api';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 

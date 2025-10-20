@@ -297,6 +297,20 @@
   transform: scale(1.05);
 }
 
+/* Dark mode browse button - softer appearance */
+[data-theme="dark"] .browse-button,
+.dark .browse-button {
+  background: #5a7ba8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .browse-button:hover,
+.dark .browse-button:hover {
+  background: #6b8ab6 !important;
+  box-shadow: 0 4px 16px rgba(90, 123, 168, 0.4) !important;
+}
+
 /* Message Display */
 .upload-message {
   margin-top: 16px;
