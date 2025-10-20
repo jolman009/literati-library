@@ -266,14 +266,16 @@ const MD3UploadPage = () => {
                   label="Title"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  onInput={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                   required
                   fullWidth
                 />
-                
+
                 <MD3TextField
                   label="Author"
                   value={formData.author}
                   onChange={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
+                  onInput={(e) => setFormData(prev => ({ ...prev, author: e.target.value }))}
                   required
                   fullWidth
                 />
@@ -331,10 +333,15 @@ const MD3UploadPage = () => {
                 <MD3Button variant="text" onClick={resetUpload}>
                   Back
                 </MD3Button>
-                <MD3Button 
-                  variant="filled" 
+                <MD3Button
+                  variant="filled"
                   onClick={handleUpload}
-                  disabled={!formData.title || !formData.author}
+                  disabled={!formData.title?.trim() || !formData.author?.trim()}
+                  style={{
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
+                    WebkitTapHighlightColor: 'transparent'
+                  }}
                 >
                   Upload Book
                 </MD3Button>

@@ -275,6 +275,43 @@
   margin-top: 2rem;
 }
 
+/* Safari/Mac specific button fixes */
+.md3-upload-actions .md3-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.md3-upload-actions .md3-button:not([disabled]):not([aria-disabled="true"]) {
+  pointer-events: auto;
+  cursor: pointer !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ensure Safari respects button state */
+.md3-upload-actions .md3-button[disabled],
+.md3-upload-actions .md3-button[aria-disabled="true"] {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+/* Safari click handling */
+@supports (-webkit-touch-callout: none) {
+  /* iOS/Safari specific styles */
+  .md3-upload-actions .md3-button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  .md3-upload-actions .md3-button:not([disabled]) {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+}
+
 /* Progress State */
 .md3-upload-progress {
   display: flex;
