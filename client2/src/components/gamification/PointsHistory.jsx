@@ -195,6 +195,21 @@ const PointsHistory = ({ limit = 10 }) => {
                   <div className="points-history-item-content">
                     <div className="points-history-item-label">
                       {getDisplayLabel(action)}
+                      {(action.pending || String(action.id || '').startsWith('local_')) && (
+                        <span
+                          title="Pending sync"
+                          style={{
+                            marginLeft: 8,
+                            fontSize: '0.7rem',
+                            color: 'var(--color-muted, #94a3b8)',
+                            border: '1px solid rgba(148,163,184,0.4)',
+                            borderRadius: '8px',
+                            padding: '2px 6px'
+                          }}
+                        >
+                          ⏳ pending
+                        </span>
+                      )}
                     </div>
                     <div className="points-history-item-time">
                       {action.timeAgo}
