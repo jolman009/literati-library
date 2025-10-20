@@ -191,40 +191,140 @@
   color: var(--md-sys-color-on-surface-variant) !important;
 }
 
-/* Dark mode dropzone background fix */
+/* Dark mode dropzone - softer appearance */
 [data-theme="dark"] .md3-dropzone,
 .dark .md3-dropzone {
-  background: var(--md-sys-color-surface-container) !important;
-  border-color: var(--md-sys-color-outline);
+  background: #242b3d !important;
+  border-color: #4a5568 !important;
 }
 
-/* Dark mode form field fixes */
+[data-theme="dark"] .md3-dropzone:hover,
+.dark .md3-dropzone:hover {
+  background: #2d3548 !important;
+  border-color: #6b7fa8 !important;
+}
+
+/* Dark mode button - much softer colors */
+[data-theme="dark"] .md3-upload-actions .md3-button--filled,
+.dark .md3-upload-actions .md3-button--filled {
+  background: #5a7ba8 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .md3-upload-actions .md3-button--filled:hover,
+.dark .md3-upload-actions .md3-button--filled:hover {
+  background: #6b8ab6 !important;
+  box-shadow: 0 4px 12px rgba(90, 123, 168, 0.3) !important;
+}
+
+[data-theme="dark"] .md3-upload-actions .md3-button--text,
+.dark .md3-upload-actions .md3-button--text {
+  color: #9eb8d9 !important;
+}
+
+[data-theme="dark"] .md3-upload-actions .md3-button--text:hover,
+.dark .md3-upload-actions .md3-button--text:hover {
+  background: rgba(158, 184, 217, 0.1) !important;
+}
+
+/* Dark mode form field fixes - easier on eyes */
 [data-theme="dark"] .md3-select,
 .dark .md3-select {
-  background: var(--md-sys-color-surface-container) !important;
-  color: var(--md-sys-color-on-surface-container) !important;
-  border-color: var(--md-sys-color-outline) !important;
+  background: #242b3d !important;
+  color: #e8eaed !important;
+  border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] .md3-select:focus,
+.dark .md3-select:focus {
+  border-color: #6b8ab6 !important;
+  box-shadow: 0 0 0 2px rgba(107, 138, 182, 0.2) !important;
 }
 
 [data-theme="dark"] .md3-select-label,
 .dark .md3-select-label {
-  color: var(--md-sys-color-on-surface-variant) !important;
+  color: #b8bfc8 !important;
 }
 
-/* Fix MD3TextField in dark mode */
+/* Fix MD3TextField in dark mode - softer colors */
 [data-theme="dark"] .md3-text-field,
 .dark .md3-text-field,
 [data-theme="dark"] .md3-text-field input,
 .dark .md3-text-field input,
 [data-theme="dark"] .md3-text-field textarea,
 .dark .md3-text-field textarea {
-  background: var(--md-sys-color-surface-container) !important;
-  color: var(--md-sys-color-on-surface-container) !important;
+  background: #242b3d !important;
+  color: #e8eaed !important;
+  border-color: #4a5568 !important;
 }
 
 [data-theme="dark"] .md3-text-field label,
 .dark .md3-text-field label {
-  color: var(--md-sys-color-on-surface-variant) !important;
+  color: #b8bfc8 !important;
+}
+
+[data-theme="dark"] .md3-text-field--focused input,
+.dark .md3-text-field--focused input,
+[data-theme="dark"] .md3-text-field--focused textarea,
+.dark .md3-text-field--focused textarea {
+  border-color: #6b8ab6 !important;
+}
+
+/* File preview in dark mode */
+[data-theme="dark"] .md3-file-info,
+.dark .md3-file-info {
+  background: #242b3d !important;
+  border: 1px solid #4a5568 !important;
+}
+
+[data-theme="dark"] .md3-file-info .md-label-large,
+.dark .md3-file-info .md-label-large {
+  color: #e8eaed !important;
+}
+
+[data-theme="dark"] .md3-file-info .md-label-small,
+.dark .md3-file-info .md-label-small {
+  color: #b8bfc8 !important;
+}
+
+/* Progress steps in dark mode */
+[data-theme="dark"] .md3-step-indicator,
+.dark .md3-step-indicator {
+  background: #2d3748 !important;
+  color: #b8bfc8 !important;
+}
+
+[data-theme="dark"] .md3-step-indicator.active,
+.dark .md3-step-indicator.active {
+  background: #5a7ba8 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .md3-step-indicator.complete,
+.dark .md3-step-indicator.complete {
+  background: #4a9d7f !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .md3-step-label,
+.dark .md3-step-label {
+  color: #b8bfc8 !important;
+}
+
+[data-theme="dark"] .md3-step-label.active,
+.dark .md3-step-label.active {
+  color: #9eb8d9 !important;
+}
+
+/* Progress bar in dark mode */
+[data-theme="dark"] .md3-upload-progress h3,
+.dark .md3-upload-progress h3 {
+  color: #e8eaed !important;
+}
+
+[data-theme="dark"] .md3-upload-progress p,
+.dark .md3-upload-progress p {
+  color: #b8bfc8 !important;
 }
 
 .md3-dropzone:hover {
