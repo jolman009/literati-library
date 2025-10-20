@@ -65,12 +65,38 @@ const PointsHistory = ({ limit = 10 }) => {
       setError(null);
       console.log(`📊 PointsHistory: Fetching history (limit: ${limit})...`);
       const response = await API.get(`/api/gamification/actions/history?limit=${limit}`);
-      setHistory(response.data || []);
+      const serverData = response.data || [];
+      let localData = [];
+      try {
+        if (typeof window !== 'undefined') {
+          const u = (JSON.parse(localStorage.getItem('shelfquest_user')||'null')||{});
+          if (u?.id) {
+            localData = JSON.parse(localStorage.getItem(`gamification_actions_${u.id}`)||'[]');
+          }
+        }
+      } catch {}
+      const byKey = new Map();
+      [...serverData, ...localData].forEach(item => {
+        const key = `${item.created_at || ''}_${item.action || ''}`;
+        if (!byKey.has(key)) byKey.set(key, item);
+      });
+      const merged = Array.from(byKey.values()).sort((a,b)=> new Date(b.created_at)-new Date(a.created_at)).slice(0, limit);
+      setHistory(merged);
       console.log(`✅ PointsHistory: Fetched ${response.data?.length || 0} history entries`);
     } catch (err) {
       console.error('❌ PointsHistory: Failed to fetch points history:', err);
       setError(err.message);
-      setHistory([]);
+      try {
+        const u=(JSON.parse(localStorage.getItem('shelfquest_user')||'null')||{});
+        if(u?.id){
+          const localOnly=JSON.parse(localStorage.getItem(`gamification_actions_${u.id}`)||'[]');
+          setHistory(localOnly.slice(0, limit));
+        } else {
+          setHistory([]);
+        }
+      } catch {
+        setHistory([]);
+      }
     } finally {
       setLoading(false);
     }

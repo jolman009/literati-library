@@ -155,6 +155,8 @@ export default function EnhancedBookCard({
       role="article"
       aria-label={`${book.title} by ${book.author ?? 'Unknown Author'}`}
       className={`enhanced-book-card ${selected ? 'selected' : ''} ${view === 'list' ? 'list-view' : 'grid-view'}`}
+      data-test="book-card"
+      data-book-id={book?.id}
       style={{
         width: '100%',
         maxWidth: view === 'list' ? 'none' : '280px',
@@ -220,110 +222,7 @@ export default function EnhancedBookCard({
         )}
       </div>
 
-      {/* Menu Button - Positioned outside the cover container to avoid clipping */}
-      {/* Removed debug book-menu-button to avoid overlapping the play button */}
-          MENU
-        </button>
-
-        {/* Menu Dropdown */}
-        {menuOpen && (
-          <>
-            {/* Backdrop to close menu */}
-            <div
-              className="menu-backdrop"
-              onClick={() => setMenuOpen(false)}
-            />
-
-            {/* Menu Items */}
-            <div
-              className="book-actions-menu"
-              style={{
-                top: `${menuButtonRef.current?.getBoundingClientRect().bottom + 10 || 60}px`,
-                right: `${window.innerWidth - (menuButtonRef.current?.getBoundingClientRect().right || window.innerWidth - 8)}px`
-              }}
-            >
-              <button
-                className="book-menu-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMenuOpen(false);
-                  onRead?.(book) || onOpen?.(book);
-                }}
-              >
-                <span className="book-menu-item__icon">📖</span>
-                Open Book
-              </button>
-
-              {/* Reading Session Controls Section */}
-              {!activeSession || activeSession.book.id !== book.id ? (
-                <button
-                  className="book-menu-item book-menu-item--primary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartReadingSession();
-                  }}
-                >
-                  <span className="book-menu-item__icon">⏱️</span>
-                  Start Reading Session
-                </button>
-              ) : (
-                <>
-                  <button
-                    className="book-menu-item"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePauseResumeSession();
-                    }}
-                  >
-                    <span className="book-menu-item__icon">{activeSession?.isPaused ? '▶️' : '⏸️'}</span>
-                    {activeSession?.isPaused ? 'Resume Session' : 'Pause Session'}
-                  </button>
-
-                  <button
-                    className="book-menu-item book-menu-item--error"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEndReadingSession();
-                    }}
-                  >
-                    <span className="book-menu-item__icon">⏹️</span>
-                    End Reading Session
-                  </button>
-                </>
-              )}
-
-              <div className="book-menu-divider" />
-
-              <button
-                className="book-menu-item"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMenuOpen(false);
-                  onEdit?.(book);
-                }}
-              >
-                <span className="book-menu-item__icon">✏️</span>
-                Edit Book
-              </button>
-
-              <div className="book-menu-divider" />
-
-              <button
-                className="book-menu-item book-menu-item--error"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMenuOpen(false);
-                  onDelete?.(book);
-                }}
-              >
-                <span className="book-menu-item__icon">🗑️</span>
-                Delete Book
-              </button>
-            </div>
-          </>
-        )}
-
-        {/* Enhanced Progress Indicator */}
+      {/* Enhanced Progress Indicator */}
         {(book.is_reading || book.status === 'reading' || (book.progress && book.progress > 0)) && (
           <div
             className="book-progress-container"
@@ -573,13 +472,13 @@ const EnhancedBookCardWithCollections = ({
 
   const getStatusColor = () => {
     if (book?.completed) return '#4CAF50';
-    if (book?.isReading) return '#2196F3';
+    if (book?.is_reading) return '#2196F3';
     return '#FF9800';
   };
 
   const getStatusText = () => {
     if (book?.completed) return 'Completed';
-    if (book?.isReading) return 'Reading';
+    if (book?.is_reading) return 'Reading';
     return 'Unread';
   };
 
@@ -666,27 +565,22 @@ const EnhancedBookCardWithCollections = ({
               </div>
             )}
 
-            {/* Quick Action Button */}
-            <div style={{
-              position: 'absolute',
-              bottom: '8px',
-              right: '8px'
-            }}>
+            {/* Quick Action Button */
+            <div title={book?.is_reading ? 'Stop Session' : (book?.progress > 0 ? 'Continue Reading' : 'Start Reading')} style={{ position: 'absolute', bottom: '8px', left: '8px', zIndex: 2 }}>
               <MD3FloatingActionButton
                 size="small"
-                icon={book?.isReading ? '⏸️' : '▶️'}
+                icon={book?.is_reading ? '??' : '??'}
+                aria-label={book?.is_reading ? 'Stop Session' : (book?.progress > 0 ? 'Continue Reading' : 'Start Reading')}
                 onClick={(e) => {
                   e.stopPropagation();
-                  book?.isReading ? onStopReading?.(book) : onStartReading?.(book);
+                  book?.is_reading ? onStopReading?.(book) : onStartReading?.(book);
                 }}
-                style={{
-                  backgroundColor: book?.isReading ? '#FF5722' : '#4CAF50',
-                  width: '32px',
-                  height: '32px'
-                }}
+                style={{ backgroundColor: book?.is_reading ? '#FF5722' : '#4CAF50', width: '30px', height: '30px' }}
               />
             </div>
+            }
           </div>
+              
 
           {/* Book Information */}
           <div className="book-info">
@@ -694,7 +588,7 @@ const EnhancedBookCardWithCollections = ({
               margin: '0 0 4px 0',
               fontSize: '1rem',
               fontWeight: '600',
-              color: '#1e293b',
+              color: 'rgba(51,78,252,0.94)',
               lineHeight: '1.2',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -706,7 +600,7 @@ const EnhancedBookCardWithCollections = ({
             <p style={{
               margin: '0 0 8px 0',
               fontSize: '0.875rem',
-              color: '#475569',
+              color: 'rgba(51,78,252,0.94)',
               fontWeight: '500',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -832,15 +726,16 @@ const EnhancedBookCardWithCollections = ({
           <button
             className="menu-button"
             onClick={handleMenuClick}
+            data-test="book-menu"
+            data-book-id={book?.id}
             style={{
               position: 'absolute',
               top: '8px',
-              right: '8px',
-              background: 'rgba(0,0,0,0.6)',
+              left: '8px',
+              background: 'rgba(51,78,252,0.94)',
               border: 'none',
               borderRadius: '50%',
-              width: '32px',
-              height: '32px',
+              width: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -863,13 +758,13 @@ const EnhancedBookCardWithCollections = ({
             className="book-menu"
             style={{
               position: 'absolute',
-              right: '8px',
+              right: '20px',
               top: '48px',
               backgroundColor: 'white',
-              borderRadius: '8px',
+              borderRadius: '100px',
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              border: '1px solid rgb(var(--md-sys-color-outline-variant))',
-              zIndex: 1000,
+              border: '4px solid rgb(var(--md-sys-color-outline-variant))',
+              zIndex: 200,
               minWidth: '160px',
               overflow: 'hidden'
             }}
@@ -893,7 +788,7 @@ const EnhancedBookCardWithCollections = ({
             </button>
             
             <button
-              onClick={() => handleMenuAction(book?.isReading ? 'stop-reading' : 'start-reading')}
+              onClick={() => handleMenuAction(book?.is_reading ? 'stop-reading' : 'start-reading')}
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -907,7 +802,7 @@ const EnhancedBookCardWithCollections = ({
                 gap: '8px'
               }}
             >
-              {book?.isReading ? '⏸️ Pause Reading' : '▶️ Start Reading'}
+              {book?.is_reading ? '⏸️ Pause Reading' : '▶️ Start Reading'}
             </button>
 
             <hr style={{ margin: '4px 0', border: 'none', borderTop: '1px solid rgb(var(--md-sys-color-outline-variant))' }} />
@@ -1067,3 +962,9 @@ const EnhancedBookCardWithCollections = ({
 };
 
 export { EnhancedBookCardWithCollections };
+
+
+
+
+
+
