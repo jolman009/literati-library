@@ -445,6 +445,17 @@ export const GamificationProvider = ({ children }) => {
       return newStats;
     });
 
+    // Record a local history entry so PointsHistory can render immediately/offline
+    try {
+      if (user?.id) {
+        const key = `gamification_actions_${user.id}`;
+        const prev = JSON.parse(localStorage.getItem(key) || '[]');
+        const nowIso = new Date().toISOString();
+        const entry = { id: `local_${Date.now()}`, action: actionType, points, data: data || {}, created_at: nowIso, pending: true };
+        localStorage.setItem(key, JSON.stringify([entry, ...prev].slice(0, 100)));
+      }
+    } catch {}
+
     // 🔔 Dispatch event AFTER state update (outside setStats callback)
     // This ensures the event fires after React has committed the state
     console.log(`🔔 GamificationContext: Broadcasting gamificationUpdate event for action: ${actionType}`);

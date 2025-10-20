@@ -92,7 +92,8 @@
 .book-menu-button {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px; /* moved from right to left */
+  right: auto;
   width: 32px;
   height: 32px;
   border-radius: 50%;

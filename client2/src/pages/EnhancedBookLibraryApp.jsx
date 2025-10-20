@@ -1858,8 +1858,8 @@ const handleBatchUpdateCovers = async () => {
                       book={book}
                       view="grid"
                       onRead={handleRead}
-                      onStartReading={handleRead}
-                      onStopReading={handleRead}
+                      onStartReading={handleStartSession}
+                      onStopReading={handleEndSession}
                       onEdit={handleEdit}
                       onDelete={handleDelete}
                       onStatusChange={handleBookUpdate}

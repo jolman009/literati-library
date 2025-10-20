@@ -11,7 +11,7 @@ import API from '../config/api';
 import MD3Card from '../components/Material3/MD3Card';
 import PointsHistory from '../components/gamification/PointsHistory';
 import MentorPreviewCard from '../components/MentorPreviewCard';
-import { BookStatusBadge } from '../components/BookStatus';
+// Minimal status pill for Dashboard cards (icon-only to avoid layout clash)
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
 
@@ -947,10 +947,29 @@ const CurrentlyReading = () => {
             className="book-card"
             style={{ position: 'relative' }}
           >
-            {/* Status badge (Reading / Paused / Completed) – moved to left */}
-            <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 2 }}>
-              <BookStatusBadge book={book} size="xs" />
-            </div>
+            {/* Minimal status dot (icon-only) to avoid overlap with menus */}
+            {(book.is_reading || book.status === 'reading' || book.status === 'paused') && (
+              <div
+                title={book.status === 'paused' ? 'Paused' : 'Reading'}
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 2,
+                  width: 22,
+                  height: 22,
+                  borderRadius: '50%',
+                  background: book.status === 'paused' ? 'rgba(148,163,184,0.9)' : 'rgba(99,102,241,0.95)',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
+                }}
+              >
+                {book.status === 'paused' ? '❚❚' : '▶'}
+              </div>
+            )}
             <div className="book-title">
               {book.title}
             </div>
