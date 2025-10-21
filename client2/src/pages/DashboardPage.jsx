@@ -13,6 +13,7 @@ import { RefreshCw } from 'lucide-react';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
+import OnboardingSpotlight from '../components/OnboardingSpotlight';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, onCheckInUpdate }) => {
@@ -23,6 +24,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
+  const [showSpotlight, setShowSpotlight] = useState(false);
 
   // Check if already checked in today and calculate streak on component mount
   const [checkInStreak, setCheckInStreak] = useState(0);
@@ -36,6 +38,12 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
     // Calculate check-in streak
     const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
     setCheckInStreak(streak);
+
+    // First-time onboarding spotlight (appears after login on dashboard)
+    try {
+      const dismissed = localStorage.getItem('onboarding_spotlight_dismissed') === 'true';
+      if (!dismissed) setShowSpotlight(true);
+    } catch {}
   }, []);
 
   // Calculate level progress percentage
@@ -217,6 +225,25 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
               {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
             </p>
 
+            {/* Onboarding Guide CTA */}
+            <button
+              onClick={() => navigate('/onboarding')}
+              className="onboarding-guide-link"
+              title="Learn how to use ShelfQuest"
+              style={{
+                marginLeft: 8,
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--md-sys-color-primary)',
+                textDecoration: 'underline',
+                cursor: 'pointer'
+              }}
+            >
+              Onboarding Guide
+            </button>
+
             {/* Compact Inline Buttons */}
             <div className="welcome-inline-buttons">
               {/* Daily Check-in Button - Compact */}
@@ -264,6 +291,12 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
       {/* Mentor Preview Card - Bottom of Welcome Section */}
       <MentorPreviewCard />
+
+      {/* First-time Spotlight Modal */}
+      <OnboardingSpotlight
+        isOpen={showSpotlight}
+        onClose={() => setShowSpotlight(false)}
+      />
     </div>
   );
 };

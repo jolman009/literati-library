@@ -49,6 +49,12 @@ const MobileNavigation = () => {
       label: 'Notes',
       path: '/notes'
     },
+    {
+      key: 'onboarding',
+      icon: 'flag',
+      label: 'Guide',
+      path: '/onboarding'
+    },
   ];
 
   const isActive = (path) => {
