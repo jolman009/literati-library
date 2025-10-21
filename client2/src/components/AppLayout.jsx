@@ -9,6 +9,7 @@ import GlobalSearch from './GlobalSearch';
 import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
+import MD3Footer from './MD3Footer';
 
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
@@ -61,6 +62,9 @@ const AppLayout = () => {
       <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
         <GlobalSearchFAB position="bottom-left" />
       </div>
+
+      {/* Footer (desktop/tablet). Mobile has fixed nav at bottom */}
+      {!inReader && <MD3Footer />}
 
       {/* Debug indicator - shows when service worker is disabled */}
       {import.meta.env.VITE_ENABLE_SERVICE_WORKER === 'false' && (
