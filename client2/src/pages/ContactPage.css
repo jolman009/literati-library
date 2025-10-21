@@ -2,12 +2,16 @@
 
 .contact-page {
   min-height: 100vh;
-  background: rgb(var(--md-sys-color-surface));
-  padding: 24px;
+  background: var(--md-sys-color-surface);
+  padding: 24px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .contact-container {
-  max-width: 920px;
+  width: 100%;
+  max-width: 720px; /* narrower page width */
+  padding: 0 16px;
   margin: 0 auto;
 }
 
@@ -18,11 +22,25 @@
 
 .contact-card {
   padding: 20px;
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
 }
 
 .contact-grid {
   display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .contact-grid .full-row {
+    grid-column: 1 / -1;
+  }
 }
 
 .contact-actions {
@@ -37,6 +55,7 @@
   align-items: center;
   gap: 10px;
   margin-top: 4px;
+  color: var(--md-sys-color-on-surface);
 }
 
 .contact-help {
@@ -47,11 +66,50 @@
 /* Theme tweaks */
 [data-theme="dark"] .contact-page,
 .dark .contact-page {
-  background: #0f172a;
+  background: var(--md-sys-color-surface);
 }
 
 [data-theme="dark"] .contact-card,
 .dark .contact-card {
-  background: #1a1f2e !important;
+  background: var(--md-sys-color-surface-container-low);
 }
 
+/* MD3 select field styling */
+.md3-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.md3-select-label {
+  color: var(--md-sys-color-on-surface-variant);
+  font: var(--md-sys-typescale-body-small-font);
+}
+
+.md3-select {
+  appearance: none;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-level1, 0 1px 2px rgba(0,0,0,0.06));
+}
+
+.md3-select:focus {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* Enlarge message textarea to a significant size */
+.contact-message-field .md3-text-field__container {
+  border-color: var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level1, 0 1px 2px rgba(0,0,0,0.06));
+}
+
+.contact-message-field textarea,
+.contact-message-field .md3-text-field__input {
+  min-height: 280px;
+  resize: vertical;
+}

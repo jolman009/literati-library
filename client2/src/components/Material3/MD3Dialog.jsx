@@ -15,6 +15,9 @@ const MD3Dialog = memo(({
   scrollable = false,
   dividers = false,
   className = '',
+  // Theme bridging for portals
+  dataTheme,
+  themeClass = '',
   ...props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -100,7 +103,8 @@ const MD3Dialog = memo(({
 
   const dialogContent = (
     <div 
-      className="md3-dialog__scrim"
+      className={`md3-dialog__scrim ${themeClass}`.trim()}
+      data-theme={dataTheme}
       onClick={handleScrimClick}
       role="presentation"
     >

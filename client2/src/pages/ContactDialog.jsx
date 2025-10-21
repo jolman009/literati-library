@@ -1,19 +1,23 @@
-// src/pages/ContactPage.jsx
-import React, { useMemo, useState, useEffect } from 'react';
+// src/pages/ContactDialog.jsx
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
-import { MD3Card, MD3Button, useSnackbar } from '../components/Material3';
+import { MD3Button, useSnackbar } from '../components/Material3';
+import MD3Dialog from '../components/Material3/MD3Dialog.jsx';
 import MD3TextField from '../components/Material3/MD3TextField.jsx';
 import './ContactPage.css';
 
-const ContactPage = () => {
-  const { user } = useAuth();
+const ContactDialog = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const { actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
 
+  const [open, setOpen] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [type, setType] = useState('feedback'); // feedback | bug | recommendation | uiux | other
+  const [type, setType] = useState('feedback');
   const [message, setMessage] = useState('');
   const [contactBack, setContactBack] = useState(true);
   const [sending, setSending] = useState(false);
@@ -68,6 +72,18 @@ const ContactPage = () => {
     return true;
   }, [name, email, message]);
 
+  const handleClose = () => {
+    setOpen(false);
+    // Navigate back if possible; otherwise go to a sensible default
+    setTimeout(() => {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate(isAuthenticated ? '/dashboard' : '/', { replace: true });
+      }
+    }, 200);
+  };
+
   const handleSend = async () => {
     if (!isValid) {
       showSnackbar({ message: 'Please complete all required fields', variant: 'error' });
@@ -75,12 +91,10 @@ const ContactPage = () => {
     }
     setSending(true);
     try {
-      // Primary: open mail client
       const mailto = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${body}`;
       window.location.href = mailto;
       showSnackbar({ message: 'Opening your email app…', variant: 'info' });
     } catch (err) {
-      // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(
           `To: ${emailTo}\nSubject: ${subject}\n\n${decodeURIComponent(body)}`
@@ -95,80 +109,73 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="contact-page" data-theme={actualTheme}>
-      <div className="contact-container">
-        <div className="contact-header">
-          <h1 className="md-display-small">Contact Us</h1>
-          <p className="md-body-large on-surface-variant">We’d love your feedback, suggestions, and bug reports.</p>
-        </div>
+    <div data-theme={actualTheme}>
+      <MD3Dialog
+        open={open}
+        onClose={handleClose}
+        title="Contact Us"
+        maxWidth="md"
+        dividers
+        dataTheme={actualTheme}
+        themeClass={actualTheme === 'dark' ? 'dark' : ''}
+      >
+        <div className="contact-grid">
+          <MD3TextField
+            label="Your Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            required
+          />
+          <MD3TextField
+            label="Your Email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
 
-        <MD3Card className="contact-card">
-          <div className="contact-grid">
-            <MD3TextField
-              label="Your Name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              fullWidth
-            />
-            <MD3TextField
-              label="Your Email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              fullWidth
-            />
-
-            <div className="md3-select-field full-row">
-              <label className="md3-select-label">Topic</label>
-              <select className="md3-select" value={type} onChange={e => setType(e.target.value)}>
-                <option value="recommendation">Feature Recommendation</option>
-                <option value="bug">Bug Report</option>
-                <option value="uiux">UI/UX Feedback</option>
-                <option value="feedback">General Feedback</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <MD3TextField
-              label="Message"
-              multiline
-              rows={12}
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              required
-              fullWidth
-              className="contact-message-field full-row"
-            />
-
-            <label className="contact-checkbox full-row">
-              <input
-                type="checkbox"
-                checked={contactBack}
-                onChange={e => setContactBack(e.target.checked)}
-              />
-              <span className="md-body-medium">Please contact me back</span>
-            </label>
-
-            <div className="contact-actions full-row">
-              <MD3Button variant="text" onClick={() => { setMessage(''); }}>
-                Clear Message
-              </MD3Button>
-              <MD3Button variant="filled" disabled={!isValid || sending} onClick={handleSend}>
-                {sending ? 'Preparing…' : 'Send Email'}
-              </MD3Button>
-            </div>
+          <div className="md3-select-field full-row">
+            <label className="md3-select-label">Topic</label>
+            <select className="md3-select" value={type} onChange={e => setType(e.target.value)}>
+              <option value="recommendation">Feature Recommendation</option>
+              <option value="bug">Bug Report</option>
+              <option value="uiux">UI/UX Feedback</option>
+              <option value="feedback">General Feedback</option>
+              <option value="other">Other</option>
+            </select>
           </div>
-        </MD3Card>
 
-        <div className="contact-help md-body-medium on-surface-variant">
-          Prefer direct email? Write us at
-          {' '}<a href={`mailto:${emailTo}`}>{emailTo}</a>.
+          <MD3TextField
+            label="Message"
+            multiline
+            rows={12}
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            required
+            className="contact-message-field full-row"
+          />
+
+          <label className="contact-checkbox full-row">
+            <input
+              type="checkbox"
+              checked={contactBack}
+              onChange={e => setContactBack(e.target.checked)}
+            />
+            <span className="md-body-medium">Please contact me back</span>
+          </label>
         </div>
-      </div>
+
+        <div className="contact-actions full-row" style={{ marginTop: 16 }}>
+          <MD3Button variant="text" onClick={handleClose}>
+            Cancel
+          </MD3Button>
+          <MD3Button variant="filled" disabled={!isValid || sending} onClick={handleSend}>
+            {sending ? 'Preparing…' : 'Send Email'}
+          </MD3Button>
+        </div>
+      </MD3Dialog>
     </div>
   );
 };
 
-export default ContactPage;
+export default ContactDialog;

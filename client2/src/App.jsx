@@ -120,11 +120,11 @@ const TermsOfServicePage = lazy(() =>
   })
 );
 
-// Contact page
-const ContactPage = lazy(() =>
-  import('./pages/ContactPage').catch(err => {
-    console.error('Failed to load ContactPage:', err);
-    return { default: () => <div>Error loading Contact page. Please refresh.</div> };
+// Contact dialog (modal)
+const ContactDialog = lazy(() =>
+  import('./pages/ContactDialog').catch(err => {
+    console.error('Failed to load ContactDialog:', err);
+    return { default: () => <div>Error loading Contact. Please refresh.</div> };
   })
 );
 
@@ -232,11 +232,11 @@ const AppRoutes = () => {
         } />
       </Route>
 
-      {/* Legal pages - accessible without authentication */}
+      {/* Public routes - contact opens as modal dialog */}
       <Route path="/contact" element={
         <ErrorBoundary fallbackComponent="contact" variant="full">
-          <Suspense fallback={<AppLoadingSpinner message="Loading Contact…" />}>
-            <ContactPage />
+          <Suspense fallback={<AppLoadingSpinner message="Opening Contact…" />}>
+            <ContactDialog />
           </Suspense>
         </ErrorBoundary>
       } />

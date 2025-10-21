@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 9999 !important; /* Temporary debug - force to top */
+  z-index: 9999; /* on top of app chrome */
   animation: md3-scrim-fade-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) forwards;
 }
 
@@ -25,7 +25,7 @@
   min-width: 280px;
   overflow: hidden;
   animation: md3-dialog-scale-in var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-emphasized) forwards;
-  border: 5px solid red !important; /* Temporary debug border */
+  /* subtle outline handled by elevation; no debug border */
 }
 
 .md3-dialog__container {
