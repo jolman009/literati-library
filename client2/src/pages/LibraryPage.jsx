@@ -528,7 +528,87 @@ const LibraryPage = () => {
                         </div>
                       )}
                       
-                      {/* Menu Button */}
+                      {/* Red Stop button when this is the active session */}
+                      {activeSession?.book?.id === book.id && (
+                        <button
+                          className="book-menu-button"
+                          title="End reading session"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEndSession();
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            backgroundColor: '#ef4444',
+                            border: '2px solid rgba(255, 255, 255, 0.9)',
+                            color: '#fff',
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                          }}
+                        >
+                          <span className="material-symbols-outlined">stop</span>
+                        </button>
+                      )}
+                      {/* Red Stop when status=reading (no active session) */}
+                      {activeSession?.book?.id !== book.id && (book.is_reading || book.status === 'reading') && (
+                        <button
+                          className="book-menu-button"
+                          title="Stop reading (set to paused)"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            (async () => {
+                              try {
+                                await API.patch(`/books/${book.id}`, {
+                                  status: 'paused',
+                                  is_reading: true,
+                                  last_opened: new Date().toISOString()
+                                });
+                                setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'paused', is_reading: true } : b));
+                                window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'stop_reading', status: 'paused' } }));
+                                localStorage.setItem('books_updated', Date.now().toString());
+                              } catch (err) {
+                                console.error('Failed to pause reading status:', err);
+                              }
+                            })();
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            backgroundColor: '#ef4444',
+                            border: '2px solid rgba(255, 255, 255, 0.9)',
+                            color: '#fff',
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                          }}
+                        >
+                          <span className="material-symbols-outlined">stop</span>
+                        </button>
+                      )}
+                      {/* Menu Button (hidden when active session matches or reading) */}
+                      {activeSession?.book?.id !== book.id && !(book.is_reading || book.status === 'reading') && (
                       <button
                         className="book-menu-button"
                         onClick={(e) => {
@@ -558,6 +638,7 @@ const LibraryPage = () => {
                       >
                         ⋮
                       </button>
+                      )}
 
                       {/* Menu Dropdown */}
                       {openMenuBookId === book.id && (
