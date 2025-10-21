@@ -113,3 +113,33 @@
   min-height: 280px;
   resize: vertical;
 }
+
+/* ------------------------------------------------------------------
+   Contact dialog: ensure strong color contrast in light mode
+   ------------------------------------------------------------------ */
+.md3-dialog .contact-grid .md3-text-field__input {
+  color: var(--md-sys-color-on-surface);
+}
+
+.md3-dialog .contact-grid .md3-text-field__label {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.md3-dialog .contact-grid .md3-text-field--outlined .md3-text-field__container {
+  background: var(--md-sys-color-surface);
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+.md3-dialog .contact-grid .md3-select-label {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.md3-dialog .contact-grid .md3-select {
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+.md3-dialog .contact-grid .contact-checkbox {
+  color: var(--md-sys-color-on-surface);
+}
