@@ -27,10 +27,11 @@ const MentorPreviewCard = () => {
       setHasApiKeys(hasKeys);
 
       // Load current reading book
-      const booksResponse = await API.get('/books');
-      const books = Array.isArray(booksResponse.data)
-        ? booksResponse.data
-        : booksResponse.data.books || [];
+      const booksResponse = await API.get('/books', { params: { limit: 200, offset: 0 } });
+      const br = booksResponse.data;
+      const books = Array.isArray(br)
+        ? br
+        : (Array.isArray(br.items) ? br.items : (br.books || []));
 
       const readingBook = books.find(b => b.is_reading);
       setCurrentBook(readingBook);
