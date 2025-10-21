@@ -182,7 +182,9 @@ const AppRoutes = () => {
         } />
         <Route path="/library" element={
           <LibraryErrorBoundary>
-            <LibraryPage />
+            <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
+              <LibraryPageWrapper />
+            </Suspense>
           </LibraryErrorBoundary>
         } />
         <Route path="/upload" element={
