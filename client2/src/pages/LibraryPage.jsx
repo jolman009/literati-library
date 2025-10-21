@@ -345,7 +345,7 @@ const LibraryPage = () => {
 
     return (
       <>
-        {/* Welcome Widget - Only show on library page */}
+        {/* Welcome Widget - Only show on                                                        */}
         {currentPage === 'library' && (
           <WelcomeWidget
             user={user}
