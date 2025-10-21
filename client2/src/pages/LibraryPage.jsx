@@ -60,9 +60,13 @@ const LibraryPage = () => {
     unreadBooks: books.filter(b => !b.is_reading && !b.completed).length
   };
 
+  // Pagination controls for initial load (can be extended to infinite scroll)
+  const PAGE_LIMIT = 200;
+  const [totalCount, setTotalCount] = useState(0);
+
   useEffect(() => {
     if (user) {
-      fetchBooks();
+      fetchBooks(0);
     }
   }, [user]); // Fetch books when user is available
 
@@ -76,29 +80,36 @@ const LibraryPage = () => {
     }
   }, [location.state, navigate]);
 
-  const fetchBooks = async () => {
+  const fetchBooks = async (offset = 0) => {
     try {
       console.log('📚 LibraryPage: Starting to fetch books...');
       setLoading(true);
-      const response = await API.get('/books');
+      const response = await API.get('/books', { params: { limit: PAGE_LIMIT, offset } });
 
       console.log('📚 LibraryPage: Response received:', {
         dataType: typeof response.data,
         isArray: Array.isArray(response.data),
         hasBooks: !!response.data?.books,
+        hasItems: !!response.data?.items,
         dataKeys: Object.keys(response.data || {}),
         sampleData: response.data
       });
 
-      const booksData = Array.isArray(response.data) ? response.data : response.data.books || [];
+      const items = response.data?.items;
+      const total = response.data?.total;
+      const booksData = Array.isArray(response.data)
+        ? response.data
+        : (Array.isArray(items) ? items : (response.data.books || []));
 
       console.log('📚 LibraryPage: Books data processed:', {
         bookCount: booksData.length,
+        totalCount: typeof total === 'number' ? total : booksData.length,
         firstBook: booksData[0],
         allTitles: booksData.map(b => b.title)
       });
 
       setBooks(booksData);
+      setTotalCount(typeof total === 'number' ? total : booksData.length);
       setError(null);
       console.log('✅ LibraryPage: Books set successfully!');
     } catch (error) {
@@ -419,7 +430,7 @@ const LibraryPage = () => {
                 className={`md3-filter-chip ${filter === 'all' ? 'selected' : ''}`}
                 onClick={() => setFilter('all')}
               >
-                All Books ({books.length})
+                All Books ({totalCount})
               </button>
               <button 
                 className={`md3-filter-chip ${filter === 'reading' ? 'selected' : ''}`}

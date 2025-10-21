@@ -165,6 +165,7 @@ export function booksRouter(authenticateToken) {
   router.get("/", authenticateToken, async (req, res) => {
     try {
       // Parse query parameters for filtering and pagination
+      const MAX_PAGE_SIZE = parseInt(process.env.BOOKS_MAX_PAGE_SIZE || '200', 10);
       const {
         limit = 50,
         offset = 0,
@@ -174,10 +175,14 @@ export function booksRouter(authenticateToken) {
         orderDirection = 'desc'
       } = req.query;
 
+      // Clamp and sanitize pagination
+      const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 50, 1), MAX_PAGE_SIZE);
+      const parsedOffset = Math.max(parseInt(offset, 10) || 0, 0);
+
       // Use optimized query with caching
-      const { data: books, error } = await dbOptimizer.getOptimizedBookList(req.user.id, {
-        limit: parseInt(limit),
-        offset: parseInt(offset),
+      const { data: books, count, error } = await dbOptimizer.getOptimizedBookList(req.user.id, {
+        limit: parsedLimit,
+        offset: parsedOffset,
         status,
         genre,
         orderBy,
@@ -207,16 +212,34 @@ export function booksRouter(authenticateToken) {
         });
       }
 
+      // Build consistent response shape with total for pagination
+      const total = typeof count === 'number' ? count : (books?.length || 0);
+
       // Return books immediately with performance metrics (development only)
       if (process.env.NODE_ENV === 'development') {
         const metrics = dbOptimizer.getPerformanceMetrics();
         res.json({
+          items: books || [],
+          total,
+          limit: parsedLimit,
+          offset: parsedOffset,
+          orderBy,
+          orderDirection,
+          // Backward compatibility field (to be removed after client migration)
           books: books || [],
-          _performance: metrics.getBookList,
-          _total: books?.length || 0
+          _performance: metrics.getBookList
         });
       } else {
-        res.json(books || []);
+        res.json({
+          items: books || [],
+          total,
+          limit: parsedLimit,
+          offset: parsedOffset,
+          orderBy,
+          orderDirection,
+          // Backward compatibility field (to be removed after client migration)
+          books: books || []
+        });
       }
       
       // Optionally fetch covers in background (non-blocking)
