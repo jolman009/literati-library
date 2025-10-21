@@ -15,7 +15,7 @@ const OnboardingGuide = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="page onboarding-guide" style={{ padding: '24px', maxWidth: 980, margin: '0 auto' }}>
+    <div className="onboarding-guide" style={{ padding: '24px', maxWidth: 980, margin: '0 auto' }}>
       <header style={{ marginBottom: 24 }}>
         <h1 style={{ margin: 0 }}>Welcome to ShelfQuest</h1>
         <p style={{ marginTop: 8, color: 'var(--md-sys-color-on-surface-variant)' }}>

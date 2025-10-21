@@ -123,9 +123,9 @@ export const ReadingSessionLoader = ({ bookTitle }) => (
   <div className="reading-session-loader">
     <div className="reading-loader-animation">
       <div className="book-pages">
-        <div className="page page-1" />
-        <div className="page page-2" />
-        <div className="page page-3" />
+        <div className="loader-page loader-page-1" />
+        <div className="loader-page loader-page-2" />
+        <div className="loader-page loader-page-3" />
       </div>
     </div>
     <h3>Preparing your reading session</h3>
