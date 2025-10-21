@@ -1,5 +1,7 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
@@ -13,10 +15,10 @@ import { RefreshCw } from 'lucide-react';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
-import OnboardingSpotlight from '../components/OnboardingSpotlight';
+// Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-const WelcomeSection = ({ user, onCheckInUpdate }) => {
+const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
   const { stats, achievements, syncWithServer, trackAction } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
   const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState(null);
-  const [showSpotlight, setShowSpotlight] = useState(false);
+  // Onboarding overlay disabled
 
   // Check if already checked in today and calculate streak on component mount
   const [checkInStreak, setCheckInStreak] = useState(0);
@@ -39,11 +41,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
     const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
     setCheckInStreak(streak);
 
-    // First-time onboarding spotlight (appears after login on dashboard)
-    try {
-      const dismissed = localStorage.getItem('onboarding_spotlight_dismissed') === 'true';
-      if (!dismissed) setShowSpotlight(true);
-    } catch {}
+    // Onboarding spotlight disabled
   }, []);
 
   // Calculate level progress percentage
@@ -244,6 +242,26 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
               Onboarding Guide
             </button>
 
+            {/* Take a Tour (Driver.js) */}
+            <button
+              id="tour-start"
+              onClick={onStartTour}
+              className="onboarding-guide-link"
+              title="Quick tour of key features"
+              style={{
+                marginLeft: 8,
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--md-sys-color-primary)',
+                textDecoration: 'underline',
+                cursor: 'pointer'
+              }}
+            >
+              Take a Tour
+            </button>
+
             {/* Compact Inline Buttons */}
             <div className="welcome-inline-buttons">
               {/* Daily Check-in Button - Compact */}
@@ -291,12 +309,6 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
 
       {/* Mentor Preview Card - Bottom of Welcome Section */}
       <MentorPreviewCard />
-
-      {/* First-time Spotlight Modal */}
-      <OnboardingSpotlight
-        isOpen={showSpotlight}
-        onClose={() => setShowSpotlight(false)}
-      />
     </div>
   );
 };
@@ -851,7 +863,7 @@ const RecentAchievements = () => {
 
 // Currently Reading Section Componentss
 const CurrentlyReading = () => {
-  const { activeSession, startReadingSession, stopReadingSession } = useReadingSession(); // Listen to session changes + controls
+  const { activeSession, startReadingSession, stopReadingSession, isPaused } = useReadingSession(); // Listen to session changes + controls
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -866,8 +878,11 @@ const CurrentlyReading = () => {
         // Handle both array and object responses
         const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
 
-        // Filter for currently reading books (active session only)
-        const readingBooks = booksArray.filter(book => getBookStatus(book) === 'reading');
+        // Filter for currently reading books (include active or paused)
+        const readingBooks = booksArray.filter(book => {
+          const status = getBookStatus(book, { activeSession, isPaused });
+          return status === 'reading' || status === 'paused';
+        });
 
         // Also check localStorage for active reading session to ensure sync
         const savedSession = localStorage.getItem('active_reading_session');
@@ -910,7 +925,10 @@ const CurrentlyReading = () => {
             const response = await API.get('/books');
             const data = response.data;
             const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
-            const readingBooks = booksArray.filter(book => getBookStatus(book) === 'reading');
+            const readingBooks = booksArray.filter(book => {
+              const status = getBookStatus(book, { activeSession, isPaused });
+              return status === 'reading' || status === 'paused';
+            });
 
             const savedSession = localStorage.getItem('active_reading_session');
             if (savedSession) {
@@ -1200,6 +1218,94 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [checkInStreak, setCheckInStreak] = useState(0);
   const [books, setBooks] = useState([]);
+
+  // Driver.js tour for onboarding key actions
+  const startDashboardTour = useCallback(() => {
+    // Ensure nav links are in DOM (they live in AppLayout)
+    const d = driver({
+      showProgress: true,
+      allowClose: true,
+      stagePadding: 6,
+      overlayColor: 'rgba(0,0,0,0.5)',
+      steps: [
+        {
+          // Upload Book CTA: highlight inline button if present, otherwise the nav link
+          element: '#tour-upload, nav .md3-rail-destinations a[href="/upload"]',
+          popover: {
+            title: 'Upload Book',
+            description: 'This is your upload book feature. Click here to go to the Upload Page.',
+            side: 'bottom',
+            align: 'start',
+            buttons: [
+              {
+                text: 'Open Upload',
+                handler: () => { d.moveNext(); navigate('/upload'); }
+              }
+            ]
+          },
+        },
+        {
+          // Start Reading guidance: point to Library entry or inline CTA
+          element: '#tour-start-reading, nav .md3-rail-destinations a[href="/library"]',
+          popover: {
+            title: 'Start Reading',
+            description:
+              'Start a reading session by starting a floatable reading timer and then click on your book to open it.',
+            side: 'right',
+            align: 'center',
+            buttons: [
+              {
+                text: 'Open Library',
+                handler: () => { d.moveNext(); navigate('/library'); }
+              }
+            ]
+          },
+        },
+        {
+          // Notes access: highlight Notes entry
+          element: '#tour-notes, nav .md3-rail-destinations a[href="/notes"]',
+          popover: {
+            title: 'Notes Widget',
+            description:
+              "Navigate through your book and annotate on the notes widget. Save and head to the Notes page.",
+            side: 'right',
+            align: 'center',
+            buttons: [
+              {
+                text: 'Open Notes',
+                handler: () => { d.moveNext(); navigate('/notes'); }
+              }
+            ]
+          },
+        },
+      ],
+    });
+    d.drive();
+  }, [navigate]);
+
+  // First-run auto-start of the tour (once per user/device)
+  useEffect(() => {
+    try {
+      const KEY = 'sq_tour_seen_v1';
+      const seen = localStorage.getItem(KEY) === '1';
+      if (!seen) {
+        setTimeout(() => {
+          // Double-check we are still on dashboard
+          if (window.location.pathname.includes('/dashboard')) {
+            startDashboardTour();
+            localStorage.setItem(KEY, '1');
+          }
+        }, 600);
+      }
+    } catch {}
+  }, [startDashboardTour]);
+
+  // Listen for manual restart requests from header/user menu
+  useEffect(() => {
+    const handler = () => startDashboardTour();
+    window.addEventListener('restartGuidedTour', handler);
+    return () => window.removeEventListener('restartGuidedTour', handler);
+  }, [startDashboardTour]);
   
   // Load check-in streak on mount
   useEffect(() => {
@@ -1242,7 +1348,34 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (replaces Transaction History) */}
           <div className="dashboard-content-left">
-            <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} />
+            <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} onStartTour={startDashboardTour} />
+            {/* Inline CTAs for the tour (stable anchors) */}
+            <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+              <button
+                id="tour-upload"
+                className="view-all-link"
+                onClick={() => navigate('/upload')}
+                title="Upload a new book"
+              >
+                Upload Book
+              </button>
+              <button
+                id="tour-start-reading"
+                className="view-all-link"
+                onClick={() => navigate('/library')}
+                title="Go to your Library to start a session"
+              >
+                Start Reading
+              </button>
+              <button
+                id="tour-notes"
+                className="view-all-link"
+                onClick={() => navigate('/notes')}
+                title="Open your Notes page"
+              >
+                Notes
+              </button>
+            </div>
           </div>
 
           {/* Right Column - Currently Reading Sessions (replaces Open Projects) */}
