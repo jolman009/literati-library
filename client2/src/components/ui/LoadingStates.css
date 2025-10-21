@@ -296,7 +296,7 @@
   height: 100%;
 }
 
-.page {
+.loader-page {
   position: absolute;
   width: 60px;
   height: 80px;
@@ -306,17 +306,17 @@
   transform-origin: left center;
 }
 
-.page-1 {
+.loader-page-1 {
   animation: flipPage 1.5s ease-in-out infinite;
   background: var(--md-sys-color-primary-container);
 }
 
-.page-2 {
+.loader-page-2 {
   animation: flipPage 1.5s ease-in-out infinite 0.5s;
   background: var(--md-sys-color-secondary-container);
 }
 
-.page-3 {
+.loader-page-3 {
   animation: flipPage 1.5s ease-in-out infinite 1s;
   background: var(--md-sys-color-tertiary-container);
 }
