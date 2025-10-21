@@ -1449,6 +1449,9 @@
   scrollbar-width: none;  /* Firefox */
   /* Prevent scroll from bubbling to parent container */
   overscroll-behavior-x: contain;
+  /* Restore smooth touch/momentum scroll on mobile */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 /* LEGACY - Keep for backwards compatibility but not used */
