@@ -1,0 +1,57 @@
+/* src/pages/ContactPage.css */
+
+.contact-page {
+  min-height: 100vh;
+  background: rgb(var(--md-sys-color-surface));
+  padding: 24px;
+}
+
+.contact-container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contact-card {
+  padding: 20px;
+}
+
+.contact-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.contact-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.contact-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.contact-help {
+  margin-top: 14px;
+  text-align: center;
+}
+
+/* Theme tweaks */
+[data-theme="dark"] .contact-page,
+.dark .contact-page {
+  background: #0f172a;
+}
+
+[data-theme="dark"] .contact-card,
+.dark .contact-card {
+  background: #1a1f2e !important;
+}
+

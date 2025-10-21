@@ -120,6 +120,14 @@ const TermsOfServicePage = lazy(() =>
   })
 );
 
+// Contact page
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage').catch(err => {
+    console.error('Failed to load ContactPage:', err);
+    return { default: () => <div>Error loading Contact page. Please refresh.</div> };
+  })
+);
+
 // Enhanced Loading Component (now using imported component)
 const AppLoadingSpinner = ({ message = "Loading ShelfQuest..." }) => (
   <LoadingSpinner message={message} size="large" variant="primary" />
@@ -225,6 +233,13 @@ const AppRoutes = () => {
       </Route>
 
       {/* Legal pages - accessible without authentication */}
+      <Route path="/contact" element={
+        <ErrorBoundary fallbackComponent="contact" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Contact…" />}>
+            <ContactPage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
       <Route path="/legal/privacy-policy" element={
         <ErrorBoundary fallbackComponent="privacy-policy" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Loading Privacy Policy..." />}>
