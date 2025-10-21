@@ -926,10 +926,11 @@ class LiteraryMentor {
   async getSuggestedNextSteps() {
     try {
       // Get user's books and notes to provide personalized suggestions
-      const books = await API.get('/books');
+      const books = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const notes = await API.get('/notes');
       
-      const bookCount = books.data?.length || 0;
+      const br = books.data;
+      const bookCount = Array.isArray(br) ? br.length : (Array.isArray(br?.items) ? br.items.length : (Array.isArray(br?.books) ? br.books.length : 0));
       const noteCount = notes.data?.length || 0;
       
       const suggestions = [];

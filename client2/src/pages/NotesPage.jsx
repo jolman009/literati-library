@@ -78,10 +78,12 @@ const NotesPage = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await API.get('/books', { timeout: 30000 });
+      const response = await API.get('/books', { params: { limit: 200, offset: 0 }, timeout: 30000 });
       let booksData = [];
       if (Array.isArray(response.data)) {
         booksData = response.data;
+      } else if (Array.isArray(response.data.items)) {
+        booksData = response.data.items;
       } else if (Array.isArray(response.data.books)) {
         booksData = response.data.books;
       }
