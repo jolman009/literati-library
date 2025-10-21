@@ -20,6 +20,7 @@ import { createDefaultCollections, loadCollectionsFromStorage, addBookToCollecti
 
 // NEW IMPORT: Add BookStatus components integration
 import { BookStatusDropdown, BookStatusBadge, getBookStatus } from '../components/BookStatus';
+import { BOOK_STATUS, applyStatus, compareByStatus } from '../utils/bookStatus';
 import { useAuth } from '../contexts/AuthContext';
 
 // Using EnhancedBookCard which has all the progress controls
@@ -479,12 +480,8 @@ const LibraryView = ({
         if (result.success) {
           console.log('📖 Reading session started for:', book.title);
           
-          // Also update the book status
-          const updatedBook = {
-            ...book,
-            is_reading: true,
-            completed: false
-          };
+                    // Also update the book status
+          const updatedBook = applyStatus(book, BOOK_STATUS.READING);
           handleStatusChange(updatedBook);
           
           // Show success message
@@ -501,13 +498,8 @@ const LibraryView = ({
         });
       }
     } else {
-      // Fallback to just updating status if context isn't available
-      const updatedBook = {
-        ...book,
-        is_reading: true,
-        completed: false
-      };
-      handleStatusChange(updatedBook);
+            // Fallback to just updating status if context isn't available
+      handleStatusChange(applyStatus(book, BOOK_STATUS.READING));
     }
   }, [handleStatusChange, readingSessionContext, showSnackbar]);
 
@@ -515,12 +507,9 @@ const LibraryView = ({
     console.log('🟢 handleStopReading called for book:', book.title);
     
     // Always update the book status first
-    const updatedBook = {
-      ...book,
-      is_reading: false,
-      completed: false
-    };
-    console.log('🟢 Setting book is_reading to false:', updatedBook);
+    const nextStatus = (Number(book.progress || 0) > 0) ? BOOK_STATUS.PAUSED : BOOK_STATUS.UNREAD;
+    const updatedBook = applyStatus(book, nextStatus);
+    console.log('?? Setting status on stopReading:', updatedBook);
     handleStatusChange(updatedBook);
     
     // Stop the actual reading session if one exists
@@ -545,12 +534,7 @@ const LibraryView = ({
       }
     } else {
       // Fallback to just updating status if context isn't available
-      const updatedBook = {
-        ...book,
-        is_reading: false,
-        completed: false
-      };
-      handleStatusChange(updatedBook);
+      handleStatusChange(applyStatus(book, nextStatus));
     }
   }, [handleStatusChange, readingSessionContext, showSnackbar]);
 
@@ -1276,9 +1260,7 @@ const EnhancedBookLibraryApp = ({
         case 'progress':
           return (b.progress || 0) - (a.progress || 0);
         case 'status':
-          const statusA = getBookStatus(a);
-          const statusB = getBookStatus(b);
-          return statusA.localeCompare(statusB);
+          return compareByStatus(a, b, { readingSession: readingSessionContext });
         case 'genre':
           return (a.genre || '').localeCompare(b.genre || '');
         default:
@@ -1637,13 +1619,10 @@ const handleBatchUpdateCovers = async () => {
         
         switch (action) {
           case 'mark-reading':
-            updatedBook.is_reading = true;
-            updatedBook.completed = false;
+            updatedBook = applyStatus(book, BOOK_STATUS.READING);
             break;
           case 'mark-completed':
-            updatedBook.is_reading = false;
-            updatedBook.completed = true;
-            updatedBook.progress = 100;
+            updatedBook = applyStatus(book, BOOK_STATUS.COMPLETED);
             break;
           case 'delete':
             // Implement batch delete
@@ -2109,3 +2088,8 @@ const handleBatchUpdateCovers = async () => {
 }
 
 export default EnhancedBookLibraryApp;
+
+
+
+
+
