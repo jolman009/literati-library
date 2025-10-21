@@ -818,7 +818,7 @@ const RecentAchievements = () => {
 
 // Currently Reading Section Componentss
 const CurrentlyReading = () => {
-  const { activeSession, startReadingSession } = useReadingSession(); // Listen to session changes + resume
+  const { activeSession, startReadingSession, stopReadingSession } = useReadingSession(); // Listen to session changes + controls
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -972,6 +972,65 @@ const CurrentlyReading = () => {
               </div>
             )}
             <div className="title-banner" title={book.title}>{book.title}</div>
+
+            {/* Quick actions: Stop (red) and Complete (green) */}
+            <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 3 }}>
+              {/* Red Stop: always available for books shown here; ends active session if present, otherwise marks paused */}
+              <button
+                title="Stop reading session"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    if (activeSession?.book?.id === book.id) {
+                      await stopReadingSession();
+                    } else {
+                      // No active session; mark as paused directly so it exits this list
+                      await API.patch(`/books/${book.id}`, { status: 'paused', is_reading: true, last_opened: new Date().toISOString() });
+                      window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'stop_reading', status: 'paused' } }));
+                      localStorage.setItem('books_updated', Date.now().toString());
+                    }
+                  } catch {}
+                  // Remove from local list to reflect change immediately
+                  setCurrentlyReading(prev => prev.filter(b => b.id !== book.id));
+                }}
+                style={{
+                  background: '#ef4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                  cursor: 'pointer'
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>stop</span>
+              </button>
+
+              {/* Mark Completed: moves book to Completed */}
+              <button
+                title="Mark as completed"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  try {
+                    await API.patch(`/books/${book.id}`, { status: 'completed' });
+                    window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'mark_completed', status: 'completed' } }));
+                    localStorage.setItem('books_updated', Date.now().toString());
+                  } catch {}
+                  setCurrentlyReading(prev => prev.filter(b => b.id !== book.id));
+                }}
+                style={{
+                  background: '#22c55e',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                  cursor: 'pointer'
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>check</span>
+              </button>
+            </div>
           </div>
         ))}
       </div>
