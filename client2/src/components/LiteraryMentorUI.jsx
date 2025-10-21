@@ -93,12 +93,14 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
 
       console.log('Loading books from API for Literary Mentor...');
       
-      // Fetch books from the API (same as library page)
-      const response = await API.get('/books');
+      // Fetch books from the API (same as library page) with pagination params
+      const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
       
       let booksData = [];
       if (Array.isArray(response.data)) {
         booksData = response.data;
+      } else if (Array.isArray(response.data.items)) {
+        booksData = response.data.items;
       } else if (Array.isArray(response.data.books)) {
         booksData = response.data.books;
       } else {
