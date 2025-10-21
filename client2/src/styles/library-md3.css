@@ -605,15 +605,15 @@
 }
 
 .md3-library-page.dark .md3-book-title {
-  color: #f1f5f9;
+  color: #000000;
 }
 
 .md3-library-page.dark .md3-book-author {
-  color: #94a3b8;
+  color: #000000;
 }
 
 .md3-library-page.dark .md3-book-genre {
-  color: #94a3b8;
+  color: #000000;
 }
 
 /* Progress Bar */

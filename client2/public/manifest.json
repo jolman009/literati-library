@@ -7,7 +7,7 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
   "background_color": "#fff7fe",
-  "theme_color": "##24A8E0",
+  "theme_color": "#24A8E0",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",

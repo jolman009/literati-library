@@ -3,6 +3,8 @@ import { Grid } from 'react-window';
 import { LazyBookCover } from './LazyImage';
 import './VirtualizedBookGrid.css';
 import '../EnhancedBookCard.css';
+import { getBookStatus } from '../BookStatus';
+import { applyStatus, BOOK_STATUS } from '../../utils/bookStatus';
 
 const VirtualizedBookGrid = ({
   books = [],
@@ -15,6 +17,7 @@ const VirtualizedBookGrid = ({
   onResumeSession,
   onPauseSession,
   onEndSession,
+  onStatusChange,
   viewMode = 'grid',
   className = ''
 }) => {
@@ -87,6 +90,7 @@ const VirtualizedBookGrid = ({
 
     const isHighlighted = highlightedBookId === book.id;
     const hasActiveSession = activeSession?.book?.id === book.id;
+    const status = getBookStatus(book);
 
     return (
       <div
@@ -121,7 +125,39 @@ const VirtualizedBookGrid = ({
               </div>
             )}
 
-                        {/* Action button: if active session, show red Stop; else open menu */}
+            {/* Quick action buttons when status is reading */}
+            {status === 'reading' && (
+              <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 3 }}>
+                {/* Red Stop */}
+                <button
+                  title="Stop reading session"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (hasActiveSession) {
+                      onEndSession && onEndSession();
+                    } else if (onStatusChange) {
+                      onStatusChange(applyStatus(book, BOOK_STATUS.PAUSED));
+                    }
+                  }}
+                  style={{ backgroundColor: '#ef4444', color: '#fff' }}
+                >
+                  <span className="material-symbols-outlined">stop</span>
+                </button>
+                {/* Mark Completed */}
+                <button
+                  title="Mark as completed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStatusChange && onStatusChange(applyStatus(book, BOOK_STATUS.COMPLETED));
+                  }}
+                  style={{ backgroundColor: '#22c55e', color: '#fff' }}
+                >
+                  <span className="material-symbols-outlined">check</span>
+                </button>
+              </div>
+            )}
+
+            {/* Action button: if active session, show red Stop; else open menu */}
             {hasActiveSession ? (
               <button
                 className="book-menu-button"
@@ -140,16 +176,6 @@ const VirtualizedBookGrid = ({
                 <span className="material-symbols-outlined">more_horiz</span>
               </button>
             )}
-            {/* Menu button (legacy placeholder for search/replace assist) */}
-            <button
-              className="book-menu-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onBookMenuClick(book.id);
-              }}
-            >
-              ⋮
-            </button>
 
             {/* Menu dropdown */}
             {openMenuBookId === book.id && (
@@ -214,7 +240,7 @@ const VirtualizedBookGrid = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle mark as completed
+                      onStatusChange && onStatusChange(applyStatus(book, BOOK_STATUS.COMPLETED));
                     }}
                     className="book-menu-item"
                   >
@@ -275,7 +301,8 @@ const VirtualizedBookGrid = ({
     onBookMenuClick,
     onResumeSession,
     onPauseSession,
-    onEndSession
+    onEndSession,
+    onStatusChange
   ]);
 
   if (books.length === 0) {
@@ -316,4 +343,3 @@ const VirtualizedBookGrid = ({
 };
 
 export default VirtualizedBookGrid;
-
