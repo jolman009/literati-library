@@ -121,7 +121,26 @@ const VirtualizedBookGrid = ({
               </div>
             )}
 
-            {/* Menu button */}
+                        {/* Action button: if active session, show red Stop; else open menu */}
+            {hasActiveSession ? (
+              <button
+                className="book-menu-button"
+                style={{ backgroundColor: '#ef4444', color: '#fff' }}
+                title="End reading session"
+                onClick={(e) => { e.stopPropagation(); onEndSession && onEndSession(); }}
+              >
+                <span className="material-symbols-outlined">stop</span>
+              </button>
+            ) : (
+              <button
+                className="book-menu-button"
+                onClick={(e) => { e.stopPropagation(); onBookMenuClick && onBookMenuClick(book.id); }}
+                title="More actions"
+              >
+                <span className="material-symbols-outlined">more_horiz</span>
+              </button>
+            )}
+            {/* Menu button (legacy placeholder for search/replace assist) */}
             <button
               className="book-menu-button"
               onClick={(e) => {
@@ -297,3 +316,4 @@ const VirtualizedBookGrid = ({
 };
 
 export default VirtualizedBookGrid;
+

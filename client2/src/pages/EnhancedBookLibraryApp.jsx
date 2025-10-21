@@ -446,6 +446,7 @@ const LibraryView = ({
   onSelectBook
 }) => {
   const { showSnackbar } = useSafeSnackbar();
+  const [openMenuBookId, setOpenMenuBookId] = useState(null);
   
   // Get reading session context using the hook
   let readingSessionContext;
@@ -584,7 +585,19 @@ const LibraryView = ({
     <VirtualizedBookGrid
       books={filteredBooks}
       viewMode={viewMode}
-      onRead={onRead}
+      onBookClick={onRead}
+      onBookMenuClick={setOpenMenuBookId}
+      openMenuBookId={openMenuBookId}
+      activeSession={readingSessionContext?.activeSession}
+      isPaused={readingSessionContext?.isPaused}
+      onResumeSession={() => readingSessionContext?.resumeReadingSession?.()}
+      onPauseSession={() => readingSessionContext?.pauseReadingSession?.()}
+      onEndSession={async () => {
+        try {
+          await readingSessionContext?.stopReadingSession?.();
+          showSnackbar({ message: 'Reading session ended', variant: 'info' });
+        } catch {}
+      }}
       onStartReading={handleStartReading}
       onStopReading={handleStopReading}
       onEdit={onEdit}

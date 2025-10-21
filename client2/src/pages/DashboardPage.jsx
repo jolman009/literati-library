@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useSnackbar } from '../components/Material3';
+import { getBookStatus } from '../components/BookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
 import MentorPreviewCard from '../components/MentorPreviewCard';
@@ -832,14 +833,8 @@ const CurrentlyReading = () => {
         // Handle both array and object responses
         const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
 
-        // Filter for currently reading books (active or paused)
-        const readingBooks = booksArray.filter(book =>
-          book?.is_reading === true ||
-          book?.status === 'reading' ||
-          book?.status === 'in_progress' ||
-          book?.status === 'paused' ||
-          (!!book?.progress && !book?.completed && book?.status !== 'completed')
-        );
+        // Filter for currently reading books (active session only)
+        const readingBooks = booksArray.filter(book => getBookStatus(book) === 'reading');
 
         // Also check localStorage for active reading session to ensure sync
         const savedSession = localStorage.getItem('active_reading_session');
@@ -882,13 +877,7 @@ const CurrentlyReading = () => {
             const response = await API.get('/books');
             const data = response.data;
             const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
-            const readingBooks = booksArray.filter(book =>
-              book?.is_reading === true ||
-              book?.status === 'reading' ||
-              book?.status === 'in_progress' ||
-              book?.status === 'paused' ||
-              (!!book?.progress && !book?.completed && book?.status !== 'completed')
-            );
+            const readingBooks = booksArray.filter(book => getBookStatus(book) === 'reading');
 
             const savedSession = localStorage.getItem('active_reading_session');
             if (savedSession) {
@@ -1154,7 +1143,7 @@ const DashboardPage = () => {
           checkInStreak={checkInStreak}
           totalBooks={Array.isArray(books) ? books.length : 0}
           completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
-          inProgressBooks={(Array.isArray(books) ? books : []).filter(b => (b.is_reading === true) || b.status === 'reading' || b.status === 'in_progress' || (!!b.progress && !b.completed && b.status !== 'completed')).length}
+          inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
         />
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
