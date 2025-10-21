@@ -19,10 +19,11 @@ const MentorPage = () => {
 
   const loadBooks = async () => {
     try {
-      const response = await API.get('/books');
-      const booksArray = Array.isArray(response.data)
-        ? response.data
-        : response.data.books || [];
+      const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
+      const d = response.data;
+      const booksArray = Array.isArray(d)
+        ? d
+        : (Array.isArray(d.items) ? d.items : (d.books || []));
 
       setBooks(booksArray);
 

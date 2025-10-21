@@ -1086,11 +1086,13 @@ const RecentlyAdded = () => {
       }
 
       // Use the API config for consistency
-      const response = await API.get('/books');
+      const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const data = response.data;
 
-      // Handle both array and object responses
-      const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+      // Handle both array and object responses (prefer new shape)
+      const booksArray = Array.isArray(data)
+        ? data
+        : (Array.isArray(data.items) ? data.items : (Array.isArray(data.books) ? data.books : []));
 
       // Get recently added books (filter by created_at or dateAdded)
       const recentlyAdded = booksArray
