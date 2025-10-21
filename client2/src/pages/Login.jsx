@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import Card from '../components/Material3/Card';
@@ -248,9 +248,11 @@ const Login = () => {
           <div className="login-footer">
             <p className="login-footer-text">
               By continuing, you agree to our{' '}
-              <a href="#" className="footer-link">Terms of Service</a>
+              <Link to="/legal/terms-of-service" className="footer-link">Terms of Service</Link>
               {' '}and{' '}
-              <a href="#" className="footer-link">Privacy Policy</a>
+              <Link to="/legal/privacy-policy" className="footer-link">Privacy Policy</Link>
+              {' '}•{' '}
+              <Link to="/contact" className="footer-link">Contact Us</Link>
             </p>
           </div>
         </div>

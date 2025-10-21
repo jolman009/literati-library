@@ -155,9 +155,17 @@ const NewLandingPage = () => {
         </div>
       </section>
 
-      {/* Footer - Minimal */}
+      {/* Footer - Minimal with quick links */}
       <footer className="landing-footer">
-        <p className="footer-text">© 2024 ShelfQuest. Made with care for book lovers.</p>
+        <p className="footer-text">
+          © 2024 ShelfQuest. Made with care for book lovers.
+          {' '}•{' '}
+          <a href="/contact" className="footer-link">Contact Us</a>
+          {' '}•{' '}
+          <a href="/legal/privacy-policy" className="footer-link">Privacy Policy</a>
+          {' '}•{' '}
+          <a href="/legal/terms-of-service" className="footer-link">Terms</a>
+        </p>
       </footer>
     </div>
   );
