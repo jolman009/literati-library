@@ -122,7 +122,7 @@
 .book-card {
   background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
   border-radius: var(--md-sys-shape-corner-large, 16px);
-  padding: var(--md-sys-spacing-4, 16px);
+  padding: var(--md-sys-spacing-4, 2px);
   
   /* Elevation */
   box-shadow: var(--md-sys-elevation-level1, 
