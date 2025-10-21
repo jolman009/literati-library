@@ -54,12 +54,12 @@ const MD3Footer = () => {
           <div className="md3-footer-column">
             <h4 className="md-title-small md3-footer-column-title">Support</h4>
             <nav className="md3-footer-nav">
-              <a
-                href="mailto:info@shelfquest.org"
+              <Link
+                to="/contact"
                 className="md-label-large md3-footer-link"
               >
                 Contact Us
-              </a>
+              </Link>
               <Link
                 to="/help"
                 className="md-label-large md3-footer-link"
@@ -109,10 +109,10 @@ const MD3Footer = () => {
               </span>
               <span className="md-body-small md3-footer-separator">•</span>
               <a
-                href="mailto:info@shelfquest.org"
+                href="mailto:admin@shelfquest.org"
                 className="md-body-small md3-footer-email"
               >
-                info@shelfquest.org
+                admin@shelfquest.org
               </a>
             </div>
           </div>
