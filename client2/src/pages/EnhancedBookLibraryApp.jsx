@@ -1779,13 +1779,15 @@ const handleBatchUpdateCovers = async () => {
         {currentPage === 'library' && (() => {
           // Get recently added books for display
           const recentBooks = filteredBooks
-            .filter(book => book.created_at || book.dateAdded)
-            .sort((a, b) => {
-              const dateA = new Date(a.created_at || a.dateAdded || 0);
-              const dateB = new Date(b.created_at || b.dateAdded || 0);
-              return dateB - dateA;
-            })
-            .slice(0, 6); // Show 6 recent books for better layout
+            .map(b => ({
+              book: b,
+              date: new Date(
+                b.created_at || b.dateAdded || b.upload_date || b.updated_at || b.last_opened || 0
+              ).getTime()
+            }))
+            .sort((a, b) => (b.date - a.date))
+            .slice(0, 6)
+            .map(x => x.book); // Show 6 recent books for better layout
           
           if (recentBooks.length === 0) return null;
           
@@ -1894,102 +1896,6 @@ const handleBatchUpdateCovers = async () => {
           );
         })()}
 
-        {/* Development Performance Testing Banner */}
-        {process.env.NODE_ENV === 'development' && (
-          <div style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            color: 'white',
-            padding: '12px 24px',
-            borderRadius: '12px',
-            margin: '16px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '20px' }}>⚡</span>
-              <div>
-                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '600' }}>
-                  Virtual Scrolling Performance Testing
-                </h4>
-                <p style={{ margin: 0, fontSize: '12px', opacity: 0.9 }}>
-                  Test with large datasets: 100, 500, 1000+ books
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <MD3Button
-                variant="outlined"
-                onClick={() => {
-                  const mockBooks = generateMockBooks(100);
-                  setLocalBooks(mockBooks);
-                  showSnackbar({ message: '✅ Loaded 100 mock books', variant: 'success' });
-                }}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontSize: '12px',
-                  padding: '6px 12px'
-                }}
-              >
-                100 Books
-              </MD3Button>
-              <MD3Button
-                variant="outlined"
-                onClick={() => {
-                  const mockBooks = generateMockBooks(500);
-                  setLocalBooks(mockBooks);
-                  showSnackbar({ message: '✅ Loaded 500 mock books', variant: 'success' });
-                }}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontSize: '12px',
-                  padding: '6px 12px'
-                }}
-              >
-                500 Books
-              </MD3Button>
-              <MD3Button
-                variant="outlined"
-                onClick={() => {
-                  const mockBooks = generateMockBooks(1000);
-                  setLocalBooks(mockBooks);
-                  showSnackbar({ message: '🚀 Loaded 1000 mock books!', variant: 'success' });
-                }}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  fontSize: '12px',
-                  padding: '6px 12px'
-                }}
-              >
-                1000 Books
-              </MD3Button>
-              <MD3Button
-                variant="outlined"
-                onClick={async () => {
-                  const results = await performanceTest.testVirtualScrolling([100, 500, 1000]);
-                  console.table(results);
-                  showSnackbar({ message: '📊 Performance test complete - check console', variant: 'info' });
-                }}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  color: 'white',
-                  border: '1px solid rgba(255,255,255,0.4)',
-                  fontSize: '12px',
-                  padding: '6px 12px'
-                }}
-              >
-                🧪 Test
-              </MD3Button>
-            </div>
-          </div>
-        )}
 
         {/* Compact Cover Status - Show when books need covers */}
         {booksNeedingCovers.length > 0 && !batchUpdating && (
