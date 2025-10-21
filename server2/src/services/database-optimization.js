@@ -2,6 +2,7 @@
 // Database optimization service for improved query performance
 
 import { supabase } from '../config/supabaseClient.js';
+import { normalizeBookUpdate } from '../utils/bookStatus.js';
 
 /**
  * Database Optimization Service
@@ -266,13 +267,14 @@ export class DatabaseOptimizer {
     const startTime = Date.now();
     
     try {
-      const promises = updates.map(({ id, data }) => 
-        supabase
+      const promises = updates.map(({ id, data }) => {
+        const normalized = normalizeBookUpdate(data);
+        return supabase
           .from('books')
-          .update({ ...data, updated_at: new Date().toISOString() })
+          .update({ ...data, ...normalized, updated_at: new Date().toISOString() })
           .eq('id', id)
-          .eq('user_id', userId)
-      );
+          .eq('user_id', userId);
+      });
       
       const results = await Promise.all(promises);
       

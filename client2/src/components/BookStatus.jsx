@@ -34,6 +34,7 @@ const ChevronDown = ({ className }) => (
 );
 
 // Book status configuration
+import { BOOK_STATUS, getStatus as getCanonicalStatus, applyStatus as applyCanonicalStatus } from '../utils/bookStatus';
 const BOOK_STATUSES = {
   unread: {
     label: 'Unread',
@@ -69,21 +70,8 @@ const BOOK_STATUSES = {
   }
 };
 
-// EXPORTED: Get current book status function
-export const getBookStatus = (book) => {
-  if (book.completed) return 'completed';
-
- // Check both is_reading flag AND status text
-  if (book.is_reading || 
-      book.status === 'reading' || 
-      book.status === 'Started Reading' ||
-      book.status === 'in_progress') {
-    return 'reading';
-  }
-  
-  if (book.progress > 0) return 'paused';
-  return 'unread';
-};
+// EXPORTED: Get current book status function (delegates to unified helper)
+export const getBookStatus = (book, readingSession) => getCanonicalStatus(book, readingSession);
 
 // EXPORTED: Material 3 Book Status Badge Component
 export const BookStatusBadge = ({ book, size = 'sm' }) => {
@@ -118,28 +106,7 @@ export const BookStatusDropdown = ({ book, onStatusChange, className = "" }) => 
     
     setTimeout(() => {
       console.log(`Status changed from ${currentStatus} to ${newStatus} for "${book.title}"`);
-      
-      const updatedBook = { ...book };
-      switch (newStatus) {
-        case 'reading':
-          updatedBook.is_reading = true;
-          updatedBook.completed = false;
-          break;
-        case 'completed':
-          updatedBook.is_reading = false;
-          updatedBook.completed = true;
-          updatedBook.progress = 100;
-          break;
-        case 'paused':
-          updatedBook.is_reading = false;
-          updatedBook.completed = false;
-          break;
-        case 'unread':
-          updatedBook.is_reading = false;
-          updatedBook.completed = false;
-          updatedBook.progress = 0;
-          break;
-      }
+      const updatedBook = applyCanonicalStatus(book, newStatus);
 
       // Attempt to persist to backend so Dashboard/Currently Reading reflect changes
       (async () => {
@@ -232,28 +199,7 @@ export const QuickStatusActions = ({ book, onStatusChange, className = "" }) => 
   const currentStatus = getBookStatus(book);
 
   const handleQuickAction = (newStatus) => {
-    const updatedBook = { ...book };
-    
-    switch (newStatus) {
-      case 'reading':
-        updatedBook.is_reading = true;
-        updatedBook.completed = false;
-        break;
-      case 'completed':
-        updatedBook.is_reading = false;
-        updatedBook.completed = true;
-        updatedBook.progress = 100;
-        break;
-      case 'paused':
-        updatedBook.is_reading = false;
-        updatedBook.completed = false;
-        break;
-      case 'unread':
-        updatedBook.is_reading = false;
-        updatedBook.completed = false;
-        updatedBook.progress = 0;
-        break;
-    }
+    const updatedBook = applyCanonicalStatus(book, newStatus);
     
     // Try to persist quick action to backend too
     (async () => {
@@ -263,7 +209,7 @@ export const QuickStatusActions = ({ book, onStatusChange, className = "" }) => 
           completed: updatedBook.completed,
           progress: updatedBook.progress ?? book.progress ?? 0,
           last_opened: updatedBook.is_reading ? new Date().toISOString() : (book.last_opened || new Date().toISOString()),
-          status: newStatus
+          status: updatedBook.status
         });
         window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'quick_status', status: newStatus } }));
         localStorage.setItem('books_updated', Date.now().toString());
