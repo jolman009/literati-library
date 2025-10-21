@@ -80,7 +80,7 @@ export class DatabaseOptimizer {
   async getOptimizedBookList(userId, options = {}) {
     const startTime = Date.now();
     const {
-      limit = 50,
+      limit = 500,
       offset = 0,
       status = null,
       genre = null,
@@ -94,7 +94,8 @@ export class DatabaseOptimizer {
       const result = await this.getCachedQuery(cacheKey, async () => {
         let query = supabase
           .from('books')
-          .select('*')
+          // Request total count for pagination alongside paged data
+          .select('*', { count: 'exact' })
           .eq('user_id', userId);
         
         // Add filters with optimized index usage
@@ -106,11 +107,13 @@ export class DatabaseOptimizer {
           query = query.eq('genre', genre);
         }
         
-        // Add ordering and pagination
+        // Add ordering (stable) and pagination
         query = query
           .order(orderBy, { ascending: orderDirection === 'asc' })
+          // Secondary stable ordering to avoid dupes/skips on ties
+          .order('id', { ascending: orderDirection === 'asc' })
           .range(offset, offset + limit - 1);
-        
+
         return await query;
       });
       

@@ -872,11 +872,13 @@ const CurrentlyReading = () => {
     const fetchCurrentlyReading = async () => {
       try {
         // Use the API config for consistency (auth via cookies supported)
-        const response = await API.get('/books');
+        const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
         const data = response.data;
-
-        // Handle both array and object responses
-        const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+        const items = data?.items;
+        // Handle both array and object responses (prefer new shape)
+        const booksArray = Array.isArray(data)
+          ? data
+          : (Array.isArray(items) ? items : (Array.isArray(data.books) ? data.books : []));
 
         // Match Library Reading subpage logic for accuracy:
         // show items flagged by backend as reading
@@ -922,9 +924,12 @@ const CurrentlyReading = () => {
         // Re-fetch data when reading session or books update in another tab
         const fetchCurrentlyReading = async () => {
           try {
-            const response = await API.get('/books');
+            const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
             const data = response.data;
-            const booksArray = Array.isArray(data) ? data : (Array.isArray(data.books) ? data.books : []);
+            const items = data?.items;
+            const booksArray = Array.isArray(data)
+              ? data
+              : (Array.isArray(items) ? items : (Array.isArray(data.books) ? data.books : []));
             const readingBooks = booksArray.filter(book => (
               book?.is_reading === true || book?.isReading === true || (book?.status || '').toLowerCase() === 'reading'
             ));
@@ -1287,10 +1292,13 @@ const DashboardPage = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const response = await API.get('/books');
+        const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
         const data = response.data;
-        // Handle both array and wrapped object response shapes
-        const booksArray = Array.isArray(data) ? data : (Array.isArray(data?.books) ? data.books : []);
+        const items = data?.items;
+        // Handle both array and wrapped object response shapes (prefer new shape)
+        const booksArray = Array.isArray(data)
+          ? data
+          : (Array.isArray(items) ? items : (Array.isArray(data?.books) ? data.books : []));
         setBooks(booksArray);
       } catch (error) {
         console.error('Error loading books for dashboard:', error);

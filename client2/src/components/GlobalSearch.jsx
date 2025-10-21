@@ -68,11 +68,12 @@ const GlobalSearch = ({
   const loadAllData = async () => {
     try {
       const [booksResponse, notesResponse] = await Promise.all([
-        API.get('/books'),
+        API.get('/books', { params: { limit: 200, offset: 0 } }),
         API.get('/notes')
       ]);
-      
-      setBooks(Array.isArray(booksResponse.data) ? booksResponse.data : booksResponse.data.books || []);
+      const br = booksResponse.data;
+      const items = br?.items;
+      setBooks(Array.isArray(br) ? br : (Array.isArray(items) ? items : (br.books || [])));
       setNotes(notesResponse.data || []);
       
       // Load collections from localStorage
