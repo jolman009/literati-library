@@ -143,3 +143,11 @@
 .md3-dialog .contact-grid .contact-checkbox {
   color: var(--md-sys-color-on-surface);
 }
+
+/* Stronger contrast in LIGHT mode only */
+.md3-dialog__scrim:not(.dark) .contact-grid .md3-text-field__input { color: var(--md-sys-color-on-surface); }
+.md3-dialog__scrim:not(.dark) .contact-grid .md3-text-field__label { color: var(--md-sys-color-on-surface); }
+.md3-dialog__scrim:not(.dark) .contact-grid .md3-select-label { color: var(--md-sys-color-on-surface); }
+.md3-dialog__scrim:not(.dark) .contact-grid .md3-select { color: var(--md-sys-color-on-surface); background: var(--md-sys-color-surface); }
+.md3-dialog__scrim:not(.dark) .contact-grid .md3-text-field--outlined .md3-text-field__container { border-color: var(--md-sys-color-outline); }
+.md3-dialog__scrim:not(.dark) .contact-grid .contact-checkbox { color: var(--md-sys-color-on-surface); }

@@ -47,12 +47,12 @@ body {
    ================================================ */
 
 /* Constrain all elements to viewport width (except login page elements) */
-div:not(.login-background):not(.login-container):not(.login-content-wrapper):not([class*="login-"]),
+div:not(.login-background):not(.login-container):not(.login-content-wrapper):not([class*="login-"]):not(.md3-dialog):not(.md3-dialog__scrim):not(.md3-dialog__container),
 section:not([class*="login-"]),
 article:not([class*="login-"]),
 main:not([class*="login-"]),
 header:not([class*="login-"]),
-footer:not(.login-footer):not([class*="login-"]),
+footer:not(.login-footer):not([class*="login-"]):not(.md3-dialog),
 nav:not([class*="login-"]),
 aside:not([class*="login-"]) {
   max-width: 100vw !important;
@@ -198,16 +198,21 @@ nav ol,
 }
 
 /* Constrain all modals */
-[class*="modal"],
-[class*="Modal"],
-[class*="dialog"],
-[class*="Dialog"],
-.modal,
-.Modal,
-.dialog,
-.Dialog {
+[class*="modal"]:not(.md3-dialog),
+[class*="Modal"]:not(.md3-dialog),
+[class*="dialog"]:not(.md3-dialog),
+[class*="Dialog"]:not(.md3-dialog),
+.modal:not(.md3-dialog),
+.Modal:not(.md3-dialog),
+.dialog:not(.md3-dialog),
+.Dialog:not(.md3-dialog) {
   max-width: calc(100vw - 40px) !important;
   overflow-x: hidden !important;
+}
+
+/* Explicitly allow MD3 dialog to control its own width */
+.md3-dialog {
+  max-width: none !important;
 }
 
 /* ================================================

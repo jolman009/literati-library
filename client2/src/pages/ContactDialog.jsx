@@ -118,13 +118,16 @@ const ContactDialog = () => {
         dividers
         dataTheme={actualTheme}
         themeClass={actualTheme === 'dark' ? 'dark' : ''}
+        className="contact-dialog"
       >
-        <div className="contact-grid">
+        <div className="contact-grid" role="form" aria-label="Contact Us Form">
           <MD3TextField
             label="Your Name"
             value={name}
             onChange={e => setName(e.target.value)}
             required
+            aria-label="Your Name"
+            aria-required="true"
           />
           <MD3TextField
             label="Your Email"
@@ -132,11 +135,13 @@ const ContactDialog = () => {
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            aria-label="Your Email"
+            aria-required="true"
           />
 
-          <div className="md3-select-field full-row">
-            <label className="md3-select-label">Topic</label>
-            <select className="md3-select" value={type} onChange={e => setType(e.target.value)}>
+          <div className="md3-select-field full-row" role="group" aria-labelledby="contact-topic-label">
+            <label id="contact-topic-label" className="md3-select-label" htmlFor="contact-topic">Topic</label>
+            <select id="contact-topic" className="md3-select" value={type} onChange={e => setType(e.target.value)}>
               <option value="recommendation">Feature Recommendation</option>
               <option value="bug">Bug Report</option>
               <option value="uiux">UI/UX Feedback</option>
@@ -152,6 +157,8 @@ const ContactDialog = () => {
             value={message}
             onChange={e => setMessage(e.target.value)}
             required
+            aria-label="Message"
+            aria-required="true"
             className="contact-message-field full-row"
           />
 

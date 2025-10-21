@@ -29,6 +29,19 @@
   /* subtle outline handled by elevation; no debug border */
 }
 
+/* Force light-mode tokens for dialog container when not in dark theme */
+.md3-dialog__scrim:not(.dark) .md3-dialog {
+  /* Use plain surface in light mode for higher contrast */
+  --_container-color: var(--md-sys-color-surface);
+  --_container-elevation: var(--md-sys-elevation-level2);
+  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+}
+
+/* Ensure dialog content text uses on-surface in light mode */
+.md3-dialog__scrim:not(.dark) .md3-dialog__content {
+  color: rgb(var(--md-sys-color-on-surface));
+}
+
 .md3-dialog__container {
   display: flex;
   flex-direction: column;
@@ -122,6 +135,47 @@
 .md3-dialog-actions {
   display: flex;
   gap: 8px;
+}
+
+/* =============================================================
+   Contact Dialog: Scoped high-specificity overrides
+   Ensures strong contrast regardless of global clamps
+   ============================================================= */
+.md3-dialog.contact-dialog {
+  background-color: rgb(var(--md-sys-color-surface)) !important;
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+  border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+  box-shadow: var(--md-sys-elevation-level2) !important;
+  width: auto !important;
+  max-width: 768px !important; /* standard md dialog */
+}
+
+.md3-dialog.contact-dialog .md3-dialog__content {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.md3-dialog.contact-dialog .contact-grid .md3-text-field__input {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.md3-dialog.contact-dialog .contact-grid .md3-text-field__label,
+.md3-dialog.contact-dialog .contact-grid .md3-select-label {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.md3-dialog.contact-dialog .contact-grid .md3-select {
+  background: rgb(var(--md-sys-color-surface)) !important;
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+  border-color: rgb(var(--md-sys-color-outline)) !important;
+}
+
+.md3-dialog.contact-dialog .contact-checkbox {
+  color: rgb(var(--md-sys-color-on-surface)) !important;
+}
+
+.md3-dialog.contact-dialog .contact-message-field .md3-text-field__container {
+  border-color: rgb(var(--md-sys-color-outline)) !important;
+  box-shadow: var(--md-sys-elevation-level1, 0 1px 2px rgba(0,0,0,0.06)) !important;
 }
 
 .md3-dialog-actions--start {
