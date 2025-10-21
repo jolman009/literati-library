@@ -22,6 +22,7 @@
   border-radius: var(--_container-shape);
   box-shadow: var(--_container-elevation);
   max-height: calc(100vh - 32px);
+  width: auto !important; /* defeat global max-width:100vw !important rules */
   min-width: 280px;
   overflow: hidden;
   animation: md3-dialog-scale-in var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-emphasized) forwards;
@@ -72,38 +73,22 @@
 }
 
 /* Dialog Variants */
-.md3-dialog--basic {
-  max-width: 560px;
-}
+.md3-dialog--basic { max-width: 560px !important; }
 
-.md3-dialog--alert {
-  max-width: 400px;
-}
+.md3-dialog--alert { max-width: 400px !important; }
 
-.md3-dialog--confirmation {
-  max-width: 400px;
-}
+.md3-dialog--confirmation { max-width: 400px !important; }
 
 /* Size Variants */
-.md3-dialog--xs {
-  max-width: 320px;
-}
+.md3-dialog--xs { max-width: 320px !important; }
 
-.md3-dialog--sm {
-  max-width: 560px;
-}
+.md3-dialog--sm { max-width: 560px !important; }
 
-.md3-dialog--md {
-  max-width: 768px;
-}
+.md3-dialog--md { max-width: 768px !important; }
 
-.md3-dialog--lg {
-  max-width: 1024px;
-}
+.md3-dialog--lg { max-width: 1024px !important; }
 
-.md3-dialog--xl {
-  max-width: 1280px;
-}
+.md3-dialog--xl { max-width: 1280px !important; }
 
 /* Fullscreen Variant */
 .md3-dialog--fullscreen {
