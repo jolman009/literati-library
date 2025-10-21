@@ -43,6 +43,9 @@ const AppLayout = () => {
         <main className="page-content">
           <Outlet />
         </main>
+
+        {/* App footer spans full content width */}
+        {!inReader && <MD3Footer />}
       </div>
 
       {/* Mobile Bottom Navigation - Self-contained with viewport detection */}
@@ -63,8 +66,7 @@ const AppLayout = () => {
         <GlobalSearchFAB position="bottom-left" />
       </div>
 
-      {/* Footer (desktop/tablet). Mobile has fixed nav at bottom */}
-      {!inReader && <MD3Footer />}
+      {/* Footer moved inside content-area to avoid grid column clipping */}
 
       {/* Debug indicator - shows when service worker is disabled */}
       {import.meta.env.VITE_ENABLE_SERVICE_WORKER === 'false' && (

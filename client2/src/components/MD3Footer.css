@@ -5,6 +5,8 @@
   border-top: 1px solid var(--md-sys-color-outline-variant);
   margin-top: auto;
   width: 100%;
+  /* Ensure full-width when used inside CSS grid layouts */
+  grid-column: 1 / -1;
 }
 
 .md3-footer-container {

@@ -14,6 +14,8 @@ const MD3TextField = memo(forwardRef(({
   required = false,
   leadingIcon,
   trailingIcon,
+  multiline = false,
+  rows = 3,
   className = '',
   onFocus,
   onBlur,
@@ -36,6 +38,7 @@ const MD3TextField = memo(forwardRef(({
   const classes = [
     'md3-text-field',
     `md3-text-field--${variant}`,
+    multiline && 'md3-text-field--textarea',
     focused && 'md3-text-field--focused',
     hasValue && 'md3-text-field--populated',
     disabled && 'md3-text-field--disabled',
@@ -53,17 +56,42 @@ const MD3TextField = memo(forwardRef(({
         )}
         
         <div className="md3-text-field__input-container">
-          <input
-            ref={ref}
-            className="md3-text-field__input"
-            value={value}
-            defaultValue={defaultValue}
-            disabled={disabled}
-            required={required}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            {...props}
-          />
+          {multiline ? (
+            <textarea
+              ref={ref}
+              className="md3-text-field__input"
+              value={value}
+              defaultValue={defaultValue}
+              disabled={disabled}
+              required={required}
+              rows={rows}
+              placeholder=" "
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={(e) => {
+                props.onChange?.(e);
+                setHasValue(Boolean(e.target.value));
+              }}
+              {...props}
+            />
+          ) : (
+            <input
+              ref={ref}
+              className="md3-text-field__input"
+              value={value}
+              defaultValue={defaultValue}
+              disabled={disabled}
+              required={required}
+              placeholder=" "
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={(e) => {
+                props.onChange?.(e);
+                setHasValue(Boolean(e.target.value));
+              }}
+              {...props}
+            />
+          )}
           
           {label && (
             <span className="md3-text-field__label">
@@ -91,4 +119,4 @@ const MD3TextField = memo(forwardRef(({
 
 MD3TextField.displayName = 'MD3TextField';
 
-export { MD3Button, MD3Card, MD3Surface, MD3TextField };
+export default MD3TextField;
