@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { MD3Card, MD3Button, MD3Divider } from '../components/Material3';
+import './OnboardingGuide.css';
 
 const Section = ({ title, children }) => (
   <MD3Card className="onboarding-section" variant="elevated">
@@ -122,4 +123,3 @@ const OnboardingGuide = () => {
 };
 
 export default OnboardingGuide;
-

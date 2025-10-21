@@ -1,0 +1,34 @@
+/* Scoped layout fixes for the Onboarding page */
+.onboarding-guide {
+  writing-mode: horizontal-tb;
+}
+
+.onboarding-guide * {
+  writing-mode: horizontal-tb; /* override any accidental global vertical text */
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+.onboarding-section {
+  width: 100%;
+  margin: 0 0 16px 0;
+}
+
+.onboarding-title {
+  margin: 0 0 8px 0;
+}
+
+.onboarding-content {
+  display: block;
+}
+
+.onboarding-list { padding-left: 20px; margin: 0; }
+.onboarding-bullets { padding-left: 20px; margin: 8px 0 0; }
+.onboarding-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.onboarding-mini-card { padding: 12px; }
+
+@media (max-width: 600px) {
+  .onboarding-guide { padding: 16px !important; }
+}
+
