@@ -1,13 +1,12 @@
 /* Scoped layout fixes for the Onboarding page */
-.onboarding-guide {
-  writing-mode: horizontal-tb;
-}
-
+.onboarding-guide { writing-mode: horizontal-tb !important; text-orientation: mixed !important; }
 .onboarding-guide * {
-  writing-mode: horizontal-tb; /* override any accidental global vertical text */
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: anywhere;
+  writing-mode: horizontal-tb !important; /* override any accidental vertical text */
+  text-orientation: mixed !important;
+  transform: none !important; /* cancel any inherited rotations */
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
 }
 
 .onboarding-section {
@@ -17,6 +16,9 @@
 
 .onboarding-title {
   margin: 0 0 8px 0;
+  line-height: 1.25;
+  letter-spacing: normal;
+  display: block;
 }
 
 .onboarding-content {
@@ -28,7 +30,9 @@
 .onboarding-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 .onboarding-mini-card { padding: 12px; }
 
+/* Ensure cards don’t collapse to a tiny column */
+.onboarding-guide .md3-card { width: 100%; }
+
 @media (max-width: 600px) {
   .onboarding-guide { padding: 16px !important; }
 }
-
