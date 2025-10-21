@@ -94,6 +94,52 @@
 }
 
 /* ========================================
+   LIGHT MODE – Increase contrast for inputs
+   ======================================== */
+
+/* Ensure the card surface is solid in light mode for readability */
+[data-theme="light"] .md3-upload-content,
+:root:not([data-theme="dark"]) .md3-upload-content,
+.light .md3-upload-content {
+  background: rgb(var(--md-sys-color-surface, 255 255 255)) !important;
+  border-color: rgb(var(--md-sys-color-outline, 121 116 126));
+}
+
+/* Text fields: solid background and darker labels/text in light mode */
+[data-theme="light"] .md3-upload-details .md3-text-field__container,
+:root:not([data-theme="dark"]) .md3-upload-details .md3-text-field__container,
+.light .md3-upload-details .md3-text-field__container {
+  background: rgb(var(--md-sys-color-surface, 255 255 255)) !important;
+}
+
+[data-theme="light"] .md3-upload-details .md3-text-field__input,
+:root:not([data-theme="dark"]) .md3-upload-details .md3-text-field__input,
+.light .md3-upload-details .md3-text-field__input {
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31)) !important;
+}
+
+[data-theme="light"] .md3-upload-details .md3-text-field__label,
+:root:not([data-theme="dark"]) .md3-upload-details .md3-text-field__label,
+.light .md3-upload-details .md3-text-field__label {
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31)) !important;
+}
+
+/* Select field: align visual treatment with text fields */
+[data-theme="light"] .md3-upload-details .md3-select,
+:root:not([data-theme="dark"]) .md3-upload-details .md3-select,
+.light .md3-upload-details .md3-select {
+  background: rgb(var(--md-sys-color-surface, 255 255 255));
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  border-color: rgb(var(--md-sys-color-outline, 121 116 126));
+}
+
+[data-theme="light"] .md3-upload-details .md3-select-label,
+:root:not([data-theme="dark"]) .md3-upload-details .md3-select-label,
+.light .md3-upload-details .md3-select-label {
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+}
+
+/* ========================================
    DARK MODE - Easier on the eyes
    ======================================== */
 
