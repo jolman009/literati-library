@@ -133,7 +133,7 @@
 [data-theme="light"],
 .light {
   /* Primary Colors */
-  --md-sys-color-primary: #4b9cd3;
+  --md-sys-color-primary: #24A8E0;
   --md-sys-color-on-primary: #ffffff;
   --md-sys-color-primary-container: #d6e3ff;
   --md-sys-color-on-primary-container: #001d36;
@@ -182,14 +182,14 @@
   --md-sys-color-scrim: #000000;
   --md-sys-color-inverse-surface: #2f3033;
   --md-sys-color-inverse-on-surface: #f1f0f4;
-  --md-sys-color-inverse-primary: #a9c7ff;
+  --md-sys-color-inverse-primary: #9fdcf1;
 }
 
 /* ===== DARK THEME SEMANTIC TOKENS ===== */
 [data-theme="dark"],
 .dark {
   /* Primary Colors */
-  --md-sys-color-primary: #a9c7ff;
+  --md-sys-color-primary: #7fd5f0;
   --md-sys-color-on-primary: #003258;
   --md-sys-color-primary-container: #31496a;
   --md-sys-color-on-primary-container: #d6e3ff;

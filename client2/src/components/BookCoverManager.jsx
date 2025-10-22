@@ -17,6 +17,14 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
   };
   
   const config = sizeConfig[size] || sizeConfig.medium;
+
+  const handleKeyDown = (e) => {
+    if (!onClick) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick(e);
+    }
+  };
   
   // Fetch cover if missing
   useEffect(() => {
@@ -106,7 +114,14 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
     // Design Type 1: Geometric Pattern
     if (fallbackType === 0) {
       return (
-        <div className={`book-cover-fallback geometric ${size} ${className}`} onClick={onClick} style={baseStyle}>
+        <div
+          className={`book-cover-fallback geometric ${size} ${className}`}
+          onClick={onClick}
+          onKeyDown={handleKeyDown}
+          role={onClick ? 'button' : undefined}
+          tabIndex={onClick ? 0 : undefined}
+          style={baseStyle}
+        >
           <div className="geometric-pattern" style={{
             position: 'absolute',
             inset: 0,
@@ -129,7 +144,14 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
     // Design Type 2: Abstract Shapes
     if (fallbackType === 1) {
       return (
-        <div className={`book-cover-fallback abstract ${size} ${className}`} onClick={onClick} style={baseStyle}>
+        <div
+          className={`book-cover-fallback abstract ${size} ${className}`}
+          onClick={onClick}
+          onKeyDown={handleKeyDown}
+          role={onClick ? 'button' : undefined}
+          tabIndex={onClick ? 0 : undefined}
+          style={baseStyle}
+        >
           <div className="abstract-shapes" style={{
             position: 'absolute',
             inset: 0,
@@ -161,7 +183,14 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
     // Design Type 3: Minimal Lines
     if (fallbackType === 2) {
       return (
-        <div className={`book-cover-fallback minimal ${size} ${className}`} onClick={onClick} style={baseStyle}>
+        <div
+          className={`book-cover-fallback minimal ${size} ${className}`}
+          onClick={onClick}
+          onKeyDown={handleKeyDown}
+          role={onClick ? 'button' : undefined}
+          tabIndex={onClick ? 0 : undefined}
+          style={baseStyle}
+        >
           <div className="minimal-lines" style={{
             position: 'absolute',
             inset: '20px',
@@ -187,7 +216,14 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
     
     // Design Type 4: Textured Background
     return (
-      <div className={`book-cover-fallback textured ${size} ${className}`} onClick={onClick} style={baseStyle}>
+      <div
+        className={`book-cover-fallback textured ${size} ${className}`}
+        onClick={onClick}
+        onKeyDown={handleKeyDown}
+        role={onClick ? 'button' : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        style={baseStyle}
+      >
         <div className="texture-overlay" style={{
           position: 'absolute',
           inset: 0,
@@ -238,9 +274,12 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
   }
   
   return (
-    <div 
+    <div
       className={`book-cover-container ${size} ${className}`}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
       style={{ width: config.width, height: config.height }}
     >
       <img 

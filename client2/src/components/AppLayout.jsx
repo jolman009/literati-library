@@ -28,6 +28,8 @@ const AppLayout = () => {
 
   return (
     <div className={layoutClasses}>
+      {/* Skip link for keyboard users to jump to main content */}
+      <a href="#main" className="skip-link">Skip to main content</a>
       {!inReader && (
         <aside className="navigation-pane" data-collapsed={navCollapsed}>
           <PremiumNavigation
@@ -40,7 +42,7 @@ const AppLayout = () => {
       <div className="content-area">
         {!inReader && <PremiumHeader onSearch={openSearch} />}
 
-        <main className="page-content">
+        <main id="main" className="page-content">
           <Outlet />
         </main>
 

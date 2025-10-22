@@ -322,7 +322,18 @@ export const BundleAnalyzer = () => {
       zIndex: 9999,
       maxWidth: '300px'
     }}>
-      <div onClick={() => setShowDetails(!showDetails)} style={{ cursor: 'pointer' }}>
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setShowDetails(!showDetails);
+          }
+        }}
+        onClick={() => setShowDetails(!showDetails)}
+        style={{ cursor: 'pointer' }}
+      >
         📊 Bundle: {(analysis.totalSize / 1024).toFixed(1)}KB
         ({analysis.chunkAnalysis.length} chunks)
       </div>
