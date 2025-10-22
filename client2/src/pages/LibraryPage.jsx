@@ -95,11 +95,8 @@ const LibraryPage = () => {
         sampleData: response.data
       });
 
-      const items = response.data?.items;
-      const total = response.data?.total;
-      const booksData = Array.isArray(response.data)
-        ? response.data
-        : (Array.isArray(items) ? items : (response.data.books || []));
+      const { items = [], total } = response.data || {};
+      const booksData = items;
 
       console.log('📚 LibraryPage: Books data processed:', {
         bookCount: booksData.length,

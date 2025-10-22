@@ -873,12 +873,8 @@ const CurrentlyReading = () => {
       try {
         // Use the API config for consistency (auth via cookies supported)
         const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
-        const data = response.data;
-        const items = data?.items;
-        // Handle both array and object responses (prefer new shape)
-        const booksArray = Array.isArray(data)
-          ? data
-          : (Array.isArray(items) ? items : (Array.isArray(data.books) ? data.books : []));
+        const { items = [] } = response.data || {};
+        const booksArray = items;
 
         // Match Library Reading subpage logic for accuracy:
         // show items flagged by backend as reading
@@ -925,11 +921,8 @@ const CurrentlyReading = () => {
         const fetchCurrentlyReading = async () => {
           try {
             const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
-            const data = response.data;
-            const items = data?.items;
-            const booksArray = Array.isArray(data)
-              ? data
-              : (Array.isArray(items) ? items : (Array.isArray(data.books) ? data.books : []));
+            const { items = [] } = response.data || {};
+            const booksArray = items;
             const readingBooks = booksArray.filter(book => (
               book?.is_reading === true || book?.isReading === true || (book?.status || '').toLowerCase() === 'reading'
             ));
@@ -1087,12 +1080,8 @@ const RecentlyAdded = () => {
 
       // Use the API config for consistency
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
-      const data = response.data;
-
-      // Handle both array and object responses (prefer new shape)
-      const booksArray = Array.isArray(data)
-        ? data
-        : (Array.isArray(data.items) ? data.items : (Array.isArray(data.books) ? data.books : []));
+      const { items = [] } = response.data || {};
+      const booksArray = items;
 
       // Get recently added books (filter by created_at or dateAdded)
       const recentlyAdded = booksArray
@@ -1295,13 +1284,8 @@ const DashboardPage = () => {
     const loadBooks = async () => {
       try {
         const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
-        const data = response.data;
-        const items = data?.items;
-        // Handle both array and wrapped object response shapes (prefer new shape)
-        const booksArray = Array.isArray(data)
-          ? data
-          : (Array.isArray(items) ? items : (Array.isArray(data?.books) ? data.books : []));
-        setBooks(booksArray);
+        const { items = [] } = response.data || {};
+        setBooks(items);
       } catch (error) {
         console.error('Error loading books for dashboard:', error);
         setBooks([]); // Fallback to empty array

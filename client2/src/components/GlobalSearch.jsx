@@ -71,9 +71,8 @@ const GlobalSearch = ({
         API.get('/books', { params: { limit: 200, offset: 0 } }),
         API.get('/notes')
       ]);
-      const br = booksResponse.data;
-      const items = br?.items;
-      setBooks(Array.isArray(br) ? br : (Array.isArray(items) ? items : (br.books || [])));
+      const { items = [] } = booksResponse.data || {};
+      setBooks(items);
       setNotes(notesResponse.data || []);
       
       // Load collections from localStorage
