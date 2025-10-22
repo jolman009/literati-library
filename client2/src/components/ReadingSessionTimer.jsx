@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { MD3Button } from './Material3';
+import Icon from './ui/Icon';
 
 // Helper to constrain position within bounds
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
@@ -177,7 +178,7 @@ const ReadingSessionTimer = () => {
         onMouseEnter={(e) => !dragging && (e.target.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(1.05)`)}
         onMouseLeave={(e) => !dragging && (e.target.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(1)`)}
       >
-        {isPaused ? '⏸️' : '📖'} {formatTime(elapsedTime)}
+        <Icon name={isPaused ? 'pause' : 'book'} size={16} /> {formatTime(elapsedTime)}
       </div>
     );
   }
@@ -221,7 +222,7 @@ const ReadingSessionTimer = () => {
           alignItems: 'center',
           gap: '8px'
         }}>
-          <span style={{ fontSize: '20px' }}>📖</span>
+          <span style={{ fontSize: '20px' }}><Icon name="book" size={20} /></span>
           <div>
             <div style={{
               fontSize: '16px',
@@ -252,7 +253,7 @@ const ReadingSessionTimer = () => {
           }}
           title="Minimize"
         >
-          ➖
+          <Icon name="minimize" size={18} />
         </button>
       </div>
 
@@ -314,7 +315,7 @@ const ReadingSessionTimer = () => {
           onClick={() => setIsMinimized(true)}
           style={{ flex: 1, fontSize: '12px', padding: '8px 12px' }}
         >
-          Minimize
+          <Icon name="minimize" size={14} /> Minimize
         </MD3Button>
         <MD3Button
           variant={isPaused ? "filled" : "outlined"}
@@ -327,7 +328,15 @@ const ReadingSessionTimer = () => {
             color: isPaused ? 'white' : (isDark ? '#f1f5f9' : '#334155')
           }}
         >
-          {isPaused ? '▶️ Resume' : '⏸️ Pause'}
+          {isPaused ? (
+            <>
+              <Icon name="play_arrow" size={14} /> Resume
+            </>
+          ) : (
+            <>
+              <Icon name="pause" size={14} /> Pause
+            </>
+          )}
         </MD3Button>
         <MD3Button
           variant="filled"
@@ -340,7 +349,7 @@ const ReadingSessionTimer = () => {
             color: 'white'
           }}
         >
-          🛑 Stop
+          <Icon name="stop" size={14} /> Stop
         </MD3Button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Brain, Sparkles, MessageCircle, Award, ArrowRight, BarChart3, Stars } from 'lucide-react';
+import Icon from './ui/Icon';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import LiteraryMentor from '../services/LiteraryMentor';
 import AIKeyManager from '../services/AIKeyManager';
@@ -53,14 +54,14 @@ const MentorPreviewCard = () => {
       } else if (!hasKeys) {
         setInsight({
           type: 'setup',
-          icon: '🔑',
+          iconName: 'login',
           message: 'Configure AI keys to unlock personalized mentoring features.',
           action: 'Configure Keys'
         });
       } else {
         setInsight({
           type: 'start',
-          icon: '📚',
+          iconName: 'books',
           message: 'Start reading a book to get personalized insights!',
         });
       }
@@ -78,11 +79,11 @@ const MentorPreviewCard = () => {
 
   const generateFallbackInsight = () => {
     const tips = [
-      { icon: '📖', message: 'Reading regularly improves comprehension by up to 50%!' },
-      { icon: '🎯', message: 'Set a daily reading goal to build momentum!' },
-      { icon: '✨', message: 'Try taking notes while reading to boost retention!' },
-      { icon: '🔥', message: 'Keep your reading streak alive - consistency is key!' },
-      { icon: '💡', message: 'Reflect on what you read to deepen understanding!' },
+      { iconName: 'book', message: 'Reading regularly improves comprehension by up to 50%!' },
+      { iconName: 'rocket', message: 'Set a daily reading goal to build momentum!' },
+      { iconName: 'star', message: 'Try taking notes while reading to boost retention!' },
+      { iconName: 'fire', message: 'Keep your reading streak alive - consistency is key!' },
+      { iconName: 'tips', message: 'Reflect on what you read to deepen understanding!' },
     ];
 
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
@@ -127,7 +128,7 @@ const MentorPreviewCard = () => {
 
       <div className="mentor-preview-content">
         <div className="insight-badge">
-          <span className="insight-icon">{insight?.icon || '💡'}</span>
+          <span className="insight-icon">{insight?.iconName ? <Icon name={insight.iconName} size={16} /> : <Icon name="tips" size={16} />}</span>
           <span className="insight-label">
             {insight?.type === 'setup' ? 'Setup Required' :
              insight?.type === 'welcome' ? 'Welcome' :
@@ -142,7 +143,7 @@ const MentorPreviewCard = () => {
 
         {currentBook && (
           <div className="current-book-info">
-            <span className="book-icon">📖</span>
+            <span className="book-icon"><Icon name="book" size={16} /></span>
             <span className="book-title">
               Currently reading: <strong>{currentBook.title}</strong>
             </span>

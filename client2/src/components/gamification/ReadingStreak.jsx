@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MD3Card, MD3Chip, MD3Button, useSnackbar } from '../Material3';
 import './ReadingStreak.css';
+import Icon from '../ui/Icon';
 
 const ReadingStreak = () => {
   const { showSnackbar } = useSnackbar();
@@ -101,13 +102,13 @@ const ReadingStreak = () => {
     }
   };
 
-  // Get streak emoji based on current streak
-  const getStreakEmoji = () => {
-    if (streakData.currentStreak === 0) return '📚';
-    if (streakData.currentStreak < 7) return '🔥';
-    if (streakData.currentStreak < 30) return '⚡';
-    if (streakData.currentStreak < 100) return '🌟';
-    return '👑';
+  // Map streak state to semantic icon names
+  const getStreakIcon = () => {
+    if (streakData.currentStreak === 0) return 'books';
+    if (streakData.currentStreak < 7) return 'fire';
+    if (streakData.currentStreak < 30) return 'bolt';
+    if (streakData.currentStreak < 100) return 'star';
+    return 'crown';
   };
 
   // Get day names
@@ -120,7 +121,7 @@ const ReadingStreak = () => {
     <MD3Card className="reading-streak-card">
       <div className="streak-header">
         <h3 className="md-title-medium">Reading Streak</h3>
-        <div className="streak-emoji">{getStreakEmoji()}</div>
+        <div className="streak-emoji"><Icon name={getStreakIcon()} size={22} /></div>
       </div>
 
       <div className="streak-stats">
@@ -163,22 +164,22 @@ const ReadingStreak = () => {
       <div className="streak-message">
         {streakData.currentStreak === 0 && (
           <p className="md-body-small on-surface-variant">
-            Start your reading streak today! 📖
+            Start your reading streak today! <Icon name="book" size={16} />
           </p>
         )}
         {streakData.currentStreak > 0 && streakData.currentStreak < 7 && (
           <p className="md-body-small on-surface-variant">
-            Great start! Keep reading to build your streak! 💪
+            Great start! Keep reading to build your streak!
           </p>
         )}
         {streakData.currentStreak >= 7 && streakData.currentStreak < 30 && (
           <p className="md-body-small on-surface-variant">
-            Amazing consistency! You're on fire! 🔥
+            Amazing consistency! You're on fire! <Icon name="fire" size={16} />
           </p>
         )}
         {streakData.currentStreak >= 30 && (
           <p className="md-body-small on-surface-variant">
-            You're a reading legend! Keep it going! 👑
+            You're a reading legend! Keep it going! <Icon name="crown" size={16} />
           </p>
         )}
       </div>
