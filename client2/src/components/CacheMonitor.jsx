@@ -2,6 +2,7 @@
 // Development cache monitoring widget
 
 import React, { useState, useEffect } from 'react';
+import Icon from './ui/Icon';
 import { getCacheMetrics, cacheManager } from '../utils/cacheManager';
 import { getApiMetrics } from '../api/cachedApi';
 
@@ -45,10 +46,10 @@ const CacheMonitor = () => {
           usage: Math.round(estimate.usage / 1024 / 1024)   // MB
         };
       } catch (error) {
-        return { quota: '?', usage: '?' };
+        return { quota: 'n/a', usage: 'n/a' };
       }
     }
-    return { quota: '?', usage: '?' };
+    return { quota: 'n/a', usage: 'n/a' };
   };
 
   const handleClearCache = () => {
@@ -130,7 +131,7 @@ const CacheMonitor = () => {
           e.target.style.transform = 'scale(1)';
         }}
       >
-        💾
+        <Icon name="save" size={18} />
       </button>
 
       {/* Cache Monitor Panel */}
@@ -156,7 +157,7 @@ const CacheMonitor = () => {
             borderBottom: '1px solid #444',
             paddingBottom: '8px'
           }}>
-            <strong>💾 Cache Monitor</strong>
+            <strong><Icon name="save" size={12} /> Cache Monitor</strong>
             <button
               onClick={() => setIsVisible(false)}
               style={{
@@ -168,7 +169,7 @@ const CacheMonitor = () => {
                 padding: '0'
               }}
             >
-              ✕
+              <Icon name="close" size={14} />
             </button>
           </div>
 
@@ -277,7 +278,7 @@ const CacheMonitor = () => {
                 minWidth: '70px'
               }}
             >
-              🔥 Warm Cache
+              <Icon name="fire" size={12} /> Warm Cache
             </button>
             <button
               onClick={handleClearCache}
@@ -293,7 +294,7 @@ const CacheMonitor = () => {
                 minWidth: '70px'
               }}
             >
-              🗑️ Clear All
+              <Icon name="delete" size={12} /> Clear All
             </button>
           </div>
 
@@ -305,7 +306,7 @@ const CacheMonitor = () => {
             fontSize: '9px',
             color: '#888'
           }}>
-            💡 Console: <code>cacheManager.getMetrics()</code>
+            <Icon name="tips" size={12} /> Console: <code>cacheManager.getMetrics()</code>
           </div>
         </div>
       )}

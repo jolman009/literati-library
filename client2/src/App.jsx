@@ -39,7 +39,6 @@ if (process.env.NODE_ENV === 'development') {
 import './styles/md3-unified-colors.css';
 import './styles/md3-components.css';
 import './styles/library-md3.css';
-import './styles/reading-timer-md3.css';
 import './App.css';
 import './styles/accessibility.css'; // WCAG AA compliance styles
 import { Routes, Route, Navigate } from 'react-router-dom';

@@ -10,8 +10,6 @@
 /* Import Material Design 3 Component Animations */
 @import './components/Material3/animations.css';
 
-@import './styles/reading-timer.css';
-@import './styles/premium-timer-widget.css';
 
 /* ===============================================
    ROOT APPLICATION STYLES
@@ -28,7 +26,7 @@
   color: rgb(var(--md-sys-color-on-background, 28 27 31));
   
   /* Typography */
-  font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, sans-serif);
+  font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif);
   font-size: var(--md-sys-typescale-body-large-size, 1rem);
   line-height: var(--md-sys-typescale-body-large-line-height, 1.5);
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);

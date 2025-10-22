@@ -1,5 +1,6 @@
 // src/components/gamification/PointsHistory.jsx
 import React, { useState, useEffect } from 'react';
+import Icon from '../ui/Icon';
 import API from '../../config/api';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import './PointsHistory.css';
@@ -15,12 +16,17 @@ const PointsHistory = ({ limit = 10 }) => {
   }, [limit]);
 
   // Local fallback mapping for display label/icon
-  const getDisplayIcon = (action) => {
+  const getDisplayIconName = (action) => {
     try {
-      if (action?.action === 'achievement_unlocked') return '🏆';
-      return action?.icon || '✨';
+      const key = String(action?.action || '').toLowerCase();
+      if (key === 'achievement_unlocked') return 'trophy';
+      if (key.includes('reading')) return 'reading';
+      if (key.includes('upload')) return 'upload';
+      if (key.includes('note')) return 'note';
+      if (key.includes('highlight')) return 'highlight';
+      return 'star';
     } catch {
-      return '✨';
+      return 'star';
     }
   };
 
@@ -122,7 +128,7 @@ const PointsHistory = ({ limit = 10 }) => {
       <div className={`points-history-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
         <div className="points-history-header">
           <h3 className="points-history-title">
-            📊 Points History
+            <Icon name="bar_chart" size={16} /> Points History
           </h3>
         </div>
         <div className="points-history-loading">
@@ -145,7 +151,7 @@ const PointsHistory = ({ limit = 10 }) => {
         <div className="points-history-error">
           <p>Failed to load points history</p>
           <button onClick={fetchHistory} className="retry-button">
-            🔄 Retry
+            <Icon name="refresh" size={14} /> Retry
           </button>
         </div>
       </div>
@@ -157,11 +163,11 @@ const PointsHistory = ({ limit = 10 }) => {
       <div className={`points-history-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
         <div className="points-history-header">
           <h3 className="points-history-title">
-            📊 Points History
+            <Icon name="bar_chart" size={16} /> Points History
           </h3>
         </div>
         <div className="points-history-empty">
-          <span style={{ fontSize: '3rem', opacity: 0.5 }}>🎯</span>
+          <span style={{ fontSize: '3rem', opacity: 0.5 }}><Icon name="rocket" size={32} /></span>
           <p>No activity yet</p>
           <p style={{ fontSize: '0.85rem', opacity: 0.7 }}>
             Start reading, taking notes, or uploading books to earn points!
@@ -175,10 +181,10 @@ const PointsHistory = ({ limit = 10 }) => {
     <div className={`points-history-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
       <div className="points-history-header">
         <h3 className="points-history-title">
-          📊 Points History
+          <Icon name="bar_chart" size={16} /> Points History
         </h3>
         <button onClick={fetchHistory} className="refresh-button" title="Refresh history">
-          🔄
+          <Icon name="refresh" size={14} />
         </button>
       </div>
 
@@ -190,7 +196,7 @@ const PointsHistory = ({ limit = 10 }) => {
               {actions.map((action, index) => (
                 <div key={action.id || index} className="points-history-item">
                   <div className="points-history-item-icon">
-                    {getDisplayIcon(action)}
+                    <Icon name={getDisplayIconName(action)} size={16} />
                   </div>
                   <div className="points-history-item-content">
                     <div className="points-history-item-label">
@@ -204,10 +210,13 @@ const PointsHistory = ({ limit = 10 }) => {
                             color: 'var(--color-muted, #94a3b8)',
                             border: '1px solid rgba(148,163,184,0.4)',
                             borderRadius: '8px',
-                            padding: '2px 6px'
+                            padding: '2px 6px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
                           }}
                         >
-                          ⏳ pending
+                          <Icon name="hourglass_empty" size={12} /> pending
                         </span>
                       )}
                     </div>

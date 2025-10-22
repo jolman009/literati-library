@@ -1,6 +1,7 @@
 // src/components/gamification/PointsLegend.jsx
 import React, { useState } from 'react';
 import { MD3Card, MD3Button } from '../Material3';
+import Icon from '../ui/Icon';
 
 const PointsLegend = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -8,48 +9,48 @@ const PointsLegend = () => {
   const pointCategories = [
     {
       title: 'Reading Activities',
-      icon: '📖',
+      icon: 'book',
       color: 'rgb(var(--md-sys-color-primary))',
       actions: [
-        { action: 'Start Reading Session', points: 5, icon: '🚀', description: 'Begin a new reading session' },
-        { action: 'Complete Reading Session', points: 10, icon: '✅', description: 'Finish a reading session' },
-        { action: 'Read Page', points: 1, icon: '📄', description: 'Each page you read' },
-        { action: 'Reading Time', points: '1/min', icon: '⏱️', description: 'One point per minute of reading' },
-        { action: 'Complete Book', points: 100, icon: '🎉', description: 'Finish reading an entire book' },
+        { action: 'Start Reading Session', points: 5, icon: 'rocket', description: 'Begin a new reading session' },
+        { action: 'Complete Reading Session', points: 10, icon: 'check_circle', description: 'Finish a reading session' },
+        { action: 'Read Page', points: 1, icon: 'page', description: 'Each page you read' },
+        { action: 'Reading Time', points: '1/min', icon: 'time', description: 'One point per minute of reading' },
+        { action: 'Complete Book', points: 100, icon: 'celebrate', description: 'Finish reading an entire book' },
       ]
     },
     {
       title: 'Library Management',
-      icon: '📚',
+      icon: 'books',
       color: 'rgb(var(--md-sys-color-secondary))',
       actions: [
-        { action: 'Upload Book', points: 25, icon: '📤', description: 'Add a new book to your library' },
-        { action: 'Daily Login', points: 10, icon: '🌅', description: 'Sign in to your account daily' },
-        { action: 'Daily Check-in', points: 10, icon: '✔️', description: 'Complete your daily reading check-in' },
+        { action: 'Upload Book', points: 25, icon: 'upload', description: 'Add a new book to your library' },
+        { action: 'Daily Login', points: 10, icon: 'login', description: 'Sign in to your account daily' },
+        { action: 'Daily Check-in', points: 10, icon: 'check', description: 'Complete your daily reading check-in' },
       ]
     },
     {
       title: 'Note-Taking & Study',
-      icon: '📝',
+      icon: 'note',
       color: 'rgb(var(--md-sys-color-tertiary))',
       actions: [
-        { action: 'Create Note', points: 15, icon: '📋', description: 'Write a note about your reading' },
-        { action: 'Create Highlight', points: 10, icon: '✏️', description: 'Highlight important text passages' },
+        { action: 'Create Note', points: 15, icon: 'note', description: 'Write a note about your reading' },
+        { action: 'Create Highlight', points: 10, icon: 'highlight', description: 'Highlight important text passages' },
       ]
     }
   ];
 
   const levelThresholds = [
-    { level: 1, points: 0, title: 'Beginner Reader', icon: '📖' },
-    { level: 2, points: 100, title: 'Casual Reader', icon: '📚' },
-    { level: 3, points: 300, title: 'Dedicated Reader', icon: '🤓' },
-    { level: 4, points: 600, title: 'Avid Reader', icon: '📘' },
-    { level: 5, points: 1000, title: 'Bookworm', icon: '🐛' },
-    { level: 6, points: 1500, title: 'Book Enthusiast', icon: '📗' },
-    { level: 7, points: 2500, title: 'Literary Scholar', icon: '🎓' },
-    { level: 8, points: 4000, title: 'Reading Master', icon: '👑' },
-    { level: 9, points: 6000, title: 'Bibliophile', icon: '💎' },
-    { level: 10, points: 10000, title: 'Reading Legend', icon: '🏆' },
+    { level: 1, points: 0, title: 'Beginner Reader', icon: 'book' },
+    { level: 2, points: 100, title: 'Casual Reader', icon: 'books' },
+    { level: 3, points: 300, title: 'Dedicated Reader', icon: 'star' },
+    { level: 4, points: 600, title: 'Avid Reader', icon: 'book' },
+    { level: 5, points: 1000, title: 'Bookworm', icon: 'bolt' },
+    { level: 6, points: 1500, title: 'Book Enthusiast', icon: 'book' },
+    { level: 7, points: 2500, title: 'Literary Scholar', icon: 'graduate' },
+    { level: 8, points: 4000, title: 'Reading Master', icon: 'crown' },
+    { level: 9, points: 6000, title: 'Bibliophile', icon: 'diamond' },
+    { level: 10, points: 10000, title: 'Reading Legend', icon: 'trophy' },
   ];
 
   const achievementCategories = [
@@ -104,7 +105,7 @@ const PointsLegend = () => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ fontSize: '24px' }}>🎯</div>
+            <div style={{ fontSize: '24px' }}><Icon name="rocket" size={20} /></div>
             <div>
               <h3 style={{
                 margin: 0,
@@ -145,8 +146,8 @@ const PointsLegend = () => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: 'bold' }}>
-              🎯 Points & Rewards System
+            <h2 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Icon name="rocket" size={24} /> Points & Rewards System
             </h2>
             <p style={{ margin: 0, fontSize: '16px', opacity: 0.9 }}>
               Everything you need to know about earning points and unlocking achievements
@@ -189,7 +190,7 @@ const PointsLegend = () => {
                   fontWeight: '600',
                   color: category.color
                 }}>
-                  <span style={{ fontSize: '24px' }}>{category.icon}</span>
+                  <Icon name={category.icon} size={22} />
                   {category.title}
                 </h4>
               </div>
@@ -208,7 +209,7 @@ const PointsLegend = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '20px' }}>{action.icon}</span>
+                      <Icon name={action.icon} size={20} />
                       <div>
                         <div style={{
                           fontSize: '16px',
@@ -274,7 +275,7 @@ const PointsLegend = () => {
                   border: '1px solid rgb(var(--md-sys-color-outline-variant))'
                 }}
               >
-                <span style={{ fontSize: '24px' }}>{level.icon}</span>
+                <Icon name={level.icon} size={22} />
                 <div>
                   <div style={{
                     fontSize: '16px',
@@ -382,7 +383,7 @@ const PointsLegend = () => {
           fontWeight: '600',
           color: 'rgb(var(--md-sys-color-on-surface))'
         }}>
-          <span style={{ fontSize: '24px' }}>💡</span>
+          <Icon name="tips" size={22} />
           Pro Tips for Maximum Points
         </h4>
         <div style={{ display: 'grid', gap: '12px' }}>
