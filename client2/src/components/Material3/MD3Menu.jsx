@@ -79,7 +79,17 @@ const MD3Menu = memo(({
   useEffect(() => {
     if (open) {
       setIsVisible(true);
-      setTimeout(calculatePosition, 0);
+      setTimeout(() => {
+        calculatePosition();
+        // Autofocus first enabled menu item for keyboard users
+        try {
+          const root = menuRef.current;
+          if (root) {
+            const firstItem = root.querySelector('[role="menuitem"]:not([aria-disabled="true"])');
+            firstItem?.focus();
+          }
+        } catch {}
+      }, 0);
     } else {
       setTimeout(() => setIsVisible(false), 200);
     }
@@ -122,6 +132,22 @@ const MD3Menu = memo(({
     className
   ].filter(Boolean).join(' ');
 
+  const onMenuKeyDown = (e) => {
+    if (!menuRef.current) return;
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    const items = Array.from(menuRef.current.querySelectorAll('[role="menuitem"]:not([aria-disabled="true"])'));
+    if (items.length === 0) return;
+    const index = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      const next = items[(index + 1) % items.length];
+      next?.focus();
+    } else if (e.key === 'ArrowUp') {
+      const prev = items[(index - 1 + items.length) % items.length];
+      prev?.focus();
+    }
+  };
+
   const menuContent = (
     <div
       ref={menuRef}
@@ -131,6 +157,7 @@ const MD3Menu = memo(({
         left: position.left
       }}
       role="menu"
+      onKeyDown={onMenuKeyDown}
       {...props}
     >
       {children}

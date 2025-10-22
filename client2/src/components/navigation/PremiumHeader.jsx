@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -25,6 +25,8 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
   const { user, logout } = useAuth();
   const [query, setQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuButtonRef = useRef(null);
+  const userMenuRef = useRef(null);
 
   /**
    * Navigate to the dashboard. This replaces the inline `title`
@@ -53,6 +55,57 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
    */
   const toggleUserMenu = () => {
     setUserMenuOpen(!userMenuOpen);
+  };
+
+  // Manage focus and dismissal for the user menu
+  useEffect(() => {
+    if (!userMenuOpen) return;
+
+    const focusFirstItem = () => {
+      try {
+        const first = userMenuRef.current?.querySelector('.dropdown-item:not([disabled])');
+        first?.focus();
+      } catch {}
+    };
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setUserMenuOpen(false);
+        userMenuButtonRef.current?.focus();
+      }
+    };
+
+    const onClickOutside = (e) => {
+      const menuEl = userMenuRef.current;
+      const btnEl = userMenuButtonRef.current;
+      if (menuEl && !menuEl.contains(e.target) && btnEl && !btnEl.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    setTimeout(focusFirstItem, 0);
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('mousedown', onClickOutside);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('mousedown', onClickOutside);
+    };
+  }, [userMenuOpen]);
+
+  const onMenuKeyDown = (e) => {
+    if (!userMenuRef.current) return;
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    e.preventDefault();
+    const items = Array.from(userMenuRef.current.querySelectorAll('.dropdown-item:not([disabled])'));
+    if (items.length === 0) return;
+    const index = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      const next = items[(index + 1) % items.length];
+      next?.focus();
+    } else if (e.key === 'ArrowUp') {
+      const prev = items[(index - 1 + items.length) % items.length];
+      prev?.focus();
+    }
   };
 
   /**
@@ -143,10 +196,14 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
           {/* User Menu */}
           <div className="premium-header-user-menu">
             <button
+              id="user-menu-button"
               className="premium-header-user-btn"
+              ref={userMenuButtonRef}
               onClick={toggleUserMenu}
               aria-label="User menu"
               aria-expanded={userMenuOpen}
+              aria-haspopup="menu"
+              aria-controls={userMenuOpen ? 'user-menu' : undefined}
             >
               <div className="user-avatar">
                 {user?.avatar ? (
@@ -162,7 +219,14 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
 
             {/* User Dropdown Menu */}
             {userMenuOpen && (
-              <div className="premium-header-dropdown">
+              <div
+                id="user-menu"
+                className="premium-header-dropdown"
+                role="menu"
+                aria-labelledby="user-menu-button"
+                ref={userMenuRef}
+                onKeyDown={onMenuKeyDown}
+              >
                 <div className="dropdown-header">
                   <div className="user-info">
                     <span className="user-name">{user?.name || 'User'}</span>
@@ -173,6 +237,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                 <nav className="dropdown-nav">
                   <button
                     className="dropdown-item"
+                    role="menuitem"
                     onClick={() => {
                       navigate('/profile');
                       setUserMenuOpen(false);
@@ -183,6 +248,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   </button>
                   <button
                     className="dropdown-item"
+                    role="menuitem"
                     onClick={() => {
                       navigate('/settings');
                       setUserMenuOpen(false);
@@ -193,6 +259,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   </button>
                   <button
                     className="dropdown-item"
+                    role="menuitem"
                     onClick={() => {
                       navigate('/help');
                       setUserMenuOpen(false);
@@ -203,6 +270,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   </button>
                   <button
                     className="dropdown-item"
+                    role="menuitem"
                     onClick={() => {
                       try {
                         localStorage.setItem('sq_tour_seen_v1', '0');
@@ -217,6 +285,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   </button>
                   <button
                     className="dropdown-item"
+                    role="menuitem"
                     onClick={() => {
                       // Dispatch custom event to show tutorial
                       window.dispatchEvent(new CustomEvent('showTutorial'));
@@ -229,6 +298,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   <div className="dropdown-divider"></div>
                   <button
                     className="dropdown-item logout-item"
+                    role="menuitem"
                     onClick={handleLogout}
                   >
                     <span className="material-symbols-outlined">logout</span>
