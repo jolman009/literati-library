@@ -28,13 +28,13 @@ const GlobalSearchFAB = ({
         width: '56px',
         height: '56px',
         borderRadius: '16px',
-        backgroundColor: isDark ? '#6366f1' : '#6750A4',
+        backgroundColor: isDark ? '#24A8E0' : '#24A8E0',
         color: 'white',
         border: 'none',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 6px 16px rgba(103, 80, 164, 0.3)',
+        boxShadow: '0 6px 16px rgba(36, 168, 224, 0.3)',
         cursor: 'pointer',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         zIndex: 999,
@@ -42,11 +42,11 @@ const GlobalSearchFAB = ({
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-        e.currentTarget.style.boxShadow = '0 8px 24px rgba(103, 80, 164, 0.4)';
+        e.currentTarget.style.boxShadow = '0 8px 24px rgba(36, 168, 224, 0.4)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0) scale(1)';
-        e.currentTarget.style.boxShadow = '0 6px 16px rgba(103, 80, 164, 0.3)';
+        e.currentTarget.style.boxShadow = '0 6px 16px rgba(36, 168, 224, 0.3)';
       }}
     >
       <Search size={24} />

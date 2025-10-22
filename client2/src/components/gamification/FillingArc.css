@@ -118,13 +118,13 @@
 /* Basic glow (simple & detailed variants) */
 @keyframes arc-glow-pulse {
   0%, 100% {
-    filter: drop-shadow(0 0 4px #6366f1)
-            drop-shadow(0 0 8px #6366f1)
+    filter: drop-shadow(0 0 4px #24A8E0)
+            drop-shadow(0 0 8px #24A8E0)
             drop-shadow(0 0 12px rgba(99, 102, 241, 0.5));
   }
   50% {
-    filter: drop-shadow(0 0 8px #6366f1)
-            drop-shadow(0 0 16px #8b5cf6)
+    filter: drop-shadow(0 0 8px #24A8E0)
+            drop-shadow(0 0 16px #24A8E0)
             drop-shadow(0 0 24px rgba(139, 92, 246, 0.7))
             drop-shadow(0 0 32px rgba(168, 85, 247, 0.4));
   }
@@ -137,13 +137,13 @@
 /* Intense glow (intricate variant) */
 @keyframes arc-glow-intense-pulse {
   0%, 100% {
-    filter: drop-shadow(0 0 6px #6366f1)
-            drop-shadow(0 0 12px #8b5cf6)
+    filter: drop-shadow(0 0 6px #24A8E0)
+            drop-shadow(0 0 12px #24A8E0)
             drop-shadow(0 0 18px rgba(139, 92, 246, 0.6));
   }
   50% {
-    filter: drop-shadow(0 0 12px #6366f1)
-            drop-shadow(0 0 24px #8b5cf6)
+    filter: drop-shadow(0 0 12px #24A8E0)
+            drop-shadow(0 0 24px #24A8E0)
             drop-shadow(0 0 36px rgba(168, 85, 247, 0.8))
             drop-shadow(0 0 48px rgba(192, 132, 252, 0.5));
   }
@@ -406,7 +406,7 @@
 
 /* Intricate variant - rich decoration */
 .filling-arc--intricate .filling-arc-stats {
-  text-shadow: 0 0 10px rgba(103, 80, 164, 0.3),
+  text-shadow: 0 0 10px rgba(36, 168, 224, 0.3),
                0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -440,12 +440,12 @@
 
 .filling-arc--cosmic .filling-arc-level-number {
   background: linear-gradient(135deg,
-    #6366f1,
-    #8b5cf6,
-    #a855f7,
+    #24A8E0,
+    #24A8E0,
+    #24A8E0,
     #c084fc,
-    #8b5cf6,
-    #6366f1);
+    #24A8E0,
+    #24A8E0);
   background-size: 400% auto;
   animation: cosmic-gradient-flow 6s ease-in-out infinite;
   -webkit-background-clip: text;
@@ -573,3 +573,4 @@
   outline-offset: 4px;
   border-radius: 50%;
 }
+

@@ -163,7 +163,7 @@ const WelcomeSection = ({ user, onCheckInUpdate }) => {
       <div style={{
         background: actualTheme === 'dark' 
           ? 'linear-gradient(135deg, #1e3a8a, #312e81)' 
-          : 'linear-gradient(135deg, #667eea, #764ba2)',
+          : 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
         borderRadius: '16px',
         padding: '24px 32px', // Reduced from 32px/40px
         color: 'white',
@@ -319,15 +319,15 @@ const QuickStatsOverview = ({ checkInStreak = 0 }) => {
       label: 'Books Read',
       color: actualTheme === 'dark' 
         ? 'linear-gradient(135deg, #1e40af, #3730a3)'
-        : 'linear-gradient(135deg, #3b82f6, #6366f1)'
+        : 'linear-gradient(135deg, #3b82f6, #24A8E0)'
     },
     { 
       icon: '📖', 
       value: stats?.pagesRead || 0, 
       label: 'Pages Read',
       color: actualTheme === 'dark'
-        ? 'linear-gradient(135deg, #7c3aed, #a21caf)'
-        : 'linear-gradient(135deg, #8b5cf6, #d946ef)'
+        ? 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))'
+        : 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))'
     },
     { 
       icon: '✅', 
@@ -903,3 +903,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+

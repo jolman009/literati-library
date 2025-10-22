@@ -694,7 +694,7 @@ const EnhancedReadingStatsCard = ({ books = [], analytics = {} }) => {
         <div style={{
           padding: '1.5rem',
           borderRadius: '12px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)',
           color: 'white',
           textAlign: 'center',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
@@ -1793,7 +1793,7 @@ const handleBatchUpdateCovers = async () => {
           
           return (
             <div style={{
-              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              background: 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
               borderRadius: '12px',
               padding: '16px 20px',
               color: 'white',
@@ -2007,6 +2007,9 @@ const handleBatchUpdateCovers = async () => {
 }
 
 export default EnhancedBookLibraryApp;
+
+
+
 
 
 

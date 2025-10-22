@@ -188,7 +188,7 @@ const onDirectUpload = async (files) => {
           width: '40px',
           height: '40px',
           border: '3px solid rgb(var(--md-sys-color-outline, #e0e0e0))',
-          borderTop: '3px solid rgb(var(--md-sys-color-primary, #6750a4))',
+          borderTop: '3px solid rgb(var(--md-sys-color-primary, #24A8E0))',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }}></div>
@@ -220,7 +220,7 @@ const onDirectUpload = async (files) => {
           onClick={refreshBooks}
           style={{
             padding: '12px 24px',
-            backgroundColor: 'rgb(var(--md-sys-color-primary, #6750a4))',
+            backgroundColor: 'rgb(var(--md-sys-color-primary, #24A8E0))',
             color: 'rgb(var(--md-sys-color-on-primary, white))',
             border: 'none',
             borderRadius: '8px',

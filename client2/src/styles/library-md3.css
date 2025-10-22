@@ -179,7 +179,7 @@
 .md3-recent-book-card.highlighted {
   animation: bookHighlight 2s ease-in-out;
   transform: scale(1.02);
-  box-shadow: 0 8px 24px rgba(103, 80, 164, 0.3);
+  box-shadow: 0 8px 24px rgba(36, 168, 224, 0.3);
 }
 
 @keyframes bookHighlight {
@@ -188,7 +188,7 @@
     transform: translateY(-2px);
   }
   50% { 
-    box-shadow: 0 12px 32px rgba(103, 80, 164, 0.4);
+    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.4);
     transform: translateY(-4px) scale(1.02);
   }
 }
@@ -447,7 +447,7 @@
   animation: mainBookHighlight 2s ease-in-out;
   background: var(--md-sys-color-primary-container) !important;
   transform: scale(1.02);
-  box-shadow: 0 8px 24px rgba(103, 80, 164, 0.3);
+  box-shadow: 0 8px 24px rgba(36, 168, 224, 0.3);
 }
 
 @keyframes mainBookHighlight {
@@ -458,7 +458,7 @@
   }
   50% { 
     background: var(--md-sys-color-primary-container);
-    box-shadow: 0 12px 32px rgba(103, 80, 164, 0.4);
+    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.4);
     transform: translateY(-4px) scale(1.02);
   }
 }

@@ -76,7 +76,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(103, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(103, 126, 234, 0.05) 0%, rgba(36, 168, 224, 0.05) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -93,7 +93,7 @@
   gap: 12px;
   margin-bottom: 32px;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   border-radius: 16px;
   color: white;
   position: relative;
@@ -413,7 +413,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -599,7 +599,7 @@
 
 .mobile-nav-item.active {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-  color: #667eea;
+  color: #24A8E0;
 }
 
 .mobile-nav-icon {
@@ -850,7 +850,7 @@
 }
 
 .premium-app-layout.dark .mobile-nav-item.active {
-  background: linear-gradient(135deg, rgba(103, 80, 164, 0.2), rgba(79, 70, 229, 0.2));
+  background: linear-gradient(135deg, rgba(36, 168, 224, 0.2), rgba(79, 70, 229, 0.2));
   color: rgb(var(--md-sys-color-primary));
 }
 
@@ -903,7 +903,7 @@
   font-weight: 700;
   color: #1e293b;
   margin: 0 0 4px 0;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -934,7 +934,7 @@
 /* Enhanced user status */
 .user-status {
   font-size: 12px;
-  color: #667eea;
+  color: #24A8E0;
   font-weight: 600;
   font-style: italic;
 }
@@ -964,7 +964,7 @@
   font-weight: 700;
   margin: 0;
   line-height: 1.2;
-  background: linear-gradient(135deg, #6750a4, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1055,3 +1055,5 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+

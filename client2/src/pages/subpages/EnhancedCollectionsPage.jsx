@@ -46,13 +46,13 @@ const EnhancedCollectionsPage = ({
   const [newCollection, setNewCollection] = useState({
     name: '',
     description: '',
-    color: '#6750A4',
+    color: '#24A8E0',
     icon: '📚'
   });
 
   // Available colors for collections
   const collectionColors = [
-    '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
+    '#24A8E0', '#24A8E0', '#3F51B5', '#2196F3',
     '#00BCD4', '#009688', '#4CAF50', '#8BC34A',
     '#CDDC39', '#FFC107', '#FF9800', '#FF5722',
     '#F44336', '#E91E63', '#9C27B0', '#673AB7'
@@ -154,7 +154,7 @@ const EnhancedCollectionsPage = ({
     };
 
     setCollections(prev => [collection, ...prev]);
-    setNewCollection({ name: '', description: '', color: '#6750A4', icon: '📚' });
+    setNewCollection({ name: '', description: '', color: '#24A8E0', icon: '📚' });
     setIsCreating(false);
   }, [newCollection]);
 
@@ -946,7 +946,7 @@ const EnhancedCollectionsPage = ({
 
 // Collection colors for UI
 export const COLLECTION_COLORS = [
-  '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
+  '#24A8E0', '#24A8E0', '#3F51B5', '#2196F3',
   '#00BCD4', '#009688', '#4CAF50', '#8BC34A',
   '#CDDC39', '#FFC107', '#FF9800', '#FF5722',
   '#F44336', '#E91E63', '#9C27B0', '#673AB7'

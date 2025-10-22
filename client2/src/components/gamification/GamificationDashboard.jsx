@@ -14,7 +14,7 @@ const AchievementNotification = ({ achievement, onDismiss }) => {
         position: 'fixed',
         top: '20px',
         right: '20px',
-        background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
         color: 'white',
         padding: '20px',
         borderRadius: '12px',
@@ -82,7 +82,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
         <div style={{ 
           fontSize: '48px', 
           fontWeight: 'bold', 
-          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           marginBottom: '8px'
@@ -120,7 +120,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
           <div style={{
             width: `${Math.min(progressPercentage, 100)}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%)',
+            background: 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
             transition: 'width 0.5s ease'
           }} />
         </div>
@@ -303,7 +303,7 @@ const GoalsSection = ({ goals }) => {
                   height: '100%',
                   background: isCompleted 
                     ? 'rgb(var(--md-sys-color-success))' 
-                    : 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%)',
+                    : 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
                   transition: 'width 0.5s ease'
                 }} />
               </div>

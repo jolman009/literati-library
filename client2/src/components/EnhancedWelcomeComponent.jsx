@@ -131,7 +131,7 @@ const EnhancedWelcomeComponent = ({
       {/* Hero Section */}
       <div 
         style={{
-          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
           borderRadius: '16px',
           padding: '32px',
           color: 'white',

@@ -90,11 +90,11 @@ const LoadingSpinner = () => (
       width: '40px',
       height: '40px',
       border: '3px solid #e0e0e0',
-      borderTop: '3px solid #6750a4',
+      borderTop: '3px solid #24A8E0',
       borderRadius: '50%',
       animation: 'spin 1s linear infinite'
     }}></div>
-    <p style={{ color: '#6750a4', margin: 0, fontWeight: 500 }}>Loading Literati...</p>
+    <p style={{ color: '#24A8E0', margin: 0, fontWeight: 500 }}>Loading Literati...</p>
     <style>{`
       @keyframes spin {
         0% { transform: rotate(0deg); }
@@ -131,13 +131,13 @@ class LazyLoadErrorBoundary extends React.Component {
           gap: '16px',
           textAlign: 'center'
         }}>
-          <h3 style={{ color: '#6750a4' }}>Something went wrong</h3>
+          <h3 style={{ color: '#24A8E0' }}>Something went wrong</h3>
           <p>This might be due to a missing file or import issue.</p>
           <button
             onClick={() => window.location.reload()}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#6750a4',
+              backgroundColor: '#24A8E0',
               color: 'white',
               border: 'none',
               borderRadius: '8px',

@@ -8,11 +8,11 @@ import React, { useRef } from 'react';
  * Features: leading/trailing icons, loading, disabled, fullWidth, href (link), ripple, a11y focus ring
  */
 const VARIANT_TOKENS = {
-  filled:   { bg:'#6750a4',  fg:'#ffffff',  border:'none',     container:'#6750a4' },
-  elevated: { bg:'#ffffff',  fg:'#6750a4',  border:'none',     shadow:'0 2px 6px rgba(0,0,0,.18)' },
+  filled:   { bg:'#24A8E0',  fg:'#ffffff',  border:'none',     container:'#24A8E0' },
+  elevated: { bg:'#ffffff',  fg:'#24A8E0',  border:'none',     shadow:'0 2px 6px rgba(0,0,0,.18)' },
   tonal:    { bg:'#eaddff',  fg:'#21005d',  border:'none' },
-  outlined: { bg:'transparent', fg:'#6750a4', border:'1px solid #79747e' },
-  text:     { bg:'transparent', fg:'#6750a4', border:'none' },
+  outlined: { bg:'transparent', fg:'#24A8E0', border:'1px solid #79747e' },
+  text:     { bg:'transparent', fg:'#24A8E0', border:'none' },
 };
 
 const SIZE_TOKENS = {
@@ -107,7 +107,7 @@ const MD3Button = React.forwardRef(({
 
   const focusRing = {
     position:'absolute', inset:-2, borderRadius:s.radius+2,
-    boxShadow:'0 0 0 2px rgba(103,80,164,.35)',
+    boxShadow:'0 0 0 2px rgba(36, 168, 224, .35)',
     pointerEvents:'none', opacity:0, transition:'opacity .15s ease'
   };
 
@@ -171,3 +171,4 @@ function adjustPadding(pad, adj) {
   const py2 = clamp(py + adj, 6);
   return `${py2}px ${px}px`;
 }
+

@@ -75,7 +75,7 @@
 .retry-button {
   margin-top: 12px;
   padding: 8px 16px;
-  background: #6366f1;
+  background: #24A8E0;
   color: white;
   border: none;
   border-radius: 8px;
@@ -221,7 +221,7 @@
 .points-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
   color: white;
   font-size: 13px;
   font-weight: 600;
@@ -244,7 +244,7 @@
 .points-history-total {
   font-size: 14px;
   font-weight: 600;
-  color: #6366f1;
+  color: #24A8E0;
 }
 
 .points-history-container.dark .points-history-total {
@@ -298,3 +298,5 @@
     padding: 3px 8px;
   }
 }
+
+

@@ -333,7 +333,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         width: `${widgetSize.width}px`,
         minHeight: `${widgetSize.height}px`,
         background: isDark ? '#1e293b' : '#ffffff',
-        border: `2px solid ${isDark ? '#8b5cf6' : '#7c3aed'}`,
+        border: `2px solid ${isDark ? '#24A8E0' : '#24A8E0'}`,
         borderRadius: isMobile ? '12px' : '16px',
         boxShadow: isMobile
           ? '0 4px 16px rgba(0,0,0,0.15)'
@@ -360,8 +360,8 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         tabIndex={0}
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
-            : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+            ? 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)'
+            : 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)',
           color: 'white',
           padding: isMobile ? '8px 10px' : '12px 16px',
           display: 'flex',
@@ -447,7 +447,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             borderRadius: isMobile ? '16px' : '20px',
             background: (!content.trim() || isSaving)
               ? (isDark ? '#334155' : '#e9ecef')
-              : (isDark ? '#7c3aed' : '#8b5cf6'),
+              : (isDark ? '#24A8E0' : '#24A8E0'),
             color: (!content.trim() || isSaving)
               ? (isDark ? '#64748b' : '#6c757d')
               : 'white',
@@ -510,3 +510,4 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 };
 
 export default FloatingNotepad;
+

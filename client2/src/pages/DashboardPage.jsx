@@ -711,7 +711,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Reading Activities',
       icon: '📖',
-      color: '#6366f1',
+      color: '#24A8E0',
       actions: [
         { action: 'Start Reading Session', points: 5, icon: '🚀' },
         { action: 'Complete Reading Session', points: 10, icon: '✅' },
@@ -723,7 +723,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Library Management',
       icon: '📚',
-      color: '#8b5cf6',
+      color: '#24A8E0',
       actions: [
         { action: 'Upload Book', points: 25, icon: '📤' },
         { action: 'Daily Login', points: 10, icon: '🌅' },
@@ -1363,6 +1363,7 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
 
 
 

@@ -69,7 +69,7 @@ const WelcomeWidget = ({
     <div style={{
       background: actualTheme === 'dark' 
         ? 'linear-gradient(135deg, #1e3a8a, #312e81)'
-        : 'linear-gradient(135deg, #667eea, #764ba2)',
+        : 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
       borderRadius: '16px',
       padding: '24px 32px',
       color: 'white',
@@ -318,3 +318,5 @@ const WelcomeWidget = ({
 };
 
 export default WelcomeWidget;
+
+

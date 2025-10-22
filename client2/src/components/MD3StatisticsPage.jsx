@@ -76,7 +76,7 @@ const MD3StatisticsPage = ({
           margin: '0 0 0.5rem 0',
           fontSize: '2.5rem',
           fontWeight: '700',
-          background: 'linear-gradient(135deg, #667eea, #764ba2)',
+          background: 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -163,7 +163,7 @@ const MD3StatisticsPage = ({
             title: 'Library Size', 
             value: stats.totalBooks, 
             subtitle: 'Total books',
-            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            gradient: 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)',
             color: 'white'
           },
           { 
@@ -294,7 +294,7 @@ const MD3StatisticsPage = ({
       }}>
         {/* Short-term Goals */}
         <div style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)',
           borderRadius: '16px',
           padding: '2rem',
           color: 'white',
@@ -498,3 +498,6 @@ const MD3StatisticsPage = ({
 };
 
 export default MD3StatisticsPage;
+
+
+

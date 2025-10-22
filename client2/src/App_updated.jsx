@@ -52,11 +52,11 @@ const LoadingSpinner = () => (
       width: '40px',
       height: '40px',
       border: '3px solid #e0e0e0',
-      borderTop: '3px solid #6750a4',
+      borderTop: '3px solid #24A8E0',
       borderRadius: '50%',
       animation: 'spin 1s linear infinite'
     }}></div>
-    <p style={{ color: '#6750a4', margin: 0 }}>Loading...</p>
+    <p style={{ color: '#24A8E0', margin: 0 }}>Loading...</p>
     <style>{`
       @keyframes spin {
         0% { transform: rotate(0deg); }
