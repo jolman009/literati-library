@@ -128,9 +128,12 @@
   --md-ref-palette-error100: #ffffff;
 }
 
-
+/* ===== LIGHT THEME SEMANTIC TOKENS ===== */
+:root,
+[data-theme="light"],
+.light {
   --brand-gradient-start: #24A8E0;
-  --brand-gradient-end: var(--brand-gradient-end);
+  --brand-gradient-end: #177199;
   /* Primary Colors */
   --md-sys-color-primary: #24A8E0;
   --md-sys-color-on-primary: #ffffff;
@@ -185,7 +188,8 @@
 }
 
 /* ===== DARK THEME SEMANTIC TOKENS ===== */
-
+[data-theme="dark"],
+.dark {
   --brand-gradient-start: #24A8E0;
   --brand-gradient-end: #1b90c5;
   /* Primary Colors */
