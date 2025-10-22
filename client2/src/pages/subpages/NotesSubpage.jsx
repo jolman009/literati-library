@@ -97,7 +97,7 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
             borderRadius: '4px',
             background: book?.coverUrl 
               ? `url(${book.coverUrl}) center/cover`
-              : 'linear-gradient(135deg, #667eea, #764ba2)',
+              : 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
             flexShrink: 0
           }} />
           <div style={{ flex: 1 }}>
@@ -276,7 +276,7 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
               label="All Books"
               onClick={() => setSelectedBook(null)}
               style={{
-                backgroundColor: !selectedBook ? '#6750a4' : '#e7e0ec',
+                backgroundColor: !selectedBook ? '#24A8E0' : '#e7e0ec',
                 color: !selectedBook ? '#ffffff' : '#1c1b1f',
                 cursor: 'pointer'
               }}
@@ -287,7 +287,7 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
                 label={book.title}
                 onClick={() => setSelectedBook(book.id)}
                 style={{
-                  backgroundColor: selectedBook === book.id ? '#6750a4' : '#e7e0ec',
+                  backgroundColor: selectedBook === book.id ? '#24A8E0' : '#e7e0ec',
                   color: selectedBook === book.id ? '#ffffff' : '#1c1b1f',
                   cursor: 'pointer'
                 }}
@@ -308,7 +308,7 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
             <span style={{
               fontSize: '20px',
               fontWeight: 'bold',
-              color: '#6750a4'
+              color: '#24A8E0'
             }}>
               {filteredNotes.length}
             </span>
@@ -395,3 +395,4 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
 };
 
 export default NotesSubpage;
+

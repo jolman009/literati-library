@@ -79,7 +79,7 @@ const WordCloud = ({ notes, actualTheme }) => {
       {wordFrequency.map(({ word, count }) => {
         const fontSize = 14 + (count / maxCount) * 28;
         const opacity = 0.5 + (count / maxCount) * 0.5;
-        const colors = ['#6750A4', '#7C4DFF', '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50'];
+        const colors = ['#24A8E0', '#24A8E0', '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
         return (
@@ -157,7 +157,7 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
               width: '12px',
               height: '12px',
               borderRadius: '50%',
-              backgroundColor: '#6750A4',
+              backgroundColor: '#24A8E0',
               marginRight: '16px',
               position: 'relative',
               zIndex: 2
@@ -166,7 +166,7 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
               margin: 0,
               fontSize: '16px',
               fontWeight: '600',
-              color: isDark ? '#a78bfa' : '#6750A4'
+              color: isDark ? '#24A8E0' : '#24A8E0'
             }}>
               {date}
             </h3>
@@ -198,7 +198,7 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = isDark ? '#475569' : '#EEEEEE';
-                  e.currentTarget.style.borderColor = '#6750A4';
+                  e.currentTarget.style.borderColor = '#24A8E0';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = isDark ? '#334155' : '#F5F5F5';
@@ -231,7 +231,7 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
                       fontSize: '11px',
                       padding: '2px 8px',
                       backgroundColor: isDark ? '#475569' : '#E7E0EC',
-                      color: isDark ? '#a78bfa' : '#6750A4',
+                      color: isDark ? '#24A8E0' : '#24A8E0',
                       borderRadius: '12px'
                     }}>
                       #{tag}
@@ -307,7 +307,7 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
         backgroundColor: isDark ? '#334155' : '#ffffff',
         border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
       }}>
-        <FileText size={32} style={{ color: '#6750A4', marginBottom: '8px' }} />
+        <FileText size={32} style={{ color: '#24A8E0', marginBottom: '8px' }} />
         <h3 style={{ 
           margin: '0 0 4px 0', 
           fontSize: '24px', 
@@ -766,7 +766,7 @@ const EnhancedNotesPage = () => {
       <div className="md3-notes-container">
         {/* Enhanced Header */}
         <MD3Card variant="filled" className="md3-notes-header" style={{
-          background: 'linear-gradient(135deg, #6750A4, #7C4DFF)',
+          background: 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
           color: 'white',
           padding: '32px 24px',
           marginBottom: '24px'
@@ -839,7 +839,7 @@ const EnhancedNotesPage = () => {
                   alignItems: 'center',
                   gap: '8px',
                   backgroundColor: 'white',
-                  color: '#6750A4',
+                  color: '#24A8E0',
                   fontWeight: '600',
                   padding: '12px 24px',
                   border: 'none',
@@ -1039,7 +1039,7 @@ const EnhancedNotesPage = () => {
               <Tag size={18} style={{ 
                 verticalAlign: 'middle', 
                 marginRight: '8px',
-                color: actualTheme === 'dark' ? '#a78bfa' : '#6750A4'
+                color: actualTheme === 'dark' ? '#24A8E0' : '#24A8E0'
               }} />
               Quick Tag Filter
             </h3>
@@ -1061,7 +1061,7 @@ const EnhancedNotesPage = () => {
                   }}
                   style={{
                     backgroundColor: selectedTags.has(tag) 
-                      ? (actualTheme === 'dark' ? '#6366f1' : '#6750A4')
+                      ? (actualTheme === 'dark' ? '#24A8E0' : '#24A8E0')
                       : (actualTheme === 'dark' ? '#475569' : '#f3f4f6'),
                     color: selectedTags.has(tag)
                       ? 'white'
@@ -1105,7 +1105,7 @@ const EnhancedNotesPage = () => {
                   border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
                 }}>
                   <FileText className="md3-notes-empty-icon" style={{
-                    color: actualTheme === 'dark' ? '#6366f1' : '#6750A4'
+                    color: actualTheme === 'dark' ? '#24A8E0' : '#24A8E0'
                   }} />
                   <h3 className="md3-notes-empty-title" style={{
                     color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
@@ -1213,7 +1213,7 @@ const EnhancedNotesPage = () => {
                           <span style={{
                             fontSize: '12px',
                             padding: '2px 6px',
-                            backgroundColor: '#6750A4',
+                            backgroundColor: '#24A8E0',
                             color: 'white',
                             borderRadius: '10px'
                           }}>
@@ -1240,7 +1240,7 @@ const EnhancedNotesPage = () => {
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            backgroundColor: '#6750A4'
+            backgroundColor: '#24A8E0'
           }}
         />
         
@@ -1324,3 +1324,5 @@ const EnhancedNotesPage = () => {
 };
 
 export default EnhancedNotesPage;
+
+

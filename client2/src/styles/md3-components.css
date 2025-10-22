@@ -151,7 +151,7 @@
 }
 
 .welcome-header.theme-light {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
 }
 
 .welcome-header.theme-dark {
@@ -702,3 +702,5 @@
    DARK MODE SUPPORT (Automatic via CSS Custom Properties)
    ============================================================================ */
 /* All colors automatically adapt to light/dark mode via MD3 tokens */
+
+

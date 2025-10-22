@@ -507,10 +507,10 @@ export const withAuth = (Component) => function WithAuth(props) {
       }}>
         <div style={{
           width: 40, height: 40, border: '3px solid #e0e0e0',
-          borderTop: '3px solid #6750a4', borderRadius: '50%',
+          borderTop: '3px solid #24A8E0', borderRadius: '50%',
           animation: 'spin 1s linear infinite'
         }} />
-        <p style={{ color: '#6750a4' }}>Loading…</p>
+        <p style={{ color: '#24A8E0' }}>Loading…</p>
       </div>
     );
   }

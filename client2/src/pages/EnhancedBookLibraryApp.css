@@ -105,7 +105,7 @@
    =============================================== */
 
 .enhanced-navigation-header {
-  background: linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%);
   color: white;
   padding: 8px 0;
   box-shadow: var(--shadow-md);
@@ -605,7 +605,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%);
   color: white;
 }
 

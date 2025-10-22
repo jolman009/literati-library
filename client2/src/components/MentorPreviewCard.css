@@ -42,7 +42,7 @@
 
 .mentor-preview-card.dark {
   background: linear-gradient(135deg,
-    rgba(103, 80, 164, 0.2) 0%,
+    rgba(36, 168, 224, 0.2) 0%,
     rgba(139, 92, 246, 0.15) 100%);
   border: 1px solid rgba(187, 134, 252, 0.3);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -541,3 +541,4 @@
     width: 100%;
   }
 }
+

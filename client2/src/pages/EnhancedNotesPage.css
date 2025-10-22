@@ -17,7 +17,7 @@
 /* Enhanced Header */
 .md3-notes-header {
   border-radius: 16px !important;
-  box-shadow: 0 8px 32px rgba(103, 80, 164, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(36, 168, 224, 0.15) !important;
 }
 
 .md3-notes-header-content {
@@ -97,7 +97,7 @@ div.md3-text-field.md3-notes-search {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #6750A4, #7C4DFF);
+  background: linear-gradient(90deg, var(--brand-gradient-start), var(--brand-gradient-end));
   transform: translateY(-100%);
   transition: transform 0.3s ease;
 }
@@ -297,8 +297,8 @@ div.md3-text-field.md3-notes-search {
 
 .md3-select:focus {
   outline: none;
-  border-color: #6750a4;
-  box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.1);
+  border-color: #24A8E0;
+  box-shadow: 0 0 0 2px rgba(36, 168, 224, 0.1);
 }
 
 .md3-select option {
@@ -384,7 +384,7 @@ div.md3-text-field.md3-notes-search {
 
 .word-cloud-word:hover {
   transform: scale(1.1);
-  background: rgba(103, 80, 164, 0.1);
+  background: rgba(36, 168, 224, 0.1);
 }
 
 /* Statistics Cards */
@@ -527,3 +527,5 @@ div.md3-text-field.md3-notes-search {
   border: 1px solid var(--md-sys-color-outline-variant);
   color: var(--md-sys-color-on-surface);
 }
+
+

@@ -14,7 +14,7 @@ const ReadingHeader = ({ book, onClose }) => {
 
   return (
     <header style={{
-      background: 'linear-gradient(135deg, #6750a4 0%, #4f46e5 100%)',
+      background: 'linear-gradient(135deg, #24A8E0 0%, #4f46e5 100%)',
       color: 'white',
       padding: '16px 20px',
       borderBottom: '1px solid rgba(255,255,255,0.2)',
@@ -75,3 +75,4 @@ const ReadingHeader = ({ book, onClose }) => {
 };
 
 export default ReadingHeader;
+

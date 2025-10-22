@@ -284,7 +284,7 @@
   width: 100px;
   height: 150px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -707,3 +707,5 @@
     page-break-inside: avoid;
   }
 }
+
+

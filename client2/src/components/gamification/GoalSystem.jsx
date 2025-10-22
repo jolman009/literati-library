@@ -111,7 +111,7 @@ const GoalItem = ({ goal, onComplete }) => {
             '#f3f4f6',
           color:
             goal.type === 'pages' ? '#1e40af' :
-            goal.type === 'time' ? '#7c3aed' :
+            goal.type === 'time' ? '#24A8E0' :
             goal.type === 'streak' ? '#ea580c' :
             goal.type === 'level' ? '#be185d' :
             '#374151'

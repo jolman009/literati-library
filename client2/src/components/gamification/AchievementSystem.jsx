@@ -125,7 +125,7 @@ const AchievementSystem = ({ achievements = [], ACHIEVEMENTS = {}, showAll = fal
       {/* Progress Overview */}
       <MD3Card style={{
         padding: '24px',
-        background: 'linear-gradient(to right, #8b5cf6, #ec4899)',
+        background: 'linear-gradient(to right, #24A8E0, #ec4899)',
         color: 'white'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -140,7 +140,7 @@ const AchievementSystem = ({ achievements = [], ACHIEVEMENTS = {}, showAll = fal
             <div style={{ color: '#ddd6fe', fontSize: '14px' }}>Complete</div>
           </div>
         </div>
-        <div style={{ marginTop: '16px', width: '100%', backgroundColor: '#a855f7', borderRadius: '9999px', height: '8px' }}>
+        <div style={{ marginTop: '16px', width: '100%', backgroundColor: '#24A8E0', borderRadius: '9999px', height: '8px' }}>
           <div 
             style={{
               backgroundColor: 'white',

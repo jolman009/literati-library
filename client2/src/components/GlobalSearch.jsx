@@ -347,7 +347,7 @@ const GlobalSearch = ({
                 size="small"
                 style={{
                   backgroundColor: activeFilters.has(filter.key) 
-                    ? (isDark ? '#6366f1' : '#6750A4')
+                    ? (isDark ? '#24A8E0' : '#24A8E0')
                     : (isDark ? '#374151' : '#f3f4f6'),
                   color: activeFilters.has(filter.key) 
                     ? 'white' 
@@ -380,7 +380,7 @@ const GlobalSearch = ({
                 width: '32px',
                 height: '32px',
                 border: `3px solid ${isDark ? '#374151' : '#e5e7eb'}`,
-                borderTopColor: '#6750A4',
+                borderTopColor: '#24A8E0',
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite',
                 margin: '0 auto 12px'
@@ -575,7 +575,7 @@ const BookResult = ({ book, query }) => {
       <div style={{
         width: '40px',
         height: '56px',
-        backgroundColor: '#6750A4',
+        backgroundColor: '#24A8E0',
         borderRadius: '4px',
         display: 'flex',
         alignItems: 'center',
@@ -673,7 +673,7 @@ const NoteResult = ({ note, query, books }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              color: isDark ? '#a78bfa' : '#6750A4'
+              color: isDark ? '#24A8E0' : '#24A8E0'
             }}>
               <BookOpen size={12} />
               {book.title}

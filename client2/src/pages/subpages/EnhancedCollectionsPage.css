@@ -142,7 +142,7 @@
 
 .collection-card {
   /* Dynamic collection color set via CSS custom properties */
-  --collection-color: #6750A4; /* Default fallback */
+  --collection-color: #24A8E0; /* Default fallback */
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--collection-color) 8%, transparent),
     color-mix(in srgb, var(--collection-color) 3%, transparent)
@@ -309,8 +309,8 @@
 .collection-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 
-    0 8px 24px rgba(103, 80, 164, 0.15),
-    0 4px 8px rgba(103, 80, 164, 0.1);
+    0 8px 24px rgba(36, 168, 224, 0.15),
+    0 4px 8px rgba(36, 168, 224, 0.1);
 }
 
 .collection-card:active {
@@ -350,9 +350,9 @@
 .collection-card.drag-over {
   transform: scale(1.05);
   box-shadow: 
-    0 12px 32px rgba(103, 80, 164, 0.25),
-    0 0 0 3px rgba(103, 80, 164, 0.3);
-  background: linear-gradient(135deg, rgba(103, 80, 164, 0.1), rgba(124, 77, 255, 0.05));
+    0 12px 32px rgba(36, 168, 224, 0.25),
+    0 0 0 3px rgba(36, 168, 224, 0.3);
+  background: linear-gradient(135deg, rgba(36, 168, 224, 0.1), rgba(124, 77, 255, 0.05));
 }
 
 .book-dragging {
@@ -382,7 +382,7 @@
 
 /* Search and Filter Section */
 .collections-search-section {
-  background: linear-gradient(135deg, #6750A4, #7C4DFF);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   position: relative;
   overflow: hidden;
 }
@@ -509,8 +509,8 @@
 
 /* Batch Mode Styles */
 .batch-mode-active {
-  background: linear-gradient(135deg, rgba(103, 80, 164, 0.1), rgba(124, 77, 255, 0.05));
-  border: 2px dashed rgba(103, 80, 164, 0.3);
+  background: linear-gradient(135deg, rgba(36, 168, 224, 0.1), rgba(124, 77, 255, 0.05));
+  border: 2px dashed rgba(36, 168, 224, 0.3);
 }
 
 .batch-mode-active .collection-card {
@@ -524,14 +524,14 @@
   right: 8px;
   width: 24px;
   height: 24px;
-  border: 2px solid #6750A4;
+  border: 2px solid #24A8E0;
   border-radius: 50%;
   background: white;
   z-index: 10;
 }
 
 .batch-mode-active .collection-card.selected::after {
-  background: #6750A4;
+  background: #24A8E0;
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>');
 }
 
@@ -693,13 +693,13 @@
 }
 
 .collection-card-batch-button {
-  background-color: #6750A4 !important;
+  background-color: #24A8E0 !important;
   color: white !important;
   font-size: 12px !important;
 }
 
 .collection-card-edit-button {
-  color: #6750A4 !important;
+  color: #24A8E0 !important;
 }
 
 .collection-card-stats {
@@ -923,7 +923,7 @@
 .draggable-book-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #6750A4;
+  background-color: #24A8E0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1012,7 +1012,7 @@
 }
 
 .batch-mode-book.selected {
-  border-color: #6750A4;
+  border-color: #24A8E0;
   transform: scale(1.05);
 }
 
@@ -1025,7 +1025,7 @@
 .batch-mode-book-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #6750A4;
+  background-color: #24A8E0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1042,7 +1042,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #6750A4;
+  background-color: #24A8E0;
   color: white;
   display: flex;
   align-items: center;
@@ -1070,11 +1070,11 @@
 }
 
 .batch-mode-bottom-panel.loading {
-  background-color: rgba(103, 80, 164, 0.8);
+  background-color: rgba(36, 168, 224, 0.8);
 }
 
 .batch-mode-bottom-panel.normal {
-  background-color: #6750A4;
+  background-color: #24A8E0;
 }
 
 .batch-mode-loading-content {
@@ -1133,7 +1133,7 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background-color: #6750A4 !important;
+  background-color: #24A8E0 !important;
 }
 
 /* Dialog Content Styles */
@@ -1260,7 +1260,7 @@
 }
 
 .dialog-edit-button {
-  color: #6750A4 !important;
+  color: #24A8E0 !important;
 }
 
 /* Create/Edit Collection Form */
@@ -1302,8 +1302,8 @@
 }
 
 .icon-picker-item.selected {
-  border-color: #6750A4;
-  background-color: #6750A420;
+  border-color: #24A8E0;
+  background-color: #24A8E020;
 }
 
 .color-picker-grid {
@@ -1371,7 +1371,7 @@
 
 /* Accessibility Improvements */
 .collection-card[aria-selected="true"] {
-  background: rgba(103, 80, 164, 0.1);
+  background: rgba(36, 168, 224, 0.1);
   border-color: var(--md-sys-color-primary);
 }
 
@@ -1502,3 +1502,5 @@
 .batch-mode-select option {
   color: #333;
 }
+
+

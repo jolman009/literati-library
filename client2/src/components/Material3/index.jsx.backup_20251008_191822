@@ -178,8 +178,8 @@ export const MD3Button = React.forwardRef(
       padding: size === 'small' ? '8px 16px' : size === 'large' ? '16px 32px' : '12px 24px',
       borderRadius: '24px',
       border: variant === 'outlined' ? '1px solid #79747e' : 'none',
-      background: variant === 'filled' ? '#6750a4' : variant === 'outlined' ? 'transparent' : '#e7e0ec',
-      color: variant === 'filled' ? '#ffffff' : '#6750a4',
+      background: variant === 'filled' ? '#24A8E0' : variant === 'outlined' ? 'transparent' : '#e7e0ec',
+      color: variant === 'filled' ? '#ffffff' : '#24A8E0',
       cursor: disabled ? 'not-allowed' : 'pointer',
       display: 'flex',
       alignItems: 'center',
@@ -395,7 +395,7 @@ export const MD3FloatingActionButton = React.forwardRef(({ icon, size = 'medium'
     width: size === 'small' ? '40px' : size === 'large' ? '64px' : '56px',
     height: size === 'small' ? '40px' : size === 'large' ? '64px' : '56px',
     borderRadius: '50%',
-    backgroundColor: '#6750a4',
+    backgroundColor: '#24A8E0',
     color: '#ffffff',
     border: 'none',
     cursor: disabled ? 'not-allowed' : 'pointer',
@@ -425,7 +425,7 @@ CircularProgress.displayName = 'CircularProgress';
 
 // Theme color helper
 export const useThemeColors = () => ({
-  primary: '#6750a4',
+  primary: '#24A8E0',
   secondary: '#625b71',
   tertiary: '#7d5260',
   surface: '#ffffff',
@@ -549,7 +549,7 @@ export const MD3ChipGroup = React.forwardRef(
               label={chipLabel}
               onClick={() => handleChipClick(chipValue)}
               style={{
-                backgroundColor: isSelected ? '#6750a4' : '#e7e0ec',
+                backgroundColor: isSelected ? '#24A8E0' : '#e7e0ec',
                 color: isSelected ? '#ffffff' : '#1c1b1f',
                 cursor: 'pointer',
               }}
@@ -568,7 +568,7 @@ export const MD3AssistChip = MD3Chip_Imported;
 // Switch (inline)
 export const MD3Switch = React.forwardRef(({ checked = false, onChange, disabled = false, label, className = '', style = {}, ...props }, ref) => {
   const switchStyle = { display: 'inline-flex', alignItems: 'center', gap: '12px', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.6 : 1, ...style };
-  const trackStyle = { width: '52px', height: '32px', borderRadius: '16px', backgroundColor: checked ? '#6750a4' : '#79747e', position: 'relative', transition: 'background-color 0.2s ease', cursor: disabled ? 'not-allowed' : 'pointer' };
+  const trackStyle = { width: '52px', height: '32px', borderRadius: '16px', backgroundColor: checked ? '#24A8E0' : '#79747e', position: 'relative', transition: 'background-color 0.2s ease', cursor: disabled ? 'not-allowed' : 'pointer' };
   const thumbStyle = { width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#ffffff', position: 'absolute', top: '6px', left: checked ? '26px' : '6px', transition: 'left 0.2s ease', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' };
 
   return (
@@ -689,7 +689,7 @@ export const MD3BookLibraryFab = React.forwardRef(({ onClick, className = '', st
       icon="➕"
       onClick={onClick}
       className={className}
-      style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#6750a4', ...style }}
+      style={{ position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#24A8E0', ...style }}
       {...props}
     />
   );
@@ -704,8 +704,8 @@ export const MD3IconButton = React.forwardRef(
       height: size === 'small' ? '32px' : size === 'large' ? '48px' : '40px',
       borderRadius: '50%',
       border: 'none',
-      backgroundColor: variant === 'filled' ? '#6750a4' : 'transparent',
-      color: variant === 'filled' ? '#ffffff' : variant === 'error' ? '#ba1a1a' : '#6750a4',
+      backgroundColor: variant === 'filled' ? '#24A8E0' : 'transparent',
+      color: variant === 'filled' ? '#ffffff' : variant === 'error' ? '#ba1a1a' : '#24A8E0',
       cursor: disabled ? 'not-allowed' : 'pointer',
       display: 'flex',
       alignItems: 'center',
@@ -744,3 +744,4 @@ if (typeof document !== 'undefined' && !document.querySelector('#md3-animations'
   `;
   document.head.appendChild(style);
 }
+

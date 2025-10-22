@@ -66,13 +66,13 @@ const LoadingSpinner = () => (
     <div style={{
       width: '40px',
       height: '40px',
-      border: '3px solid rgba(103, 80, 164, 0.2)',
-      borderTop: '3px solid rgb(103, 80, 164)',
+      border: '3px solid rgba(36, 168, 224, 0.2)',
+      borderTop: '3px solid rgb(36, 168, 224)',
       borderRadius: '50%',
       animation: 'spin 1s linear infinite'
     }}></div>
     <p style={{ 
-      color: 'rgb(103, 80, 164)', 
+      color: 'rgb(36, 168, 224)', 
       margin: 0,
       fontWeight: 500 
     }}>
@@ -125,7 +125,7 @@ class LazyLoadErrorBoundary extends React.Component {
             onClick={() => window.location.reload()}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#6750a4',
+              backgroundColor: '#24A8E0',
               color: 'white',
               border: 'none',
               borderRadius: '8px',

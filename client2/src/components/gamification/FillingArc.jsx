@@ -79,8 +79,8 @@ const FillingArc = ({
             {/* Gradient definition */}
             <defs>
               <linearGradient id="gradient-simple" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#6366f1" stopOpacity="1" />
-                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="1" />
+                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="100%" stopColor="#24A8E0" stopOpacity="1" />
               </linearGradient>
             </defs>
           </g>
@@ -154,14 +154,14 @@ const FillingArc = ({
             {/* Gradient and filter definitions */}
             <defs>
               <linearGradient id="gradient-detailed" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#6366f1" stopOpacity="1" />
-                <stop offset="50%" stopColor="#8b5cf6" stopOpacity="1" />
-                <stop offset="100%" stopColor="#a855f7" stopOpacity="1" />
+                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="50%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="100%" stopColor="#24A8E0" stopOpacity="1" />
               </linearGradient>
 
               <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feFlood floodColor="#6366f1" floodOpacity="0.6" result="glowColor"/>
+                <feFlood floodColor="#24A8E0" floodOpacity="0.6" result="glowColor"/>
                 <feComposite in="glowColor" in2="coloredBlur" operator="in" result="coloredGlow"/>
                 <feMerge>
                   <feMergeNode in="coloredGlow"/>
@@ -290,14 +290,14 @@ const FillingArc = ({
             {/* Gradient and filter definitions */}
             <defs>
               <linearGradient id="gradient-intricate" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#667eea" stopOpacity="1" />
-                <stop offset="33%" stopColor="#764ba2" stopOpacity="0.95" />
+                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="33%" stopColor="#24A8E0" stopOpacity="0.95" />
                 <stop offset="66%" stopColor="#f093fb" stopOpacity="0.9" />
                 <stop offset="100%" stopColor="#4facfe" stopOpacity="1" />
               </linearGradient>
 
               <linearGradient id="gradient-trail" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#667eea" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="#24A8E0" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#4facfe" stopOpacity="0.1" />
               </linearGradient>
 
@@ -498,3 +498,4 @@ const FillingArc = ({
 };
 
 export default FillingArc;
+

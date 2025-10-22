@@ -6,7 +6,7 @@ export { default as CollectionsPage } from './EnhancedCollectionsPage'; // Alias
 
 // Collection-related utilities and constants
 export const COLLECTION_COLORS = [
-  '#6750A4', '#7C4DFF', '#3F51B5', '#2196F3',
+  '#24A8E0', '#24A8E0', '#3F51B5', '#2196F3',
   '#00BCD4', '#009688', '#4CAF50', '#8BC34A',
   '#CDDC39', '#FFC107', '#FF9800', '#FF5722',
   '#F44336', '#E91E63', '#9C27B0', '#673AB7'
