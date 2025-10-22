@@ -47,9 +47,10 @@ const LibraryPage = () => {
   const [openMenuBookId, setOpenMenuBookId] = useState(null);
   const [useVirtualization, setUseVirtualization] = useState(false);
 
-  // Enable virtualization for large libraries (>50 books for better performance)
+  // Temporarily disable virtualization to avoid react-window grid crash
+  // TODO: Re-enable after stabilizing Grid sizing lifecycle
   useEffect(() => {
-    setUseVirtualization(books.length > 50);
+    setUseVirtualization(false);
   }, [books.length]);
 
   // Analytics data for welcome widget
@@ -343,7 +344,7 @@ const LibraryPage = () => {
           <span className="material-symbols-outlined md3-error-icon">error</span>
           <h3 className="md3-error-title">Oops! Something went wrong</h3>
           <p className="md3-error-message">{error}</p>
-          <button className="md3-button md3-button-filled" onClick={fetchBooks}>
+          <button className="md3-button md3-button-filled" onClick={() => fetchBooks(0)}>
             <span className="material-symbols-outlined">refresh</span>
             Try Again
           </button>

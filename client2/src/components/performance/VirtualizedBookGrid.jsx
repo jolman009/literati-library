@@ -60,9 +60,12 @@ const VirtualizedBookGrid = ({
     };
   }, [containerSize.width, viewMode]);
 
-  // Calculate grid dimensions
-  const { itemWidth, itemHeight, columnCount } = gridConfig;
-  const rowCount = Math.ceil(books.length / columnCount);
+  // Calculate grid dimensions with safety checks
+  const { itemWidth, itemHeight, columnCount } = gridConfig || {};
+  const safeColumnCount = Number.isFinite(columnCount) && columnCount > 0 ? columnCount : 1;
+  const safeItemWidth = Number.isFinite(itemWidth) && itemWidth > 0 ? itemWidth : 200;
+  const safeItemHeight = Number.isFinite(itemHeight) && itemHeight > 0 ? itemHeight : 320;
+  const rowCount = Math.ceil((Array.isArray(books) ? books.length : 0) / safeColumnCount);
 
   // Resize observer to track container size
   useEffect(() => {
@@ -323,13 +326,13 @@ const VirtualizedBookGrid = ({
       className={`virtualized-book-grid ${className}`}
       style={{ width: '100%', height: '100%' }}
     >
-      {containerSize.width > 0 && (
+      {containerSize.width > 0 && Number.isFinite(rowCount) && rowCount >= 0 && (
         <Grid
-          columnCount={columnCount}
-          columnWidth={itemWidth}
+          columnCount={safeColumnCount}
+          columnWidth={safeItemWidth}
           height={containerSize.height || 600}
           rowCount={rowCount}
-          rowHeight={itemHeight}
+          rowHeight={safeItemHeight}
           width={containerSize.width}
           overscanRowCount={2}
           overscanColumnCount={1}
