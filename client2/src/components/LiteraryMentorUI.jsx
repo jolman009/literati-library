@@ -97,16 +97,8 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
       
       let booksData = [];
-      if (Array.isArray(response.data)) {
-        booksData = response.data;
-      } else if (Array.isArray(response.data.items)) {
-        booksData = response.data.items;
-      } else if (Array.isArray(response.data.books)) {
-        booksData = response.data.books;
-      } else {
-        console.warn('Unexpected API response format:', response.data);
-        booksData = [];
-      }
+      const { items = [] } = response.data || {};
+      booksData = items;
       
       console.log(`Loaded ${booksData.length} books from API`);
       setUserBooks(booksData);

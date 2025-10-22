@@ -122,15 +122,8 @@ const openAtLocation = (note) => {
   const fetchBooks = async () => {
     try {
       const response = await API.get('/books', { params: { limit: 200, offset: 0 }, timeout: 30000 });
-      let booksData = [];
-      if (Array.isArray(response.data)) {
-        booksData = response.data;
-      } else if (Array.isArray(response.data.items)) {
-        booksData = response.data.items;
-      } else if (Array.isArray(response.data.books)) {
-        booksData = response.data.books;
-      }
-      setBooks(booksData);
+      const { items = [] } = response.data || {};
+      setBooks(items);
     } catch (error) {
       console.error('Error fetching books:', error);
       setBooks([]);

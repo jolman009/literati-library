@@ -90,21 +90,9 @@ const CollectionsPageContent = () => {
 
       const response = await API.get('/books', { params: { limit: 200, offset: 0 }, timeout: 30000 });
 
-      // Success - handle both direct array and structured response
-      let booksData = [];
-      if (Array.isArray(response.data)) {
-        // Direct array response (some environments)
-        booksData = response.data;
-      } else if (Array.isArray(response.data.items)) {
-        // New paginated response shape
-        booksData = response.data.items;
-      } else if (Array.isArray(response.data.books)) {
-        // Structured response with {books: Array} (most common)
-        booksData = response.data.books;
-      } else {
-        console.warn('Unexpected API response format:', response.data);
-        booksData = [];
-      }
+      // Strict items-only parsing
+      const { items = [] } = response.data || {};
+      const booksData = items;
       setBooks(booksData);
       setError(null);
       setServerStatus('online');

@@ -929,8 +929,8 @@ class LiteraryMentor {
       const books = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const notes = await API.get('/notes');
       
-      const br = books.data;
-      const bookCount = Array.isArray(br) ? br.length : (Array.isArray(br?.items) ? br.items.length : (Array.isArray(br?.books) ? br.books.length : 0));
+      const { items: bookItems = [] } = books.data || {};
+      const bookCount = bookItems.length;
       const noteCount = notes.data?.length || 0;
       
       const suggestions = [];
