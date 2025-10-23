@@ -124,9 +124,8 @@
 .premium-app-layout.dark .section-card,
 .premium-app-layout.dark .section-card-compact {
   background: linear-gradient(135deg,
-    rgb(var(--md-sys-color-surface-container-low)),
-    rgb(var(--md-sys-color-surface-container))
-  );
+    rgba(75, 192, 105, 0.4),
+    rgba(75, 192, 105, 0.3));
   border: 1px solid rgb(var(--md-sys-color-outline-variant));
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
