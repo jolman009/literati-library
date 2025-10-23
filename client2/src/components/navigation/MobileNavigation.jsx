@@ -101,7 +101,7 @@ const MobileNavigation = () => {
       ? (isDark ? '#4a4a4a' : '#e8e0f5')
       : 'transparent',
     color: active
-      ? (isDark ? '#bb86fc' : '#24A8E0')
+      ? (isDark ? '#ffffff' : '#24A8E0')
       : (isDark ? '#e0e0e0' : '#5f5f5f'),
     transition: 'all 0.2s ease',
     padding: '8px',

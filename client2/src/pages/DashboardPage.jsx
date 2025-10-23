@@ -234,7 +234,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
                 borderRadius: 6,
                 border: 'none',
                 background: 'transparent',
-                color: 'var(--md-sys-color-primary)',
+                color: "red",
                 textDecoration: 'underline',
                 cursor: 'pointer'
               }}
