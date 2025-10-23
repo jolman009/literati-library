@@ -10,8 +10,9 @@
 }
 
 .points-history-container.dark {
-  background: #1e293b;
+  background: rgba(75, 192, 105, 0.2);
   border-color: #334155;
+  padding-bottom: 16px;
 }
 
 .points-history-header {
@@ -161,16 +162,16 @@
 }
 
 .points-history-container.dark .points-history-item {
-  background: #0f172a;
+  background: rgba(75, 192, 105, 0.1)
 }
 
 .points-history-item:hover {
-  background: #f3f4f6;
+  background: rgba(75, 192, 105, 0.9);
   transform: translateX(2px);
 }
 
 .points-history-container.dark .points-history-item:hover {
-  background: #1e293b;
+  background: rgba(75, 192, 105, 0.3);
 }
 
 .points-history-item-icon {
@@ -230,15 +231,17 @@
 }
 
 .points-history-footer {
-  padding: 12px 20px;
+  padding: 12px 20px 12px 20px;
   border-top: 1px solid #e5e7eb;
   text-align: right;
   background: #f9fafb;
+
 }
 
 .points-history-container.dark .points-history-footer {
   border-top-color: #334155;
-  background: #0f172a;
+  background: rgba(75, 192, 105, 0.5);
+  border-radius: 12px;
 }
 
 .points-history-total {
@@ -260,7 +263,7 @@
 }
 
 .points-history-container.dark .loading-shimmer {
-  background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+  background: linear-gradient(90deg, rgba(75, 192, 105, 0.2) 0%, rgba(75, 192, 105, 0.5) 50%, rgba(75, 192, 105, 0.2) 100%);
   background-size: 200% 100%;
 }
 
