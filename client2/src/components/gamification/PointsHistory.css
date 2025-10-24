@@ -1,12 +1,17 @@
 /* src/components/gamification/PointsHistory.css */
 
 .points-history-container {
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface-container);
   border-radius: 16px;
   border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  box-shadow: var(--md-sys-elevation-level1);
+  transition: box-shadow var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  padding-bottom: 12px;
+}
+
+.points-history-container:hover {
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .points-history-container.dark {
@@ -155,7 +160,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: var(--md-sys-color-surface-container-low);
+  background: var(--md-sys-color-surface-container-high);
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: default;
@@ -223,11 +228,19 @@
   display: inline-block;
   padding: 4px 10px;
   background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%);
-  color: white;
+  color: var(--md-sys-color-on-primary);
   font-size: 13px;
   font-weight: 600;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
+  min-width: 44px;
+  text-align: center;
+}
+
+.points-badge:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
 }
 
 .points-history-footer {
