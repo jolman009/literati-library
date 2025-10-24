@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Exclude sensitive files from cloud backup -->
+        <exclude domain="sharedpref" path="user_preferences.xml"/>
+        <exclude domain="sharedpref" path="auth_tokens.xml"/>
+        <exclude domain="database" path="shelfquest.db"/>
+    </cloud-backup>
+    <device-transfer>
+        <!-- Include user data for device transfer -->
+        <include domain="sharedpref" path="reading_preferences.xml"/>
+        <include domain="file" path="books/"/>
+        <include domain="file" path="covers/"/>
+    </device-transfer>
+</data-extraction-rules>

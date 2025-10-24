@@ -1,0 +1,261 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    namespace 'org.shelfquest.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "org.shelfquest.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+
+        // Multidex support
+        multiDexEnabled true
+
+        // TWA Configuration
+        manifestPlaceholders = [
+            hostName: "shelfquest.org",
+            defaultUrl: "https://shelfquest.org",
+            launchUrl: "/",
+            appName: "ShelfQuest",
+            themeColor: "#6750A4",
+            backgroundColor: "#FFFBFE",
+            navigationBarColor: "#FFFBFE",
+            statusBarColor: "#6750A4",
+            enableNotification: "true",
+            enableLocationDelegation: "false",
+            enableSharing: "true",
+            enableDownloads: "true",
+            shareTarget: "true",
+            splashScreenFadeOutDuration: "300"
+        ]
+
+        // Build config fields
+        buildConfigField "String", "PWA_URL", "\"https://shelfquest.org\""
+        buildConfigField "String", "APP_VERSION", "\"${versionName}\""
+        buildConfigField "int", "BUILD_NUMBER", "${versionCode}"
+        buildConfigField "boolean", "DEBUG_MODE", "false"
+    }
+
+    // Signing configurations (must be before buildTypes)
+    signingConfigs {
+        release {
+            if (project.hasProperty('KEYSTORE_FILE')) {
+                storeFile file(project.property('KEYSTORE_FILE'))
+                storePassword project.property('KEYSTORE_PASSWORD')
+                keyAlias project.property('KEY_ALIAS')
+                keyPassword project.property('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Build config fields for release
+            buildConfigField "boolean", "DEBUG_MODE", "false"
+
+            // Optimize for release
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            zipAlignEnabled true
+
+            // Release signing configuration
+            if (project.hasProperty('KEYSTORE_FILE')) {
+                signingConfig signingConfigs.release
+            }
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+
+            // Build config fields for debug
+            buildConfigField "boolean", "DEBUG_MODE", "true"
+            buildConfigField "String", "PWA_URL", "\"http://localhost:3000\""
+
+            // Debug manifest placeholders
+            manifestPlaceholders = [
+                hostName: "localhost:3000",
+                defaultUrl: "http://localhost:3000",
+                launchUrl: "/",
+                appName: "ShelfQuest Debug",
+                themeColor: "#6750A4",
+                backgroundColor: "#FFFBFE",
+                navigationBarColor: "#FFFBFE",
+                statusBarColor: "#6750A4",
+                enableNotification: "true",
+                enableLocationDelegation: "false",
+                enableSharing: "true",
+                enableDownloads: "true",
+                shareTarget: "true",
+                splashScreenFadeOutDuration: "300"
+            ]
+        }
+
+        staging {
+            initWith debug
+            applicationIdSuffix ".staging"
+            buildConfigField "String", "PWA_URL", "\"https://your-staging-url.vercel.app\""
+            manifestPlaceholders = [
+                hostName: "your-staging-url.vercel.app",
+                defaultUrl: "https://your-staging-url.vercel.app",
+                launchUrl: "/",
+                appName: "ShelfQuest Staging",
+                themeColor: "#6750A4",
+                backgroundColor: "#FFFBFE",
+                navigationBarColor: "#FFFBFE",
+                statusBarColor: "#6750A4",
+                enableNotification: "true",
+                enableLocationDelegation: "false",
+                enableSharing: "true",
+                enableDownloads: "true",
+                shareTarget: "true",
+                splashScreenFadeOutDuration: "300"
+            ]
+        }
+    }
+
+    // Signing configurations moved to before buildTypes block
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        buildConfig true
+        viewBinding false
+        dataBinding false
+        compose false
+    }
+
+    // Disable lint for builds without Android SDK
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += [
+                '/META-INF/{AL2.0,LGPL2.1}',
+                '/META-INF/DEPENDENCIES',
+                '/META-INF/LICENSE',
+                '/META-INF/LICENSE.txt',
+                '/META-INF/NOTICE',
+                '/META-INF/NOTICE.txt'
+            ]
+        }
+    }
+}
+
+dependencies {
+    // AndroidX Core Libraries
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.activity:activity:1.8.1'
+    implementation 'androidx.fragment:fragment:1.6.2'
+
+    // Material Design Components
+    implementation 'com.google.android.material:material:1.10.0'
+
+    // Splash Screen API
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    // TWA Dependencies (Primary)
+    implementation 'androidx.browser:browser:1.7.0'
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+
+    // Multidex Support
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Lifecycle Components
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
+
+    // Security and Crypto
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // Work Manager (for background tasks)
+    implementation 'androidx.work:work-runtime:2.9.0'
+
+    // Notification Support
+    implementation 'androidx.core:core:1.12.0'
+
+    // File Provider
+    implementation 'androidx.core:core:1.12.0'
+
+    // Preference Management
+    implementation 'androidx.preference:preference:1.2.1'
+
+    // Navigation Component (if needed for complex navigation)
+    implementation 'androidx.navigation:navigation-fragment:2.7.5'
+    implementation 'androidx.navigation:navigation-ui:2.7.5'
+
+    // Kotlin Standard Library
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20'
+
+    // Coroutines (for async operations)
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+
+    // JSON Processing
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // HTTP Client (for API calls if needed)
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // Image Loading
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // Testing Dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.7.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+
+    // Android Testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.work:work-testing:2.9.0'
+
+    // UI Testing
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.5.1'
+
+    // Debug Dependencies
+    debugImplementation 'androidx.fragment:fragment-testing:1.6.2'
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<share-target xmlns:android="http://schemas.android.com/apk/res/android">
+    <data android:mimeType="application/pdf" />
+    <data android:mimeType="application/epub+zip" />
+    <data android:mimeType="text/plain" />
+    <data android:mimeType="image/*" />
+</share-target>
