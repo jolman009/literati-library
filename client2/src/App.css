@@ -22,8 +22,8 @@
   flex-direction: column;
   
   /* Material Design 3 Base Colors */
-  background-color: rgb(var(--md-sys-color-background, 255 251 255));
-  color: rgb(var(--md-sys-color-on-background, 28 27 31));
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
   
   /* Typography */
   font-family: var(--md-sys-typescale-body-large-font-family, "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif);
@@ -52,9 +52,9 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
-  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant, 202 196 208));
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   
   /* Elevation */
   box-shadow: var(--md-sys-elevation-level1, 
@@ -118,7 +118,7 @@
 }
 
 .book-card {
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  background-color: var(--md-sys-color-surface-container);
   border-radius: var(--md-sys-shape-corner-large, 16px);
   padding: var(--md-sys-spacing-4, 2px);
   
@@ -134,7 +134,7 @@
 }
 
 .book-card:hover {
-  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  background-color: var(--md-sys-color-surface-container-high);
   box-shadow: var(--md-sys-elevation-level2, 
     0px 1px 2px rgba(0, 0, 0, 0.3), 
     0px 2px 6px 2px rgba(0, 0, 0, 0.15)
@@ -142,7 +142,7 @@
 }
 
 .book-card:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
@@ -155,13 +155,13 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--md-sys-spacing-4, 16px) var(--md-sys-spacing-6, 24px);
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  background-color: var(--md-sys-color-surface-container);
 }
 
 .navigation-rail {
   width: 80px;
   min-height: 100vh;
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  background-color: var(--md-sys-color-surface-container);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -172,7 +172,7 @@
 .navigation-drawer {
   width: 280px;
   min-height: 100vh;
-  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  background-color: var(--md-sys-color-surface-container-low);
   display: flex;
   flex-direction: column;
   padding: var(--md-sys-spacing-6, 24px);
@@ -184,7 +184,7 @@
    =============================================== */
 
 .content-section {
-  background-color: rgb(var(--md-sys-color-surface, 255 251 255));
+  background-color: var(--md-sys-color-surface);
   border-radius: var(--md-sys-shape-corner-large, 16px);
   padding: var(--md-sys-spacing-6, 24px);
   margin-bottom: var(--md-sys-spacing-6, 24px);
@@ -199,10 +199,10 @@
 .hero-section {
   background: linear-gradient(
     135deg,
-    rgb(var(--md-sys-color-primary-container, 234 221 255)),
-    rgb(var(--md-sys-color-tertiary-container, 255 216 228))
+    var(--md-sys-color-primary-container),
+    var(--md-sys-color-tertiary-container)
   );
-  color: rgb(var(--md-sys-color-on-primary-container, 33 0 93));
+  color: var(--md-sys-color-on-primary-container);
   border-radius: var(--md-sys-shape-corner-extra-large, 24px);
   padding: var(--md-sys-spacing-8, 32px);
   text-align: center;
