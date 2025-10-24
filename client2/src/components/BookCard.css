@@ -507,7 +507,7 @@
   .book-card {
     break-inside: avoid;
     box-shadow: none;
-    border: 1px solid #ccc;
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
   
   .book-card:hover {

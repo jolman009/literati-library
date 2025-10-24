@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1rem;
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-surface-container-low);
   color: var(--md-sys-color-on-surface);
   border-bottom: 1px solid var(--md-sys-color-outline);
 }
@@ -176,26 +176,29 @@
 }
 
 /* User button */
-.premium-header-user-btn {
+.premium-header .premium-header-user-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
-  border: none;
-  background: none;
-  color: inherit;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
   border-radius: var(--md-sys-shape-corner-medium);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--md-sys-motion-duration-short3, 150ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+              box-shadow var(--md-sys-motion-duration-short3, 150ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  box-shadow: var(--md-sys-elevation-level0);
 }
 
-.premium-header-user-btn:hover,
-.premium-header-user-btn:focus {
+.premium-header .premium-header-user-btn:hover,
+.premium-header .premium-header-user-btn:focus {
   background-color: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 /* User avatar */
-.user-avatar {
+.premium-header .premium-header-user-btn .user-avatar {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -205,6 +208,8 @@
   justify-content: center;
   background-color: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 .avatar-image {
@@ -213,10 +218,11 @@
   object-fit: cover;
 }
 
-.avatar-initials {
+.premium-header .premium-header-user-btn .avatar-initials {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
+  color: var(--md-sys-color-on-primary);
 }
 
 .dropdown-icon {
@@ -230,13 +236,14 @@
   top: calc(100% + 0.5rem);
   right: 0;
   min-width: 12rem;
-  background-color: var(--md-sys-color-surface-container);
-  border: 1px solid var(--md-sys-color-outline);
+  background-color: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: var(--md-sys-shape-corner-medium);
-  box-shadow: var(--md-sys-elevation-2);
+  box-shadow: var(--md-sys-elevation-level2);
   z-index: 1000;
   overflow: hidden;
   animation: dropdownSlideIn 0.2s ease;
+  backdrop-filter: none;
 }
 
 @keyframes dropdownSlideIn {
@@ -292,7 +299,7 @@
   width: 100%;
   padding: 0.75rem 1rem;
   border: none;
-  background: none;
+  background: transparent;
   color: var(--md-sys-color-on-surface);
   font-size: 0.875rem;
   text-align: left;
@@ -302,7 +309,8 @@
 
 .dropdown-item:hover,
 .dropdown-item:focus {
-  background-color: var(--md-sys-color-surface-container-highest);
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 .dropdown-item .material-symbols-outlined {

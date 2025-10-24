@@ -397,7 +397,7 @@
   .book-card,
   .content-section {
     box-shadow: none;
-    border: 1px solid #ccc;
+    border: 1px solid var(--md-sys-color-outline-variant);
     break-inside: avoid;
   }
 }
@@ -407,8 +407,8 @@
       position: fixed;
       bottom: 20px; /* Example starting position */
       right: 20px; /* Example starting position */
-      background-color: #fff;
-      border: 1px solid #ccc;
+      background-color: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
       padding: 10px;
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
       z-index: 1000; /* Ensures it's above other elements */
@@ -434,9 +434,7 @@
 [data-theme="light"] .upload-main-text,
 .light .upload-main-text,
 :root:not([data-theme="dark"]) .upload-main-text,
-.upload-main-text {
-  color: #1a202c !important; /* Absolute dark color for light mode */
-}
+.upload-main-text { color: var(--md-sys-color-on-surface) !important; }
 
 [data-theme="dark"] .upload-main-text,
 .dark .upload-main-text {

@@ -136,7 +136,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface-container-high);
   padding: 8px 16px;
   border-radius: 24px;
   width: fit-content;
@@ -204,30 +204,44 @@
   gap: 10px;
   flex-wrap: wrap;
   padding: 14px 16px;
-  background: var(--md-sys-color-surface);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary-container) 24%, var(--md-sys-color-surface-container-high)) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 18%, var(--md-sys-color-surface-container)) 100%
+  );
   border-radius: 16px;
   font-size: 0.925rem;
   color: var(--md-sys-color-on-surface);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  box-shadow: var(--md-sys-elevation-level1);
+  transition: box-shadow 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+              background 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .current-book-info:hover {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary-container) 30%, var(--md-sys-color-surface-container-high)) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 24%, var(--md-sys-color-surface-container)) 100%
+  );
   border-color: var(--md-sys-color-outline);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .mentor-preview-card.dark .current-book-info {
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-container)) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary) 10%, var(--md-sys-color-surface-container-high)) 100%
+  );
+  box-shadow: var(--md-sys-elevation-level1);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .mentor-preview-card.dark .current-book-info:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(187, 134, 252, 0.3);
-  box-shadow: 0 2px 8px rgba(187, 134, 252, 0.15);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 14%, var(--md-sys-color-surface-container)) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary) 16%, var(--md-sys-color-surface-container-high)) 100%
+  );
+  border-color: var(--md-sys-color-outline);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .book-icon {
@@ -390,8 +404,8 @@
 }
 
 .action-button.view-full {
-  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-primary));
-  color: var(--md-sys-color-on-tertiary);
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  color: var(--md-sys-color-on-primary);
   margin-left: auto;
   font-weight: 700;
   box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
