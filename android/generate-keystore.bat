@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM =============================================================================
-REM LITERATI ANDROID KEYSTORE GENERATION SCRIPT (WINDOWS)
+REM SHELFQUEST ANDROID KEYSTORE GENERATION SCRIPT (WINDOWS)
 REM =============================================================================
 REM This batch script generates a keystore for Android app signing and extracts
 REM the SHA256 fingerprint for Digital Asset Links verification.
@@ -10,8 +10,7 @@ REM
 REM Usage: generate-keystore.bat
 REM
 REM Prerequisites:
-REM - Java Development Kit (JDK) 11 or higher
-REM - keytool.exe (part of JDK, should be in PATH)
+REM - Android Studio with JDK
 REM
 REM The script will:
 REM 1. Generate a new keystore for app signing
@@ -21,8 +20,15 @@ REM 4. Create assetlinks.json for web verification
 REM =============================================================================
 
 echo ========================================
-echo   Literati Android Keystore Generator
+echo   ShelfQuest Android Keystore Generator
 echo ========================================
+echo.
+
+REM Set JAVA_HOME to Android Studio's JDK
+set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+
+echo Using Java from: %JAVA_HOME%
 echo.
 
 REM Configuration
@@ -35,9 +41,10 @@ set APP_PACKAGE=org.shelfquest.app
 set PWA_URL=https://shelfquest.org
 
 REM Check if Java/keytool is available
-keytool -help >nul 2>&1
+"%JAVA_HOME%\bin\keytool.exe" -help >nul 2>&1
 if errorlevel 1 (
-    echo Error: keytool not found. Please install Java Development Kit ^(JDK^) and ensure it's in your PATH.
+    echo Error: keytool not found at %JAVA_HOME%\bin\keytool.exe
+    echo Please ensure Android Studio is installed.
     pause
     exit /b 1
 )
@@ -96,7 +103,7 @@ echo.
 
 REM Generate the keystore
 echo Generating keystore...
-keytool -genkeypair -alias "%KEY_ALIAS%" -keyalg "%ALGORITHM%" -keysize %KEY_SIZE% -validity %VALIDITY_DAYS% -keystore "%KEYSTORE_NAME%" -storepass "%KEYSTORE_PASSWORD%" -keypass "%KEY_PASSWORD%" -dname "%DISTINGUISHED_NAME%"
+"%JAVA_HOME%\bin\keytool.exe" -genkeypair -alias "%KEY_ALIAS%" -keyalg "%ALGORITHM%" -keysize %KEY_SIZE% -validity %VALIDITY_DAYS% -keystore "%KEYSTORE_NAME%" -storepass "%KEYSTORE_PASSWORD%" -keypass "%KEY_PASSWORD%" -dname "%DISTINGUISHED_NAME%"
 
 if errorlevel 1 (
     echo Failed to generate keystore.
@@ -109,7 +116,7 @@ echo Keystore generated successfully!
 REM Extract SHA256 fingerprint
 echo.
 echo Extracting SHA256 fingerprint...
-keytool -list -v -keystore "%KEYSTORE_NAME%" -alias "%KEY_ALIAS%" -storepass "%KEYSTORE_PASSWORD%" > keystore_info.txt
+"%JAVA_HOME%\bin\keytool.exe" -list -v -keystore "%KEYSTORE_NAME%" -alias "%KEY_ALIAS%" -storepass "%KEYSTORE_PASSWORD%" > keystore_info.txt
 
 REM Parse SHA256 fingerprint from output
 for /f "tokens=2 delims= " %%a in ('findstr "SHA256:" keystore_info.txt') do set SHA256_FINGERPRINT=%%a

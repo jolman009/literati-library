@@ -270,19 +270,30 @@
 -dontwarn sun.misc.Unsafe
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 
+# Google Tink optional dependencies (used by androidx.security:security-crypto)
+-dontwarn com.google.api.client.http.GenericUrl
+-dontwarn com.google.api.client.http.HttpHeaders
+-dontwarn com.google.api.client.http.HttpRequest
+-dontwarn com.google.api.client.http.HttpRequestFactory
+-dontwarn com.google.api.client.http.HttpResponse
+-dontwarn com.google.api.client.http.HttpTransport
+-dontwarn com.google.api.client.http.javanet.NetHttpTransport$Builder
+-dontwarn com.google.api.client.http.javanet.NetHttpTransport
+-dontwarn org.joda.time.Instant
+
 # =============================================================================
 # ADDITIONAL OPTIMIZATION
 # =============================================================================
 
-# Allow aggressive optimization
+# Moderate optimization (less aggressive to prevent R8 failures)
 -allowaccessmodification
--mergeinterfacesaggressively
--overloadaggressively
+# -mergeinterfacesaggressively (disabled - can cause issues with TWA)
+# -overloadaggressively (disabled - can cause issues with reflection)
 -repackageclasses ''
 
-# Optimize for size
--optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
--optimizationpasses 5
+# Optimize for size with safer settings
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-optimizationpasses 3
 
 # =============================================================================
 # DEBUG INFORMATION

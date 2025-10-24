@@ -11,12 +11,22 @@ set PATH=%JAVA_HOME%\bin;%PATH%
 echo Using Java from: %JAVA_HOME%
 echo.
 
+echo Cleaning previous builds and stopping Gradle daemon...
+call gradlew --stop
+timeout /t 2 /nobreak >nul
+
+echo.
+echo Cleaning build artifacts...
+call gradlew clean
+
+echo.
 echo Building Android App Bundle (AAB)...
 echo This is the file you'll upload to Play Store
+echo This may take 5-10 minutes...
 echo.
 
-REM Build AAB
-gradlew.bat bundleRelease
+REM Build AAB with updated optimization settings
+call gradlew bundleRelease --no-daemon
 
 if errorlevel 1 (
     echo.
