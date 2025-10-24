@@ -84,11 +84,11 @@
 }
 
 .app-footer {
-  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface-variant);
   padding: var(--md-sys-spacing-6, 24px);
   text-align: center;
-  border-top: 1px solid rgb(var(--md-sys-color-outline-variant, 202 196 208));
+  border-top: 1px solid var(--md-sys-color-outline-variant);
   
   /* Typography */
   font-size: var(--md-sys-typescale-body-small-size, 0.75rem);
@@ -320,7 +320,7 @@
 
 /* Focus styles */
 .focusable:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
   border-radius: var(--md-sys-shape-corner-small, 8px);
 }
@@ -331,7 +331,7 @@
   .app-footer,
   .book-card,
   .content-section {
-    border: 1px solid rgb(var(--md-sys-color-outline, 121 116 126));
+    border: 1px solid var(--md-sys-color-outline);
   }
 }
 
@@ -353,26 +353,26 @@
 
 @media (prefers-color-scheme: dark) {
   #root {
-    background-color: rgb(var(--md-sys-color-background, 16 14 19));
-    color: rgb(var(--md-sys-color-on-background, 230 225 229));
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
   }
   
   .app-header {
-    background-color: rgb(var(--md-sys-color-surface-container, 37 35 42));
-    color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+    background-color: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
   }
   
   .app-footer {
-    background-color: rgb(var(--md-sys-color-surface-container-low, 28 27 31));
-    color: rgb(var(--md-sys-color-on-surface-variant, 202 196 208));
+    background-color: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface-variant);
   }
   
   .book-card {
-    background-color: rgb(var(--md-sys-color-surface-container, 37 35 42));
+    background-color: var(--md-sys-color-surface-container);
   }
   
   .book-card:hover {
-    background-color: rgb(var(--md-sys-color-surface-container-high, 54 52 59));
+    background-color: var(--md-sys-color-surface-container-high);
   }
 }
 

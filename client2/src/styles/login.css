@@ -9,19 +9,15 @@
 
 .login-background {
   min-height: 100vh;
-  background-color: #fafafa;
+  background-color: var(--md-sys-color-surface);
   position: relative;
   overflow: hidden;
 }
 
-[data-theme="dark"] .login-background {
-  background-color: #1c1b1f;
-}
+[data-theme="dark"] .login-background { background-color: var(--md-sys-color-surface); }
 
 @media (prefers-color-scheme: dark) {
-  .login-background {
-    background-color: #1c1b1f;
-  }
+  .login-background { background-color: var(--md-sys-color-surface); }
 }
 
 /* Decorative Background Elements */
@@ -146,10 +142,10 @@
   margin-bottom: 1.5rem;
   border-radius: 1.5rem;
   background: linear-gradient(135deg,
-    rgba(36, 168, 224, 0.15) 0%,
-    rgba(36, 168, 224, 0.05) 100%
+    color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 100%
   );
-  border: 1px solid rgba(36, 168, 224, 0.1);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
   transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -162,51 +158,39 @@
 }
 
 .logo-svg {
-  color: #24A8E0;
+  color: var(--md-sys-color-primary);
 }
 
-[data-theme="dark"] .logo-svg {
-  color: #d0bcff;
-}
+[data-theme="dark"] .logo-svg { color: var(--md-sys-color-secondary); }
 
 @media (prefers-color-scheme: dark) {
-  .logo-svg {
-    color: #d0bcff;
-  }
+  .logo-svg { color: var(--md-sys-color-secondary); }
 }
 
 .brand-title {
   font-size: 2.25rem;
   font-weight: 700;
-  color: #1c1b1f;
+  color: var(--md-sys-color-on-surface);
   margin-bottom: 0.5rem;
   letter-spacing: -0.025em;
 }
 
-[data-theme="dark"] .brand-title {
-  color: #e6e1e5;
-}
+[data-theme="dark"] .brand-title { color: var(--md-sys-color-on-surface); }
 
 @media (prefers-color-scheme: dark) {
-  .brand-title {
-    color: #e6e1e5;
-  }
+  .brand-title { color: var(--md-sys-color-on-surface); }
 }
 
 .brand-subtitle {
   font-size: 1.125rem;
-  color: #49454f;
+  color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
 }
 
-[data-theme="dark"] .brand-subtitle {
-  color: #b0b0b0;
-}
+[data-theme="dark"] .brand-subtitle { color: var(--md-sys-color-on-surface-variant); }
 
 @media (prefers-color-scheme: dark) {
-  .brand-subtitle {
-    color: #b0b0b0;
-  }
+  .brand-subtitle { color: var(--md-sys-color-on-surface-variant); }
 }
 
 /* ================================================
@@ -220,8 +204,8 @@
 .login-card-enhanced {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(121, 116, 126, 0.2);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 80%, transparent);
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 4px 16px rgba(0, 0, 0, 0.05),
@@ -230,8 +214,8 @@
 }
 
 [data-theme="dark"] .login-card-enhanced {
-  background: rgba(28, 27, 31, 0.9);
-  border: 1px solid rgba(147, 144, 153, 0.2);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     0 4px 16px rgba(0, 0, 0, 0.2),
@@ -240,8 +224,8 @@
 
 @media (prefers-color-scheme: dark) {
   .login-card-enhanced {
-    background: rgba(28, 27, 31, 0.9);
-    border: 1px solid rgba(147, 144, 153, 0.2);
+    background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
+    border: 1px solid var(--md-sys-color-outline-variant);
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.3),
       0 4px 16px rgba(0, 0, 0, 0.2),
@@ -289,32 +273,24 @@
 .login-form-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1c1b1f;
+  color: var(--md-sys-color-on-surface);
   margin-bottom: 0.5rem;
 }
 
-[data-theme="dark"] .login-form-title {
-  color: #e6e1e5;
-}
+[data-theme="dark"] .login-form-title { color: var(--md-sys-color-on-surface); }
 
 @media (prefers-color-scheme: dark) {
-  .login-form-title {
-    color: #e6e1e5;
-  }
+  .login-form-title { color: var(--md-sys-color-on-surface); }
 }
 
 .login-form-subtitle {
-  color: #49454f;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
-[data-theme="dark"] .login-form-subtitle {
-  color: #b0b0b0;
-}
+[data-theme="dark"] .login-form-subtitle { color: var(--md-sys-color-on-surface-variant); }
 
 @media (prefers-color-scheme: dark) {
-  .login-form-subtitle {
-    color: #b0b0b0;
-  }
+  .login-form-subtitle { color: var(--md-sys-color-on-surface-variant); }
 }
 
 /* ================================================
@@ -327,27 +303,23 @@
   border-radius: 0.75rem;
   animation: slideInUp 0.3s cubic-bezier(0.2, 0, 0, 1);
   background: linear-gradient(135deg,
-    rgba(186, 26, 26, 0.2) 0%,
-    rgba(186, 26, 26, 0.1) 100%
+    color-mix(in srgb, var(--md-sys-color-error) 20%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-error) 10%, transparent) 100%
   );
-  border-left: 4px solid #ba1a1a;
+  border-left: 4px solid var(--md-sys-color-error);
 }
 
 .error-text {
   font-size: 0.875rem;
-  color: #ba1a1a;
+  color: var(--md-sys-color-error);
   text-align: center;
   font-weight: 500;
 }
 
-[data-theme="dark"] .error-text {
-  color: #ffb4ab;
-}
+[data-theme="dark"] .error-text { color: var(--md-sys-color-error); }
 
 @media (prefers-color-scheme: dark) {
-  .error-text {
-    color: #ffb4ab;
-  }
+  .error-text { color: var(--md-sys-color-error); }
 }
 
 /* ================================================
@@ -380,10 +352,7 @@
   height: 3.5rem;
   font-size: 1.125rem;
   font-weight: 600;
-  background: linear-gradient(135deg,
-    #24A8E0 0%,
-    rgba(36, 168, 224, 0.9) 100%
-  );
+  background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent) 100%);
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
@@ -399,7 +368,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.2),
+    color-mix(in srgb, var(--md-sys-color-on-primary) 20%, transparent),
     transparent
   );
   transition: left 0.5s;
@@ -412,8 +381,8 @@
 .login-button-primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 8px 24px rgba(36, 168, 224, 0.4),
-    0 4px 12px rgba(36, 168, 224, 0.2);
+    0 8px 24px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent),
+    0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
 }
 
 .login-button-primary:active {
@@ -428,8 +397,8 @@
 }
 
 .loading-spinner {
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid #ffffff;
+  border: 2px solid color-mix(in srgb, var(--md-sys-color-on-primary) 30%, transparent);
+  border-top: 2px solid var(--md-sys-color-on-primary);
   border-radius: 50%;
   width: 20px;
   height: 20px;
@@ -464,7 +433,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(121, 116, 126, 0.5),
+    color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent),
     transparent
   );
 }
@@ -473,7 +442,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(147, 144, 153, 0.5),
+    color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent),
     transparent
   );
 }
@@ -483,7 +452,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(147, 144, 153, 0.5),
+      color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent),
       transparent
     );
   }
@@ -498,21 +467,15 @@
 
 .divider-text {
   padding: 0 1rem;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #49454f;
+  background-color: color-mix(in srgb, var(--md-sys-color-surface) 80%, transparent);
+  color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
 }
 
-[data-theme="dark"] .divider-text {
-  background-color: rgba(28, 27, 31, 0.9);
-  color: #b0b0b0;
-}
+[data-theme="dark"] .divider-text { background-color: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent); color: var(--md-sys-color-on-surface-variant); }
 
 @media (prefers-color-scheme: dark) {
-  .divider-text {
-    background-color: rgba(28, 27, 31, 0.9);
-    color: #b0b0b0;
-  }
+  .divider-text { background-color: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent); color: var(--md-sys-color-on-surface-variant); }
 }
 
 /* ================================================
@@ -555,35 +518,27 @@
 
 .login-footer-text {
   font-size: 0.875rem;
-  color: #49454f;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
-[data-theme="dark"] .login-footer-text {
-  color: #b0b0b0;
-}
+[data-theme="dark"] .login-footer-text { color: var(--md-sys-color-on-surface-variant); }
 
 @media (prefers-color-scheme: dark) {
-  .login-footer-text {
-    color: #b0b0b0;
-  }
+  .login-footer-text { color: var(--md-sys-color-on-surface-variant); }
 }
 
 .footer-link {
-  color: #24A8E0;
+  color: var(--md-sys-color-primary);
   font-weight: 500;
   position: relative;
   transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
   text-decoration: none;
 }
 
-[data-theme="dark"] .footer-link {
-  color: #d0bcff;
-}
+[data-theme="dark"] .footer-link { color: var(--md-sys-color-secondary); }
 
 @media (prefers-color-scheme: dark) {
-  .footer-link {
-    color: #d0bcff;
-  }
+  .footer-link { color: var(--md-sys-color-secondary); }
 }
 
 .footer-link::after {
@@ -593,18 +548,14 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: #24A8E0;
+  background: var(--md-sys-color-primary);
   transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
 }
 
-[data-theme="dark"] .footer-link::after {
-  background: #d0bcff;
-}
+[data-theme="dark"] .footer-link::after { background: var(--md-sys-color-secondary); }
 
 @media (prefers-color-scheme: dark) {
-  .footer-link::after {
-    background: #d0bcff;
-  }
+  .footer-link::after { background: var(--md-sys-color-secondary); }
 }
 
 .footer-link:hover::after {
@@ -715,19 +666,17 @@
 
 @media (prefers-contrast: high) {
   .login-card-enhanced {
-    border: 2px solid #79747e;
-    background: #ffffff;
+    border: 2px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
   [data-theme="dark"] .login-card-enhanced {
-    border: 2px solid #938f99;
-    background: #1c1b1f;
+    border: 2px solid var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface);
   }
 
-  .logo-container {
-    border: 2px solid #24A8E0;
-  }
+  .logo-container { border: 2px solid var(--md-sys-color-primary); }
 }
 

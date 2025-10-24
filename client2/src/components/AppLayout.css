@@ -24,7 +24,7 @@
 
 /* Dark mode support for main app background */
 .premium-app-layout.dark {
-  background: #0f172a;
+  background: var(--md-sys-color-background);
 }
 
 .premium-app-layout::before {
@@ -35,9 +35,9 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--md-sys-color-tertiary) 15%, transparent) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, color-mix(in srgb, var(--md-sys-color-secondary) 15%, transparent) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -55,9 +55,9 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--md-sys-color-surface) 95%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent) 100%);
   backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 1px 0 0 rgba(255, 255, 255, 0.5);
   padding: 24px 20px;
   overflow: visible;
@@ -76,7 +76,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(103, 126, 234, 0.05) 0%, rgba(36, 168, 224, 0.05) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 5%, transparent) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -93,7 +93,7 @@
   gap: 12px;
   margin-bottom: 32px;
   padding: 16px;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
   border-radius: 16px;
   color: white;
   position: relative;
@@ -107,7 +107,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent), transparent);
   pointer-events: none;
 }
 
@@ -222,7 +222,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 32px;
-  background: linear-gradient(180deg, #ffffff, rgba(255,255,255,0.8));
+  background: var(--md-sys-color-primary);
   border-radius: 2px 0 0 2px;
   box-shadow: 0 0 8px rgba(255,255,255,0.6);
 }
@@ -249,8 +249,8 @@
 }
 
 .quick-action-btn.primary {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  color: var(--md-sys-color-on-primary);
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
 
@@ -260,13 +260,13 @@
 }
 
 .quick-action-btn.secondary {
-  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-  color: #64748b;
-  border: 1px solid #cbd5e1;
+  background: linear-gradient(135deg, var(--md-sys-color-surface-variant), var(--md-sys-color-surface-container-low));
+  color: var(--md-sys-color-on-surface-variant);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .quick-action-btn.secondary:hover {
-  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  background: linear-gradient(135deg, var(--md-sys-color-surface-container-low), var(--md-sys-color-surface-variant));
   transform: translateY(-1px);
 }
 
@@ -276,11 +276,11 @@
 
 .premium-header {
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.9) 0%, 
-    rgba(248, 250, 252, 0.9) 100%
+    color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent) 0%, 
+    color-mix(in srgb, var(--md-sys-color-surface) 85%, transparent) 100%
   );
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -311,7 +311,7 @@
   font-size: 24px;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(135deg, #1e293b, #475569);
+  background: linear-gradient(135deg, var(--md-sys-color-on-surface), var(--md-sys-color-on-surface-variant));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -319,7 +319,7 @@
 
 .page-subtitle {
   font-size: 14px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   margin: 2px 0 0 0;
   font-weight: 500;
 }
@@ -343,9 +343,9 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 70%, transparent);
   border-radius: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent);
   backdrop-filter: blur(10px);
 }
 
@@ -356,7 +356,7 @@
 .stat-value {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Header Action Buttons */
@@ -365,9 +365,9 @@
   height: 44px;
   border: none;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 70%, transparent);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent);
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -376,7 +376,7 @@
 }
 
 .header-action-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -395,16 +395,16 @@
   align-items: center;
   gap: 12px;
   padding: 8px 16px 8px 8px;
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 70%, transparent);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent);
   border-radius: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .user-avatar-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -413,7 +413,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -438,13 +438,13 @@
 .user-name {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--md-sys-color-on-surface);
   line-height: 1.2;
 }
 
 .user-status {
   font-size: 12px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
 }
 
@@ -455,7 +455,7 @@
   right: 0;
   margin-top: 8px;
   width: 280px;
-  background: white;
+  background: var(--md-sys-color-surface);
   border-radius: 16px;
   box-shadow: 
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
@@ -468,7 +468,7 @@
 
 .dropdown-header {
   padding: 20px;
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  background: linear-gradient(135deg, var(--md-sys-color-surface), var(--md-sys-color-surface-variant));
   display: flex;
   align-items: center;
   gap: 16px;
@@ -477,24 +477,24 @@
 .user-name-full {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--md-sys-color-on-surface);
 }
 
 .user-email {
   font-size: 14px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .dropdown-divider {
   height: 1px;
-  background: #e2e8f0;
+  background: var(--md-sys-color-outline-variant);
   margin: 0;
 }
 
 .dropdown-actions {
   padding: 8px;
 }
-
+  
 .dropdown-item {
   width: 100%;
   padding: 12px 16px;
@@ -508,23 +508,18 @@
   gap: 12px;
   font-size: 14px;
   font-weight: 500;
-  color: #475569;
+  color: var(--md-sys-color-on-surface-variant);
   transition: all 0.2s ease;
 }
 
 .dropdown-item:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface);
 }
 
-.dropdown-item.logout {
-  color: #dc2626;
-}
+.dropdown-item.logout { color: var(--md-sys-color-error); }
 
-.dropdown-item.logout:hover {
-  background: #fef2f2;
-  color: #dc2626;
-}
+.dropdown-item.logout:hover { background: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); }
 
 /* ============================================================================
    CONTENT AREA
@@ -593,13 +588,13 @@
   padding: 8px;
   border-radius: 12px;
   text-decoration: none;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   transition: all 0.3s ease;
 }
 
 .mobile-nav-item.active {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-  color: #24A8E0;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent), color-mix(in srgb, var(--md-sys-color-tertiary) 14%, transparent));
+  color: var(--md-sys-color-on-secondary-container);
 }
 
 .mobile-nav-icon {
@@ -864,34 +859,34 @@
 
 .premium-app-layout.dark .premium-header {
   background: linear-gradient(135deg, 
-    rgba(30, 41, 59, 0.9) 0%, 
-    rgba(15, 23, 42, 0.9) 100%
+    var(--md-sys-color-surface-container) 0%, 
+    var(--md-sys-color-surface-container-high) 100%
   );
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: var(--md-sys-color-outline-variant);
 }
 
 .premium-app-layout.dark .nav-item {
-  color: #cbd5e1;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .premium-app-layout.dark .nav-item:hover {
-  color: #e2e8f0;
+  color: var(--md-sys-color-on-surface);
 }
 
 .premium-app-layout.dark .page-title {
-  background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+  background: linear-gradient(135deg, var(--md-sys-color-on-surface), var(--md-sys-color-on-surface-variant));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .premium-app-layout.dark .page-subtitle {
-  color: #94a3b8;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .dropdown-about {
   padding: 20px;
-  background: linear-gradient(135deg, #f8fafc, #e0f2fe);
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, var(--md-sys-color-surface), var(--md-sys-color-surface-variant));
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .literati-definition {
@@ -901,9 +896,9 @@
 .definition-title {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--md-sys-color-on-surface);
   margin: 0 0 4px 0;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -911,7 +906,7 @@
 
 .definition-pronunciation {
   font-size: 12px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   margin: 0 0 8px 0;
   font-style: italic;
 }
@@ -919,14 +914,14 @@
 .definition-text {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--md-sys-color-on-surface);
   margin: 0 0 4px 0;
   font-style: italic;
 }
 
 .definition-subtext {
   font-size: 12px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   margin: 0;
   line-height: 1.4;
 }
@@ -934,7 +929,7 @@
 /* Enhanced user status */
 .user-status {
   font-size: 12px;
-  color: #24A8E0;
+  color: var(--md-sys-color-primary);
   font-weight: 600;
   font-style: italic;
 }
@@ -964,7 +959,7 @@
   font-weight: 700;
   margin: 0;
   line-height: 1.2;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -972,7 +967,7 @@
 
 .brand-tagline {
   font-size: 12px;
-  color: #64748b;
+  color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
   margin: 0;
   line-height: 1;

@@ -25,8 +25,12 @@
 
 /* Light mode gradient background for welcome section */
 :root:not([data-theme="dark"]) .welcome-section {
-  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
-  border: 1px solid #9ca3af;
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-variant) 0%,
+    var(--md-sys-color-surface-container-high) 50%,
+    var(--md-sys-color-surface-variant) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -37,28 +41,30 @@
     var(--md-sys-color-surface-container-high) 50%,
     var(--md-sys-color-surface-container) 100%
   );
-  border: 7px solid #d1d5db;
-  box-shadow:
-    0 4px 12px rgba(75, 190, 105, 0.3),
-    0 1px 3px rgba(70, 190, 105, 0.8);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level2);
 }
 
 /* Light mode darker background for welcome header */
 :root:not([data-theme="dark"]) .welcome-header {
-  background: linear-gradient(135deg, #4b5563 0%, #6b7280 50%, #4b5563 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* Ensure all text in welcome header is white in light mode */
 :root:not([data-theme="dark"]) .welcome-title,
 :root:not([data-theme="dark"]) .welcome-subtitle {
-  color: white;
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* Light mode gradient background for progress section */
 :root:not([data-theme="dark"]) .progress-section {
-  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
-  border: 1px solid #9ca3af;
+  background: linear-gradient(135deg,
+    var(--md-sys-color-surface-variant) 0%,
+    var(--md-sys-color-surface-container) 50%,
+    var(--md-sys-color-surface-variant) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -100,14 +106,9 @@
 /* Dark mode section cards */
 [data-theme="dark"] .section-card,
 [data-theme="dark"] .section-card-compact {
-  background: linear-gradient(135deg,
-    rgba(75, 192, 105, 0.5) 45%,
-    rgba(75, 192, 105, 0.9) 100%
-  );
-  border: 2px solid rgba(75, 192, 105, 0.8);
-  box-shadow:
-    0 2px 1px rgba(75, 192, 105, 0.9),
-    0 2px 2px rgba(75, 192, 105, .6);
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level1);
 }
 
 /* Compact tweaks for existing Currently Reading markup (fallback) */
@@ -115,10 +116,10 @@
 #dashboard-currently-reading .book-card { border-radius: 12px; overflow: hidden; position: relative; }
 /* Overlay texts at the bottom of the cover */
 #dashboard-currently-reading .book-title,
-#dashboard-currently-reading .book-author { position: absolute; left: 0; right: 0; color: #fff; padding: 0 12px; text-shadow: 0 2px 8px rgba(0,0,0,.35); }
+#dashboard-currently-reading .book-author { position: absolute; left: 0; right: 0; color: var(--md-sys-color-on-surface); padding: 0 12px; text-shadow: 0 2px 8px rgba(0,0,0,.35); }
 #dashboard-currently-reading .book-title { bottom: 28px; font-size: .95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #dashboard-currently-reading .book-author { bottom: 8px; font-size: .8rem; opacity: .95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#dashboard-currently-reading .book-card::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(75, 192, 105, 0.1) 95%); pointer-events: none; }
+#dashboard-currently-reading .book-card::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 95%); pointer-events: none; }
 #dashboard-currently-reading .progress-bar-container, 
 #dashboard-currently-reading .progress-text { display: none; }
 
@@ -203,9 +204,9 @@
 
 .action-button-secondary {
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--md-sys-color-on-primary-container) 10%, transparent);
   color: var(--md-sys-color-on-primary-container);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-on-primary-container) 20%, transparent);
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
@@ -215,7 +216,7 @@
 }
 
 .action-button-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: color-mix(in srgb, var(--md-sys-color-on-primary-container) 20%, transparent);
   transform: translateY(-2px);
 }
 
@@ -305,8 +306,8 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 2px solid rgba(99, 102, 241, 0.15);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 70%, transparent);
+  border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent);
   border-radius: 20px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 280px;
@@ -316,15 +317,15 @@
 
 .stat-arc-card:hover {
   transform: translateY(-4px) scale(1.02);
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12),
               inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 /* Dark mode card background */
 [data-theme="dark"] .stat-arc-card {
-  background: rgba(30, 30, 35, 0.9);
+  background: color-mix(in srgb, var(--md-sys-color-surface) 90%, transparent);
   border: 2px solid rgba(99, 102, 241, 0.25);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3),
               inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -466,18 +467,18 @@
 
 /* Section Cards */
 .section-card {
-  background: rgba(75, 192, 105, 0.);
+  background: var(--md-sys-color-surface-container);
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid rgba(75, 192, 105, 0.9);
+  border: 1px solid var(--md-sys-color-outline-variant);
   margin-bottom: 32px;
 }
 
 .section-card-compact {
-  background: rgba(75, 192, 105, 0.9);
+  background: var(--md-sys-color-surface-container);
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid rgba(75, 192, 105, 0.9);
+  border: 1px solid var(--md-sys-color-outline-variant);
   margin-bottom: 32px;
 }
 
@@ -504,8 +505,8 @@
 
 .achievement-tag {
   padding: 8px 16px;
-  background: rgba(75, 192, 105, 0.9);
-  border: 1px solid rgba(75, 192, 105, 0.9);
+  background: var(--md-sys-color-tertiary-container);
+  border: 1px solid var(--md-sys-color-tertiary);
   color: var(--md-sys-color-on-tertiary-container);
   border-radius: 20px;
   font-size: 14px;
@@ -1815,18 +1816,18 @@
 .cr-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
 .cr-card { position: relative; display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--md-sys-color-surface-container); border: 1px solid var(--md-sys-color-outline-variant); transition: transform .15s ease, box-shadow .15s ease; }
 .cr-card:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
-.cr-thumb { width: 44px; height: 60px; border-radius: 6px; background: linear-gradient(135deg, rgba(99,102,241,.2), rgba(99,102,241,.05)); color: rgb(var(--md-sys-color-primary)); font-weight: 800; display:flex; align-items:center; justify-content:center; overflow: hidden; }
+.cr-thumb { width: 44px; height: 60px; border-radius: 6px; background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent), color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent)); color: var(--md-sys-color-primary); font-weight: 800; display:flex; align-items:center; justify-content:center; overflow: hidden; }
 .cr-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cr-meta { min-width: 0; flex: 1; }
 .cr-title { font-size: 0.95rem; font-weight: 700; color: var(--md-sys-color-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cr-author { font-size: 0.8rem; color: var(--md-sys-color-on-surface-variant); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .cr-progress { display:flex; align-items:center; gap:8px; margin-top:6px; }
 .cr-progress-bar { flex:1; height:6px; border-radius:4px; background: var(--md-sys-color-surface-variant); overflow: hidden; }
-.cr-progress-fill { height:100%; background: rgb(var(--md-sys-color-primary)); box-shadow: inset 0 0 8px rgba(0,0,0,0.12); transition: width .3s ease; }
+.cr-progress-fill { height:100%; background: var(--md-sys-color-primary); box-shadow: inset 0 0 8px rgba(0,0,0,0.12); transition: width .3s ease; }
 .cr-progress-text { font-size: 0.75rem; color: var(--md-sys-color-on-surface-variant); }
 .cr-status { position:absolute; top:8px; right:8px; padding:2px 8px; border-radius:999px; font-size:.7rem; font-weight:600; letter-spacing:.01em; }
-.cr-status.reading { background: rgba(99,102,241,.12); color: rgb(var(--md-sys-color-primary)); border: 1px solid rgba(99,102,241,.35); }
-.cr-status.paused { background: rgba(148,163,184,.12); color: #94a3b8; border: 1px solid rgba(148,163,184,.35); }
+.cr-status.reading { background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent); color: var(--md-sys-color-primary); border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent); }
+.cr-status.paused { background: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 12%, transparent); color: var(--md-sys-color-on-surface-variant); border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface-variant) 35%, transparent); }
 
 :root:not([data-theme='dark']) .cr-card { --cr-card-bg: #f1f5f9; }
 [data-theme='dark'] .cr-card { --cr-card-bg: rgba(255,255,255,0.06); }
