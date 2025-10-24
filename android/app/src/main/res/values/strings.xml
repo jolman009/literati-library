@@ -172,7 +172,7 @@
     <!-- Time Formatting -->
     <string name="time_minutes">%d min</string>
     <string name="time_hours">%d hr</string>
-    <string name="time_hours_minutes">%d hr %d min</string>
+    <string name="time_hours_minutes">%1$d hr %2$d min</string>
     <string name="time_just_now">Just now</string>
     <string name="time_today">Today</string>
     <string name="time_yesterday">Yesterday</string>

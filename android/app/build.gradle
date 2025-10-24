@@ -110,12 +110,12 @@ android {
         staging {
             initWith debug
             applicationIdSuffix ".staging"
-            buildConfigField "String", "PWA_URL", "\"https://your-staging-url.vercel.app\""
+            buildConfigField "String", "PWA_URL", "\"https://shelfquest.org\""
             manifestPlaceholders = [
-                hostName: "your-staging-url.vercel.app",
-                defaultUrl: "https://your-staging-url.vercel.app",
+                hostName: "shelfquest.org",
+                defaultUrl: "https://shelfquest.org",
                 launchUrl: "/",
-                appName: "ShelfQuest Staging",
+                appName: "ShelfQuest",
                 themeColor: "#6750A4",
                 backgroundColor: "#FFFBFE",
                 navigationBarColor: "#FFFBFE",
@@ -135,6 +135,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+
+        // Disable desugaring to avoid JDK transform issues
+        coreLibraryDesugaringEnabled = false
     }
 
     kotlinOptions {
