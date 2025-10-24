@@ -175,3 +175,19 @@ bundle-analyzer-report.html
 
 # MD cleanup backup folder
 .md-cleanup-backup/
+
+# Android - NEVER COMMIT THESE
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/*.keystore
+android/*.jks
+android/app/*.keystore
+android/app/*.jks
+*.apk
+*.aab
+*.ap_
+*.dex
+.externalNativeBuild
+.cxx
