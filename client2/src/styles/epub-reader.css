@@ -7,7 +7,7 @@
 .epub-reader-container {
   position: fixed;
   inset: 0;
-  background-color: #000;
+  background-color: var(--md-sys-color-surface);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -19,9 +19,9 @@
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(17, 24, 39, 0.95);
+  background: linear-gradient(135deg, var(--md-sys-color-surface-container), var(--md-sys-color-surface-container-high));
   backdrop-filter: blur(8px);
-  color: white;
+  color: var(--md-sys-color-on-surface);
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@
 
 .epub-reader-author {
   font-size: 0.875rem;
-  color: rgba(156, 163, 175, 1);
+  color: var(--md-sys-color-on-surface-variant);
   margin: 0.25rem 0 0 0;
 }
 
@@ -71,21 +71,21 @@
 }
 
 .epub-reader-btn-primary {
-  background-color: rgb(99, 102, 241);
-  color: white;
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
 .epub-reader-btn-primary:hover {
-  background-color: rgb(79, 70, 229);
+  background-color: var(--md-sys-color-secondary);
 }
 
 .epub-reader-btn-secondary {
-  background-color: rgb(31, 41, 55);
-  color: white;
+  background-color: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface);
 }
 
 .epub-reader-btn-secondary:hover {
-  background-color: rgb(55, 65, 81);
+  background-color: var(--md-sys-color-surface-container-high);
 }
 
 .epub-reader-btn-text {
@@ -116,7 +116,7 @@
 .epub-viewer {
   width: 100%;
   height: 100%; /* Fill parent container completely */
-  background: #ffffff;
+  background: var(--md-sys-color-surface);
   transition: opacity 0.3s;
   /* Center the content within the available space */
   max-width: 900px;
@@ -142,16 +142,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  color: #374151;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
   gap: 1rem;
 }
 
 .epub-reader-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #e5e7eb;
-  border-top-color: rgb(99, 102, 241);
+  border: 4px solid var(--md-sys-color-outline-variant);
+  border-top-color: var(--md-sys-color-primary);
   border-radius: 50%;
   animation: epub-spin 0.8s linear infinite;
 }
@@ -168,7 +168,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: var(--md-sys-color-surface);
   padding: 2rem;
   text-align: center;
   gap: 1rem;
@@ -177,12 +177,12 @@
 .epub-reader-error-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--md-sys-color-on-surface);
   margin: 0;
 }
 
 .epub-reader-error-message {
-  color: #6b7280;
+  color: var(--md-sys-color-on-surface-variant);
   margin: 0;
 }
 
@@ -191,8 +191,8 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 50%, transparent);
+  color: var(--md-sys-color-on-surface);
   border: none;
   padding: 1rem;
   cursor: pointer;
@@ -202,7 +202,7 @@
 }
 
 .epub-nav-arrow:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.7);
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 70%, transparent);
   transform: translateY(-50%) scale(1.1);
 }
 

@@ -1,17 +1,17 @@
 /* src/components/gamification/PointsHistory.css */
 
 .points-history-container {
-  background: white;
+  background: var(--md-sys-color-surface);
   border-radius: 16px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
 }
 
 .points-history-container.dark {
-  background: rgba(75, 192, 105, 0.2);
-  border-color: #334155;
+  background: var(--md-sys-color-surface-container);
+  border-color: var(--md-sys-color-outline-variant);
   padding-bottom: 16px;
 }
 
@@ -20,22 +20,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .points-history-container.dark .points-history-header {
-  border-bottom-color: #334155;
+  border-bottom-color: var(--md-sys-color-outline-variant);
 }
 
 .points-history-title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1a1d20;
+  color: var(--md-sys-color-on-surface);
 }
 
 .points-history-container.dark .points-history-title {
-  color: #f1f5f9;
+  color: var(--md-sys-color-on-surface);
 }
 
 .refresh-button {
@@ -51,11 +51,11 @@
 
 .refresh-button:hover {
   opacity: 1;
-  background: #f3f4f6;
+  background: var(--md-sys-color-surface-variant);
 }
 
 .points-history-container.dark .refresh-button:hover {
-  background: #334155;
+  background: var(--md-sys-color-surface-container-high);
 }
 
 .points-history-loading,
@@ -66,18 +66,18 @@
 }
 
 .points-history-error {
-  color: #ef4444;
+  color: var(--md-sys-color-error);
 }
 
 .points-history-container.dark .points-history-error {
-  color: #fca5a5;
+  color: var(--md-sys-color-error);
 }
 
 .retry-button {
   margin-top: 12px;
   padding: 8px 16px;
-  background: #24A8E0;
-  color: white;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -87,16 +87,16 @@
 }
 
 .retry-button:hover {
-  background: #4f46e5;
+  background: var(--md-sys-color-secondary);
   transform: translateY(-1px);
 }
 
 .points-history-empty {
-  color: #6b7280;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .points-history-container.dark .points-history-empty {
-  color: #94a3b8;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .points-history-list {
@@ -114,12 +114,12 @@
 }
 
 .points-history-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--md-sys-color-outline-variant);
   border-radius: 3px;
 }
 
 .points-history-container.dark .points-history-list::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: var(--md-sys-color-outline-variant);
 }
 
 .points-history-date-group {
@@ -133,7 +133,7 @@
 .points-history-date-header {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--md-sys-color-on-surface-variant);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -141,7 +141,7 @@
 }
 
 .points-history-container.dark .points-history-date-header {
-  color: #94a3b8;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .points-history-items {
@@ -155,23 +155,23 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: #f9fafb;
+  background: var(--md-sys-color-surface-container-low);
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: default;
 }
 
 .points-history-container.dark .points-history-item {
-  background: rgba(75, 192, 105, 0.1)
+  background: var(--md-sys-color-surface-container);
 }
 
 .points-history-item:hover {
-  background: rgba(75, 192, 105, 0.9);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
   transform: translateX(2px);
 }
 
 .points-history-container.dark .points-history-item:hover {
-  background: rgba(75, 192, 105, 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
 }
 
 .points-history-item-icon {
@@ -182,12 +182,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
+  background: var(--md-sys-color-surface);
   border-radius: 8px;
 }
 
 .points-history-container.dark .points-history-item-icon {
-  background: #334155;
+  background: var(--md-sys-color-surface-container-high);
 }
 
 .points-history-item-content {
@@ -198,21 +198,21 @@
 .points-history-item-label {
   font-size: 14px;
   font-weight: 500;
-  color: #1a1d20;
+  color: var(--md-sys-color-on-surface);
   margin-bottom: 2px;
 }
 
 .points-history-container.dark .points-history-item-label {
-  color: #f1f5f9;
+  color: var(--md-sys-color-on-surface);
 }
 
 .points-history-item-time {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .points-history-container.dark .points-history-item-time {
-  color: #94a3b8;
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .points-history-item-points {
@@ -222,7 +222,7 @@
 .points-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
+  background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%);
   color: white;
   font-size: 13px;
   font-weight: 600;
@@ -232,38 +232,38 @@
 
 .points-history-footer {
   padding: 12px 20px 12px 20px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
   text-align: right;
-  background: #f9fafb;
+  background: var(--md-sys-color-surface-container-low);
 
 }
 
 .points-history-container.dark .points-history-footer {
-  border-top-color: #334155;
-  background: rgba(75, 192, 105, 0.5);
+  border-top-color: var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
   border-radius: 12px;
 }
 
 .points-history-total {
   font-size: 14px;
   font-weight: 600;
-  color: #24A8E0;
+  color: var(--md-sys-color-primary);
 }
 
 .points-history-container.dark .points-history-total {
-  color: #818cf8;
+  color: var(--md-sys-color-primary);
 }
 
 /* Loading shimmer animation */
 .loading-shimmer {
-  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background: linear-gradient(90deg, var(--md-sys-color-surface-variant) 0%, var(--md-sys-color-surface-container-high) 50%, var(--md-sys-color-surface-variant) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 8px;
 }
 
 .points-history-container.dark .loading-shimmer {
-  background: linear-gradient(90deg, rgba(75, 192, 105, 0.2) 0%, rgba(75, 192, 105, 0.5) 50%, rgba(75, 192, 105, 0.2) 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent) 50%, color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent) 100%);
   background-size: 200% 100%;
 }
 

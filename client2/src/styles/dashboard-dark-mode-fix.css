@@ -7,17 +7,17 @@
 .dark .currently-reading-section,
 .premium-app-layout.dark .currently-reading-section {
   background: linear-gradient(135deg,
-    rgb(var(--md-sys-color-surface-container-low)),
-    rgb(var(--md-sys-color-surface-container))
+    var(--md-sys-color-surface-container-low),
+    var(--md-sys-color-surface-container)
   );
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* Section heading text - ensure high contrast in dark mode */
 [data-theme="dark"] .currently-reading-section h3,
 .dark .currently-reading-section h3,
 .premium-app-layout.dark .currently-reading-section h3 {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Book card in Currently Reading - Dark Mode */
@@ -27,8 +27,8 @@
 .dark .currently-reading-section .book-card-compact,
 .premium-app-layout.dark .currently-reading-section .book-card,
 .premium-app-layout.dark .currently-reading-section .book-card-compact {
-  background: rgb(var(--md-sys-color-surface-container-high));
-  border: 1px solid rgb(var(--md-sys-color-outline));
+  background: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline);
 }
 
 /* Book title - Dark Mode HIGH CONTRAST FIX */
@@ -38,7 +38,7 @@
 .dark .currently-reading-section .book-title-compact,
 .premium-app-layout.dark .currently-reading-section .book-title,
 .premium-app-layout.dark .currently-reading-section .book-title-compact {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
   font-weight: 600;
 }
 
@@ -49,7 +49,7 @@
 .dark .currently-reading-section .book-author-compact,
 .premium-app-layout.dark .currently-reading-section .book-author,
 .premium-app-layout.dark .currently-reading-section .book-author-compact {
-  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 /* Progress text - Dark Mode FIX */
@@ -59,7 +59,7 @@
 .dark .currently-reading-section .book-progress,
 .premium-app-layout.dark .currently-reading-section .progress-text,
 .premium-app-layout.dark .currently-reading-section .book-progress {
-  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 /* ============================================================================
@@ -73,7 +73,7 @@
 .dark div[style*="fontSize: '12px'"],
 .premium-app-layout.dark div[style*="fontSize: '14px'"],
 .premium-app-layout.dark div[style*="fontSize: '12px'"] {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Specific fix for book metadata in Currently Reading */
@@ -86,7 +86,7 @@
 .premium-app-layout.dark [style*="color: '#cbd5e1'"],
 .premium-app-layout.dark [style*="color: '#334155'"],
 .premium-app-layout.dark [style*="color: '#94a3b8'"] {
-  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 /* Fix for book title text specifically */
@@ -96,7 +96,7 @@
 .dark [style*="color: '#0f172a'"],
 .premium-app-layout.dark [style*="color: '#e2e8f0'"],
 .premium-app-layout.dark [style*="color: '#0f172a'"] {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* ============================================================================
@@ -113,7 +113,7 @@
 .premium-app-layout.dark .stat-card .stat-value,
 .premium-app-layout.dark .stat-card .stat-label,
 .premium-app-layout.dark .stat-card .stat-icon {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Section cards in dark mode */
@@ -124,9 +124,9 @@
 .premium-app-layout.dark .section-card,
 .premium-app-layout.dark .section-card-compact {
   background: linear-gradient(135deg,
-    rgba(75, 192, 105, 0.4),
-    rgba(75, 192, 105, 0.3));
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+    color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent),
+    color-mix(in srgb, var(--md-sys-color-tertiary) 12%, transparent));
+  border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -137,7 +137,7 @@
 .dark .section-title-compact,
 .premium-app-layout.dark .section-title,
 .premium-app-layout.dark .section-title-compact {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Recently Added section fixes */
@@ -145,8 +145,8 @@
 .dark .recently-added-section,
 .premium-app-layout.dark .recently-added-section {
   background: linear-gradient(135deg,
-    rgb(var(--md-sys-color-surface-container-low)),
-    rgb(var(--md-sys-color-surface-container))
+    var(--md-sys-color-surface-container-low),
+    var(--md-sys-color-surface-container)
   );
 }
 
@@ -155,10 +155,10 @@
 .dark .progress-section,
 .premium-app-layout.dark .progress-section {
   background: linear-gradient(135deg,
-    rgba(79, 70, 229, 0.15),
-    rgba(5, 150, 105, 0.15)
+    color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent),
+    color-mix(in srgb, var(--md-sys-color-tertiary) 15%, transparent)
   );
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -167,22 +167,22 @@
 .dark .cta-section,
 .premium-app-layout.dark .cta-section {
   background: linear-gradient(135deg,
-    rgb(var(--md-sys-color-surface-container)),
-    rgb(var(--md-sys-color-surface-container-high))
+    var(--md-sys-color-surface-container),
+    var(--md-sys-color-surface-container-high)
   );
-  border: 1px solid rgb(var(--md-sys-color-primary));
+  border: 1px solid var(--md-sys-color-primary);
 }
 
 [data-theme="dark"] .cta-title,
 .dark .cta-title,
 .premium-app-layout.dark .cta-title {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 [data-theme="dark"] .cta-subtitle,
 .dark .cta-subtitle,
 .premium-app-layout.dark .cta-subtitle {
-  color: rgb(var(--md-sys-color-on-surface-variant)) !important;
+  color: var(--md-sys-color-on-surface-variant) !important;
 }
 
 /* ============================================================================
