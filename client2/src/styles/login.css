@@ -80,8 +80,7 @@
 .login-content-wrapper {
   width: 100%;
   max-width: 26rem !important;
-  margin: 0 auto;
-  padding: 0 1rem;
+  margin: 100px auto;
 }
 
 /* Constrain the card itself */
@@ -108,7 +107,7 @@
 /* Extra large screens - maintain compact centered layout */
 @media (min-width: 1440px) {
   .login-content-wrapper {
-    max-width: 20rem !important;
+    max-width: 30rem !important;
   }
 }
 
@@ -259,6 +258,7 @@
 
 .login-card-content {
   padding: 2rem;
+  width: px;
 }
 
 /* ================================================
@@ -352,7 +352,6 @@
   height: 3.5rem;
   font-size: 1.125rem;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--md-sys-color-primary) 0%, color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent) 100%);
   position: relative;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
