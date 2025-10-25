@@ -16,20 +16,25 @@
 :root,
 [data-theme="light"],
 .light {
+  /* Brand aliases (exact palette) */
+  --brand-primary: #023e8a;   /* Marian Blue */
+  --brand-secondary: #0077b6; /* Honolulu Blue */
+  --brand-tertiary: #00b4d8;  /* Pacific Cyan */
+  --brand-neutral: #03045e;   /* Federal Blue */
   /* Primary Tonal Palette */
-  --md-sys-color-primary: #005995;
+  --md-sys-color-primary: var(--brand-primary);
   --md-sys-color-on-primary: #FFFFFF;
   --md-sys-color-primary-container: #CDE6FF;
   --md-sys-color-on-primary-container: #001B34;
 
   /* Secondary Tonal Palette */
-  --md-sys-color-secondary: #00659B;
+  --md-sys-color-secondary: var(--brand-secondary);
   --md-sys-color-on-secondary: #FFFFFF;
   --md-sys-color-secondary-container: #CCE5FF;
   --md-sys-color-on-secondary-container: #001E32;
 
   /* Tertiary Tonal Palette */
-  --md-sys-color-tertiary: #006889;
+  --md-sys-color-tertiary: var(--brand-tertiary);
   --md-sys-color-on-tertiary: #FFFFFF;
   --md-sys-color-tertiary-container: #BFE9FF;
   --md-sys-color-on-tertiary-container: #001F2B;
@@ -40,10 +45,10 @@
   --md-sys-color-error-container: #FFDAD6;
   --md-sys-color-on-error-container: #410002;
 
-  /* Neutral & Surface Palette */
-  --md-sys-color-background: #FBFCFF;
+  /* Neutral & Surface Palette (lightly brand‑tinted, not pure white) */
+  --md-sys-color-background: #F5F8FF; /* soft blue-tinted neutral */
   --md-sys-color-on-background: #1A1C28;
-  --md-sys-color-surface: #FBFCFF;
+  --md-sys-color-surface: #F6F8FF;
   --md-sys-color-on-surface: #1A1C28;
   --md-sys-color-surface-variant: #E0E2EC;
   --md-sys-color-on-surface-variant: #434752;
@@ -64,20 +69,25 @@
 /* -------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Brand aliases available in dark too */
+    --brand-primary: #023e8a;
+    --brand-secondary: #0077b6;
+    --brand-tertiary: #00b4d8;
+    --brand-neutral: #03045e;
     /* Primary Tonal Palette */
-    --md-sys-color-primary: #9ECFFF;
+    --md-sys-color-primary: color-mix(in srgb, var(--brand-primary) 45%, #9ECFFF);
     --md-sys-color-on-primary: #003258;
     --md-sys-color-primary-container: #00487D;
     --md-sys-color-on-primary-container: #CDE6FF;
 
     /* Secondary Tonal Palette */
-    --md-sys-color-secondary: #74D2FF;
+    --md-sys-color-secondary: color-mix(in srgb, var(--brand-secondary) 45%, #74D2FF);
     --md-sys-color-on-secondary: #003651;
     --md-sys-color-secondary-container: #004D74;
     --md-sys-color-on-secondary-container: #CCE5FF;
 
     /* Tertiary Tonal Palette */
-    --md-sys-color-tertiary: #5FDBFF;
+    --md-sys-color-tertiary: color-mix(in srgb, var(--brand-tertiary) 55%, #5FDBFF);
     --md-sys-color-on-tertiary: #003643;
     --md-sys-color-tertiary-container: #004D60;
     --md-sys-color-on-tertiary-container: #BFE9FF;

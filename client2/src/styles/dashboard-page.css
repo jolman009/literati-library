@@ -2,7 +2,13 @@
 
 /* Main dashboard container */
 .dashboard-container {
-  background: var(--md-sys-color-surface-container-low);
+  /* Tinted, layered background to avoid pure white */
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 6%, var(--md-sys-color-surface)) 0%,
+    var(--md-sys-color-surface-container-low) 32%,
+    color-mix(in srgb, var(--md-sys-color-secondary) 6%, var(--md-sys-color-surface-container)) 100%
+  );
   min-height: calc(100vh - 80px); /* Account for header height */
   transition: background 0.3s ease;
   position: relative;
@@ -272,12 +278,13 @@
 /* Progress Cards Section */
 .progress-section {
   margin-bottom: 32px;
+  /* Use brand primary/tertiary instead of hard-coded purple/green */
   background: linear-gradient(135deg,
-    rgba(79, 70, 229, 0.08),
-    rgba(5, 150, 105, 0.08)
+    color-mix(in srgb, var(--md-sys-color-primary) 14%, transparent),
+    color-mix(in srgb, var(--md-sys-color-tertiary) 14%, transparent)
   );
   border-radius: 16px;
-  border: 1px solid rgba(79, 70, 229, 0.2);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
@@ -395,7 +402,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--md-sys-color-primary);
-  text-shadow: 0 2px 8px rgba(36, 168, 224, 0.2);
+  text-shadow: 0 2px 8px color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent);
 }
 
 .stat-arc-label {
@@ -409,7 +416,7 @@
 /* Dark mode text colors */
 [data-theme="dark"] .stat-arc-value {
   color: var(--md-sys-color-primary);
-  text-shadow: 0 2px 8px rgba(36, 168, 224, 0.4);
+  text-shadow: 0 2px 8px color-mix(in srgb, var(--md-sys-color-tertiary) 50%, transparent);
 }
 
 [data-theme="dark"] .stat-arc-label {
@@ -450,7 +457,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
 }
 
 .stat-card:hover {
@@ -880,8 +887,11 @@
 
 /* Ready to Level Up section */
 :root:not([data-theme="dark"]) .cta-section {
-  background: linear-gradient(135deg, #d1d5db 0%, #b8bcc2 50%, #d1d5db 100%);
-  border: 1px solid #9ca3af;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary-container) 85%, var(--md-sys-color-surface)) 0%,
+    color-mix(in srgb, var(--md-sys-color-tertiary-container) 85%, var(--md-sys-color-surface-container)) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -1105,7 +1115,7 @@
   padding: 0;
   border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
   color: var(--md-sys-color-on-primary);
   font-size: 1.1rem;
   cursor: pointer;
@@ -1119,7 +1129,7 @@
 .checkin-button-inline:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-secondary), var(--md-sys-color-primary));
+  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-primary));
 }
 
 .checkin-button-inline:active:not(:disabled) {
@@ -1140,11 +1150,11 @@
   padding: 0;
   border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-secondary), var(--md-sys-color-primary));
+  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-primary));
   color: var(--md-sys-color-on-primary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--md-sys-color-tertiary) 35%, transparent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1153,7 +1163,7 @@
 .sync-button-inline:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 4px 12px color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
 }
 
 .sync-button-inline:active:not(:disabled) {
@@ -1166,12 +1176,12 @@
 }
 
 .sync-button-inline.syncing {
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
   border-color: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
 }
 
 .sync-button-inline.synced {
-  background: linear-gradient(135deg, var(--md-sys-color-secondary), var(--md-sys-color-primary));
+  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-primary));
   border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
 }
 
@@ -1281,7 +1291,7 @@
   padding: 12px 24px;
   border-radius: 12px;
   border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
   color: var(--md-sys-color-on-primary);
   font-weight: 600;
   font-size: 0.95rem;
@@ -1296,7 +1306,7 @@
 .checkin-button-compact:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--md-sys-color-primary) 45%, transparent);
-  background: linear-gradient(135deg, var(--md-sys-color-secondary), var(--md-sys-color-primary));
+  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-primary));
 }
 
 .checkin-button-compact:disabled {
@@ -1317,14 +1327,14 @@
   align-self: flex-start;
   padding: 10px 20px;
   border-radius: 10px;
-  border: 2px solid rgba(16, 185, 129, 0.3);
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  border: 2px solid color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent);
+  background: linear-gradient(135deg, var(--md-sys-color-tertiary), var(--md-sys-color-secondary));
+  color: var(--md-sys-color-on-primary);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--md-sys-color-tertiary) 30%, transparent);
   display: flex;
   align-items: center;
   gap: 8px;
