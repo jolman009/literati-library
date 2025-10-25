@@ -52,6 +52,7 @@ import { notesRouter } from './routes/notes.js';
 import { readingRouter, registerLegacyReadingEndpoints } from './routes/reading.js';
 import { gamificationRouter } from './routes/gamification.js';
 import { aiRouter } from './routes/ai.js';
+import guideRouter from './routes/guide.js';
 import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
@@ -194,6 +195,9 @@ app.use('/notes', notesRouter(authenticateTokenEnhanced));
 app.use('/reading', readingRouter(authenticateTokenEnhanced));
 // Gamification endpoints with specialized rate limiting
 app.use('/api/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
+
+// In-app Guide Assistant (rate limited like general API)
+app.use('/api/guide', rateLimitSuite.api, slowDownSuite.general, guideRouter(authenticateTokenEnhanced));
 
 // Optional: preserve your older client that calls POST /api/reading-session
 registerLegacyReadingEndpoints(app, authenticateTokenEnhanced);

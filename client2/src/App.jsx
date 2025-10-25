@@ -68,6 +68,7 @@ import LibraryPage from './pages/LibraryPage';
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
+const HelpViewer = lazy(() => import('./pages/HelpViewer'));
 
 // Lazy load secondary pages with error handling
 const LibraryPageWrapper = lazy(() =>
@@ -198,6 +199,13 @@ const AppRoutes = () => {
               <UploadPageWrapper />
             </Suspense>
           </UploadErrorBoundary>
+        } />
+        <Route path="/help/viewer" element={
+          <ErrorBoundary fallbackComponent="dashboard" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading help..." />}>
+              <HelpViewer />
+            </Suspense>
+          </ErrorBoundary>
         } />
         <Route path="/notes" element={
           <NotesErrorBoundary>
