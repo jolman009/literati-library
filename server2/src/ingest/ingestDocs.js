@@ -3,11 +3,20 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import OpenAI from 'openai';
 import { supabase } from '../config/supabaseClient.js';
 
 const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || 'text-embedding-3-small';
+const CHUNK_SIZE = parseInt(process.env.RAG_CHUNK_SIZE || '1200', 10);
+const CHUNK_OVERLAP = parseInt(process.env.RAG_CHUNK_OVERLAP || '200', 10);
+const BATCH_SIZE = parseInt(process.env.RAG_BATCH_SIZE || '32', 10);
+const MAX_FILE_SIZE_BYTES = parseInt(process.env.RAG_MAX_FILE_SIZE || `${300 * 1024}`, 10); // 300 KB default
+const MAX_CHUNKS_TOTAL = parseInt(process.env.RAG_MAX_CHUNKS || '5000', 10);
 
+// ESM-safe __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(path.join(__dirname, '..', '..', '..'));
 const SOURCES = [
   'docs',
@@ -38,7 +47,20 @@ function readSourceFiles() {
       for (const f of walk(full)) if (isTextFile(f)) files.push(f);
     } else if (isTextFile(full)) files.push(full);
   }
-  return files;
+  // Filter out very large files to avoid OOM
+  const filtered = files.filter(f => {
+    try {
+      const st = fs.statSync(f);
+      if (st.size > MAX_FILE_SIZE_BYTES) {
+        console.warn(`[ingest] Skipping large file (${Math.round(st.size/1024)} KB): ${path.relative(ROOT, f).replaceAll('\\','/')}`);
+        return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  });
+  return filtered;
 }
 
 function stripJsx(content) {
@@ -58,17 +80,15 @@ function normalizeText(file, raw) {
   return stripJsx(raw);
 }
 
-function chunkText(text, chunkSize = 1500, overlap = 200) {
-  const chunks = [];
+function* chunkTextIter(text, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP) {
   let i = 0; const len = text.length;
   while (i < len) {
     const end = Math.min(len, i + chunkSize);
     const slice = text.slice(i, end).trim();
-    if (slice.length > 100) chunks.push(slice);
-    i = end - overlap;
-    if (i < 0) i = 0;
+    if (slice.length > 100) yield slice;
+    const next = end - overlap;
+    i = next > i ? next : end; // ensure forward progress
   }
-  return chunks;
 }
 
 function sha1(str) {
@@ -123,17 +143,39 @@ async function run() {
     const raw = fs.readFileSync(file, 'utf8');
     const text = normalizeText(file, raw);
     if (!text || text.length < 200) continue;
-    const chunks = chunkText(text);
-    if (chunks.length === 0) continue;
-
-    // Embed in batches of 64
-    const batchSize = 64;
-    for (let i = 0; i < chunks.length; i += batchSize) {
-      const slice = chunks.slice(i, i + batchSize);
-      const embeddings = await embedBatch(openai, slice);
-      for (let j = 0; j < slice.length; j++) {
-        const content = slice[j];
-        const contentSha = sha1(`${file}::${i + j}::${content}`);
+    const iter = chunkTextIter(text);
+    let batch = [];
+    let idx = 0;
+    for (const chunk of iter) {
+      batch.push(chunk);
+      if (batch.length >= BATCH_SIZE) {
+        const embeddings = await embedBatch(openai, batch);
+        for (let j = 0; j < batch.length; j++) {
+          const content = batch[j];
+          const contentSha = sha1(`${file}::${idx + j}::${content}`);
+          const metadata = metaFor(file);
+          try {
+            await upsertChunk({ content, metadata, embedding: embeddings[j], contentSha });
+            totalChunks += 1;
+          } catch (e) {
+            console.warn('Upsert failed (continuing):', e?.message || e);
+          }
+        }
+        idx += batch.length;
+        batch = [];
+        if (typeof global.gc === 'function') global.gc();
+        if (totalChunks >= MAX_CHUNKS_TOTAL) {
+          console.warn(`[ingest] Reached MAX_CHUNKS_TOTAL=${MAX_CHUNKS_TOTAL}, stopping early.`);
+          break;
+        }
+      }
+    }
+    // Flush remaining
+    if (batch.length) {
+      const embeddings = await embedBatch(openai, batch);
+      for (let j = 0; j < batch.length; j++) {
+        const content = batch[j];
+        const contentSha = sha1(`${file}::${idx + j}::${content}`);
         const metadata = metaFor(file);
         try {
           await upsertChunk({ content, metadata, embedding: embeddings[j], contentSha });
@@ -142,7 +184,9 @@ async function run() {
           console.warn('Upsert failed (continuing):', e?.message || e);
         }
       }
+      if (typeof global.gc === 'function') global.gc();
     }
+    if (totalChunks >= MAX_CHUNKS_TOTAL) break;
   }
   console.log(`Ingestion complete. Upserted ${totalChunks} chunks.`);
 }
@@ -151,4 +195,3 @@ run().catch(err => {
   console.error('Ingestion failed:', err);
   process.exit(1);
 });
-
