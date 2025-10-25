@@ -90,6 +90,12 @@
   outline-offset: 2px;
 }
 
+/* Ensure the page background uses the themed token */
+html, body {
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+}
+
 ::selection {
   background: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
   color: var(--md-sys-color-on-surface);
