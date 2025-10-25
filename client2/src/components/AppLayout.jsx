@@ -10,6 +10,7 @@ import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
 import MD3Footer from './MD3Footer';
+import ChatGuide from './ChatGuide/ChatGuide';
 
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
@@ -76,6 +77,9 @@ const AppLayout = () => {
           SW disabled
         </div>
       )}
+
+      {/* Feature-flagged in-app guide chatbot */}
+      {!inReader && <ChatGuide />}
     </div>
   );
 };

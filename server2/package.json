@@ -18,7 +18,8 @@
     "migrate": "node src/scripts/runMigration.js",
     "migrate:security": "node src/scripts/runMigration.js",
     "generate-dev-certs": "node src/scripts/generateDevCerts.js",
-    "https-status": "node -e \"import('./src/config/httpsConfig.js').then(m => console.log(JSON.stringify(m.checkHTTPSStatus(), null, 2)))\""
+    "https-status": "node -e \"import('./src/config/httpsConfig.js').then(m => console.log(JSON.stringify(m.checkHTTPSStatus(), null, 2)))\"",
+    "ingest:docs": "node src/ingest/ingestDocs.js"
   },
   "engines": {
     "node": ">=20.16.0"
