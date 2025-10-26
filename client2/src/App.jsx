@@ -71,12 +71,12 @@ const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
 
 // Lazy load secondary pages with error handling
-const LibraryPageWrapper = lazy(() =>
-  import('./components/wrappers/LibraryPageWrapper').catch(err => {
-    console.error('Failed to load LibraryPageWrapper:', err);
-    return { default: () => <div>Error loading Library. Please refresh.</div> };
-  })
-);
+// const LibraryPageWrapper = lazy(() =>
+ // import('./components/wrappers/LibraryPageWrapper').catch(err => {
+ //   console.error('Failed to load LibraryPageWrapper:', err);
+//  return { default: () => <div>Error loading Library. Please refresh.</div> };
+//  })
+// ); 
 
 const UploadPageWrapper = lazy(() =>
   import('./components/wrappers/UploadPageWrapper').catch(err => {
