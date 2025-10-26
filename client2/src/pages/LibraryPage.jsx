@@ -16,7 +16,7 @@ const NotesSubpage = React.lazy(() => import('./subpages/NotesSubpage'));
 
 // Import dashboard components
 import WelcomeWidget from '../components/WelcomeWidget';
-import EnhancedBookCard from '../components/EnhancedBookCard';
+// import EnhancedBookCard from '../components/EnhancedBookCard';
 import { BookCoverManager } from '../components/BookCoverManager';
 // ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
