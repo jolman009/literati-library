@@ -766,25 +766,25 @@ const LibraryPage = () => {
     );
   };
 
-  return (
-    <div 
-      className={`md3-library-page ${actualTheme === 'dark' ? 'dark' : ''}`}
-      onDrop={handleDragDrop}
-      onDragOver={handleDragOver}
-    >
-      {renderPageContent()}
+ // return (
+   // <div 
+  //    className={`md3-library-page' actual-theme-${actualTheme}`}
+ //    onDrop={handleDragDrop}
+  //    onDragOver={handleDragOver}
+  //  >
+ //     {renderPageContent()}
 
-      <button 
-        className="md3-fab"
-        onClick={() => navigate('/upload')}
-        title="Upload new book"
-      >
-        <span className="material-symbols-outlined">add</span>
-      </button>
+ //     <button 
+  //     className="md3-fab"
+  //      onClick={() => navigate('/upload')}
+  //      title="Upload new book"
+  //    >
+  //      <span className="material-symbols-outlined">add</span>
+  //    </button>
 
       {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
-    </div>
-  );
-};
-
+ //   </div>
+ // );
+// };
+}
 export default LibraryPage;
