@@ -53,6 +53,23 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // Summarize a collection of user notes (per-book or selection)
+  router.post('/summarize-notes', authenticateToken, async (req, res) => {
+    try {
+      const { notes, title, mode, tags } = req.body || {};
+
+      if (!Array.isArray(notes) || notes.length === 0) {
+        return res.status(400).json({ error: 'notes (string[]) is required' });
+      }
+
+      const result = await aiService.summarizeNotes(notes, { title, mode, tags });
+      res.json(result);
+    } catch (error) {
+      console.error('Summarize notes error:', error);
+      res.status(500).json({ error: 'Summarization failed' });
+    }
+  });
+
   // Get contextual help for difficult passages
   router.post('/contextual-help', authenticateToken, async (req, res) => {
     try {

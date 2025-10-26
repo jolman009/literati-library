@@ -176,6 +176,79 @@ class AIService {
   }
 
   /**
+   * Summarize a collection of notes (map-reduce style for long inputs)
+   */
+  async summarizeNotes(notes, options = {}) {
+    const cleanNotes = (Array.isArray(notes) ? notes : []).map(n => String(n || '').trim()).filter(Boolean);
+    if (cleanNotes.length === 0) return this.summarizeNotesFallback([],{...options});
+
+    const cacheKey = `sum_${this.hashText(cleanNotes.join('\n\n'))}_${options?.mode || 'default'}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      const fb = await this.summarizeNotesFallback(cleanNotes, options);
+      this.requestCache.set(cacheKey, fb);
+      return fb;
+    }
+
+    try {
+      // Chunk notes conservatively to control token usage
+      const chunks = this.chunkNotesForSummarization(cleanNotes, 1200);
+
+      // First pass: summarize each chunk
+      const partials = [];
+      for (const chunk of chunks) {
+        const prompt = this.buildNotesSummarizationPrompt(chunk, options);
+        const completion = await this.openai.chat.completions.create({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: 'You are a helpful synthesis assistant. Return strict JSON only.' },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.4,
+          max_tokens: 500,
+          response_format: { type: 'json_object' }
+        });
+        const parsed = JSON.parse(completion.choices[0].message.content);
+        partials.push(parsed);
+      }
+
+      // Second pass: combine partials into a single synthesis
+      const combinePrompt = this.buildCombineSummariesPrompt(partials, options);
+      const finalCompletion = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: 'You synthesize multiple summaries into one. Return strict JSON only.' },
+          { role: 'user', content: combinePrompt }
+        ],
+        temperature: 0.4,
+        max_tokens: 600,
+        response_format: { type: 'json_object' }
+      });
+
+      const final = JSON.parse(finalCompletion.choices[0].message.content);
+      const enriched = {
+        ...final,
+        aiGenerated: true,
+        title: final.title || options.title || 'Notes Summary',
+        noteCount: cleanNotes.length,
+        timestamp: Date.now()
+      };
+
+      this.requestCache.set(cacheKey, enriched);
+      return enriched;
+    } catch (error) {
+      console.error('AI notes summarization failed:', error);
+      serverCrashReporting.reportAIError?.(error, 'summarize_notes', { note_count: cleanNotes.length });
+      const fb = await this.summarizeNotesFallback(cleanNotes, options);
+      this.requestCache.set(cacheKey, fb);
+      return fb;
+    }
+  }
+
+  /**
    * Generate contextual help for difficult passages
    */
   async generateContextualHelp(text, context, userLevel) {
@@ -438,6 +511,35 @@ Provide enhancement in this JSON structure:
 `;
   }
 
+  buildNotesSummarizationPrompt(notes, options) {
+    const joined = notes.map((n, i) => `${i + 1}. ${n.substring(0, 800)}`).join('\n');
+    const tagLine = options?.tags?.length ? `\nRelevant tags: ${options.tags.join(', ')}` : '';
+    return `Summarize the following user notes into a concise synthesis. Focus only on what is written in the notes. Avoid adding facts not present.
+
+Notes:\n${joined}${tagLine}
+
+Return JSON with shape:
+{
+  "title": "short synthesis title",
+  "summary": "3-5 sentence executive summary",
+  "bullets": ["key point", ...],
+  "themes": [ { "name": "theme", "explanation": "short" } ],
+  "questions": ["thoughtful question"],
+  "nextSteps": ["actionable suggestion"],
+  "confidence": 0.0_to_1.0
+}`;
+  }
+
+  buildCombineSummariesPrompt(partials, options) {
+    const payload = JSON.stringify(partials).substring(0, 8000);
+    const title = options?.title || 'Notes Summary';
+    return `Combine these partial summaries into a single synthesis for "${title}":
+
+${payload}
+
+Return the same JSON structure as before.`;
+  }
+
   /**
    * Enrichment methods to enhance AI responses
    */
@@ -497,6 +599,67 @@ Provide enhancement in this JSON structure:
       aiGenerated: true,
       timestamp: Date.now()
     };
+  }
+
+  /**
+   * Fallback notes summarization using heuristics
+   */
+  async summarizeNotesFallback(notes, options = {}) {
+    const all = (Array.isArray(notes) ? notes : []).join(' \n ');
+    const sentences = all.split(/[.!?]\s+/).filter(s => s && s.length > 0);
+    const top = sentences.slice(0, 4).join('. ') + (sentences.length > 0 ? '.' : '');
+
+    // crude keyword extraction
+    const words = all.toLowerCase().match(/[a-zA-Z][a-zA-Z\-']+/g) || [];
+    const stop = new Set(['the','and','to','of','in','a','for','is','on','that','with','as','by','it','this','be','or','an','are','from','at','not','your','you']);
+    const freq = new Map();
+    for (const w of words) {
+      if (w.length < 4 || stop.has(w)) continue;
+      freq.set(w, (freq.get(w) || 0) + 1);
+    }
+    const themes = Array.from(freq.entries())
+      .sort((a,b) => b[1]-a[1])
+      .slice(0, 5)
+      .map(([name]) => ({ name, explanation: 'Recurring concept in your notes' }));
+
+    return {
+      title: options.title || 'Notes Summary',
+      summary: top || 'Your notes are ready for summarization once added.',
+      bullets: sentences.slice(0, 6).map(s => s.trim()).filter(Boolean),
+      themes,
+      questions: [
+        'What connections can you make between these points?',
+        'Which ideas need further evidence or examples?'
+      ],
+      nextSteps: [
+        'Review the top themes and add clarifying notes',
+        'Create action items for the most important points'
+      ],
+      confidence: 0.4,
+      aiGenerated: false,
+      noteCount: Array.isArray(notes) ? notes.length : 0,
+      timestamp: Date.now()
+    };
+  }
+
+  /**
+   * Utility: chunk notes by approximate character limit
+   */
+  chunkNotesForSummarization(notes, maxChars = 1200) {
+    const chunks = [];
+    let current = [];
+    let length = 0;
+    for (const n of notes) {
+      if ((length + n.length) > maxChars && current.length) {
+        chunks.push(current.slice());
+        current = [];
+        length = 0;
+      }
+      current.push(n);
+      length += n.length + 1;
+    }
+    if (current.length) chunks.push(current);
+    return chunks;
   }
 
   /**
