@@ -154,10 +154,7 @@
 [data-theme="dark"] .progress-section,
 .dark .progress-section,
 .premium-app-layout.dark .progress-section {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent),
-    color-mix(in srgb, var(--md-sys-color-tertiary) 15%, transparent)
-  );
+  background: rgba(245, 40, 145, 0.8);
   border: 1px solid color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -166,10 +163,7 @@
 [data-theme="dark"] .cta-section,
 .dark .cta-section,
 .premium-app-layout.dark .cta-section {
-  background: linear-gradient(135deg,
-    var(--md-sys-color-surface-container),
-    var(--md-sys-color-surface-container-high)
-  );
+  background: rgba(245, 40, 145, 0.8);
   border: 1px solid var(--md-sys-color-primary);
 }
 

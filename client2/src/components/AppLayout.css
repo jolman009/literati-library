@@ -438,7 +438,7 @@
 .user-name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--md-sys-color-on-surface);
+  color: rgba(245, 40, 145, 0.8);
   line-height: 1.2;
 }
 
@@ -477,7 +477,7 @@
 .user-name-full {
   font-size: 16px;
   font-weight: 600;
-  color: var(--md-sys-color-on-surface);
+  color: rgba(245, 40, 145, 0.8);
 }
 
 .user-email {
@@ -530,7 +530,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--md-sys-color-surface);
+  background: rgba(245, 40, 145, 0.8);
   overflow: visible;
 }
 
@@ -558,7 +558,7 @@
   padding: 16px;
   padding-top: 24px;
   overflow: visible;
-  background: var(--md-sys-color-surface);
+  background: rgba(245, 40, 145, 0.8);
   min-height: 0;
 }
 
@@ -572,7 +572,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(245, 40, 145, 0.8);
   backdrop-filter: blur(20px);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding: 8px;
@@ -733,7 +733,7 @@
     left: 0;
     right: 0;
     height: 80px;
-    background-color: var(--md-sys-color-surface-container);
+    background-color: rgba(245, 40, 145, 0.8);
     border-top: 1px solid var(--md-sys-color-outline-variant);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -836,7 +836,7 @@
    ============================================================================ */
 
 .premium-app-layout.dark .mobile-navigation {
-  background: rgba(18, 18, 18, 0.95);
+  background: rgba(245, 40, 145, 0.8);
   border-top-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -845,15 +845,12 @@
 }
 
 .premium-app-layout.dark .mobile-nav-item.active {
-  background: linear-gradient(135deg, rgba(36, 168, 224, 0.2), rgba(79, 70, 229, 0.2));
+  background: rgba(245, 40, 145, 0.8);
   color: var(--md-sys-color-primary);
 }
 
 .premium-app-layout.dark .navigation-pane {
-  background: linear-gradient(180deg, 
-    rgba(30, 41, 59, 0.95) 0%, 
-    rgba(15, 23, 42, 0.9) 100%
-  );
+  background: rgba(245, 40, 145, 0.8);
   border-right-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -929,7 +926,7 @@
 /* Enhanced user status */
 .user-status {
   font-size: 12px;
-  color: var(--md-sys-color-primary);
+  color: rgba(245, 40, 145, 0.8);
   font-weight: 600;
   font-style: italic;
 }
@@ -967,7 +964,7 @@
 
 .brand-tagline {
   font-size: 12px;
-  color: var(--md-sys-color-on-surface-variant);
+  color: rgba(245, 40, 145, 0.8);
   font-weight: 500;
   margin: 0;
   line-height: 1;
@@ -1037,7 +1034,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: var(--md-sys-color-surface);
+  background: rgba(245, 40, 145, 0.8);
 }
 
 .loading-spinner {

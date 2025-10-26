@@ -12,6 +12,9 @@ import {
   MD3DialogActions,
   MD3Chip,
   MD3FloatingActionButton,
+  MD3Menu,
+  MD3MenuItem,
+  MD3MenuDivider,
   useSnackbar
 } from '../components/Material3';
 import AIReadingCompanion from '../components/AIReadingCompanion';
@@ -26,6 +29,7 @@ import {
   BookOpen,
   Tag,
   Plus,
+  ChevronDown,
   CheckSquare,
   Square
 } from 'lucide-react';
@@ -51,6 +55,9 @@ const NotesPage = () => {
   const [summarizing, setSummarizing] = useState(false);
   const [tagToSummarize, setTagToSummarize] = useState('');
   const [summaryContext, setSummaryContext] = useState(null);
+  const [summarizeMenuOpen, setSummarizeMenuOpen] = useState(false);
+  const [summarizeAnchor, setSummarizeAnchor] = useState(null);
+  const [autoSaveSummary, setAutoSaveSummary] = useState(false);
 
   // Form state
   const [noteForm, setNoteForm] = useState({
@@ -235,11 +242,16 @@ const NotesPage = () => {
       const contents = selected.map(n => n.content).filter(Boolean);
       const title = selected.length === 1 ? (selected[0].title || 'Note Summary') : `Summary of ${selected.length} Notes`;
       const tags = Array.from(new Set(selected.flatMap(n => Array.isArray(n.tags) ? n.tags : []))).slice(0, 10);
+      const context = { mode: 'selection', ids: selectedNoteIds.slice() };
       const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'book', tags });
       if (result) {
-        setSummaryResult(result);
-        setSummaryContext({ mode: 'selection', ids: selectedNoteIds.slice() });
-        setSummaryOpen(true);
+        if (autoSaveSummary) {
+          await handleSaveSummaryAsNote(result, context);
+        } else {
+          setSummaryResult(result);
+          setSummaryContext(context);
+          setSummaryOpen(true);
+        }
       } else {
         showSnackbar({ message: 'Failed to summarize selected notes', variant: 'error' });
       }
@@ -273,11 +285,16 @@ const NotesPage = () => {
       const contents = tagged.map(n => n.content).filter(Boolean);
       const title = `Summary: #${tag}`;
       const tags = [tag];
+      const context = { mode: 'tags', tag };
       const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'tags', tags });
       if (result) {
-        setSummaryResult(result);
-        setSummaryContext({ mode: 'tags', tag });
-        setSummaryOpen(true);
+        if (autoSaveSummary) {
+          await handleSaveSummaryAsNote(result, context);
+        } else {
+          setSummaryResult(result);
+          setSummaryContext(context);
+          setSummaryOpen(true);
+        }
       } else {
         showSnackbar({ message: 'Failed to summarize by tag', variant: 'error' });
       }
@@ -316,11 +333,16 @@ const NotesPage = () => {
       const topTags = Array.from(tagCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k]) => k);
       const titleBase = searchTerm ? `Summary: search:"${searchTerm}"` : 'Summary: Filtered Notes';
       const title = `${titleBase} (${contents.length})`;
+      const context = { mode: 'filtered', searchTerm, selectedFilter };
       const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'filtered', tags: topTags });
       if (result) {
-        setSummaryResult(result);
-        setSummaryContext({ mode: 'filtered', searchTerm, selectedFilter });
-        setSummaryOpen(true);
+        if (autoSaveSummary) {
+          await handleSaveSummaryAsNote(result, context);
+        } else {
+          setSummaryResult(result);
+          setSummaryContext(context);
+          setSummaryOpen(true);
+        }
       } else {
         showSnackbar({ message: 'Failed to summarize filtered notes', variant: 'error' });
       }
@@ -332,15 +354,17 @@ const NotesPage = () => {
     }
   };
 
-  const handleSaveSummaryAsNote = async () => {
-    if (!summaryResult) return;
+  const handleSaveSummaryAsNote = async (resultOverride = null, contextOverride = null) => {
+    const effectiveResult = resultOverride || summaryResult;
+    const effectiveContext = contextOverride || summaryContext;
+    if (!effectiveResult) return;
     try {
-      const mode = summaryContext?.mode;
+      const mode = effectiveContext?.mode;
       let candidateNotes = [];
-      if (mode === 'selection' && Array.isArray(summaryContext?.ids)) {
-        candidateNotes = notes.filter(n => summaryContext.ids.includes(n.id));
-      } else if (mode === 'tags' && summaryContext?.tag) {
-        const tag = summaryContext.tag;
+      if (mode === 'selection' && Array.isArray(effectiveContext?.ids)) {
+        candidateNotes = notes.filter(n => effectiveContext.ids.includes(n.id));
+      } else if (mode === 'tags' && effectiveContext?.tag) {
+        const tag = effectiveContext.tag;
         candidateNotes = notes.filter(n => Array.isArray(n.tags) && n.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
       } else if (mode === 'filtered') {
         candidateNotes = filteredNotes;
@@ -349,30 +373,30 @@ const NotesPage = () => {
       const uniqueBooks = Array.from(new Set(candidateNotes.map(n => n.book_id).filter(Boolean)));
       const book_id = uniqueBooks.length === 1 ? uniqueBooks[0] : null;
 
-      const title = summaryResult.title || 'Notes Summary';
+      const title = effectiveResult.title || 'Notes Summary';
       const parts = [];
-      if (summaryResult.summary) parts.push(summaryResult.summary);
-      if (Array.isArray(summaryResult.bullets) && summaryResult.bullets.length) {
-        parts.push('\nKey Points:\n' + summaryResult.bullets.slice(0, 10).map(b => `- ${b}`).join('\n'));
+      if (effectiveResult.summary) parts.push(effectiveResult.summary);
+      if (Array.isArray(effectiveResult.bullets) && effectiveResult.bullets.length) {
+        parts.push('\nKey Points:\n' + effectiveResult.bullets.slice(0, 10).map(b => `- ${b}`).join('\n'));
       }
-      if (Array.isArray(summaryResult.themes) && summaryResult.themes.length) {
-        parts.push('\nThemes:\n' + summaryResult.themes.slice(0, 8).map(t => `- ${t.name}: ${t.explanation}`).join('\n'));
+      if (Array.isArray(effectiveResult.themes) && effectiveResult.themes.length) {
+        parts.push('\nThemes:\n' + effectiveResult.themes.slice(0, 8).map(t => `- ${t.name}: ${t.explanation}`).join('\n'));
       }
-      if (Array.isArray(summaryResult.questions) && summaryResult.questions.length) {
-        parts.push('\nQuestions:\n' + summaryResult.questions.slice(0, 6).map(q => `- ${q}`).join('\n'));
+      if (Array.isArray(effectiveResult.questions) && effectiveResult.questions.length) {
+        parts.push('\nQuestions:\n' + effectiveResult.questions.slice(0, 6).map(q => `- ${q}`).join('\n'));
       }
-      if (Array.isArray(summaryResult.nextSteps) && summaryResult.nextSteps.length) {
-        parts.push('\nNext Steps:\n' + summaryResult.nextSteps.slice(0, 6).map(s => `- ${s}`).join('\n'));
+      if (Array.isArray(effectiveResult.nextSteps) && effectiveResult.nextSteps.length) {
+        parts.push('\nNext Steps:\n' + effectiveResult.nextSteps.slice(0, 6).map(s => `- ${s}`).join('\n'));
       }
       const content = parts.join('\n\n').trim();
 
       // Build tags: base + context + top source tags
       const tags = ['ai-summary'];
-      if (mode === 'tags' && summaryContext?.tag) tags.push(`tag:${summaryContext.tag}`);
+      if (mode === 'tags' && effectiveContext?.tag) tags.push(`tag:${effectiveContext.tag}`);
       if (mode === 'selection') tags.push('selection-summary');
       if (mode === 'filtered') tags.push('filtered-summary');
-      if (summaryContext?.searchTerm) tags.push(`search:${summaryContext.searchTerm}`);
-      if (summaryContext?.selectedFilter && summaryContext.selectedFilter !== 'all') tags.push(`filter:${summaryContext.selectedFilter}`);
+      if (effectiveContext?.searchTerm) tags.push(`search:${effectiveContext.searchTerm}`);
+      if (effectiveContext?.selectedFilter && effectiveContext.selectedFilter !== 'all') tags.push(`filter:${effectiveContext.selectedFilter}`);
 
       const tagCounts = new Map();
       for (const n of candidateNotes) {
@@ -558,36 +582,82 @@ const NotesPage = () => {
                   onClick={() => setShowAICompanion(!showAICompanion)}
                 />
               </div>
-              {/* Summarize by Tag controls */}
+              {/* Summarize split-button */}
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginLeft: 8 }}>
-                <MD3TextField
-                  variant="outlined"
-                  label="Tag to summarize"
-                  value={tagToSummarize}
-                  onChange={(e) => setTagToSummarize(e.target.value)}
-                  leadingIcon={<Tag className="md3-icon" />}
-                  className="md3-notes-search"
-                />
                 <MD3Button
                   variant="filled"
-                  disabled={!tagToSummarize.trim() || summarizing}
-                  onClick={handleSummarizeByTag}
+                  icon={<FileText className="md3-icon" />}
+                  trailingIcon={<ChevronDown size={16} />}
+                  onClick={(e) => { setSummarizeMenuOpen(prev => !prev); setSummarizeAnchor(e.currentTarget); }}
+                  aria-haspopup="menu"
+                  aria-expanded={summarizeMenuOpen}
                 >
-                  {summarizing ? 'Summarizing…' : 'Summarize by Tag'}
-                </MD3Button>
-                <MD3Button
-                  variant="filled"
-                  disabled={filteredNotes.length === 0 || summarizing}
-                  onClick={handleSummarizeFiltered}
-                  style={{ whiteSpace: 'nowrap' }}
-                >
-                  {summarizing ? 'Summarizing…' : `Summarize Filtered (${filteredNotes.length})`}
+                  Summarize
                 </MD3Button>
               </div>
               
             </div>
           </div>
         </MD3Card>
+        {/* Summarize menu */}
+        <MD3Menu
+          open={summarizeMenuOpen}
+          onClose={() => setSummarizeMenuOpen(false)}
+          anchorEl={summarizeAnchor}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        >
+          <MD3MenuItem
+            icon={<CheckSquare size={16} />}
+            onClick={() => { setSummarizeMenuOpen(false); handleSummarizeSelection(); }}
+            disabled={selectedNoteIds.length === 0 || summarizing}
+          >
+            Summarize Selection
+          </MD3MenuItem>
+          <MD3MenuItem
+            icon={<Tag size={16} />}
+            onClick={() => { /* header chips already present; keep for consistency */ }}
+            disabled
+          >
+            Filters above
+          </MD3MenuItem>
+          <MD3MenuItem
+            icon={<Filter size={16} />}
+            onClick={() => { setSummarizeMenuOpen(false); handleSummarizeFiltered(); }}
+            disabled={filteredNotes.length === 0 || summarizing}
+          >
+            Summarize Filtered ({filteredNotes.length})
+          </MD3MenuItem>
+          <MD3MenuDivider />
+          <div style={{ padding: '8px 12px', width: '260px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <Tag size={16} style={{ opacity: 0.8 }} />
+              <span className="md-body-small" style={{ opacity: 0.8 }}>Summarize by tag</span>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <MD3TextField
+                placeholder="e.g. quotes"
+                value={tagToSummarize}
+                onChange={(e) => setTagToSummarize(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <MD3Button
+                variant="filled"
+                disabled={!tagToSummarize.trim() || summarizing}
+                onClick={() => { setSummarizeMenuOpen(false); handleSummarizeByTag(); }}
+              >
+                Go
+              </MD3Button>
+            </div>
+          </div>
+          <MD3MenuDivider />
+          <MD3MenuItem
+            icon={autoSaveSummary ? <CheckSquare size={16} /> : <Square size={16} />}
+            onClick={() => setAutoSaveSummary(v => !v)}
+          >
+            Auto-save as Note
+          </MD3MenuItem>
+        </MD3Menu>
 
         {/* AI Reading Companion */}
         {showAICompanion && (
