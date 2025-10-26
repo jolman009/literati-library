@@ -5,9 +5,8 @@ import DOMPurify from 'dompurify';
 import { useAuth } from '../../contexts/AuthContext';
 import { Material3ThemeProvider, useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { MD3SnackbarProvider } from '../Material3';
-import EnhancedBookLibraryApp from '../../pages/EnhancedBookLibraryApp';
 import API from '../../config/api';
-
+// import EnhancedBookLibraryApp from '../../pages/EnhancedBookLibraryApp';
 
 // ✅ FIXED: Safe gamification hook with ES6 imports
 const useOptionalGamification = () => {
@@ -658,8 +657,8 @@ const LibraryPageContent = () => {
 
   // ✅ COMPLETE: Main component with all features
   return (
-    <div style={{ 
-      background: actualTheme === 'dark' ? '#0f172a' : '#f8fafc',
+    <div style={{
+      background: 'rgba(247, 69, 10, 0.5)',
       minHeight: '100vh',
       transition: 'background 0.3s ease'
     }}>
