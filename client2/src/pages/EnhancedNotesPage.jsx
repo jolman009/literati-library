@@ -37,7 +37,9 @@ import {
   Hash,
   Clock,
   Book,
-  X
+  X,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import './EnhancedNotesPage.css';
 
@@ -404,6 +406,13 @@ const EnhancedNotesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [loading, setLoading] = useState(false);
+  // AI summary & selection state
+  const [selectedNoteIds, setSelectedNoteIds] = useState([]);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [summaryResult, setSummaryResult] = useState(null);
+  const [summarizing, setSummarizing] = useState(false);
+  const [tagToSummarize, setTagToSummarize] = useState('');
+  const [summaryContext, setSummaryContext] = useState(null);
   
   // View and filter state
   const [viewMode, setViewMode] = useState('grid'); // grid, timeline, cloud, stats
@@ -647,6 +656,190 @@ const EnhancedNotesPage = () => {
       return matchesSearch && matchesFilter && matchesTags && matchesDate;
     });
   }, [notes, searchTerm, selectedFilter, selectedTags, dateRange]);
+
+  // Selection helpers
+  const toggleSelectNote = useCallback((noteId) => {
+    setSelectedNoteIds(prev => prev.includes(noteId) ? prev.filter(id => id !== noteId) : [...prev, noteId]);
+  }, []);
+  const clearSelection = useCallback(() => setSelectedNoteIds([]), []);
+
+  // Summarization handlers
+  const handleSummarizeSelection = useCallback(async () => {
+    if (selectedNoteIds.length === 0) return;
+    try {
+      const count = selectedNoteIds.length;
+      if (count > 100) {
+        showSnackbar({ message: `Large selection (${count} notes). Summarization may be slow.`, variant: 'warning' });
+        const proceed = window.confirm(`You are about to summarize ${count} notes. Continue?`);
+        if (!proceed) return;
+      }
+      if (count < 2) {
+        showSnackbar({ message: `Only ${count} note selected. Consider selecting more for a stronger summary.`, variant: 'warning' });
+      }
+      setSummarizing(true);
+      const selected = notes.filter(n => selectedNoteIds.includes(n.id));
+      const contents = selected.map(n => n.content).filter(Boolean);
+      const title = selected.length === 1 ? (selected[0].title || 'Note Summary') : `Summary of ${selected.length} Notes`;
+      const tags = Array.from(new Set(selected.flatMap(n => Array.isArray(n.tags) ? n.tags : []))).slice(0, 10);
+      const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'book', tags });
+      if (result) {
+        setSummaryResult(result);
+        setSummaryContext({ mode: 'selection', ids: selectedNoteIds.slice() });
+        setSummaryOpen(true);
+      } else {
+        showSnackbar({ message: 'Failed to summarize selected notes', variant: 'error' });
+      }
+    } catch (e) {
+      console.error('Summarize selection error:', e);
+      showSnackbar({ message: 'Summarization failed', variant: 'error' });
+    } finally {
+      setSummarizing(false);
+    }
+  }, [selectedNoteIds, notes, showSnackbar]);
+
+  const handleSummarizeByTag = useCallback(async () => {
+    const tag = tagToSummarize.trim();
+    if (!tag) return;
+    try {
+      setSummarizing(true);
+      const tagged = notes.filter(n => Array.isArray(n.tags) && n.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
+      const count = tagged.length;
+      if (count === 0) {
+        showSnackbar({ message: `No notes found with tag: ${tag}`, variant: 'warning' });
+        return;
+      }
+      if (count > 100) {
+        showSnackbar({ message: `Large selection (${count} notes). Summarization may be slow.`, variant: 'warning' });
+        const proceed = window.confirm(`You are about to summarize ${count} notes. Continue?`);
+        if (!proceed) return;
+      }
+      if (count < 3) {
+        showSnackbar({ message: `Only ${count} note${count === 1 ? '' : 's'} with this tag. Consider adding more for a stronger summary.`, variant: 'warning' });
+      }
+      const contents = tagged.map(n => n.content).filter(Boolean);
+      const title = `Summary: #${tag}`;
+      const tags = [tag];
+      const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'tags', tags });
+      if (result) {
+        setSummaryResult(result);
+        setSummaryContext({ mode: 'tags', tag });
+        setSummaryOpen(true);
+      } else {
+        showSnackbar({ message: 'Failed to summarize by tag', variant: 'error' });
+      }
+    } catch (e) {
+      console.error('Summarize by tag error:', e);
+      showSnackbar({ message: 'Summarization failed', variant: 'error' });
+    } finally {
+      setSummarizing(false);
+    }
+  }, [tagToSummarize, notes, showSnackbar]);
+
+  const handleSummarizeFiltered = useCallback(async () => {
+    try {
+      if (!filteredNotes || filteredNotes.length === 0) return;
+      const count = filteredNotes.length;
+      if (count > 100) {
+        showSnackbar({ message: `Large selection (${count} notes). Summarization may be slow.`, variant: 'warning' });
+        const proceed = window.confirm(`You are about to summarize ${count} notes. Continue?`);
+        if (!proceed) return;
+      }
+      if (count < 3) {
+        showSnackbar({ message: `Only ${count} note${count === 1 ? '' : 's'} in filtered view. Consider adding more for a stronger summary.`, variant: 'warning' });
+      }
+      setSummarizing(true);
+      const contents = filteredNotes.map(n => n.content).filter(Boolean);
+      if (contents.length === 0) {
+        showSnackbar({ message: 'No content to summarize in filtered view', variant: 'warning' });
+        return;
+      }
+      const tagCounts = new Map();
+      for (const n of filteredNotes) {
+        const t = Array.isArray(n.tags) ? n.tags : [];
+        for (const tag of t) tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      }
+      const topTags = Array.from(tagCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k]) => k);
+      const titleBase = searchTerm ? `Summary: search:"${searchTerm}"` : 'Summary: Filtered Notes';
+      const title = `${titleBase} (${contents.length})`;
+      const result = await ReadingAssistant.summarizeNotes({ notes: contents, title, mode: 'filtered', tags: topTags });
+      if (result) {
+        setSummaryResult(result);
+        setSummaryContext({ mode: 'filtered', searchTerm, selectedFilter });
+        setSummaryOpen(true);
+      } else {
+        showSnackbar({ message: 'Failed to summarize filtered notes', variant: 'error' });
+      }
+    } catch (e) {
+      console.error('Summarize filtered error:', e);
+      showSnackbar({ message: 'Summarization failed', variant: 'error' });
+    } finally {
+      setSummarizing(false);
+    }
+  }, [filteredNotes, searchTerm, selectedFilter, showSnackbar]);
+
+  const handleSaveSummaryAsNote = useCallback(async () => {
+    if (!summaryResult) return;
+    try {
+      const mode = summaryContext?.mode;
+      let candidateNotes = [];
+      if (mode === 'selection' && Array.isArray(summaryContext?.ids)) {
+        candidateNotes = notes.filter(n => summaryContext.ids.includes(n.id));
+      } else if (mode === 'tags' && summaryContext?.tag) {
+        const tag = summaryContext.tag;
+        candidateNotes = notes.filter(n => Array.isArray(n.tags) && n.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
+      } else if (mode === 'filtered') {
+        candidateNotes = filteredNotes;
+      }
+
+      const uniqueBooks = Array.from(new Set(candidateNotes.map(n => n.book_id).filter(Boolean)));
+      const book_id = uniqueBooks.length === 1 ? uniqueBooks[0] : null;
+
+      const title = summaryResult.title || 'Notes Summary';
+      const parts = [];
+      if (summaryResult.summary) parts.push(summaryResult.summary);
+      if (Array.isArray(summaryResult.bullets) && summaryResult.bullets.length) {
+        parts.push('\nKey Points:\n' + summaryResult.bullets.slice(0, 10).map(b => `- ${b}`).join('\n'));
+      }
+      if (Array.isArray(summaryResult.themes) && summaryResult.themes.length) {
+        parts.push('\nThemes:\n' + summaryResult.themes.slice(0, 8).map(t => `- ${t.name}: ${t.explanation}`).join('\n'));
+      }
+      if (Array.isArray(summaryResult.questions) && summaryResult.questions.length) {
+        parts.push('\nQuestions:\n' + summaryResult.questions.slice(0, 6).map(q => `- ${q}`).join('\n'));
+      }
+      if (Array.isArray(summaryResult.nextSteps) && summaryResult.nextSteps.length) {
+        parts.push('\nNext Steps:\n' + summaryResult.nextSteps.slice(0, 6).map(s => `- ${s}`).join('\n'));
+      }
+      const content = parts.join('\n\n').trim();
+
+      const tags = ['ai-summary'];
+      if (mode === 'tags' && summaryContext?.tag) tags.push(`tag:${summaryContext.tag}`);
+      if (mode === 'selection') tags.push('selection-summary');
+      if (mode === 'filtered') tags.push('filtered-summary');
+      if (summaryContext?.searchTerm) tags.push(`search:${summaryContext.searchTerm}`);
+      if (summaryContext?.selectedFilter && summaryContext.selectedFilter !== 'all') tags.push(`filter:${summaryContext.selectedFilter}`);
+
+      const tagCounts = new Map();
+      for (const n of candidateNotes) {
+        const t = Array.isArray(n.tags) ? n.tags : [];
+        for (const tag of t) tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      }
+      const topTags = Array.from(tagCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k]) => k);
+      const mergedTags = Array.from(new Set([...tags, ...topTags]));
+
+      const payload = { title, content, book_id, tags: mergedTags };
+      await API.post('/notes', payload, { timeout: 30000 });
+      showSnackbar({ message: 'Summary saved as note!', variant: 'success' });
+      setSummaryOpen(false);
+      setSummaryResult(null);
+      setSummaryContext(null);
+      setTagToSummarize('');
+      clearSelection();
+      fetchNotes();
+    } catch (e) {
+      console.error('Save summary as note failed:', e);
+      showSnackbar({ message: 'Failed to save summary note', variant: 'error' });
+    }
+  }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection]);
   
   // Render note card
   const renderNoteCard = (note) => (
@@ -661,6 +854,16 @@ const EnhancedNotesPage = () => {
         transition: 'all 0.3s ease'
       }}
     >
+      {/* Selection checkbox */}
+      <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 2 }}>
+        <button
+          onClick={() => toggleSelectNote(note.id)}
+          className="md3-icon-button"
+          title={selectedNoteIds.includes(note.id) ? 'Deselect' : 'Select'}
+        >
+          {selectedNoteIds.includes(note.id) ? <CheckSquare className="md3-icon-small" /> : <Square className="md3-icon-small" />}
+        </button>
+      </div>
       <div className="md3-note-content">
         <h3 className="md3-note-title">
           {note.title}
@@ -861,6 +1064,32 @@ const EnhancedNotesPage = () => {
                 <Plus size={20} />
                 New Note
               </button>
+
+              {/* Summarize controls */}
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <MD3TextField
+                  variant="outlined"
+                  placeholder="Tag to summarize"
+                  value={tagToSummarize}
+                  onChange={(e) => setTagToSummarize(e.target.value)}
+                  leadingIcon={<Tag className="md3-icon" />}
+                  style={{ borderRadius: '12px', minWidth: '220px' }}
+                />
+                <MD3Button
+                  variant="filled"
+                  disabled={!tagToSummarize.trim() || summarizing}
+                  onClick={handleSummarizeByTag}
+                >
+                  {summarizing ? 'Summarizing…' : 'Summarize by Tag'}
+                </MD3Button>
+                <MD3Button
+                  variant="filled"
+                  disabled={filteredNotes.length === 0 || summarizing}
+                  onClick={handleSummarizeFiltered}
+                >
+                  {summarizing ? 'Summarizing…' : `Summarize Filtered (${filteredNotes.length})`}
+                </MD3Button>
+              </div>
 
               {/* View Mode Toggles */}
               <div style={{ display: 'flex', gap: '12px' }}>

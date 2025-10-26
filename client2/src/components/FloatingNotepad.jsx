@@ -21,6 +21,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   const noteRef = useRef(null);
   const [content, setContent] = useState(initialContent);
   const [isSaving, setIsSaving] = useState(false);
+  const [tagInput, setTagInput] = useState("");
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
   const startPos = useRef({ x: 0, y: 0 });
@@ -178,12 +179,18 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       console.log('📖 Saving EPUB note (no location tracking)');
     }
 
+    const userTags = tagInput
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+    const allTags = Array.from(new Set([...(tags || []), ...userTags]));
+
     const noteData = {
       title: title || content.substring(0, 30),
       content: `${locationPrefix}${content.trim()}`,
       book_id: bookId,
       ...locationMetadata,
-      tags
+      tags: allTags
     };
 
     console.log('📝 Attempting to save note:', {
@@ -235,6 +242,8 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       showSnackbar({ message: snackbarMessage, variant: "success" });
       setContent("");
       setIsSaving(false);
+      setTagInput("");
+      setTagInput("");
       console.log('✅ FloatingNotepad: Save workflow completed successfully');
     } catch (error) {
       console.error('❌ Failed to save note:', {
@@ -437,6 +446,23 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         background: isDark ? '#0f172a' : '#f8f9fa',
         borderTop: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`
       }}>
+        <input
+          type="text"
+          value={tagInput}
+          onChange={(e) => setTagInput(e.target.value)}
+          placeholder="Tags (comma-separated)"
+          aria-label="Note tags"
+          style={{
+            flex: 2,
+            minWidth: '120px',
+            padding: isMobile ? '8px' : '10px',
+            borderRadius: isMobile ? '12px' : '14px',
+            border: `1px solid ${isDark ? '#334155' : '#cbd5e1'}`,
+            background: isDark ? '#0b1220' : '#ffffff',
+            color: isDark ? '#e2e8f0' : '#0f172a',
+            fontSize: isMobile ? '12px' : '13px'
+          }}
+        />
         <button
           onClick={handleSave}
           disabled={!content.trim() || isSaving}

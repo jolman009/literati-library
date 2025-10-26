@@ -255,6 +255,29 @@ class ReadingAssistant {
   }
 
   /**
+   * Summarize a set of notes (strings) using server AI
+   */
+  async summarizeNotes({ notes = [], title = undefined, mode = 'book', tags = [] } = {}) {
+    try {
+      const response = await API.post('/ai/summarize-notes', { notes, title, mode, tags });
+      return {
+        title: response.data.title,
+        summary: response.data.summary,
+        bullets: response.data.bullets,
+        themes: response.data.themes,
+        questions: response.data.questions,
+        nextSteps: response.data.nextSteps,
+        confidence: response.data.confidence,
+        noteCount: response.data.noteCount,
+        aiGenerated: response.data.aiGenerated
+      };
+    } catch (error) {
+      console.warn('Summarize notes failed:', error);
+      return null;
+    }
+  }
+
+  /**
    * Generate contextual help for difficult passages
    */
   async getContextualHelp(selectedText, bookContext) {
