@@ -2,3 +2,4 @@ fastapi
 uvicorn[standard]
 google-generativeai
 python-dotenv
+sentry-sdk[fastapi]

@@ -73,6 +73,12 @@
   color: rgb(var(--md-sys-color-on-primary));
 }
 
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .brand-identity {
   text-align: left;
 }

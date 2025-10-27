@@ -25,6 +25,18 @@
   gap: 8px;
 }
 
+.md3-footer-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.md3-footer-logo-image {
+  display: block;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
 .md3-footer-logo {
   color: var(--md-sys-color-on-surface);
   margin: 0;

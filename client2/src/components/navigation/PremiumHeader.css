@@ -47,6 +47,13 @@
   background-color: var(--md-sys-color-surface-container-highest);
 }
 
+/* Header logo image styling */
+.header-logo-image {
+  display: block;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
 /* Title styling */
 .premium-header-title {
   margin: 0 0 0 0.75rem;
