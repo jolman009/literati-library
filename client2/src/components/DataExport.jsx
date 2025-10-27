@@ -173,7 +173,7 @@ const DataExport = () => {
         </div>
 
         <p className="md-body-small data-export-footer">
-          Questions about your data? Contact us at <a href="mailto:info@shelfquest.pro">info@shelfquest.pro</a>
+          Questions about your data? Contact us at <a href="mailto:info@shelfquest.org">info@shelfquest.org</a>
         </p>
       </div>
     </MD3Card>

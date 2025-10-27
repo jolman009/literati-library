@@ -164,6 +164,53 @@ const PrivacyPolicyPage = () => {
       )
     },
     {
+      id: 'account-deletion',
+      title: 'Account and Data Deletion',
+      content: (
+        <>
+          <h3 className="md-title-large">How to request deletion</h3>
+          <ol className="legal-list">
+            <li>Open the ShelfQuest app and sign in</li>
+            <li>Go to <strong>Profile → Settings → Privacy</strong></li>
+            <li>Select <strong>Delete Account</strong> and follow the prompts</li>
+          </ol>
+          <p className="md-body-medium">
+            If you cannot access the app, email us from your registered address at
+            {' '}<a href="mailto:info@shelfquest.org">info@shelfquest.org</a> with subject “Delete my ShelfQuest account”.
+          </p>
+
+          <h3 className="md-title-large">What we delete</h3>
+          <ul className="legal-list">
+            <li>Account profile (name, email) and authentication identifiers</li>
+            <li>User settings and preferences</li>
+            <li>Library data you created (uploaded books and metadata)</li>
+            <li>Reading activity (progress, bookmarks, session history)</li>
+            <li>Notes, highlights, and annotations</li>
+            <li>Gamification data (achievements, goals, points, activity records)</li>
+          </ul>
+
+          <h3 className="md-title-large">What may be retained</h3>
+          <ul className="legal-list">
+            <li>Records we must keep for legal/security purposes (e.g., fraud prevention, audit)</li>
+            <li>Aggregated or de‑identified analytics that cannot reasonably identify you</li>
+            <li>Encrypted backups that are purged automatically after the retention window</li>
+          </ul>
+
+          <h3 className="md-title-large">Timing</h3>
+          <ul className="legal-list">
+            <li>Production systems: deletion completes within <strong>7 days</strong> of verification</li>
+            <li>Backups: residual encrypted copies are overwritten within <strong>30 days</strong></li>
+            <li>Security logs: retained up to <strong>90 days</strong> unless a longer period is legally required</li>
+          </ul>
+
+          <p className="md-body-medium">
+            Full instructions are also available at
+            {' '}<a href="https://www.shelfquest.org/account-deletion.html" target="_blank" rel="noopener noreferrer">https://www.shelfquest.org/account-deletion.html</a>.
+          </p>
+        </>
+      )
+    },
+    {
       id: 'data-security',
       title: 'Data Security',
       content: (

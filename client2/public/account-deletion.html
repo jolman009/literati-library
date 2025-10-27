@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ShelfQuest — Account Deletion</title>
+    <meta name="description" content="How to request deletion of your ShelfQuest account and data, what is deleted, and retention timelines." />
+    <style>
+      :root {
+        --fg: #0f172a;
+        --muted: #475569;
+        --accent: #2563eb;
+        --bg: #ffffff;
+        --card: #f8fafc;
+        --border: #e2e8f0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--fg); background: var(--bg);
+      }
+      .container { max-width: 880px; margin: 0 auto; padding: 32px 20px 56px; }
+      header { margin-bottom: 24px; }
+      h1 { margin: 0 0 8px; font-size: 1.875rem; }
+      .subtitle { color: var(--muted); margin: 0 0 20px; }
+      .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 16px 0; }
+      h2 { font-size: 1.25rem; margin: 0 0 12px; }
+      h3 { font-size: 1.05rem; margin: 14px 0 8px; }
+      p { line-height: 1.6; }
+      ul, ol { padding-left: 18px; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .note { color: var(--muted); font-size: .95rem; }
+      footer { margin-top: 28px; color: var(--muted); font-size: .95rem; }
+      .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-size: .8rem; border: 1px solid #c7d2fe; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="badge">ShelfQuest</div>
+        <h1>Account and Data Deletion</h1>
+        <p class="subtitle">How to delete your ShelfQuest account, what data is deleted, and how long residual copies may remain in backups.</p>
+      </header>
+
+      <section class="card" aria-labelledby="in-app-steps">
+        <h2 id="in-app-steps">Delete your account in the app</h2>
+        <ol>
+          <li>Open the ShelfQuest app and sign in.</li>
+          <li>Go to Profile → Settings → Privacy.</li>
+          <li>Select “Delete Account”.</li>
+          <li>Confirm your password and submit the request.</li>
+        </ol>
+        <p class="note">If you can’t access the app, use the web request option below.</p>
+      </section>
+
+      <section class="card" aria-labelledby="web-request">
+        <h2 id="web-request">Request deletion outside the app</h2>
+        <p>Send an email from your account’s registered email address with subject “Delete my ShelfQuest account” to:
+          <br />
+          <strong><a href="mailto:info@shelfquest.org">info@shelfquest.org</a></strong>
+        </p>
+        <p>Include:</p>
+        <ul>
+          <li>Your account email</li>
+          <li>Confirmation you want your account and data deleted</li>
+        </ul>
+        <p>We’ll verify ownership and process your request.</p>
+      </section>
+
+      <section class="card" aria-labelledby="what-is-deleted">
+        <h2 id="what-is-deleted">What we delete</h2>
+        <ul>
+          <li>Account profile: name, email, and authentication identifiers</li>
+          <li>User settings and preferences</li>
+          <li>Library data you created: uploaded books and related metadata</li>
+          <li>Reading activity: progress, bookmarks, and session history</li>
+          <li>Notes, highlights, and annotations</li>
+          <li>Gamification data: achievements, goals, points, and activity records</li>
+          <li>Any other content you directly stored with ShelfQuest</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="what-is-retained">
+        <h2 id="what-is-retained">What may be retained</h2>
+        <ul>
+          <li>Legal or security records that we are required to keep (e.g., fraud prevention, audit trails)</li>
+          <li>Aggregated or de‑identified analytics that cannot reasonably identify you</li>
+          <li>Encrypted backup copies that will be purged automatically after the retention window</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="timelines">
+        <h2 id="timelines">Timing and retention periods</h2>
+        <ul>
+          <li>Production systems: account and associated content are removed within 7 days of verification</li>
+          <li>Backups: residual encrypted copies are overwritten within 30 days through routine rotation</li>
+          <li>Security logs: retained up to 90 days, then deleted or anonymized unless a longer period is legally required</li>
+        </ul>
+      </section>
+
+      <section class="card" aria-labelledby="contact">
+        <h2 id="contact">Contact</h2>
+        <p>If you have questions about account deletion, contact us at <a href="mailto:info@shelfquest.org">info@shelfquest.org</a>.</p>
+      </section>
+
+      <footer>
+        <p>This page refers to the ShelfQuest app. Use this link on the Google Play listing for account deletion information.</p>
+        <p>Last updated: <time datetime="2025-10-27">October 27, 2025</time></p>
+      </footer>
+    </div>
+  </body>
+  </html>
+
