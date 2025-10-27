@@ -44,7 +44,7 @@ function SentryTestPanel() {
   const handleUserContextTest = () => {
     Sentry.setUser({
       id: 'test-user-123',
-      email: 'test@shelfquest.pro',
+      email: 'test@shelfquest.org',
       username: 'test_reader'
     });
     alert('User context set! Future errors will include this user info.');

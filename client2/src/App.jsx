@@ -74,6 +74,8 @@ const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage')
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const DataExport = lazy(() => import('./components/DataExport'));
 
 // Lazy load secondary pages with error handling
 // const LibraryPageWrapper = lazy(() =>
@@ -192,6 +194,20 @@ const AppRoutes = () => {
               <LibraryPageWrapper />
             </Suspense>
           </LibraryErrorBoundary>
+        } />
+        <Route path="/settings" element={
+          <ErrorBoundary fallbackComponent="settings" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading settings..." />}>
+              <SettingsPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/settings/data-export" element={
+          <ErrorBoundary fallbackComponent="data-export" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Preparing data export..." />}>
+              <DataExport />
+            </Suspense>
+          </ErrorBoundary>
         } />
         <Route path="/onboarding" element={
           <ErrorBoundary fallbackComponent="dashboard" variant="full">

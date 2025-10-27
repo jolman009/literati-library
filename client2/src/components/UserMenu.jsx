@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const UserMenu = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const { deleteAccount } = useAuth();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -38,6 +40,28 @@ const UserMenu = ({ user, onLogout }) => {
   const handleLogout = () => {
     setIsOpen(false);
     onLogout();
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const confirmed = window.confirm(
+        'This will permanently delete your ShelfQuest account and associated data. This action cannot be undone.\n\nDo you want to continue?'
+      );
+      if (!confirmed) return;
+
+      const password = window.prompt('Please enter your password to confirm account deletion:');
+      if (!password) return;
+
+      const result = await deleteAccount(password);
+      if (result?.success) {
+        alert('Your account has been deleted. We’re signing you out now.');
+        setIsOpen(false);
+      } else if (result?.error) {
+        alert(`Deletion failed: ${result.error}`);
+      }
+    } catch (err) {
+      alert(`Deletion failed: ${err?.message || 'Unknown error'}`);
+    }
   };
 
   return (
@@ -98,7 +122,7 @@ const UserMenu = ({ user, onLogout }) => {
             <button
               className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-on-surface hover:bg-surface-container-high transition-colors duration-short2"
               role="menuitem"
-              onClick={() => setIsOpen(false)}
+              onClick={() => { window.location.href = '/settings'; setIsOpen(false); }}
             >
               <span className="material-symbols-outlined text-xl">
                 settings
@@ -132,6 +156,20 @@ const UserMenu = ({ user, onLogout }) => {
               className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-on-surface hover:bg-surface-container-high transition-colors duration-short2"
               role="menuitem"
               onClick={() => {
+                window.open('https://www.shelfquest.org/account-deletion.html', '_blank', 'noopener');
+                setIsOpen(false);
+              }}
+            >
+              <span className="material-symbols-outlined text-xl">
+                link
+              </span>
+              <span>Account Deletion Info</span>
+            </button>
+
+            <button
+              className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-on-surface hover:bg-surface-container-high transition-colors duration-short2"
+              role="menuitem"
+              onClick={() => {
                 // Dispatch custom event to show tutorial
                 window.dispatchEvent(new CustomEvent('showTutorial'));
                 setIsOpen(false);
@@ -144,6 +182,17 @@ const UserMenu = ({ user, onLogout }) => {
             </button>
 
             <div className="border-t border-outline-variant my-2"></div>
+
+            <button
+              className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-error hover:bg-error-container/10 transition-colors duration-short2"
+              role="menuitem"
+              onClick={handleDeleteAccount}
+            >
+              <span className="material-symbols-outlined text-xl">
+                delete_forever
+              </span>
+              <span>Delete Account</span>
+            </button>
 
             <button
               className="w-full flex items-center space-x-3 px-4 py-3 text-left text-label-large text-error hover:bg-error-container/10 transition-colors duration-short2"

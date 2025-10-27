@@ -158,7 +158,7 @@ const TermsOfServicePage = () => {
               If you believe content on our Service infringes your copyright, please contact our DMCA agent:
             </p>
             <div className="legal-contact">
-              <p><strong>Email:</strong> info@shelfquest.pro</p>
+              <p><strong>Email:</strong> info@shelfquest.org</p>
               <p><strong>Address:</strong> 628 Montreal Court, Brownsville, Texas 78526</p>
             </div>
           </section>
@@ -196,7 +196,7 @@ const TermsOfServicePage = () => {
               For questions about these Terms, contact us at:
             </p>
             <div className="legal-contact">
-              <p><strong>Email:</strong> info@shelfquest.pro</p>
+              <p><strong>Email:</strong> info@shelfquest.org</p>
               <p><strong>Address:</strong> 628 Montreal Court, Brownsville, Texas 78526</p>
               <p><strong>Support:</strong> info@shelfquest.org</p>
             </div>
