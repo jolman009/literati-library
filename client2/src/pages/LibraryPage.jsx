@@ -23,7 +23,7 @@ import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 
 const LibraryPage = () => {
   const { actualTheme } = useMaterial3Theme();
-  const { user } = useAuth();
+  const { user, makeAuthenticatedApiCall } = useAuth();
   const { 
     startReadingSession, 
     stopReadingSession,
@@ -85,18 +85,18 @@ const LibraryPage = () => {
     try {
       console.log('📚 LibraryPage: Starting to fetch books...');
       setLoading(true);
-      const response = await API.get('/books', { params: { limit: PAGE_LIMIT, offset } });
+      const response = await makeAuthenticatedApiCall(`/books?limit=${PAGE_LIMIT}&offset=${offset}`);
 
       console.log('📚 LibraryPage: Response received:', {
-        dataType: typeof response.data,
-        isArray: Array.isArray(response.data),
-        hasBooks: !!response.data?.books,
-        hasItems: !!response.data?.items,
-        dataKeys: Object.keys(response.data || {}),
-        sampleData: response.data
+        dataType: typeof response,
+        isArray: Array.isArray(response),
+        hasBooks: !!response?.books,
+        hasItems: !!response?.items,
+        dataKeys: Object.keys(response || {}),
+        sampleData: response
       });
 
-      const { items = [], total } = response.data || {};
+      const { items = [], total } = response || {};
       const booksData = items;
 
       console.log('📚 LibraryPage: Books data processed:', {
@@ -788,3 +788,4 @@ const LibraryPage = () => {
 // };
 }
 export default LibraryPage;
+

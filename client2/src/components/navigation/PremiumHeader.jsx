@@ -138,7 +138,13 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
           onClick={handleLogoClick}
           aria-label="Home"
         >
-          <span className="material-symbols-outlined">auto_stories</span>
+          <img
+            src="/ShelfQuest_logo_favicon.png"
+            alt="ShelfQuest"
+            className="header-logo-image"
+            width="32"
+            height="32"
+          />
         </button>
         <h1 className="premium-header-title">{title}</h1>
         {breadcrumbs.length > 0 && (
