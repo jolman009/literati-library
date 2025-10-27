@@ -11,9 +11,18 @@ const MD3Footer = () => {
       <div className="md3-footer-container">
         {/* Brand Section */}
         <div className="md3-footer-brand">
-          <h3 className="md-title-medium md3-footer-logo">
-            📚 ShelfQuest
-          </h3>
+          <div className="md3-footer-logo-container">
+            <img
+              src="/ShelfQuest_logo_favicon.png"
+              alt="ShelfQuest"
+              className="md3-footer-logo-image"
+              width="32"
+              height="32"
+            />
+            <h3 className="md-title-medium md3-footer-logo">
+              ShelfQuest
+            </h3>
+          </div>
           <p className="md-body-small md3-footer-tagline">
             Your personal digital library
           </p>

@@ -103,7 +103,7 @@ const SignUpPage = () => {
         {/* Header Section */}
         <div className="md3-signup-header">
           <img
-            src="/shelfquest-logo-192.png"
+            src="/ShelfQuest_logo_.png"
             alt="ShelfQuest"
             className="md3-signup-logo"
           />

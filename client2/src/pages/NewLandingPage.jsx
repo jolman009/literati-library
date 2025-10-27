@@ -51,9 +51,11 @@ const NewLandingPage = () => {
           {/* Logo with Animation */}
           <div className="logo-display">
             <div className="logo-circle">
-              <span className="material-symbols-outlined logo-icon">
-                auto_stories
-              </span>
+              <img
+                src="/ShelfQuest_logo_favicon.png"
+                alt="ShelfQuest"
+                className="logo-image"
+              />
             </div>
             <div className="brand-identity">
               <h1 className="brand-title">ShelfQuest</h1>

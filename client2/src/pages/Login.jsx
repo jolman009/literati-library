@@ -103,12 +103,13 @@ const Login = () => {
           <div className="login-logo">
             {/* Logo */}
             <div className="logo-container">
-              <svg width="40" height="40" viewBox="0 0 100 100" className="logo-svg">
-                <path
-                  d="M20 20 L20 80 L40 80 L40 40 L60 20 C70 10, 80 15, 85 25 C90 35, 85 45, 75 50 L60 60 L80 60 C85 60, 90 65, 90 70 C90 75, 85 80, 80 80 L40 80"
-                  fill="currentColor"
-                />
-              </svg>
+              <img
+                src="/ShelfQuest_logo_favicon.png"
+                alt="ShelfQuest"
+                className="logo-image"
+                width="80"
+                height="80"
+              />
             </div>
 
             {/* Brand Text */}
