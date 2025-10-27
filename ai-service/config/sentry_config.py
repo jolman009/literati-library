@@ -1,8 +1,14 @@
 import os
-import sentry_sdk
-from sentry_sdk.integrations.fastapi import FastApiIntegration
-# Temporarily comment out SQLAlchemy integration due to import issue
-# from sentry_sdk.integrations.sqlalchemy import SqlAlchemyIntegration
+import random
+try:
+    import sentry_sdk
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    # Temporarily comment out SQLAlchemy integration due to import issue
+    # from sentry_sdk.integrations.sqlalchemy import SqlAlchemyIntegration
+    SENTRY_AVAILABLE = True
+except ImportError:
+    SENTRY_AVAILABLE = False
+    print("[Sentry] Warning: sentry-sdk not installed. Error reporting will be disabled.")
 
 SENTRY_CONFIG = {
     "development": {
@@ -23,6 +29,10 @@ SENTRY_CONFIG = {
 
 def initialize_sentry():
     """Initialize Sentry for the AI service."""
+    if not SENTRY_AVAILABLE:
+        print("[Sentry] Not available - skipping initialization")
+        return
+        
     environment = os.getenv("ENVIRONMENT", "development")
     config = SENTRY_CONFIG.get(environment, SENTRY_CONFIG["development"])
 
@@ -96,13 +106,15 @@ def filter_transactions(event, hint):
     if event.get("transaction") and "health" in event.get("transaction", "").lower():
         if event.get("contexts", {}).get("trace", {}).get("sampled"):
             # 1% sampling for health checks
-            import random
             event["contexts"]["trace"]["sampled"] = random.random() < 0.01
 
     return event
 
 def report_error(error, context=None):
     """Manually report an error to Sentry."""
+    if not SENTRY_AVAILABLE:
+        return
+        
     if context is None:
         context = {}
 
@@ -118,6 +130,9 @@ def report_error(error, context=None):
 
 def add_breadcrumb(message, category="ai-processing", level="info", data=None):
     """Add a breadcrumb to Sentry."""
+    if not SENTRY_AVAILABLE:
+        return
+        
     if data is None:
         data = {}
 
@@ -130,6 +145,9 @@ def add_breadcrumb(message, category="ai-processing", level="info", data=None):
 
 def start_transaction(name, operation="ai.processing"):
     """Start a performance transaction."""
+    if not SENTRY_AVAILABLE:
+        return None
+        
     return sentry_sdk.start_transaction(
         name=name,
         op=operation
@@ -139,6 +157,9 @@ def with_sentry_transaction(name, operation="ai.processing"):
     """Decorator to wrap functions with Sentry transaction monitoring."""
     def decorator(func):
         def wrapper(*args, **kwargs):
+            if not SENTRY_AVAILABLE:
+                return func(*args, **kwargs)
+                
             transaction = sentry_sdk.start_transaction(
                 name=name,
                 op=operation
@@ -168,13 +189,17 @@ class SentryTransaction:
         self.transaction = None
 
     def __enter__(self):
-        self.transaction = sentry_sdk.start_transaction(
-            name=self.name,
-            op=self.operation
-        )
+        if SENTRY_AVAILABLE:
+            self.transaction = sentry_sdk.start_transaction(
+                name=self.name,
+                op=self.operation
+            )
         return self.transaction
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if not SENTRY_AVAILABLE or not self.transaction:
+            return
+            
         if exc_type:
             self.transaction.set_status("internal_error")
             sentry_sdk.capture_exception(exc_val)
