@@ -49,7 +49,7 @@ def initialize_sentry():
         release=os.getenv("APP_VERSION", "unknown"),
 
         # Server configuration
-        server_name=os.getenv("SERVER_NAME", "literati-ai"),
+        server_name=os.getenv("SERVER_NAME", "shelfquest-ai"),
 
         # Error filtering
         before_send=filter_events,
