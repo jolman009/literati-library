@@ -63,8 +63,13 @@ import Login from './pages/Login';
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
-// TEMPORARY: Import LibraryPage directly to debug loading issue
-import LibraryPage from './pages/LibraryPage';
+// Library Page wrapper (lazy-loaded)
+const LibraryPageWrapper = lazy(() =>
+  import('./components/wrappers/LibraryPageWrapper').catch(err => {
+    console.error('Failed to load LibraryPageWrapper:', err);
+    return { default: () => <div>Error loading Library. Please refresh.</div> };
+  })
+);
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
@@ -183,7 +188,9 @@ const AppRoutes = () => {
         } />
         <Route path="/library" element={
           <LibraryErrorBoundary>
-            <LibraryPage />
+            <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
+              <LibraryPageWrapper />
+            </Suspense>
           </LibraryErrorBoundary>
         } />
         <Route path="/onboarding" element={
