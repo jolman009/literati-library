@@ -158,6 +158,80 @@
   margin-left: 1rem;
 }
 
+/* Premium CTA (subtle standout with MD3 elevation + nudge) */
+.premium-header .premium-cta {
+  position: relative;
+  /* Keep MD3 tonal look but add presence */
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level2);
+  transform: translateZ(0); /* enable GPU for smoother nudge */
+  transition: transform 160ms var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
+              box-shadow 160ms var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  /* Gentle, infrequent attention nudge */
+  animation: premiumCtaNudge 24s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+.premium-header .premium-cta:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.premium-header .premium-cta:hover {
+  box-shadow: var(--md-sys-elevation-level3);
+  transform: scale(1.02);
+}
+
+/* Pause animation during interaction so hover stands out */
+.premium-header .premium-cta:hover,
+.premium-header .premium-cta:focus-visible {
+  animation: none;
+}
+
+/* Light mode colors */
+.premium-app-layout:not(.dark) .premium-header .premium-cta {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+/* Dark mode colors (use primary container for stronger contrast) */
+.premium-app-layout.dark .premium-header .premium-cta {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  /* Start a notch higher in elevation for clarity on dark */
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+/* Dark mode hover/active: bump elevation a bit more */
+.premium-app-layout.dark .premium-header .premium-cta:hover {
+  box-shadow: var(--md-sys-elevation-level4);
+}
+.premium-app-layout.dark .premium-header .premium-cta:active {
+  box-shadow: var(--md-sys-elevation-level5);
+}
+
+@keyframes premiumCtaNudge {
+  0%, 92%, 100% {
+    transform: scale(1);
+    box-shadow: var(--md-sys-elevation-level2);
+  }
+  95% {
+    transform: scale(1.0125);
+    box-shadow: var(--md-sys-elevation-level3);
+  }
+  97% {
+    transform: scale(1.015);
+    box-shadow: var(--md-sys-elevation-level4);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .premium-header .premium-cta {
+    animation: none;
+  }
+}
+
 /* Additional actions in the right section can use these base styles */
 .premium-header-action-btn {
   display: inline-flex;

@@ -180,6 +180,12 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
             onChange={handleSearchChange}
           />
         </div>
+        {/* Inline Premium CTA for non-premium users */}
+        {!isPremium && (
+          <div className="premium-header-actions">
+            <GoPremiumCTA to="/premium" variant="tonal" className="premium-cta" />
+          </div>
+        )}
 
         {/* Action buttons */}
         <div className="premium-header-actions">
