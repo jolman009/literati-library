@@ -142,11 +142,11 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
           aria-label="Home"
         >
           <img
-            src="/ShelfQuest_logo_favicon.png"
+            src="/ShelfQuest_logo_v2.png"
             alt="ShelfQuest"
             className="header-logo-image"
-            width="32"
-            height="32"
+            width="48"
+            height="48"
           />
         </button>
         <h1 className="premium-header-title">{title}</h1>

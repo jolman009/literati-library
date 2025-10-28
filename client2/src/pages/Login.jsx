@@ -104,7 +104,7 @@ const Login = () => {
             {/* Logo */}
             <div className="logo-container">
               <img
-                src="/ShelfQuest_logo_favicon.png"
+                src="/ShelfQuest_logo_v2.png"
                 alt="ShelfQuest"
                 className="logo-image"
                 width="80"
