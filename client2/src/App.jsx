@@ -43,6 +43,7 @@ import './App.css';
 import './styles/accessibility.css'; // WCAG AA compliance styles
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { EntitlementsProvider } from './contexts/EntitlementsContext';
 import { GamificationProvider } from './contexts/GamificationContext';
 import './styles/dashboard-dark-mode-fix.css';
 
@@ -55,6 +56,7 @@ import ReadingSessionTimer from './components/ReadingSessionTimer';
 import GamificationOnboarding from './components/gamification/GamificationOnboarding';
 import CookieConsent from './components/legal/CookieConsent';
 import NoteSyncListener from './components/NoteSyncListener';
+import PremiumModal from './components/premium/PremiumModal';
 
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
@@ -76,6 +78,12 @@ const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const DataExport = lazy(() => import('./components/DataExport'));
+const PremiumPage = lazy(() =>
+  import('./pages/PremiumPage').catch(err => {
+    console.error('Failed to load PremiumPage:', err);
+    return { default: () => <div>Error loading Premium. Please refresh.</div> };
+  })
+);
 
 // Lazy load secondary pages with error handling
 // const LibraryPageWrapper = lazy(() =>
@@ -294,6 +302,14 @@ const AppRoutes = () => {
         </ErrorBoundary>
       } />
 
+      <Route path="/premium" element={
+        <ErrorBoundary fallbackComponent="premium" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Premium..." />}>
+            <PremiumPage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+
       <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/"} replace />} />
     </Routes>
   );
@@ -322,10 +338,11 @@ const App = () => {
   return (
     <div className="app">
       <AuthProvider>
-        <Material3ThemeProvider defaultTheme="auto">
-          <MD3SnackbarProvider>
-            <GamificationProvider>
-              <ReadingSessionProvider>
+        <EntitlementsProvider>
+          <Material3ThemeProvider defaultTheme="auto">
+            <MD3SnackbarProvider>
+              <GamificationProvider>
+                <ReadingSessionProvider>
                 <NetworkStatus isOnline={isOnline} isReconnecting={isReconnecting} />
                 <NoteSyncListener />
                 <AppRoutes />
@@ -334,6 +351,7 @@ const App = () => {
                 <CacheMonitor />
                 <GamificationOnboarding />
                 <CookieConsent />
+                <PremiumModal />
 
                 {/* PWA Components */}
                 <OfflineIndicator />
@@ -344,7 +362,8 @@ const App = () => {
               </ReadingSessionProvider>
             </GamificationProvider>
           </MD3SnackbarProvider>
-        </Material3ThemeProvider>
+          </Material3ThemeProvider>
+        </EntitlementsProvider>
       </AuthProvider>
     </div>
   );

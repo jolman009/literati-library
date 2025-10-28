@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import './PremiumHeader.css';
+import { useEntitlements } from '../../contexts/EntitlementsContext';
+import GoPremiumCTA from '../premium/GoPremiumCTA';
 
 /**
  * A Material Design 3–compliant header for the premium experience.
@@ -24,6 +26,7 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
   const { actualTheme, toggleTheme } = useMaterial3Theme();
   const { user, logout } = useAuth();
   const [query, setQuery] = useState('');
+  const { isPremium, openPremiumModal } = useEntitlements();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuButtonRef = useRef(null);
   const userMenuRef = useRef(null);
@@ -239,6 +242,22 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                     <span className="user-email">{user?.email || 'user@example.com'}</span>
                   </div>
                 </div>
+                {!isPremium && (
+                  <>
+                    <div className="dropdown-divider"></div>
+                    <button
+                      className="dropdown-item"
+                      role="menuitem"
+                      onClick={() => {
+                        openPremiumModal();
+                        setUserMenuOpen(false);
+                      }}
+                    >
+                      <span className="material-symbols-outlined">workspace_premium</span>
+                      Go Premium
+                    </button>
+                  </>
+                )}
                 <div className="dropdown-divider"></div>
                 <nav className="dropdown-nav">
                   <button
@@ -262,6 +281,17 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
                   >
                     <span className="material-symbols-outlined">settings</span>
                     Settings
+                  </button>
+                  <button
+                    className="dropdown-item"
+                    role="menuitem"
+                    onClick={() => {
+                      navigate('/premium');
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    <span className="material-symbols-outlined">workspace_premium</span>
+                    Premium
                   </button>
                   <button
                     className="dropdown-item"

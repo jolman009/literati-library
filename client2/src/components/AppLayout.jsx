@@ -5,15 +5,18 @@ import MobileNavigation from './navigation/MobileNavigation';
 import PremiumHeader from './navigation/PremiumHeader';
 import NavigationFAB from './NavigationFAB';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useEntitlements } from '../contexts/EntitlementsContext';
 import GlobalSearch from './GlobalSearch';
 import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
 import MD3Footer from './MD3Footer';
 import ChatGuide from './ChatGuide/ChatGuide';
+import GoPremiumBanner from './premium/GoPremiumBanner';
 
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
+  const { isPremium } = useEntitlements();
   const { pathname } = useLocation();
   const { isOpen, openSearch, closeSearch, navigateToResult } = useGlobalSearch();
   const [navCollapsed, setNavCollapsed] = useState(false); // false = expanded = 280px
@@ -42,6 +45,9 @@ const AppLayout = () => {
 
       <div className="content-area">
         {!inReader && <PremiumHeader onSearch={openSearch} />}
+        {!inReader && !isPremium && (
+          <GoPremiumBanner />
+        )}
 
         <main id="main" className="page-content">
           <Outlet />
