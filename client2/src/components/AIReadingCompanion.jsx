@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { MD3Card, MD3Button, MD3Chip, useSnackbar } from './Material3';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useEntitlements } from '../contexts/EntitlementsContext';
 import ReadingAssistant from '../services/ReadingAssistant';
 import {
   Brain,
@@ -27,6 +28,7 @@ const AIReadingCompanion = ({
 }) => {
   const { actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
+  const { isPremium, openPremiumModal } = useEntitlements();
   
   const [selectedText, setSelectedText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -43,6 +45,12 @@ const AIReadingCompanion = ({
     
     if (text.length < 10) {
       return; // Too short for meaningful analysis
+    }
+
+    if (!isPremium) {
+      showSnackbar({ message: 'AI analysis is a Premium feature', variant: 'info' });
+      openPremiumModal();
+      return;
     }
 
     setSelectedText(text);
@@ -85,6 +93,11 @@ const AIReadingCompanion = ({
 
   // Generate reading insights
   const generateReadingInsights = useCallback(async () => {
+    if (!isPremium) {
+      showSnackbar({ message: 'Reading insights are a Premium feature', variant: 'info' });
+      openPremiumModal();
+      return;
+    }
     setShowInsights(true);
     
     try {
@@ -140,6 +153,11 @@ const AIReadingCompanion = ({
           <Brain className="ai-icon" />
           <h3>AI Reading Companion</h3>
           <p>Select text to get AI-powered insights, explanations, and smart annotations</p>
+          {!isPremium && (
+            <div className="md-body-small text-on-surface-variant" style={{ marginBottom: 8 }}>
+              Premium required for AI features
+            </div>
+          )}
           <MD3Button
             variant="filled"
             icon={<TrendingUp className="button-icon" />}

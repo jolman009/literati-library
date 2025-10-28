@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useEntitlements } from '../contexts/EntitlementsContext';
+import GoPremiumCTA from '../components/premium/GoPremiumCTA';
 
 const SettingsPage = () => {
   const { user, deleteAccount } = useAuth();
+  const { isPremium, openPremiumModal } = useEntitlements();
   const [requesting, setRequesting] = useState(false);
   const [categories, setCategories] = useState({
     library: false,
@@ -61,6 +64,23 @@ const SettingsPage = () => {
     <div className="container mx-auto px-4 py-6">
       <h1 className="md-headline-medium mb-2">Settings</h1>
       <p className="text-on-surface-variant mb-6">Manage your account, privacy, and data controls.</p>
+
+      {!isPremium && (
+        <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
+          <h2 className="md-title-large mb-2">ShelfQuest Premium</h2>
+          <p className="md-body-medium mb-3">Upgrade to unlock AI summaries, advanced analytics, and cross-device sync.</p>
+          <ul className="md-body-medium list-disc pl-5 mb-4 space-y-1">
+            <li>AI-powered summaries and contextual insights</li>
+            <li>Advanced reading stats, goals, and streaks</li>
+            <li>Secure backup and sync across devices</li>
+            <li>Full note search and export</li>
+          </ul>
+          <div className="flex items-center gap-3">
+            <GoPremiumCTA />
+            <button className="md3-button md3-button--outlined" onClick={openPremiumModal}>Learn More</button>
+          </div>
+        </section>
+      )}
 
       <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
         <h2 className="md-title-large mb-2">Privacy</h2>
@@ -133,4 +153,3 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
-
