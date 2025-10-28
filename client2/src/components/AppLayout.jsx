@@ -45,9 +45,7 @@ const AppLayout = () => {
 
       <div className="content-area">
         {!inReader && <PremiumHeader onSearch={openSearch} />}
-        {!inReader && !isPremium && (
-          <GoPremiumBanner />
-        )}
+        {/* Premium inline CTA now lives in header; removing banner card */}
 
         <main id="main" className="page-content">
           <Outlet />

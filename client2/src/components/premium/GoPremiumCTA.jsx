@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useEntitlements } from '../../contexts/EntitlementsContext';
 
-const GoPremiumCTA = ({ size = 'medium', variant = 'filled', className = '', children }) => {
+const GoPremiumCTA = ({ to, size = 'medium', variant = 'filled', className = '', children }) => {
   const { openPremiumModal } = useEntitlements();
   const label = children || 'Go Premium';
 
@@ -14,8 +15,19 @@ const GoPremiumCTA = ({ size = 'medium', variant = 'filled', className = '', chi
 
   const sizeClass = size === 'small' ? 'md3-button--small' : size === 'large' ? 'md3-button--large' : '';
 
+  const classes = [base, style, sizeClass, className].filter(Boolean).join(' ');
+
+  if (to) {
+    return (
+      <Link to={to} className={classes} aria-label={typeof label === 'string' ? label : 'Go Premium'}>
+        <span className="material-symbols-outlined mr-2">workspace_premium</span>
+        {label}
+      </Link>
+    );
+  }
+
   return (
-    <button onClick={openPremiumModal} className={[base, style, sizeClass, className].filter(Boolean).join(' ')}>
+    <button onClick={openPremiumModal} className={classes}>
       <span className="material-symbols-outlined mr-2">workspace_premium</span>
       {label}
     </button>
@@ -23,4 +35,3 @@ const GoPremiumCTA = ({ size = 'medium', variant = 'filled', className = '', chi
 };
 
 export default GoPremiumCTA;
-
