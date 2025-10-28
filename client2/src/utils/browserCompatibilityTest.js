@@ -288,6 +288,29 @@ class BrowserCompatibilityTester {
   }
 
   /**
+   * Test Service Worker support
+   */
+  testServiceWorker() {
+    console.log('⚙️ Testing Service Worker support...');
+    
+    const serviceWorkerTests = {
+      serviceWorkerAPI: 'serviceWorker' in navigator,
+      serviceWorkerContainer: 'ServiceWorkerContainer' in window,
+      serviceWorkerRegistration: 'ServiceWorkerRegistration' in window,
+      cacheAPI: 'caches' in window,
+      pushManager: 'PushManager' in window,
+      notificationAPI: 'Notification' in window
+    };
+    const passedServiceWorker = Object.values(serviceWorkerTests).filter(Boolean).length;
+    this.results.serviceWorker = {
+      tests: serviceWorkerTests,
+      score: `${passedServiceWorker}/${Object.keys(serviceWorkerTests).length}`,
+      status: passedServiceWorker === Object.keys(serviceWorkerTests).length ? 'excellent' :
+              passedServiceWorker >= Object.keys(serviceWorkerTests).length * 0.7 ? 'good' : 'partial'
+    };
+    console.log(`✅ Service Worker: ${passedServiceWorker}/${Object.keys(serviceWorkerTests).length} APIs supported`);
+  }
+  /**
    * Test Virtual Scrolling capabilities
    */
   testVirtualScrolling() {
