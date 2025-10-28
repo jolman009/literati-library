@@ -293,7 +293,7 @@ const MD3UploadPage = () => {
                     <option value="Science Fiction">Science Fiction</option>
                     <option value="Fantasy">Fantasy</option>
                     <option value="Mystery">Mystery</option>
-                    <option value="Thriller">Thriller</option>
+                    <option value="Psychology">Psychology</option>
                     <option value="Romance">Romance</option>
                     <option value="Horror">Horror</option>
                     <option value="Biography">Biography</option>

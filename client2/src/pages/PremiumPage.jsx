@@ -1,6 +1,7 @@
 import React from 'react';
 import GoPremiumCTA from '../components/premium/GoPremiumCTA';
 import { useEntitlements } from '../contexts/EntitlementsContext';
+import '../styles/premium-page.css';
 
 const benefits = [
   'AI-powered summaries and contextual insights',
@@ -40,52 +41,59 @@ const faqs = [
 const PremiumPage = () => {
   const { isPremium } = useEntitlements();
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="md-headline-medium">ShelfQuest Premium</h1>
-        <p className="text-on-surface-variant mt-2">Everything you need to read smarter.</p>
+    <div className="premium-page container">
+      <header className="premium-hero">
+        <div className="premium-hero-text">
+          <h1 className="md-headline-medium premium-title">ShelfQuest Premium</h1>
+          <p className="text-on-surface-variant premium-subtitle">Everything you need to read smarter.</p>
+        </div>
+        {!isPremium && (
+          <div className="premium-hero-cta">
+            <GoPremiumCTA size="large">Start Premium</GoPremiumCTA>
+          </div>
+        )}
       </header>
 
-      {!isPremium && (
-        <div className="mb-6 bg-surface-container-high rounded-medium border border-outline-variant p-4 flex items-center justify-between gap-3">
-          <div>
-            <div className="md-title-medium mb-1">Unlock AI and advanced features</div>
-            <div className="md-body-medium text-on-surface-variant">Start your Premium plan in seconds.</div>
-          </div>
-          <GoPremiumCTA size="large" />
-        </div>
-      )}
-
-      <section className="mb-8 bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-3">Premium Benefits</h2>
-        <ul className="md-body-medium list-disc pl-5 space-y-2">
+      <section className="premium-section premium-benefits">
+        <h2 className="md-title-large section-title">Premium Benefits</h2>
+        <ul className="benefits-grid">
           {benefits.map((b) => (
-            <li key={b}>{b}</li>
+            <li key={b} className="benefit-item">
+              <span className="material-symbols-outlined benefit-icon" aria-hidden>check_circle</span>
+              <span className="md-body-medium">{b}</span>
+            </li>
           ))}
         </ul>
       </section>
 
-      <section className="mb-8 bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-3">Frequently Asked Questions</h2>
-        <div className="space-y-4">
+      <section className="premium-section premium-faq">
+        <h2 className="md-title-large section-title">Frequently Asked Questions</h2>
+        <div className="faq-list">
           {faqs.map(({ q, a }) => (
-            <div key={q}>
-              <div className="md-title-medium">{q}</div>
-              <p className="md-body-medium text-on-surface-variant mt-1">{a}</p>
+            <div key={q} className="faq-item">
+              <div className="md-title-medium faq-q">{q}</div>
+              <p className="md-body-medium text-on-surface-variant faq-a">{a}</p>
             </div>
           ))}
         </div>
       </section>
 
       {!isPremium && (
-        <div className="flex items-center gap-3">
-          <GoPremiumCTA size="large">Start Premium</GoPremiumCTA>
-          <a className="md3-button md3-button--outlined" href="/settings">Manage Subscription</a>
-        </div>
+        <section className="premium-section premium-final-cta">
+          <div className="final-cta-content">
+            <div>
+              <div className="md-title-medium mb-1">Ready to unlock more?</div>
+              <div className="md-body-medium text-on-surface-variant">AI insights, advanced analytics, sync, and more.</div>
+            </div>
+            <div className="final-cta-actions">
+              <GoPremiumCTA size="large">Start Premium</GoPremiumCTA>
+              <a className="md3-button md3-button--outlined" href="/settings">Manage Subscription</a>
+            </div>
+          </div>
+        </section>
       )}
     </div>
   );
 };
 
 export default PremiumPage;
-

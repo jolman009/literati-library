@@ -135,7 +135,7 @@ const getGenreColor = (genre) => {
     'Fantasy': '#96CEB4',
     'Mystery': '#FFEAA7',
     'Romance': '#FD79A8',
-    'Thriller': '#E17055',
+    'Psychology': '#E17055',
     'Biography': '#74B9FF',
     'History': '#A29BFE',
     'Science': '#6C5CE7',
