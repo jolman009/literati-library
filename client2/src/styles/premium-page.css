@@ -1,0 +1,105 @@
+/* Premium Page layout using MD3 tokens and subtle elevation */
+
+.premium-page.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Hero */
+.premium-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  box-shadow: var(--md-sys-elevation-level2);
+  margin-bottom: 24px;
+}
+
+.premium-title { margin: 0; }
+.premium-subtitle { margin: 6px 0 0; }
+
+.premium-hero-cta { flex: 0 0 auto; }
+
+/* Sections */
+.premium-section {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  box-shadow: var(--md-sys-elevation-level1);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.section-title { margin: 0 0 12px; }
+
+/* Benefits grid */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.benefit-icon {
+  color: var(--md-sys-color-primary);
+}
+
+/* FAQ */
+.faq-list { display: grid; gap: 12px; }
+.faq-item {
+  padding: 12px;
+  border: 1px dashed var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-small, 8px);
+  background: var(--md-sys-color-surface-container-low);
+}
+.faq-q { margin: 0; }
+.faq-a { margin: 6px 0 0; }
+
+/* Final CTA */
+.premium-final-cta .final-cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.final-cta-actions { display: flex; align-items: center; gap: 10px; }
+
+/* Responsive */
+@media (max-width: 720px) {
+  .premium-hero,
+  .premium-final-cta .final-cta-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .premium-hero-cta,
+  .final-cta-actions { display: flex; gap: 10px; }
+}
+
+/* Dark mode specific tweaks for clarity */
+.premium-app-layout.dark .premium-page .premium-hero {
+  background: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.premium-app-layout.dark .premium-page .premium-section {
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.premium-app-layout.dark .premium-page .faq-item {
+  background: var(--md-sys-color-surface-container);
+}
