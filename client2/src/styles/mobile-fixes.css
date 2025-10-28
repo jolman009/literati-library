@@ -138,8 +138,6 @@ pre {
 [class*="Container"]:not([class*="login"]):not(.login-container) {
   max-width: 100vw !important;
   overflow-x: hidden !important;
-  padding-left: max(16px, env(safe-area-inset-left)) !important;
-  padding-right: max(16px, env(safe-area-inset-right)) !important;
 }
 
 /* Exception: Allow horizontal scroll for designated scroll containers */
