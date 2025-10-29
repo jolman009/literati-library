@@ -67,7 +67,6 @@
 .md3-text-field--filled .md3-text-field__container {
   border-radius: var(--md-sys-shape-corner-small, 8px) var(--md-sys-shape-corner-small, 8px) 0 0;
   border-bottom: 1px solid rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
-  padding: 0 16px;
 }
 
 .md3-text-field--filled:hover:not(.md3-text-field--disabled) .md3-text-field__container {
@@ -118,15 +117,16 @@
 
 .md3-text-field__input {
   /* Reset browser styles */
-  border: none;
+  border: 1px solid;
+  border-radius: 3px;
   outline: none;
-  background: transparent;
+  background: rgba(59, 130, 246, 0.2);
   margin: 0;
   padding: 0;
   
   /* Layout */
   width: 100%;
-  height: 32px;
+  height: 48px;
   
   /* Typography */
   font-family: inherit;
