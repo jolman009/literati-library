@@ -82,7 +82,7 @@ const MobileNavigation = () => {
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: '0 8px',
-    zIndex: 1000,
+    zIndex: 1200,
     boxShadow: isDark
       ? '0 -2px 8px rgba(0, 0, 0, 0.5)'
       : '0 -2px 8px rgba(0, 0, 0, 0.1)',
