@@ -495,20 +495,44 @@ const LibraryPage = () => {
               </div>
             ) : useVirtualization ? (
               <div className="md3-virtualized-container" style={{ height: '600px' }}>
-                <VirtualizedBookGrid
-                  books={filteredBooks}
-                  onBookClick={handleBookClick}
-                  onBookMenuClick={handleVirtualizedMenuClick}
-                  highlightedBookId={highlightedBookId}
-                  openMenuBookId={openMenuBookId}
-                  activeSession={activeSession}
-                  isPaused={isPaused}
-                  onResumeSession={handleResumeSession}
-                  onPauseSession={handlePauseSession}
-                  onEndSession={handleEndSession}
-                  viewMode={viewMode}
-                  className="library-virtualized-grid"
-                />
+              <VirtualizedBookGrid
+                books={filteredBooks}
+                onBookClick={handleBookClick}
+                onBookMenuClick={handleVirtualizedMenuClick}
+                highlightedBookId={highlightedBookId}
+                openMenuBookId={openMenuBookId}
+                activeSession={activeSession}
+                isPaused={isPaused}
+                onResumeSession={handleResumeSession}
+                onPauseSession={handlePauseSession}
+                onEndSession={handleEndSession}
+                onStatusChange={async (updated) => {
+                  try {
+                    await API.patch(`/books/${updated.id}`, updated);
+                    setBooks(prev => prev.map(b => b.id === updated.id ? { ...b, ...updated } : b));
+                    setOpenMenuBookId(null);
+                  } catch (err) {
+                    console.error('Failed to update status:', err);
+                  }
+                }}
+                onEditBook={(book) => {
+                  // Placeholder: open read page as edit entry point or emit event
+                  console.log('Edit book requested:', book.id);
+                  // You could navigate to an edit dialog/page here
+                }}
+                onDeleteBook={async (book) => {
+                  try {
+                    if (!confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
+                    await API.delete(`/books/${book.id}`);
+                    setBooks(prev => prev.filter(b => b.id !== book.id));
+                    setOpenMenuBookId(null);
+                  } catch (err) {
+                    console.error('Failed to delete book:', err);
+                  }
+                }}
+                viewMode={viewMode}
+                className="library-virtualized-grid"
+              />
               </div>
             ) : (
               <div className={`md3-books-container ${viewMode}`}>
@@ -517,6 +541,17 @@ const LibraryPage = () => {
                     key={book.id} 
                     className={`md3-book-card ${highlightedBookId === book.id ? 'highlighted' : ''}`}
                     data-book-id={book.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open ${book.title}`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleBookClick(book);
+                      } else if (e.key === 'Escape' && openMenuBookId === book.id) {
+                        setOpenMenuBookId(null);
+                      }
+                    }}
                     onClick={() => handleBookClick(book)}
                   >
                     <div className="md3-book-cover">
@@ -574,18 +609,17 @@ const LibraryPage = () => {
                       {activeSession?.book?.id !== book.id && (book.is_reading || book.status === 'reading') && (
                         <button
                           className="book-menu-button"
-                          title="Stop reading (set to paused)"
+                          title="Stop reading (return to normal)"
                           onClick={(e) => {
                             e.stopPropagation();
                             (async () => {
                               try {
                                 await API.patch(`/books/${book.id}`, {
-                                  status: 'paused',
-                                  is_reading: true,
-                                  last_opened: new Date().toISOString()
+                                  status: 'unread',
+                                  is_reading: false,
                                 });
-                                setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'paused', is_reading: true } : b));
-                                window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'stop_reading', status: 'paused' } }));
+                                setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'unread', is_reading: false, completed: false } : b));
+                                window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'stop_reading', status: 'unread' } }));
                                 localStorage.setItem('books_updated', Date.now().toString());
                               } catch (err) {
                                 console.error('Failed to pause reading status:', err);
@@ -672,6 +706,9 @@ const LibraryPage = () => {
                               top: '50px',
                               right: '8px'
                             }}
+                            role="menu"
+                            aria-label={`Actions for ${book.title}`}
+                            onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpenMenuBookId(null); } }}
                           >
                             {/* Reading Session Controls */}
                             {activeSession?.book?.id === book.id ? (
@@ -737,6 +774,71 @@ const LibraryPage = () => {
                               <span className="book-menu-item__icon">📚</span>
                               Open Book
                             </button>
+
+                            <button
+                              className="book-menu-item"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  await API.patch(`/books/${book.id}`, { status: 'completed', is_reading: false, completed: true, progress: 100 });
+                                  setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'completed', is_reading: false, completed: true, progress: 100 } : b));
+                                  setOpenMenuBookId(null);
+                                } catch (err) {
+                                  console.error('Failed to mark as completed:', err);
+                                }
+                              }}
+                            >
+                              <span className="book-menu-item__icon">✅</span>
+                              Mark as Completed
+                            </button>
+
+                            <button
+                              className="book-menu-item"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  await API.patch(`/books/${book.id}`, { status: 'unread', is_reading: false, completed: false, progress: 0 });
+                                  setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'unread', is_reading: false, completed: false, progress: 0 } : b));
+                                  setOpenMenuBookId(null);
+                                } catch (err) {
+                                  console.error('Failed to mark as want to read:', err);
+                                }
+                              }}
+                            >
+                              <span className="book-menu-item__icon">🔖</span>
+                              Mark as Want to Read
+                            </button>
+
+                            <button
+                              className="book-menu-item"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log('Edit book requested:', book.id);
+                                // TODO: Implement edit UI
+                                setOpenMenuBookId(null);
+                              }}
+                            >
+                              <span className="book-menu-item__icon">✏️</span>
+                              Edit Book
+                            </button>
+
+                            <button
+                              className="book-menu-item book-menu-item--error"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  if (!confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
+                                  await API.delete(`/books/${book.id}`);
+                                  setBooks(prev => prev.filter(b => b.id !== book.id));
+                                  setOpenMenuBookId(null);
+                                } catch (err) {
+                                  console.error('Failed to delete book:', err);
+                                }
+                              }}
+                            >
+                              <span className="book-menu-item__icon">🗑️</span>
+                              Delete Book
+                            </button>
                           </div>
                         </>
                       )}
@@ -787,4 +889,3 @@ const LibraryPage = () => {
   );
  };
 export default LibraryPage;
-
