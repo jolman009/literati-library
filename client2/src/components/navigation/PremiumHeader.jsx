@@ -21,7 +21,7 @@ import GoPremiumCTA from '../premium/GoPremiumCTA';
  *     list of links separated by chevrons. If `href` is omitted, the
  *     breadcrumb will render as plain text.
  */
-export default function PremiumHeader({ title, breadcrumbs = [] }) {
+export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
   const navigate = useNavigate();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
   const { user, logout } = useAuth();
@@ -180,6 +180,14 @@ export default function PremiumHeader({ title, breadcrumbs = [] }) {
             onChange={handleSearchChange}
           />
         </div>
+        {/* Mobile search trigger (search field is hidden on mobile) */}
+        <button
+          className="premium-header-action-btn mobile-only"
+          aria-label="Search"
+          onClick={() => onSearch?.()}
+        >
+          <span className="material-symbols-outlined">search</span>
+        </button>
         {/* Inline Premium CTA for non-premium users */}
         {!isPremium && (
           <div className="premium-header-actions">

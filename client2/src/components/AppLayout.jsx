@@ -22,6 +22,7 @@ const AppLayout = () => {
   const [navCollapsed, setNavCollapsed] = useState(false); // false = expanded = 280px
 
   const inReader = /^\/read\/[^/]+$/.test(pathname);
+  const isDashboard = pathname === '/dashboard';
 
   const layoutClasses = [
     'premium-app-layout',
@@ -68,10 +69,12 @@ const AppLayout = () => {
         onNavigateToResult={navigateToResult}
       />
 
-      {/* Mobile Search FAB - Position at bottom-left */}
-      <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
-        <GlobalSearchFAB position="bottom-left" />
-      </div>
+      {/* Mobile Search FAB - hidden on Dashboard to free space */}
+      {!isDashboard && (
+        <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
+          <GlobalSearchFAB position="bottom-left" />
+        </div>
+      )}
 
       {/* Footer moved inside content-area to avoid grid column clipping */}
 
