@@ -21,7 +21,7 @@ const GoPremiumCTA = ({ to, size = 'medium', variant = 'filled', className = '',
     return (
       <Link to={to} className={classes} aria-label={typeof label === 'string' ? label : 'Go Premium'}>
         <span className="material-symbols-outlined mr-2">workspace_premium</span>
-        {label}
+        <span className="btn-label">{label}</span>
       </Link>
     );
   }
@@ -29,7 +29,7 @@ const GoPremiumCTA = ({ to, size = 'medium', variant = 'filled', className = '',
   return (
     <button onClick={openPremiumModal} className={classes}>
       <span className="material-symbols-outlined mr-2">workspace_premium</span>
-      {label}
+      <span className="btn-label">{label}</span>
     </button>
   );
 };

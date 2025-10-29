@@ -415,5 +415,14 @@
 
   .premium-header-actions {
     margin-left: 0.5rem;
+    gap: 0.25rem;
   }
+
+  /* In header, show icon-only Premium CTA on mobile */
+  .premium-header .premium-cta {
+    padding: 8px;
+    border-radius: 9999px;
+    min-width: auto;
+  }
+  .premium-header .premium-cta .btn-label { display: none; }
 }

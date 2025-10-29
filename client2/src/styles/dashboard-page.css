@@ -21,6 +21,14 @@
   padding: 24px;
 }
 
+/* Mobile: remove forced side padding on dashboard container */
+@media (max-width: 767px) {
+  .dashboard-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 /* Welcome Section */
 .welcome-section {
   margin-bottom: 32px;
