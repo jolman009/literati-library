@@ -11,6 +11,8 @@ initialize_sentry()
 
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Response
 from datetime import datetime, timezone
 from pydantic import BaseModel, constr, conint
 from typing import Optional
@@ -31,6 +33,15 @@ class Note(BaseModel):
 
 # Initialize our FastAPI application
 app = FastAPI()
+
+# Enable CORS for testing and integration with other services
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -109,3 +120,12 @@ async def summarize_note(note: Note):
             if status not in (400, 401, 403, 404, 408, 413, 415, 422, 429, 500):
                 status = 500
             raise HTTPException(status_code=status, detail=f"Failed to generate summary. Error: {str(e)}")
+
+# Explicit OPTIONS handler to ensure CORS preflight succeeds in tests/environments
+@app.options("/summarize-note")
+def summarize_note_options():
+    return Response(status_code=200, headers={
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-allow-headers": "*",
+    })
