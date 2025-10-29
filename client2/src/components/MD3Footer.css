@@ -199,7 +199,7 @@
   }
 
   .md3-footer-links {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
   }
 
@@ -224,6 +224,9 @@
 @media (max-width: 480px) {
   .md3-footer-container {
     padding: 24px 16px 16px;
+  }
+  .md3-footer-links {
+    grid-template-columns: 1fr;
   }
 }
 
