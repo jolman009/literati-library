@@ -1,8 +1,10 @@
 import pytest
+import pytest_asyncio
 import asyncio
 import os
 from unittest.mock import AsyncMock, MagicMock, patch
 from httpx import AsyncClient
+from httpx import ASGITransport
 from fastapi.testclient import TestClient
 
 # Import the main app
@@ -20,10 +22,11 @@ def test_client():
     """Create a test client for the FastAPI app."""
     return TestClient(app)
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client():
-    """Create an async test client for the FastAPI app."""
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    """Create an async test client for the FastAPI app using ASGITransport (httpx >=0.28)."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
 
 @pytest.fixture
