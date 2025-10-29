@@ -18,8 +18,7 @@ jest.mock('./config/supabaseClient.js', () => ({
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      then: jest.fn().mockResolvedValue({ data: [], error: null })
+      single: jest.fn().mockResolvedValue({ data: null, error: null })
     })),
     auth: {
       signUp: jest.fn(),

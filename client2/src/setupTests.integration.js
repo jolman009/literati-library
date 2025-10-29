@@ -7,11 +7,5 @@ vi.mock('./contexts/ReadingSessionContext', async () => {
   return await vi.importActual('./contexts/ReadingSessionContext')
 })
 
-vi.mock('./contexts/GamificationContext', async () => {
-  return await vi.importActual('./contexts/GamificationContext')
-})
-
-vi.mock('./contexts/AuthContext', async () => {
-  return await vi.importActual('./contexts/AuthContext')
-})
-
+// Keep AuthContext and GamificationContext mocked from setupTests to avoid
+// requiring full provider wiring or real network calls in integration tests.

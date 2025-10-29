@@ -11,7 +11,9 @@ initialize_sentry()
 
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from datetime import datetime, timezone
+from pydantic import BaseModel, constr, conint
+from typing import Optional
 
 # Configure the Gemini API with your key
 # Make sure you have a GOOGLE_API_KEY in your .env file
@@ -24,13 +26,12 @@ except Exception as e:
     
 # This defines the expected input data for our API endpoint
 class Note(BaseModel):
-    text: str
+    text: constr(min_length=1)
+    max_length: Optional[conint(gt=0)] = None
 
 # Initialize our FastAPI application
 app = FastAPI()
 
-# Create the text generation model instance
-model = genai.GenerativeModel('gemini-2.0-flash')
 
 @app.get("/")
 def read_root():
@@ -42,7 +43,12 @@ def health_check():
     """ Health check endpoint for Docker health checks. """
     try:
         # Basic health check - verify AI service is responsive
-        return {"status": "healthy", "service": "ai-service", "version": "1.0.0"}
+        return {
+            "status": "healthy",
+            "service": "ai-service",
+            "version": "1.0.0",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
     except Exception as e:
         return {"status": "unhealthy", "error": str(e)}
 
@@ -52,8 +58,7 @@ async def summarize_note(note: Note):
     Receives text from a note, sends it to the Gemini API for summarization,
     and returns the summary.
     """
-    if not note.text:
-        raise HTTPException(status_code=400, detail="Text to summarize cannot be empty.")
+    # Validation is enforced by Pydantic (422 on empty input)
 
     # Use Sentry transaction for performance monitoring
     with SentryTransaction("summarize_note", "ai.summarization"):
@@ -72,7 +77,8 @@ async def summarize_note(note: Note):
 
             # Call the Gemini API with transaction monitoring
             with SentryTransaction("gemini_api_call", "ai.external_api"):
-                response = model.generate_content(prompt)
+                # Create model lazily so tests can patch genai.GenerativeModel
+                response = genai.GenerativeModel('gemini-2.0-flash').generate_content(prompt)
 
             add_breadcrumb(
                 message="Summary generated successfully",
@@ -98,4 +104,8 @@ async def summarize_note(note: Note):
             })
 
             print(f"An error occurred during summarization: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to generate summary. Error: {str(e)}")
+            status = getattr(e, "code", None) or 500
+            # Normalize unexpected codes
+            if status not in (400, 401, 403, 404, 408, 413, 415, 422, 429, 500):
+                status = 500
+            raise HTTPException(status_code=status, detail=f"Failed to generate summary. Error: {str(e)}")
