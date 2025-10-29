@@ -18,6 +18,8 @@ const VirtualizedBookGrid = ({
   onPauseSession,
   onEndSession,
   onStatusChange,
+  onEditBook,
+  onDeleteBook,
   viewMode = 'grid',
   className = ''
 }) => {
@@ -95,6 +97,15 @@ const VirtualizedBookGrid = ({
     const hasActiveSession = activeSession?.book?.id === book.id;
     const status = getBookStatus(book);
 
+    const handleCardKeyDown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onBookClick && onBookClick(book);
+      } else if (e.key === 'Escape' && openMenuBookId === book.id) {
+        onBookMenuClick && onBookMenuClick(null);
+      }
+    };
+
     return (
       <div
         style={{
@@ -106,6 +117,10 @@ const VirtualizedBookGrid = ({
         <div
           className={`virtualized-book-card ${isHighlighted ? 'highlighted' : ''} ${viewMode}`}
           data-book-id={book.id}
+          role="button"
+          tabIndex={0}
+          aria-label={`Open ${book.title}`}
+          onKeyDown={handleCardKeyDown}
           onClick={() => onBookClick(book)}
         >
           <div className="book-cover-container">
@@ -139,7 +154,8 @@ const VirtualizedBookGrid = ({
                     if (hasActiveSession) {
                       onEndSession && onEndSession();
                     } else if (onStatusChange) {
-                      onStatusChange(applyStatus(book, BOOK_STATUS.PAUSED));
+                      // Return to normal state (unread)
+                      onStatusChange(applyStatus(book, BOOK_STATUS.UNREAD));
                     }
                   }}
                   style={{ backgroundColor: '#ef4444', color: '#fff' }}
@@ -175,6 +191,8 @@ const VirtualizedBookGrid = ({
                 className="book-menu-button"
                 onClick={(e) => { e.stopPropagation(); onBookMenuClick && onBookMenuClick(book.id); }}
                 title="More actions"
+                aria-haspopup="menu"
+                aria-expanded={openMenuBookId === book.id}
               >
                 <span className="material-symbols-outlined">more_horiz</span>
               </button>
@@ -188,7 +206,12 @@ const VirtualizedBookGrid = ({
                   onClick={() => onBookMenuClick(null)}
                 />
 
-                <div className="book-actions-menu">
+                <div
+                  className="book-actions-menu"
+                  role="menu"
+                  aria-label={`Actions for ${book.title}`}
+                  onKeyDown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); onBookMenuClick && onBookMenuClick(null); } }}
+                >
                   {hasActiveSession ? (
                     <>
                       {isPaused ? (
@@ -198,6 +221,7 @@ const VirtualizedBookGrid = ({
                             onResumeSession();
                           }}
                           className="book-menu-item"
+                          role="menuitem"
                         >
                           <span className="material-symbols-outlined book-menu-item__icon">play_arrow</span>
                           Resume Reading
@@ -209,6 +233,7 @@ const VirtualizedBookGrid = ({
                             onPauseSession();
                           }}
                           className="book-menu-item"
+                          role="menuitem"
                         >
                           <span className="material-symbols-outlined book-menu-item__icon">pause</span>
                           Pause Reading
@@ -220,6 +245,7 @@ const VirtualizedBookGrid = ({
                           onEndSession();
                         }}
                         className="book-menu-item book-menu-item--error"
+                        role="menuitem"
                       >
                         <span className="material-symbols-outlined book-menu-item__icon">stop</span>
                         End Session
@@ -232,6 +258,7 @@ const VirtualizedBookGrid = ({
                         onBookClick(book);
                       }}
                       className="book-menu-item book-menu-item--primary"
+                      role="menuitem"
                     >
                       <span className="material-symbols-outlined book-menu-item__icon">menu_book</span>
                       Start Reading
@@ -246,6 +273,7 @@ const VirtualizedBookGrid = ({
                       onStatusChange && onStatusChange(applyStatus(book, BOOK_STATUS.COMPLETED));
                     }}
                     className="book-menu-item"
+                    role="menuitem"
                   >
                     <span className="material-symbols-outlined book-menu-item__icon">check_circle</span>
                     Mark as Completed
@@ -254,9 +282,46 @@ const VirtualizedBookGrid = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      onStatusChange && onStatusChange(applyStatus(book, BOOK_STATUS.UNREAD));
+                    }}
+                    className="book-menu-item"
+                    role="menuitem"
+                  >
+                    <span className="material-symbols-outlined book-menu-item__icon">bookmark_add</span>
+                    Mark as Want to Read
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditBook && onEditBook(book);
+                    }}
+                    className="book-menu-item"
+                    role="menuitem"
+                  >
+                    <span className="material-symbols-outlined book-menu-item__icon">edit</span>
+                    Edit Book
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onDeleteBook) onDeleteBook(book);
+                    }}
+                    className="book-menu-item book-menu-item--error"
+                    role="menuitem"
+                  >
+                    <span className="material-symbols-outlined book-menu-item__icon">delete</span>
+                    Delete Book
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       // Handle add to collection
                     }}
                     className="book-menu-item"
+                    role="menuitem"
                   >
                     <span className="material-symbols-outlined book-menu-item__icon">collections_bookmark</span>
                     Add to Collection
