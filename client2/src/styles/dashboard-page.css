@@ -1606,7 +1606,9 @@
   gap: 8px;
   transition: all var(--md-sys-motion-duration-medium2, 300ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
   box-shadow: var(--md-sys-elevation-level1);
-  min-width: 180px; /* Fixed minimum width to force horizontal overflow */
+  width: 200px; /* Consistent width across cards */
+  min-width: 200px;
+  max-width: 200px;
   flex-shrink: 0; /* Prevent cards from shrinking to fit container */
 }
 
@@ -1725,10 +1727,20 @@
 
 @media (max-width: 600px) {
   .stat-metric-card {
-    min-width: 165px; /* Fixed width on mobile to force overflow */
+    width: 165px; /* Fixed width on mobile to force overflow */
+    min-width: 165px;
     max-width: 165px;
     flex-shrink: 0;
   }
+}
+
+/* Ensure subtitles wrap and don't stretch cards */
+.stat-metric-subtitle {
+  font-size: 0.8rem;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* ========================================================================

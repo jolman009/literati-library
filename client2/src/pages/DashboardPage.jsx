@@ -223,44 +223,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
               {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
             </p>
 
-            {/* Onboarding Guide CTA */}
-            <button
-              onClick={() => navigate('/onboarding')}
-              className="onboarding-guide-link"
-              title="Learn how to use ShelfQuest"
-              style={{
-                marginLeft: 8,
-                padding: '4px 8px',
-                borderRadius: 6,
-                border: 'none',
-                background: 'transparent',
-                color: "red",
-                textDecoration: 'underline',
-                cursor: 'pointer'
-              }}
-            >
-              Onboarding Guide
-            </button>
-
-            {/* Take a Tour (Driver.js) */}
-            <button
-              id="tour-start"
-              onClick={onStartTour}
-              className="onboarding-guide-link"
-              title="Quick tour of key features"
-              style={{
-                marginLeft: 8,
-                padding: '4px 8px',
-                borderRadius: 6,
-                border: 'none',
-                background: 'transparent',
-                color: 'var(--md-sys-color-primary)',
-                textDecoration: 'underline',
-                cursor: 'pointer'
-              }}
-            >
-              Take a Tour
-            </button>
+            {/* Onboarding links moved to navigation/menu for a cleaner dashboard */}
 
             {/* Compact Inline Buttons */}
             <div className="welcome-inline-buttons">
@@ -690,11 +653,12 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
               {stat.trend === 'up' ? '↗' : stat.trend === 'down' ? '↘' : '→'}
             </span>
           </div>
+          {/* Subtitle on its own line to avoid stretching width */}
+          {stat.subtitle && (
+            <div className="stat-metric-subtitle">{stat.subtitle}</div>
+          )}
           <div className="stat-metric-footer">
             <span className="stat-metric-label">{stat.label}</span>
-            {stat.subtitle && (
-              <span className="stat-metric-subtitle">{stat.subtitle}</span>
-            )}
             <span className={`stat-metric-percentage ${stat.trend}`}>{stat.growth}</span>
           </div>
         </div>
