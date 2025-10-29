@@ -1,6 +1,6 @@
 // Integration test for reading session functionality
 // Tests: timer deployment, persistence across reloads, backend storage, gamification
-
+import React from 'react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ReadingSessionProvider, useReadingSession } from '../../contexts/ReadingSessionContext';

@@ -65,25 +65,7 @@ vi.mock('./contexts/GamificationContext', () => ({
   })
 }))
 
-vi.mock('./contexts/ReadingSessionContext', () => ({
-  ReadingSessionProvider: ({ children }) => children,
-  useReadingSession: () => ({
-    currentSession: null,
-    isReading: false,
-    stats: {
-      totalMinutesRead: 0,
-      booksCompleted: 0,
-      currentStreak: 0
-    },
-    startReading: vi.fn(),
-    pauseReading: vi.fn(),
-    stopReading: vi.fn(),
-    updateProgress: vi.fn(),
-    getStats: vi.fn(),
-    loading: false,
-    error: null
-  })
-}))
+// Do not mock ReadingSessionContext globally; integration tests rely on real behavior
 
 vi.mock('./contexts/Material3ThemeContext', () => ({
   Material3ThemeProvider: ({ children }) => children,
@@ -254,6 +236,24 @@ afterEach(() => {
 
 // Extend expect with jest-dom matchers
 expect.extend({})
+
+// Provide a resilient localStorage mock for environments where jsdom doesn't expose it
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map()
+  const ls = {
+    getItem: (key) => (store.has(key) ? store.get(key) : null),
+    setItem: (key, value) => { store.set(String(key), String(value)) },
+    removeItem: (key) => { store.delete(String(key)) },
+    clear: () => { store.clear() },
+    key: (index) => Array.from(store.keys())[Number(index)] ?? null,
+    get length() { return store.size }
+  }
+  // Ensure availability on all common globals and as an identifier in tests
+  globalThis.localStorage = ls
+  if (typeof window !== 'undefined') window.localStorage = ls
+  // Vitest helper to create a global identifier
+  if (typeof vi !== 'undefined' && vi.stubGlobal) vi.stubGlobal('localStorage', ls)
+}
 
 // Global context mocks for use across all tests
 export const createMockAuthContext = (overrides = {}) => ({
