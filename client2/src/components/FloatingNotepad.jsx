@@ -70,7 +70,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         }
       } else {
         // Desktop size
-        setWidgetSize({ width: 320, height: 280 });
+        setWidgetSize({ width: 499, height: 280 });
       }
     };
 
@@ -369,9 +369,9 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
         tabIndex={0}
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)'
-            : 'linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%)',
-          color: 'white',
+            ? '#4B9CD3'
+            : '#3B82F6',
+          color: 'black',
           padding: isMobile ? '8px 10px' : '12px 16px',
           display: 'flex',
           alignItems: 'center',
