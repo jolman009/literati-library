@@ -1410,9 +1410,9 @@ const EnhancedNotesPage = () => {
           <>
             {/* MD3 Delete Confirmation Dialog */}
             {confirmDeleteNote && (
-              <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
-                <div className="absolute inset-0 bg-black/40" onClick={() => !isDeletingNote && setConfirmDeleteNote(null)} />
-                <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+              <div role="dialog" aria-modal="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1300 }}>
+                <div onClick={() => !isDeletingNote && setConfirmDeleteNote(null)} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)' }} />
+                <div className="bg-surface-container-high rounded-large shadow-lg border border-outline-variant" style={{ position: 'relative', maxWidth: 420, width: '92%', padding: 20 }}>
                   <div className="md-title-large mb-1">Delete note?</div>
                   <div className="md-body-medium text-on-surface-variant mb-4">
                     This will permanently delete "{confirmDeleteNote.title || 'Untitled'}".
@@ -1428,9 +1428,9 @@ const EnhancedNotesPage = () => {
             )}
             {/* Bulk Delete Confirmation Dialog */}
             {confirmDeleteBulk && (
-              <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
-                <div className="absolute inset-0 bg-black/40" onClick={() => !isDeletingBulk && setConfirmDeleteBulk(false)} />
-                <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+              <div role="dialog" aria-modal="true" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1300 }}>
+                <div onClick={() => !isDeletingBulk && setConfirmDeleteBulk(false)} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)' }} />
+                <div className="bg-surface-container-high rounded-large shadow-lg border border-outline-variant" style={{ position: 'relative', maxWidth: 420, width: '92%', padding: 20 }}>
                   <div className="md-title-large mb-1">Delete selected notes?</div>
                   <div className="md-body-medium text-on-surface-variant mb-4">
                     This will permanently delete {selectedNoteIds.length} note{selectedNoteIds.length === 1 ? '' : 's'}. This action cannot be undone.
