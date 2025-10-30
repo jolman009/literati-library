@@ -858,6 +858,17 @@ const LibraryPage = () => {
                         </div>
                       )}
                     </div>
+                    {/* Dedicated Delete control, separate from the overflow menu */}
+                    <div className="md3-book-actions-row">
+                      <button
+                        className="md3-button md3-button--text delete-book-link"
+                        onClick={(e) => { e.stopPropagation(); handleDelete(book); }}
+                        aria-label={`Delete ${book.title}`}
+                      >
+                        <span className="material-symbols-outlined" aria-hidden>delete</span>
+                        <span>Delete</span>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -875,6 +886,8 @@ const LibraryPage = () => {
    onDragOver={handleDragOver}
     >
     {renderPageContent()}
+
+    {/* Delete book link rendered per-card in library view (outside of menu) */}
 
     <button 
      className="md3-fab"

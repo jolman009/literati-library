@@ -211,6 +211,25 @@
   font-size: 18px;
 }
 
+/* Dedicated delete link styling below book info */
+.md3-book-actions-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.delete-book-link {
+  color: var(--md-sys-color-error);
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.delete-book-link:hover,
+.delete-book-link:focus-visible {
+  background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent);
+}
+
 /* Progress bar enhancements */
 .book-progress-container {
   /* Ensure proper layering */
