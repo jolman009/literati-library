@@ -410,7 +410,9 @@ const UploadPage = () => {
             
             <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
               <div 
-                className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300"
+                className="bg-gradient-to-rcd ai-service
+                pip install -r requirements.txt
+ from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>

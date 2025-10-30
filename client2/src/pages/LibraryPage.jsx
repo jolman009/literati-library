@@ -46,7 +46,9 @@ const LibraryPage = () => {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [highlightedBookId, setHighlightedBookId] = useState(null);
   const [openMenuBookId, setOpenMenuBookId] = useState(null);
-  const [useVirtualization, setUseVirtualization] = useState(false);
+  const [useVirtualization, setUseVirtualization] = useState(true);
+  const [confirmDeleteBulk, setConfirmDeleteBulk] = useState(false);
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false);
   const { showSnackbar } = useSnackbar();
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -237,6 +239,32 @@ const LibraryPage = () => {
         ? prev.filter(id => id !== bookId)
         : [...prev, bookId]
     );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!Array.isArray(selectedBooks) || selectedBooks.length === 0) return;
+    try {
+      setIsDeletingBulk(true);
+      const results = await Promise.allSettled(
+        selectedBooks.map(id => makeAuthenticatedApiCall(`/books/${id}`, { method: 'DELETE' }))
+      );
+      const succeeded = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.length - succeeded;
+      if (succeeded > 0) {
+        setBooks(prev => prev.filter(b => !selectedBooks.includes(b.id)));
+      }
+      try { localStorage.setItem('books_updated', Date.now().toString()); } catch {}
+      setSelectedBooks([]);
+      setConfirmDeleteBulk(false);
+      if (failed > 0) {
+        alert(`${failed} item(s) failed to delete`);
+      }
+    } catch (err) {
+      console.error('Bulk delete failed:', err);
+      alert(err?.message || 'Failed to delete selected books');
+    } finally {
+      setIsDeletingBulk(false);
+    }
   };
 
   const handleDragDrop = (e) => {
@@ -504,6 +532,27 @@ const LibraryPage = () => {
                 )}
               </div>
             ) : useVirtualization ? (
+              <>
+              <div className="md3-notes-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '12px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className="md-body-small">Selected: {selectedBooks.length}</span>
+                  {selectedBooks.length > 0 && (
+                    <button onClick={() => setSelectedBooks([])} className="md3-icon-button" title="Clear selection">
+                      <span className="material-symbols-outlined">close</span>
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    className="md3-button md3-button--filled"
+                    disabled={selectedBooks.length === 0}
+                    onClick={() => setConfirmDeleteBulk(true)}
+                    style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }}
+                  >
+                    Delete Selected
+                  </button>
+                </div>
+              </div>
               <div className="md3-virtualized-container" style={{ height: '600px' }}>
               <VirtualizedBookGrid
                 books={filteredBooks}
@@ -534,10 +583,13 @@ const LibraryPage = () => {
                   setConfirmDelete(book);
                   setOpenMenuBookId(null);
                 }}
+                selectedIds={selectedBooks}
+                onToggleSelect={handleSelectBook}
                 viewMode={viewMode}
                 className="library-virtualized-grid"
               />
               </div>
+              </>
             ) : (
               <div className={`md3-books-container ${viewMode}`}>
                 {filteredBooks.map(book => (
@@ -884,6 +936,25 @@ const LibraryPage = () => {
    onDragOver={handleDragOver}
     >
     {renderPageContent()}
+
+    {/* Bulk Delete Confirmation Dialog */}
+    {confirmDeleteBulk && (
+      <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/40" onClick={() => !isDeletingBulk && setConfirmDeleteBulk(false)} />
+        <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+          <div className="md-title-large mb-1">Delete selected books?</div>
+          <div className="md-body-medium text-on-surface-variant mb-4">
+            This will permanently delete {selectedBooks.length} book{selectedBooks.length === 1 ? '' : 's'}. This action cannot be undone.
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <button className="md3-button md3-button--text" onClick={() => setConfirmDeleteBulk(false)} disabled={isDeletingBulk}>Cancel</button>
+            <button className="md3-button md3-button--filled" style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }} onClick={handleDeleteSelected} disabled={isDeletingBulk}>
+              {isDeletingBulk ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
 
     {/* MD3 Confirmation Dialog for Delete */}
     {confirmDelete && (

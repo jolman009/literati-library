@@ -20,6 +20,8 @@ const VirtualizedBookGrid = ({
   onStatusChange,
   onEditBook,
   onDeleteBook,
+  selectedIds = [],
+  onToggleSelect,
   viewMode = 'grid',
   className = ''
 }) => {
@@ -94,6 +96,7 @@ const VirtualizedBookGrid = ({
     }
 
     const isHighlighted = highlightedBookId === book.id;
+    const isSelected = Array.isArray(selectedIds) && selectedIds.includes(book.id);
     const hasActiveSession = activeSession?.book?.id === book.id;
     const status = getBookStatus(book);
 
@@ -123,6 +126,20 @@ const VirtualizedBookGrid = ({
           onKeyDown={handleCardKeyDown}
           onClick={() => onBookClick(book)}
         >
+          {/* Selection checkbox (top-left) */}
+          {onToggleSelect && (
+            <button
+              className="md3-icon-button"
+              title={isSelected ? 'Deselect' : 'Select'}
+              aria-pressed={isSelected}
+              onClick={(e) => { e.stopPropagation(); onToggleSelect(book.id); }}
+              style={{ position: 'absolute', top: 8, left: 8, zIndex: 4 }}
+            >
+              <span className="material-symbols-outlined">
+                {isSelected ? 'check_box' : 'check_box_outline_blank'}
+              </span>
+            </button>
+          )}
           <div className="book-cover-container">
             <LazyBookCover
               book={book}

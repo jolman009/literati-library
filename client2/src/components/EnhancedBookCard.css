@@ -216,6 +216,8 @@
   display: flex;
   justify-content: flex-start;
   margin-top: 8px;
+  position: relative;
+  z-index: 5; /* keep above cover and progress overlays */
 }
 
 .delete-book-link {
@@ -228,6 +230,12 @@
 .delete-book-link:hover,
 .delete-book-link:focus-visible {
   background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent);
+}
+
+/* Ensure the simple MD3 book card doesn't clip inline actions */
+.md3-book-card {
+  position: relative !important;
+  overflow: visible !important;
 }
 
 /* Progress bar enhancements */
