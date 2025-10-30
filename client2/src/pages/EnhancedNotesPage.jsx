@@ -583,8 +583,10 @@ const EnhancedNotesPage = () => {
     }
   };
   
-  const [confirmDeleteNote, setConfirmDeleteNote] = useState(null); // note object
+  const [confirmDeleteNote, setConfirmDeleteNote] = useState(null); // single note object
   const [isDeletingNote, setIsDeletingNote] = useState(false);
+  const [confirmDeleteBulk, setConfirmDeleteBulk] = useState(false); // bulk delete confirm
+  const [isDeletingBulk, setIsDeletingBulk] = useState(false);
 
   const handleDeleteNote = async (noteId) => {
     try {
@@ -598,6 +600,32 @@ const EnhancedNotesPage = () => {
     } finally {
       setIsDeletingNote(false);
       setConfirmDeleteNote(null);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (!Array.isArray(selectedNoteIds) || selectedNoteIds.length === 0) return;
+    try {
+      setIsDeletingBulk(true);
+      const results = await Promise.allSettled(
+        selectedNoteIds.map(id => makeAuthenticatedApiCall(`/notes/${id}`, { method: 'DELETE' }))
+      );
+      const succeeded = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.length - succeeded;
+      if (succeeded > 0) {
+        showSnackbar({ message: `Deleted ${succeeded} note${succeeded === 1 ? '' : 's'}`, variant: failed ? 'warning' : 'success' });
+      }
+      if (failed > 0) {
+        showSnackbar({ message: `${failed} note${failed === 1 ? '' : 's'} failed to delete`, variant: 'error' });
+      }
+      clearSelection();
+      await fetchNotes();
+    } catch (error) {
+      console.error('Bulk delete failed:', error);
+      showSnackbar({ message: error?.message || 'Failed to delete selected notes', variant: 'error' });
+    } finally {
+      setIsDeletingBulk(false);
+      setConfirmDeleteBulk(false);
     }
   };
   
@@ -1398,6 +1426,24 @@ const EnhancedNotesPage = () => {
                 </div>
               </div>
             )}
+            {/* Bulk Delete Confirmation Dialog */}
+            {confirmDeleteBulk && (
+              <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40" onClick={() => !isDeletingBulk && setConfirmDeleteBulk(false)} />
+                <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+                  <div className="md-title-large mb-1">Delete selected notes?</div>
+                  <div className="md-body-medium text-on-surface-variant mb-4">
+                    This will permanently delete {selectedNoteIds.length} note{selectedNoteIds.length === 1 ? '' : 's'}. This action cannot be undone.
+                  </div>
+                  <div className="flex items-center justify-end gap-2">
+                    <button className="md3-button md3-button--text" onClick={() => setConfirmDeleteBulk(false)} disabled={isDeletingBulk}>Cancel</button>
+                    <button className="md3-button md3-button--filled" style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }} onClick={handleDeleteSelected} disabled={isDeletingBulk}>
+                      {isDeletingBulk ? 'Deleting…' : 'Delete'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Grid View */}
             {viewMode === 'grid' && (
               filteredNotes.length > 0 ? (
@@ -1420,6 +1466,15 @@ const EnhancedNotesPage = () => {
                         icon={<FileText className="md3-icon" />}
                       >
                         {summarizing ? 'Summarizing…' : 'Summarize Selection'}
+                      </MD3Button>
+                      <MD3Button
+                        variant="filled"
+                        disabled={selectedNoteIds.length === 0 || isDeletingBulk}
+                        onClick={() => setConfirmDeleteBulk(true)}
+                        icon={<Trash2 className="md3-icon" />}
+                        style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }}
+                      >
+                        {isDeletingBulk ? 'Deleting…' : 'Delete Selected'}
                       </MD3Button>
                     </div>
                   </div>
