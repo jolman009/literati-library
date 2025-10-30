@@ -14,6 +14,12 @@ export function analyticsRouter(authenticateToken, db) {
     try {
       const eventData = req.body;
 
+      // Drop or ignore analytics from child-mode clients
+      const isChildHeader = (req.headers['x-child-mode'] || '').toString() === 'true';
+      if (isChildHeader || eventData?.child_mode === true) {
+        return res.status(200).json({ status: 'ignored_child_mode' });
+      }
+
       // Validate event data
       if (!eventData.event || !eventData.timestamp) {
         return res.status(400).json({ error: 'Invalid event data' });
