@@ -399,7 +399,7 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
 };
 
 const EnhancedNotesPage = () => {
-  const { user } = useAuth();
+  const { user, makeAuthenticatedApiCall } = useAuth();
   const { actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
   
@@ -583,27 +583,21 @@ const EnhancedNotesPage = () => {
     }
   };
   
+  const [confirmDeleteNote, setConfirmDeleteNote] = useState(null); // note object
+  const [isDeletingNote, setIsDeletingNote] = useState(false);
+
   const handleDeleteNote = async (noteId) => {
-    if (!window.confirm('Are you sure you want to delete this note?')) {
-      return;
-    }
-    
     try {
-      setLoading(true);
-      await API.delete(`/notes/${noteId}`, { timeout: 30000 });
-      showSnackbar({
-        message: 'Note deleted successfully!',
-        variant: 'success'
-      });
-      fetchNotes();
+      setIsDeletingNote(true);
+      await makeAuthenticatedApiCall(`/notes/${noteId}`, { method: 'DELETE' });
+      showSnackbar({ message: 'Note deleted successfully!', variant: 'success' });
+      await fetchNotes();
     } catch (error) {
       console.error('Error deleting note:', error);
-      showSnackbar({
-        message: 'Failed to delete note. Please try again.',
-        variant: 'error'
-      });
+      showSnackbar({ message: error?.message || 'Failed to delete note. Please try again.', variant: 'error' });
     } finally {
-      setLoading(false);
+      setIsDeletingNote(false);
+      setConfirmDeleteNote(null);
     }
   };
   
@@ -963,7 +957,7 @@ const EnhancedNotesPage = () => {
           <Edit className="md3-icon-small" />
         </button>
         <button
-          onClick={() => handleDeleteNote(note.id)}
+          onClick={() => setConfirmDeleteNote(note)}
           title="Delete note"
           className="md3-icon-button md3-icon-button--error"
         >
@@ -1386,6 +1380,24 @@ const EnhancedNotesPage = () => {
           </MD3Card>
         ) : (
           <>
+            {/* MD3 Delete Confirmation Dialog */}
+            {confirmDeleteNote && (
+              <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40" onClick={() => !isDeletingNote && setConfirmDeleteNote(null)} />
+                <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+                  <div className="md-title-large mb-1">Delete note?</div>
+                  <div className="md-body-medium text-on-surface-variant mb-4">
+                    This will permanently delete "{confirmDeleteNote.title || 'Untitled'}".
+                  </div>
+                  <div className="flex items-center justify-end gap-2">
+                    <button className="md3-button md3-button--text" onClick={() => setConfirmDeleteNote(null)} disabled={isDeletingNote}>Cancel</button>
+                    <button className="md3-button md3-button--filled" style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }} onClick={() => handleDeleteNote(confirmDeleteNote.id)} disabled={isDeletingNote}>
+                      {isDeletingNote ? 'Deleting…' : 'Delete'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Grid View */}
             {viewMode === 'grid' && (
               filteredNotes.length > 0 ? (
