@@ -1,5 +1,6 @@
 // src/services/analytics.js - Comprehensive Analytics Service
 import environmentConfig from '../config/environment.js';
+import { isChildMode } from './childSafety.js';
 
 class AnalyticsService {
   constructor() {
@@ -44,6 +45,7 @@ class AnalyticsService {
   async initializeGoogleAnalytics() {
     const gaId = import.meta.env.VITE_GA_TRACKING_ID;
     if (!gaId || typeof window === 'undefined') return;
+    if (isChildMode()) return; // Do not initialize GA for child users
 
     try {
       // Load GA4 script
@@ -58,13 +60,24 @@ class AnalyticsService {
       window.gtag = gtag;
       gtag('js', new Date());
 
+      // Default consent: denied (explicitly child-safe)
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+      });
+
       gtag('config', gaId, {
         page_title: document.title,
         page_location: window.location.href,
         send_page_view: true,
         app_name: this.config.app.name,
         app_version: this.config.app.version,
-        debug_mode: this.config.isDevelopment
+        debug_mode: this.config.isDevelopment,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false
       });
 
       console.log('📊 Google Analytics 4 initialized');
@@ -114,6 +127,7 @@ class AnalyticsService {
    */
   async initializePerformanceMonitoring() {
     if (typeof window === 'undefined' || !window.performance) return;
+    if (isChildMode()) return; // Disable performance tracking for child users
 
     // Track performance metrics
     window.addEventListener('load', () => {
@@ -140,6 +154,7 @@ class AnalyticsService {
   trackWebVitals() {
     // Only track in production to avoid noise
     if (!this.config.isProduction) return;
+    if (isChildMode()) return;
 
     try {
       // Import web-vitals dynamically
@@ -195,7 +210,7 @@ class AnalyticsService {
   setUserId(userId) {
     this.userId = userId;
 
-    if (window.gtag) {
+    if (window.gtag && !isChildMode()) {
       gtag('config', import.meta.env.VITE_GA_TRACKING_ID, {
         user_id: userId
       });
@@ -209,6 +224,14 @@ class AnalyticsService {
    */
   trackEvent(eventName, properties = {}, immediate = false) {
     if (!this.config.isFeatureEnabled('analytics')) return;
+    try {
+      const child = isChildMode();
+      const consent = JSON.parse(localStorage.getItem('shelfquest-cookie-consent') || '{}');
+      const allow = !child && consent.analytics === true;
+      if (!allow) return;
+    } catch (_) {
+      return;
+    }
 
     const eventData = {
       event: eventName,
@@ -231,7 +254,7 @@ class AnalyticsService {
     }
 
     // Also send to Google Analytics if available
-    if (window.gtag) {
+    if (window.gtag && !isChildMode()) {
       gtag('event', eventName, {
         event_category: properties.category || 'general',
         event_label: properties.label,
@@ -329,7 +352,10 @@ class AnalyticsService {
       // Send to custom backend
       await fetch(this.customAnalyticsEndpoint, {
         method: 'POST',
-        headers: this.config.getAuthHeaders(),
+        headers: {
+          ...this.config.getAuthHeaders(),
+          'X-Child-Mode': isChildMode() ? 'true' : 'false'
+        },
         body: JSON.stringify(eventData)
       });
     } catch (error) {

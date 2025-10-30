@@ -17,6 +17,21 @@ const CookieConsent = () => {
   useEffect(() => {
     // Check if user has already made a choice
     const consentData = localStorage.getItem('shelfquest-cookie-consent');
+
+    // Enforce essential-only in child mode and do not show banner
+    const isChild = localStorage.getItem('shelfquest_child_mode') === 'true';
+    if (isChild) {
+      const enforced = {
+        essential: true,
+        analytics: false,
+        marketing: false,
+        timestamp: new Date().toISOString(),
+        version: '1.0'
+      };
+      localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(enforced));
+      return;
+    }
+
     if (!consentData) {
       // Show banner after a short delay for better UX
       const timer = setTimeout(() => {
@@ -34,6 +49,11 @@ const CookieConsent = () => {
       timestamp: new Date().toISOString(),
       version: '1.0'
     };
+
+    if (localStorage.getItem('shelfquest_child_mode') === 'true') {
+      consentData.analytics = false;
+      consentData.marketing = false;
+    }
 
     localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(consentData));
     setIsVisible(false);
@@ -64,6 +84,11 @@ const CookieConsent = () => {
       version: '1.0'
     };
 
+    if (localStorage.getItem('shelfquest_child_mode') === 'true') {
+      consentData.analytics = false;
+      consentData.marketing = false;
+    }
+
     localStorage.setItem('shelfquest-cookie-consent', JSON.stringify(consentData));
     setIsVisible(false);
 
@@ -77,6 +102,13 @@ const CookieConsent = () => {
     // Initialize analytics services here
     console.log('Analytics initialized with user consent');
     // Example: gtag('config', 'GA_MEASUREMENT_ID');
+    if (window.gtag && localStorage.getItem('shelfquest_child_mode') !== 'true') {
+      try {
+        window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      } catch (_) {
+        // ignore
+      }
+    }
   };
 
   const togglePreference = (type) => {
@@ -182,27 +214,28 @@ const CookieConsent = () => {
                 </div>
 
                 {/* Analytics Cookies */}
-                <div className="cookie-category">
-                  <div className="cookie-category-header">
-                    <div className="cookie-category-info">
-                      <h4 className="md-title-medium">Analytics cookies</h4>
-                      <p className="md-body-small">Help us improve our service</p>
-                    </div>
-                    <div className="cookie-toggle">
-                      <input
-                        type="checkbox"
-                        checked={preferences.analytics}
-                        onChange={() => togglePreference('analytics')}
-                        className="cookie-checkbox"
-                      />
-                    </div>
+              <div className="cookie-category">
+                <div className="cookie-category-header">
+                  <div className="cookie-category-info">
+                    <h4 className="md-title-medium">Analytics cookies</h4>
+                    <p className="md-body-small">Help us improve our service</p>
                   </div>
-                  <p className="md-body-small cookie-category-description">
-                    These cookies help us understand how you use our service so we can make improvements.
-                  </p>
+                  <div className="cookie-toggle">
+                    <input
+                      type="checkbox"
+                      checked={preferences.analytics}
+                      onChange={() => togglePreference('analytics')}
+                      className="cookie-checkbox"
+                    />
+                  </div>
                 </div>
+                <p className="md-body-small cookie-category-description">
+                  These cookies help us understand how you use our service so we can make improvements.
+                </p>
+              </div>
 
-                {/* Marketing Cookies */}
+              {/* Marketing Cookies (hidden for child users) */}
+              {localStorage.getItem('shelfquest_child_mode') !== 'true' && (
                 <div className="cookie-category">
                   <div className="cookie-category-header">
                     <div className="cookie-category-info">
@@ -222,6 +255,7 @@ const CookieConsent = () => {
                     These cookies are used to show you relevant content and advertisements.
                   </p>
                 </div>
+              )}
               </div>
 
               <div className="cookie-consent-actions">
