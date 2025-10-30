@@ -6,6 +6,7 @@ import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates';
 import API from '../config/api';
 import '../components/EnhancedBookCard.css';
+import { useSnackbar } from '../components/Material3';
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
@@ -46,6 +47,9 @@ const LibraryPage = () => {
   const [highlightedBookId, setHighlightedBookId] = useState(null);
   const [openMenuBookId, setOpenMenuBookId] = useState(null);
   const [useVirtualization, setUseVirtualization] = useState(false);
+  const { showSnackbar } = useSnackbar();
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Temporarily disable virtualization to avoid react-window grid crash
   // TODO: Re-enable after stabilizing Grid sizing lifecycle
@@ -211,13 +215,19 @@ const LibraryPage = () => {
   };
 
   const handleDelete = async (book) => {
-    if (window.confirm(`Are you sure you want to delete "${book.title}"?`)) {
-      try {
-        await API.delete(`/books/${book.id}`);
-        setBooks(prevBooks => prevBooks.filter(b => b.id !== book.id));
-      } catch (error) {
-        console.error('Failed to delete book:', error);
-      }
+    try {
+      setIsDeleting(true);
+      await makeAuthenticatedApiCall(`/books/${book.id}`, { method: 'DELETE' });
+      setBooks(prevBooks => prevBooks.filter(b => b.id !== book.id));
+      try { localStorage.setItem('books_updated', Date.now().toString()); } catch {}
+      window.dispatchEvent(new CustomEvent('bookDeleted', { detail: { bookId: book.id } }));
+      showSnackbar({ message: `Deleted "${book.title}"`, variant: 'success' });
+    } catch (error) {
+      console.error('Failed to delete book:', error);
+      showSnackbar({ message: error?.message || 'Failed to delete book', variant: 'error' });
+    } finally {
+      setIsDeleting(false);
+      setConfirmDelete(null);
     }
   };
 
@@ -520,15 +530,9 @@ const LibraryPage = () => {
                   console.log('Edit book requested:', book.id);
                   // You could navigate to an edit dialog/page here
                 }}
-                onDeleteBook={async (book) => {
-                  try {
-                    if (!confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
-                    await API.delete(`/books/${book.id}`);
-                    setBooks(prev => prev.filter(b => b.id !== book.id));
-                    setOpenMenuBookId(null);
-                  } catch (err) {
-                    console.error('Failed to delete book:', err);
-                  }
+                onDeleteBook={(book) => {
+                  setConfirmDelete(book);
+                  setOpenMenuBookId(null);
                 }}
                 viewMode={viewMode}
                 className="library-virtualized-grid"
@@ -824,16 +828,10 @@ const LibraryPage = () => {
 
                             <button
                               className="book-menu-item book-menu-item--error"
-                              onClick={async (e) => {
+                              onClick={(e) => {
                                 e.stopPropagation();
-                                try {
-                                  if (!confirm(`Delete "${book.title}"? This cannot be undone.`)) return;
-                                  await API.delete(`/books/${book.id}`);
-                                  setBooks(prev => prev.filter(b => b.id !== book.id));
-                                  setOpenMenuBookId(null);
-                                } catch (err) {
-                                  console.error('Failed to delete book:', err);
-                                }
+                                setConfirmDelete(book);
+                                setOpenMenuBookId(null);
                               }}
                             >
                               <span className="book-menu-item__icon">🗑️</span>
@@ -862,7 +860,7 @@ const LibraryPage = () => {
                     <div className="md3-book-actions-row">
                       <button
                         className="md3-button md3-button--text delete-book-link"
-                        onClick={(e) => { e.stopPropagation(); handleDelete(book); }}
+                        onClick={(e) => { e.stopPropagation(); setConfirmDelete(book); }}
                         aria-label={`Delete ${book.title}`}
                       >
                         <span className="material-symbols-outlined" aria-hidden>delete</span>
@@ -887,7 +885,24 @@ const LibraryPage = () => {
     >
     {renderPageContent()}
 
-    {/* Delete book link rendered per-card in library view (outside of menu) */}
+    {/* MD3 Confirmation Dialog for Delete */}
+    {confirmDelete && (
+      <div role="dialog" aria-modal="true" className="fixed inset-0 z-[1300] flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/40" onClick={() => !isDeleting && setConfirmDelete(null)} />
+        <div className="relative bg-surface-container-high rounded-large shadow-lg max-w-[420px] w-[92%] p-5 border border-outline-variant">
+          <div className="md-title-large mb-1">Delete book?</div>
+          <div className="md-body-medium text-on-surface-variant mb-4">
+            This will remove "{confirmDelete.title}" and its file. This action cannot be undone.
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <button className="md3-button md3-button--text" onClick={() => setConfirmDelete(null)} disabled={isDeleting}>Cancel</button>
+            <button className="md3-button md3-button--filled" style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }} onClick={() => handleDelete(confirmDelete)} disabled={isDeleting}>
+              {isDeleting ? 'Deleting…' : 'Delete'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
 
     <button 
      className="md3-fab"
