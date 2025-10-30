@@ -130,6 +130,32 @@ const LibraryPage = () => {
     }
   };
 
+  // Delete/Patch helpers with fallback for servers using '/api' prefix
+  const deleteBookServer = async (bookId) => {
+    try {
+      await makeAuthenticatedApiCall(`/books/${bookId}`, { method: 'DELETE' });
+    } catch (err1) {
+      try {
+        await makeAuthenticatedApiCall(`/api/books/${bookId}`, { method: 'DELETE' });
+      } catch (err2) {
+        throw err2 || err1;
+      }
+    }
+  };
+
+  const patchBookServer = async (bookId, updates) => {
+    const options = { method: 'PATCH', body: JSON.stringify(updates) };
+    try {
+      return await makeAuthenticatedApiCall(`/books/${bookId}`, options);
+    } catch (err1) {
+      try {
+        return await makeAuthenticatedApiCall(`/api/books/${bookId}`, options);
+      } catch (err2) {
+        throw err2 || err1;
+      }
+    }
+  };
+
   const filteredBooks = books.filter(book => {
     switch (filter) {
       case 'reading':
