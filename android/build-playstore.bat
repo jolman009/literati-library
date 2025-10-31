@@ -1,23 +1,47 @@
 @echo off
+setlocal ENABLEDELAYEDEXPANSION
+REM Ensure we run from this script's folder (android directory)
+pushd "%~dp0"
 echo ========================================
 echo   Building AAB for Google Play Store
 echo ========================================
 echo.
 
-REM Set JAVA_HOME to Android Studio's JDK (has jlink and all required tools)
-set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr
-set PATH=%JAVA_HOME%\bin;%PATH%
+REM Prefer Android Studio's bundled JDK 17 if available
+set "PREF_JDK=C:\Program Files\Android\Android Studio\jbr"
+if exist "%PREF_JDK%\bin\java.exe" (
+  set "JAVA_HOME=%PREF_JDK%"
+) else (
+  REM Fallback: try Adoptium Temurin 17 (most common install path)
+  for /d %%G in ("C:\Program Files\Eclipse Adoptium\jdk-17.*") do (
+    if exist "%%G\bin\java.exe" (
+      set "JAVA_HOME=%%G"
+    )
+  )
+)
+
+if not defined JAVA_HOME (
+  echo ❌ Could not find JDK 17.
+  echo    Install Android Studio OR Temurin JDK 17.
+  echo    Temurin download: https://adoptium.net/temurin/releases/?version=17
+  echo.
+  echo    After installing, re-run this script.
+  pause
+  exit /b 1
+)
+
+set "PATH=%JAVA_HOME%\bin;%PATH%"
 
 echo Using Java from: %JAVA_HOME%
+"%JAVA_HOME%\bin\java.exe" -version
 echo.
 
 echo Cleaning previous builds and stopping Gradle daemon...
-call gradlew --stop
-timeout /t 2 /nobreak >nul
+call .\gradlew.bat --stop
 
 echo.
 echo Cleaning build artifacts...
-call gradlew clean
+call .\gradlew.bat clean
 
 echo.
 echo Building Android App Bundle (AAB)...
@@ -26,7 +50,7 @@ echo This may take 5-10 minutes...
 echo.
 
 REM Build AAB with updated optimization settings
-call gradlew bundleRelease --no-daemon
+call .\gradlew.bat bundleRelease --no-daemon --stacktrace
 
 if errorlevel 1 (
     echo.
@@ -56,3 +80,5 @@ echo 4. Complete store listing
 echo 5. Submit for review
 echo.
 pause
+endlocal
+popd
