@@ -11,8 +11,8 @@ android {
         applicationId "org.shelfquest.app"
         minSdk 24
         targetSdk 35
-        versionCode 3
-        versionName "1.0.1"
+        versionCode 4
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -26,10 +26,10 @@ android {
             defaultUrl: "https://shelfquest.org",
             launchUrl: "/",
             appName: "ShelfQuest",
-            themeColor: "#6750A4",
+            themeColor: "#56a0d3 ",
             backgroundColor: "#FFFBFE",
             navigationBarColor: "#FFFBFE",
-            statusBarColor: "#6750A4",
+            statusBarColor: "#56a0d3 ",
             enableNotification: "true",
             enableLocationDelegation: "false",
             enableSharing: "true",
@@ -94,10 +94,10 @@ android {
                 defaultUrl: "http://localhost:3000",
                 launchUrl: "/",
                 appName: "ShelfQuest Debug",
-                themeColor: "#6750A4",
+                themeColor: "#56a0d3",
                 backgroundColor: "#FFFBFE",
                 navigationBarColor: "#FFFBFE",
-                statusBarColor: "#6750A4",
+                statusBarColor: "#56a0d3",
                 enableNotification: "true",
                 enableLocationDelegation: "false",
                 enableSharing: "true",
@@ -116,10 +116,10 @@ android {
                 defaultUrl: "https://shelfquest.org",
                 launchUrl: "/",
                 appName: "ShelfQuest",
-                themeColor: "#6750A4",
+                themeColor: "#56a0d3",
                 backgroundColor: "#FFFBFE",
                 navigationBarColor: "#FFFBFE",
-                statusBarColor: "#6750A4",
+                statusBarColor: "#56a0d3",
                 enableNotification: "true",
                 enableLocationDelegation: "false",
                 enableSharing: "true",

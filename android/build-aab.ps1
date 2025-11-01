@@ -1,6 +1,14 @@
 # Build AAB for Play Store
 Set-Location "C:\Users\Jolma\Vibe-Code\my-library-app-2\android"
-$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+
+# Prefer existing JAVA_HOME if set; otherwise fall back to Android Studio's JBR
+if (-not $env:JAVA_HOME -or -not (Test-Path (Join-Path $env:JAVA_HOME 'bin\java.exe'))) {
+    $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+    $javaSource = "Android Studio JBR (fallback)"
+} else {
+    $javaSource = "System JAVA_HOME"
+}
+
 $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
 
 Write-Host "========================================" -ForegroundColor Cyan
@@ -8,7 +16,8 @@ Write-Host "  Building AAB for Google Play Store" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "Using Java from: $env:JAVA_HOME" -ForegroundColor Yellow
+Write-Host "Using Java from: $env:JAVA_HOME ($javaSource)" -ForegroundColor Yellow
+& "$env:JAVA_HOME\bin\java.exe" -version
 Write-Host ""
 
 Write-Host "Cleaning previous builds and stopping Gradle daemon..." -ForegroundColor Yellow
