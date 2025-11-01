@@ -1,14 +1,20 @@
 @echo off
 echo ========================================
-echo   Building Literati Android App
+echo   Building ShelfQuest Android App
 echo ========================================
 echo.
 
-REM Set JAVA_HOME to Android Studio's JDK (has jlink and all required tools)
-set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr
+REM Prefer system JAVA_HOME if set; fall back to Android Studio's JBR
+IF NOT DEFINED JAVA_HOME (
+    set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr"
+    set "JAVA_SOURCE=Android Studio JBR (fallback)"
+ ) ELSE (
+    set "JAVA_SOURCE=System JAVA_HOME"
+ )
+
 set PATH=%JAVA_HOME%\bin;%PATH%
 
-echo Using Java from: %JAVA_HOME%
+echo Using Java from: %JAVA_HOME% (%JAVA_SOURCE%)
 echo.
 
 REM Verify Java is accessible
