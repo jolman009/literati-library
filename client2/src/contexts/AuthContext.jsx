@@ -158,7 +158,10 @@ export const AuthProvider = ({ children }) => {
           msg.includes('403') ||
           /jwt\s*expired/i.test(msg) ||
           /TokenExpiredError/i.test(msg) ||
-          /Token verification failed/i.test(msg);
+          /Token verification failed/i.test(msg) ||
+          /Access token required/i.test(msg) ||
+          /NO_TOKEN/i.test(msg) ||
+          /INVALID_TOKEN/i.test(msg);
 
         if (expired) {
           console.warn('🔄 Token expired/invalid → attempting refresh');
@@ -205,6 +208,29 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   }, []);
+
+  // Verify cookie session if a stored user exists but cookies may be gone
+  useEffect(() => {
+    let cancelled = false;
+    const verifyIfNeeded = async () => {
+      // Only verify when we have a stored user but subsequent calls fail
+      if (user) {
+        try {
+          setLoading(true);
+          await verifyToken();
+        } catch {
+          if (!cancelled) {
+            localStorage.removeItem(USER_KEY);
+            setUser(null);
+          }
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+      }
+    };
+    verifyIfNeeded();
+    return () => { cancelled = true; };
+  }, [user, verifyToken]);
 
   /**
    * Optional explicit verification (call when you need it)
