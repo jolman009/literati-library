@@ -2,6 +2,7 @@
 // Sync Manager - processes sync queue and syncs with backend
 
 import API, { gamificationAPI } from '../config/api';
+import environmentConfig from '../config/environment.js';
 import {
   getPendingActions,
   getRetryableActions,
@@ -178,7 +179,6 @@ class SyncManager {
   async syncCreateNote(payload) {
     const { bookId, content, page, position, timestamp, noteId } = payload;
 
-    const environmentConfig = (await import('../config/environment.js')).default;
     const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.createNote(token, {
       book_id: bookId,
@@ -197,7 +197,6 @@ class SyncManager {
   async syncUpdateNote(payload) {
     const { noteId, content, timestamp } = payload;
 
-    const environmentConfig = (await import('../config/environment.js')).default;
     const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.updateNote(token, noteId, {
       content,
@@ -213,7 +212,6 @@ class SyncManager {
   async syncDeleteNote(payload) {
     const { noteId } = payload;
 
-    const environmentConfig = (await import('../config/environment.js')).default;
     const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.deleteNote(token, noteId);
 
