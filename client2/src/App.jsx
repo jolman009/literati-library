@@ -337,10 +337,10 @@ const App = () => {
 
   return (
     <div className="app">
-      <AuthProvider>
-        <EntitlementsProvider>
-          <Material3ThemeProvider defaultTheme="auto">
-            <MD3SnackbarProvider>
+      <MD3SnackbarProvider>
+        <AuthProvider>
+          <EntitlementsProvider>
+            <Material3ThemeProvider defaultTheme="auto">
               <GamificationProvider>
                 <ReadingSessionProvider>
                 <NetworkStatus isOnline={isOnline} isReconnecting={isReconnecting} />
@@ -361,10 +361,10 @@ const App = () => {
                 {/* <SentryTestButton /> */}
               </ReadingSessionProvider>
             </GamificationProvider>
-          </MD3SnackbarProvider>
-          </Material3ThemeProvider>
-        </EntitlementsProvider>
-      </AuthProvider>
+            </Material3ThemeProvider>
+          </EntitlementsProvider>
+        </AuthProvider>
+      </MD3SnackbarProvider>
     </div>
   );
 };

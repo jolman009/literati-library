@@ -22,13 +22,10 @@ import './index.css';
 import App from './App.jsx';
 
 // 4) Utilities
-import { clearExpiredToken } from './utils/clearExpiredToken';
 
 // 5) PWA registration with update notifications
 import { registerSW } from 'virtual:pwa-register';
 
-// One-time token cleanup
-clearExpiredToken();
 
 // Register SW based on environment mode only (no hostname detection)
 // Use VITE_ENABLE_SERVICE_WORKER to control SW registration in production

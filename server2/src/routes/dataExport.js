@@ -1,16 +1,17 @@
 // server2/src/routes/dataExport.js - GDPR Data Export API
 import express from 'express';
-import { authenticateToken } from '../middlewares/auth.js';
 import { supabase } from '../config/supabaseClient.js';
 
-const router = express.Router();
 const supabaseAdmin = supabase; // Using service role key with admin privileges
+
+export default function dataExportRouter(authenticateToken) {
+  const router = express.Router();
 
 /**
  * GET /api/data-export/user-data
  * Export all user data in JSON format (GDPR Article 20 - Right to Data Portability)
  */
-router.get('/user-data', authenticateToken, async (req, res) => {
+  router.get('/user-data', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
@@ -280,13 +281,13 @@ router.get('/user-data', authenticateToken, async (req, res) => {
       message: error.message
     });
   }
-});
+  });
 
 /**
  * GET /api/data-export/summary
  * Get a summary of exportable data (for UI display)
  */
-router.get('/summary', authenticateToken, async (req, res) => {
+  router.get('/summary', authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
@@ -347,6 +348,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
       message: error.message
     });
   }
-});
+  });
 
-export default router;
+  return router;
+}

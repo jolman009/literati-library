@@ -258,9 +258,9 @@ app.use('/books', booksRouter(authenticateTokenEnhanced));
 app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
 app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));
-app.use('/covers-enhanced', coversEnhancedRouter);
+app.use('/covers-enhanced', coversEnhancedRouter(authenticateTokenEnhanced));
 app.use('/ai', aiRouter(authenticateTokenEnhanced));
-app.use('/api/data-export', dataExportRouter);
+app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
 
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
 app.post('/auth/register', async (req, res) => {
@@ -423,7 +423,7 @@ app.post('/auth/logout', (req, res) => {
   }
 });
 
-app.get('/auth/profile', authenticateToken, async (req, res) => {
+app.get('/auth/profile', authenticateTokenEnhanced, async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
