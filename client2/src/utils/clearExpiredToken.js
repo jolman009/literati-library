@@ -35,7 +35,4 @@ export const clearExpiredToken = () => {
   }
 };
 
-// Call this function immediately when the app loads
-if (typeof window !== 'undefined') {
-  clearExpiredToken();
-}
+// Note: Do not auto-run on load anymore; call manually for troubleshooting only.

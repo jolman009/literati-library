@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import environmentConfig from '../config/environment.js';
 import { syncPendingNotes } from '../utils/noteSyncUtil.js';
+import { useSnackbar } from '../components/Material3';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Storage keys (single source of truth) - Using centralized config
@@ -34,6 +36,8 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  const { showSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   // State
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // gate initial render
@@ -57,8 +61,12 @@ export const AuthProvider = ({ children }) => {
   const makeApiCall = useCallback(
     async (endpoint, options = {}) => {
       const url = `${API_URL}${endpoint}`;
+      // Include Authorization header when a token exists (fallback),
+      // but rely on HttpOnly cookies as the primary auth mechanism
+      const baseHeaders = environmentConfig.getAuthHeaders();
       const headers = {
         'Content-Type': 'application/json',
+        ...baseHeaders,
         ...(options.headers || {}),
       };
 
@@ -131,6 +139,13 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         }
 
+        // If server returns token in body for compatibility, update localStorage
+        if (data?.token) {
+          try {
+            localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+          } catch {}
+        }
+
         // Return true to indicate success (no need to return token - it's in cookies)
         return true;
       }
@@ -174,8 +189,21 @@ export const AuthProvider = ({ children }) => {
             console.log('🔄 Retrying original request with refreshed cookies');
             return await makeApiCall(endpoint, options);
           } else {
-            // Refresh failed, log out
-            console.warn('❌ Token refresh failed → logging out');
+            // Refresh failed, prompt re-login
+            console.warn('❌ Token refresh failed → prompting re-login');
+            try {
+              showSnackbar({
+                message: 'Session expired. Please sign in again.',
+                variant: 'warning',
+                duration: 5000,
+                position: 'top-center',
+                action: (
+                  <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
+                    Sign in
+                  </button>
+                )
+              });
+            } catch {}
             localStorage.removeItem(USER_KEY);
             setUser(null);
             throw new Error('Your session has expired. Please log in again.');
@@ -209,40 +237,85 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Listen for global refresh failures (from axios paths) and prompt re-login
+  useEffect(() => {
+    const handler = () => {
+      try {
+        showSnackbar({
+          message: 'Session expired. Please sign in again.',
+          variant: 'warning',
+          duration: 5000,
+          position: 'top-center',
+          action: (
+            <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
+              Sign in
+            </button>
+          )
+        });
+      } catch {}
+    };
+    window.addEventListener('auth-refresh-failed', handler);
+    return () => window.removeEventListener('auth-refresh-failed', handler);
+  }, [showSnackbar, navigate]);
+
   /**
    * Optional explicit verification (call when you need it)
    * Now uses cookie-based authentication automatically
    */
   const verifyToken = useCallback(
     async () => {
-      const data = await makeApiCall('/auth/profile');
+      const data = await makeAuthenticatedApiCall('/auth/profile');
       return data;
     },
-    [makeApiCall]
+    [makeAuthenticatedApiCall]
   );
 
-  // Verify cookie session if a stored user exists but cookies may be gone
+  // Verify cookie/header session after restoring user from storage
   useEffect(() => {
     let cancelled = false;
     const verifyIfNeeded = async () => {
-      // Only verify when we have a stored user but subsequent calls fail
-      if (user) {
+      if (!user) return;
+
+      const devHeaderAuth = typeof environmentConfig.shouldUseDevHeaderAuth === 'function'
+        ? environmentConfig.shouldUseDevHeaderAuth()
+        : false;
+      const hasHeaderToken = (() => { try { return !!localStorage.getItem(environmentConfig.getTokenKey()); } catch { return false; } })();
+
+      // In dev header-auth mode but no token: clear user and prompt sign-in
+      if (import.meta.env.DEV && devHeaderAuth && !hasHeaderToken) {
         try {
-          setLoading(true);
-          await verifyToken();
-        } catch {
-          if (!cancelled) {
-            localStorage.removeItem(USER_KEY);
-            setUser(null);
-          }
-        } finally {
-          if (!cancelled) setLoading(false);
+          showSnackbar({
+            message: 'Session expired. Please sign in again.',
+            variant: 'warning',
+            duration: 5000,
+            position: 'top-center',
+            action: (
+              <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
+                Sign in
+              </button>
+            )
+          });
+        } catch {}
+        localStorage.removeItem(USER_KEY);
+        setUser(null);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        await verifyToken();
+      } catch {
+        if (!cancelled) {
+          localStorage.removeItem(USER_KEY);
+          setUser(null);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     verifyIfNeeded();
     return () => { cancelled = true; };
-  }, [user, verifyToken]);
+  }, [user, verifyToken, showSnackbar, navigate]);
 
   /**
    * Auth actions

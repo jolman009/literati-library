@@ -51,6 +51,33 @@
   flex-shrink: 0;
 }
 
+/* Emphasized action button for primary CTA (e.g., Sign in) */
+.md3-snackbar__action-button {
+  appearance: none;
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 14px;
+  font: var(--md-sys-typescale-label-large-font);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  cursor: pointer;
+  background-color: rgb(var(--md-sys-color-inverse-primary));
+  color: rgb(var(--md-sys-color-inverse-on-surface));
+  transition: transform 120ms ease, filter 120ms ease, background-color 120ms ease;
+}
+
+.md3-snackbar__action-button:hover {
+  filter: brightness(0.95);
+}
+
+.md3-snackbar__action-button:active {
+  transform: translateY(1px);
+}
+
+.md3-snackbar__action-button:focus-visible {
+  outline: 2px solid rgba(var(--md-sys-color-inverse-on-surface), 0.9);
+  outline-offset: 2px;
+}
+
 .md3-snackbar__action .md3-button {
   --md-sys-color-primary: var(--md-sys-color-inverse-primary);
   --md-sys-color-on-primary: var(--md-sys-color-inverse-on-surface);

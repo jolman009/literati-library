@@ -43,7 +43,9 @@ class EnvironmentConfig {
       security: {
         tokenKey: import.meta.env.VITE_TOKEN_KEY || 'shelfquest_token',
         useSecureCookies: import.meta.env.VITE_USE_SECURE_COOKIES === 'true',
-        enforceHttps: import.meta.env.VITE_ENFORCE_HTTPS !== 'false' // Default true for prod
+        enforceHttps: import.meta.env.VITE_ENFORCE_HTTPS !== 'false', // Default true for prod
+        // Dev-only: force header-based auth in development (skip cookie dependency)
+        devHeaderAuth: import.meta.env.VITE_DEV_HEADER_AUTH === 'true'
       },
 
       // Storage configuration
@@ -227,6 +229,11 @@ class EnvironmentConfig {
     }
 
     return headers;
+  }
+
+  // Dev helper: should we force header auth in development?
+  shouldUseDevHeaderAuth() {
+    return this.isDevelopment && !!this.security.devHeaderAuth;
   }
 }
 

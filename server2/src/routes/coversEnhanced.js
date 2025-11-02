@@ -1,14 +1,15 @@
 // Enhanced covers route with batch processing
 import { Router } from 'express';
 import { ensureBookCover, ensureCoversForBooks } from '../services/coverEnhanced.js';
-import { authenticateToken } from '../middlewares/auth.js';
 import { createClient } from '@supabase/supabase-js';
 
-const router = Router();
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+export default function coversEnhancedRouter(authenticateToken) {
+  const router = Router();
+
 // Get or create cover for a single book
-router.post('/ensure', authenticateToken, async (req, res) => {
+  router.post('/ensure', authenticateToken, async (req, res) => {
   try {
     const { bookId, title, author, isbn, isbn10, isbn13, genre } = req.body;
     
@@ -48,10 +49,10 @@ router.post('/ensure', authenticateToken, async (req, res) => {
       message: error.message 
     });
   }
-});
+  });
 
 // Batch process covers for multiple books
-router.post('/batch', authenticateToken, async (req, res) => {
+  router.post('/batch', authenticateToken, async (req, res) => {
   try {
     const { bookIds, processAll = false } = req.body;
     
@@ -118,10 +119,10 @@ router.post('/batch', authenticateToken, async (req, res) => {
       message: error.message 
     });
   }
-});
+  });
 
 // Get cover processing status
-router.get('/status', authenticateToken, async (req, res) => {
+  router.get('/status', authenticateToken, async (req, res) => {
   try {
     const { data: stats, error } = await supabase
       .from('books')
@@ -155,10 +156,10 @@ router.get('/status', authenticateToken, async (req, res) => {
       message: error.message 
     });
   }
-});
+  });
 
 // Regenerate cover for a book (force new fetch/generation)
-router.post('/regenerate/:bookId', authenticateToken, async (req, res) => {
+  router.post('/regenerate/:bookId', authenticateToken, async (req, res) => {
   try {
     const { bookId } = req.params;
     
@@ -200,6 +201,7 @@ router.post('/regenerate/:bookId', authenticateToken, async (req, res) => {
       message: error.message 
     });
   }
-});
+  });
 
-export default router;
+  return router;
+}

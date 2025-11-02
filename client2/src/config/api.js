@@ -37,16 +37,52 @@ API.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      console.warn('⚠️ 401 Unauthorized - Token may be expired:', error.config.url);
-    } else if (error.response?.status === 404 && error.config?.url?.includes('/gamification/')) {
+  async (error) => {
+    const status = error.response?.status;
+    const originalRequest = error.config || {};
+
+    if (status === 401) {
+      console.warn('⚠️ 401 Unauthorized - Token may be expired:', originalRequest.url);
+    } else if (status === 404 && originalRequest?.url?.includes('/gamification/')) {
       // Suppress 404 console errors for gamification endpoints that may not be implemented yet
       // This allows frontend to work with localStorage fallback without console noise
       // When backend endpoints are ready, they'll work automatically
-      console.log(`ℹ️ Gamification endpoint not available: ${error.config.url} - using local storage`);
+      console.log(`ℹ️ Gamification endpoint not available: ${originalRequest.url} - using local storage`);
       // Don't show the red error in console
       return Promise.reject(error);
+    }
+
+    // Attempt cookie-based refresh on 401/403, then retry once
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
+      // Avoid retrying refresh endpoint itself
+      if ((originalRequest.url || '').includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+      try {
+        const refreshResp = await API.post('/auth/refresh', {}, { withCredentials: true });
+        // If server returns token in body (compat), update localStorage for header fallback
+        const newToken = refreshResp?.data?.token;
+        if (newToken) {
+          try {
+            localStorage.setItem(environmentConfig.getTokenKey(), newToken);
+          } catch {}
+        }
+        return API.request(originalRequest);
+      } catch (refreshErr) {
+        // Broadcast a refresh failure so UI can prompt re-login
+        try {
+          window.dispatchEvent(new CustomEvent('auth-refresh-failed', {
+            detail: {
+              url: originalRequest?.url,
+              status,
+            }
+          }));
+        } catch {}
+        // Let caller (contexts) handle logout messaging
+        return Promise.reject(refreshErr);
+      }
     }
 
     return Promise.reject(error);
