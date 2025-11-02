@@ -281,6 +281,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
 const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBooks = null, inProgressBooks = null }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
+  const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(!stats);
   const [refreshing, setRefreshing] = useState(false);
   const [notesPoints, setNotesPoints] = useState(0);
@@ -1373,3 +1374,13 @@ export default DashboardPage;
 
 
 
+  if (!isAuthenticated) {
+    return (
+      <div className="simple-scroll-container">
+        <div className="stat-metric-card" style={{ textAlign: 'center' }}>
+          <div className="stat-icon">🔒</div>
+          <div className="stat-label">Sign in to view your stats</div>
+        </div>
+      </div>
+    );
+  }
