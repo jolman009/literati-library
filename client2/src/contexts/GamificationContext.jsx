@@ -91,7 +91,7 @@ export const GamificationProvider = ({ children }) => {
   const [offlineMode, setOfflineMode] = useState(false);
 
   // Get auth context (AuthContext uses HttpOnly cookies; no token needed here)
-  const { user, makeApiCall } = useAuth();
+  const { user, makeApiCall, loading: authLoading, isAuthenticated } = useAuth();
 
   // Reset offline mode when we have an authenticated user
   useEffect(() => {
@@ -210,7 +210,8 @@ export const GamificationProvider = ({ children }) => {
 
   // Fetch all gamification data
   const fetchData = useCallback(async () => {
-    if (!user) {
+    // Defer until auth provider has finished verifying cookies and user is authenticated
+    if (authLoading || !user || !isAuthenticated) {
       setLoading(false);
       return;
     }
@@ -323,7 +324,7 @@ export const GamificationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user, offlineMode, calculateReadingStreak]);
+  }, [user, isAuthenticated, authLoading, offlineMode, calculateReadingStreak]);
 
   // Add debouncing and caching for fetchData
   const lastFetchTime = useRef(0);
@@ -343,9 +344,9 @@ export const GamificationProvider = ({ children }) => {
 
   // Load data when user or token changes
   useEffect(() => {
-    if (!user) return;
+    if (!user || authLoading || !isAuthenticated) return;
     fetchDataDebounced();
-  }, [user?.id]); // Only depend on user ID, not fetchData
+  }, [user?.id, authLoading, isAuthenticated]);
 
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {

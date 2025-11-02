@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../ui/Icon';
 import API from '../../config/api';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 import './PointsHistory.css';
 
 const PointsHistory = ({ limit = 10 }) => {
@@ -10,10 +11,16 @@ const PointsHistory = ({ limit = 10 }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { actualTheme } = useMaterial3Theme();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      setHistory([]);
+      return;
+    }
     fetchHistory();
-  }, [limit]);
+  }, [limit, isAuthenticated]);
 
   // Local fallback mapping for display label/icon
   const getDisplayIconName = (action) => {
@@ -135,6 +142,22 @@ const PointsHistory = ({ limit = 10 }) => {
           <div className="loading-shimmer" style={{ height: '60px', marginBottom: '8px', borderRadius: '8px' }}></div>
           <div className="loading-shimmer" style={{ height: '60px', marginBottom: '8px', borderRadius: '8px' }}></div>
           <div className="loading-shimmer" style={{ height: '60px', borderRadius: '8px' }}></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className={`points-history-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
+        <div className="points-history-header">
+          <h3 className="points-history-title">
+            <Icon name="bar_chart" size={16} /> Points History
+          </h3>
+        </div>
+        <div className="points-history-empty">
+          <span style={{ fontSize: '2rem', opacity: 0.6 }}>🔒</span>
+          <p>Sign in to view your recent activity</p>
         </div>
       </div>
     );
