@@ -855,6 +855,20 @@ const RecentAchievements = () => {
 // Currently Reading Section Componentss
 const CurrentlyReading = () => {
   const { activeSession, startReadingSession, stopReadingSession, isPaused } = useReadingSession(); // Listen to session changes + controls
+  const [elapsedSec, setElapsedSec] = useState(0);
+  useEffect(() => {
+    if (!activeSession) { setElapsedSec(0); return; }
+    const compute = () => {
+      const start = new Date(activeSession.startTime);
+      const now = new Date();
+      const current = Math.floor((now - start) / 1000);
+      const total = (activeSession.accumulatedTime || 0) + (activeSession.isPaused ? 0 : current);
+      setElapsedSec(Math.max(0, total));
+    };
+    compute();
+    const id = setInterval(compute, 1000);
+    return () => clearInterval(id);
+  }, [activeSession]);
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1020,11 +1034,10 @@ const CurrentlyReading = () => {
                   title="Stop reading session"
                   onClick={async (e) => {
                     e.stopPropagation();
-                    try {
-                      await stopReadingSession();
-                    } catch {}
+                    try { await stopReadingSession(); } catch {}
                   }}
                   style={{
+                    position: 'relative',
                     background: '#ef4444',
                     color: '#fff',
                     border: 'none',
@@ -1035,6 +1048,13 @@ const CurrentlyReading = () => {
                   }}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>stop</span>
+                  <span
+                    className="reader-topbar-badge"
+                    aria-label="elapsed minutes"
+                    style={{ position: 'absolute', top: '-8px', right: '-10px' }}
+                  >
+                    {Math.floor(elapsedSec / 60)}m
+                  </span>
                 </button>
               )}
 
