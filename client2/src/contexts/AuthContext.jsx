@@ -446,6 +446,15 @@ export const AuthProvider = ({ children }) => {
   // User is authenticated if we have user data (cookies handle the actual auth)
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
 
+  // Expose token for compatibility with components that still read it directly
+  const token = useMemo(() => {
+    try {
+      return localStorage.getItem(environmentConfig.getTokenKey()) || null;
+    } catch {
+      return null;
+    }
+  }, [user]);
+
   const value = useMemo(
     () => ({
       // state
@@ -453,6 +462,7 @@ export const AuthProvider = ({ children }) => {
       loading,
       error,
       isAuthenticated,
+      token,
 
       // actions
       register,
@@ -475,6 +485,7 @@ export const AuthProvider = ({ children }) => {
       loading,
       error,
       isAuthenticated,
+      token,
       register,
       login,
       logout,
