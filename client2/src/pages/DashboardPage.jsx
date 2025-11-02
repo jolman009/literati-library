@@ -1369,18 +1369,3 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-
-
-
-
-
-  if (!isAuthenticated) {
-    return (
-      <div className="simple-scroll-container">
-        <div className="stat-metric-card" style={{ textAlign: 'center' }}>
-          <div className="stat-icon">🔒</div>
-          <div className="stat-label">Sign in to view your stats</div>
-        </div>
-      </div>
-    );
-  }
