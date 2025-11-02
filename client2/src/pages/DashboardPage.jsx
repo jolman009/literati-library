@@ -1083,12 +1083,6 @@ const RecentlyAdded = () => {
 
   const fetchRecentBooks = useCallback(async () => {
     try {
-      const token = localStorage.getItem('shelfquest_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       // Use the API config for consistency
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const { items = [] } = response.data || {};

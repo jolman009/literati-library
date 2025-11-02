@@ -178,7 +178,8 @@ class SyncManager {
   async syncCreateNote(payload) {
     const { bookId, content, page, position, timestamp, noteId } = payload;
 
-    const token = localStorage.getItem('shelfquest_token');
+    const environmentConfig = (await import('../config/environment.js')).default;
+    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.createNote(token, {
       book_id: bookId,
       content,
@@ -196,7 +197,8 @@ class SyncManager {
   async syncUpdateNote(payload) {
     const { noteId, content, timestamp } = payload;
 
-    const token = localStorage.getItem('shelfquest_token');
+    const environmentConfig = (await import('../config/environment.js')).default;
+    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.updateNote(token, noteId, {
       content,
       type: 'note',
@@ -211,7 +213,8 @@ class SyncManager {
   async syncDeleteNote(payload) {
     const { noteId } = payload;
 
-    const token = localStorage.getItem('shelfquest_token');
+    const environmentConfig = (await import('../config/environment.js')).default;
+    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.deleteNote(token, noteId);
 
     return data;
