@@ -1612,6 +1612,27 @@
   flex-shrink: 0; /* Prevent cards from shrinking to fit container */
 }
 
+/* Small badge indicating server-synced totals on stat cards */
+.server-sync-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(36, 168, 224, 0.9);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.server-sync-badge-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
 .stat-metric-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--md-sys-elevation-level2);

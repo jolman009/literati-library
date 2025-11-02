@@ -289,6 +289,8 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   const [totalPointsFromServer, setTotalPointsFromServer] = useState(0);
   const [totalMinutesRead, setTotalMinutesRead] = useState(0);
   const { getReadingStats, activeSession, sessionStats } = useReadingSession();
+  const { showSnackbar } = useSnackbar();
+  const [serverWins, setServerWins] = useState(false);
   const NOTES_POINTS_PER = 15;
 
   // 🔍 DEBUG: Log stats on every render
@@ -337,6 +339,24 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       const statsData = statsResp?.data || null;
       const serverTotals = statsData?.totalPoints ?? categories?.total ?? 0;
       setTotalPointsFromServer(serverTotals);
+      // Notify if server totals are being used over local to reassure cross-device sync
+      const localTotals = stats?.totalPoints || 0;
+      const serverBeatsLocal = serverTotals > localTotals;
+      setServerWins(Boolean(serverBeatsLocal));
+      if (serverBeatsLocal) {
+        try {
+          const key = 'serverTotalsToastShownAt';
+          const lastShown = parseInt(localStorage.getItem(key) || '0', 10);
+          const now = Date.now();
+          if (!lastShown || now - lastShown > 10 * 60 * 1000) { // 10 minutes debounce
+            showSnackbar({
+              message: `⭐ Synced totals from server: ${serverTotals} points`,
+              variant: 'info'
+            });
+            localStorage.setItem(key, String(now));
+          }
+        } catch {}
+      }
       // Time read pulled from stats when available; otherwise leave local value
       if (typeof statsData?.totalReadingTime === 'number') {
         setTotalMinutesRead(statsData.totalReadingTime);
@@ -645,6 +665,13 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
               opacity: 0.6
             }}>
               🔄
+            </div>
+          )}
+          {/* Small badge when using server totals to reassure cross-device sync */}
+          {stat.label === 'Total Points' && serverWins && (
+            <div className="server-sync-badge" title="Using synced totals from server">
+              <span className="server-sync-badge-icon">☁</span>
+              <span>synced</span>
             </div>
           )}
           <div className="stat-metric-header">

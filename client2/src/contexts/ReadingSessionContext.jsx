@@ -10,7 +10,8 @@
 // where the user left off after a page refresh rather than resetting to
 // zero.
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { useGamification } from './GamificationContext';
 import API from '../config/api';
@@ -38,6 +39,55 @@ export const ReadingSessionProvider = ({ children }) => {
     pagesRead: 0,
     startTime: null
   });
+
+  // Batch guard for rapid page updates
+  const pendingPagesRef = useRef(0);
+  const flushTimerRef = useRef(null);
+  const lastFlushRef = useRef(0);
+
+  const flushPendingPages = useCallback(async () => {
+    try {
+      if (!activeSession || !trackAction) return;
+      const pages = pendingPagesRef.current;
+      if (!pages || pages <= 0) return;
+      pendingPagesRef.current = 0;
+      lastFlushRef.current = Date.now();
+
+      const actionType = pages === 1 ? 'page_read' : 'pages_read';
+      await trackAction(actionType, {
+        pages,
+        bookId: activeSession.book.id,
+        bookTitle: activeSession.book.title,
+        timestamp: new Date().toISOString()
+      });
+      console.log(`✅ Flushed ${pages} pending page(s) via ${actionType}`);
+    } catch (err) {
+      console.warn('Failed to flush pending pages (non-fatal):', err);
+    }
+  }, [activeSession, trackAction]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+    }
+    // Debounce flush by 1.5s to coalesce rapid updates
+    flushTimerRef.current = setTimeout(() => {
+      flushTimerRef.current = null;
+      flushPendingPages();
+  }, 1500);
+  }, [flushPendingPages]);
+
+  // Flush pending pages when navigating away from the reader route
+  const location = useLocation();
+  const prevPathRef = useRef(window.location?.pathname || '/');
+  useEffect(() => {
+    const prev = prevPathRef.current || '';
+    const curr = location.pathname || '';
+    if (prev.startsWith('/read') && !curr.startsWith('/read')) {
+      flushPendingPages();
+    }
+    prevPathRef.current = curr;
+  }, [location.pathname, flushPendingPages]);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -204,6 +254,9 @@ export const ReadingSessionProvider = ({ children }) => {
       const startTime = new Date(activeSession.startTime);
       const durationMinutes = Math.floor((endTime - startTime) / 60000);
 
+      // Flush any pending page increments before completing session
+      await flushPendingPages();
+
       // ✅ CRITICAL FIX: End backend reading session if it exists
       if (activeSession.backendSessionId && token) {
         try {
@@ -312,21 +365,24 @@ export const ReadingSessionProvider = ({ children }) => {
       }));
       // Save to localStorage
       localStorage.setItem('active_reading_session', JSON.stringify(updatedSession));
-      // Track to gamification if available (track each page individually)
+      // Track to gamification if available (batch rapid increments)
       if (trackAction && pagesRead > 0) {
         try {
           const previousPages = activeSession.pagesRead || 0;
           const newPages = pagesRead - previousPages;
 
           if (newPages > 0) {
-            // Track page_read for each new page read
-            await trackAction('page_read', {
-              pages: newPages,
-              bookId: activeSession.book.id,
-              bookTitle: activeSession.book.title,
-              timestamp: new Date().toISOString()
-            });
-            console.log(`✅ ${newPages} page(s) tracked - ${newPages} point(s) awarded`);
+            // Accumulate and debounce flush to reduce API chatter
+            pendingPagesRef.current += newPages;
+
+            // Heuristic: flush immediately if > 10 pages, else debounce
+            const timeSinceLast = Date.now() - (lastFlushRef.current || 0);
+            if (pendingPagesRef.current >= 10 || timeSinceLast > 5000) {
+              await flushPendingPages();
+            } else {
+              scheduleFlush();
+            }
+            console.log(`📖 Queued ${newPages} new page(s), pending total = ${pendingPagesRef.current}`);
           }
         } catch (error) {
           console.warn('Failed to track pages read:', error);
@@ -339,6 +395,24 @@ export const ReadingSessionProvider = ({ children }) => {
       return { success: false, error: error.message };
     }
   }, [activeSession, token]);
+
+  // Cleanup any timers on unmount
+  useEffect(() => {
+    return () => {
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    };
+  }, []);
+
+  // Best-effort flush on page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (pendingPagesRef.current > 0) {
+        try { flushPendingPages(); } catch {}
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [flushPendingPages]);
 
   // Show/hide reading tracker
   const showReadingTrackerModal = useCallback(() => {
