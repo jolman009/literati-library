@@ -2,6 +2,7 @@
 // API wrapper with intelligent caching and offline support
 
 import API from '../config/api.js';
+import environmentConfig from '../config/environment.js';
 import { cacheManager } from '../utils/cacheManager.js';
 import { measureCustomMetric } from '../utils/webVitals.js';
 
@@ -343,7 +344,7 @@ export class CachedApiService {
   getCurrentUserId() {
     // Try to get from localStorage token
     try {
-      const token = localStorage.getItem('shelfquest_token');
+      const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
       if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.sub || payload.user_id || payload.id;

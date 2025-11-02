@@ -1,7 +1,10 @@
 // Utility to clear expired tokens - run this once to fix the immediate issue
+import environmentConfig from '../config/environment.js';
+
 export const clearExpiredToken = () => {
   try {
-    const token = localStorage.getItem('shelfquest_token');
+    const tokenKey = environmentConfig.getTokenKey();
+    const token = localStorage.getItem(tokenKey);
     
     if (token) {
       // Try to decode the token to check expiration
@@ -11,7 +14,7 @@ export const clearExpiredToken = () => {
       
       if (now >= exp) {
         console.log('Token is expired, clearing...');
-        localStorage.removeItem('shelfquest_token');
+        localStorage.removeItem(tokenKey);
         localStorage.removeItem('shelfquest_user');
         
         // Reload the page to reset the app state
@@ -24,7 +27,8 @@ export const clearExpiredToken = () => {
   } catch (error) {
     console.error('Error checking token:', error);
     // If we can't parse the token, it's probably invalid
-    localStorage.removeItem('shelfquest_token');
+    const tokenKey = environmentConfig.getTokenKey();
+    localStorage.removeItem(tokenKey);
     localStorage.removeItem('shelfquest_user');
     window.location.reload();
     return true;
