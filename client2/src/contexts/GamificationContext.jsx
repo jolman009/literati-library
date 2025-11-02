@@ -263,7 +263,7 @@ export const GamificationProvider = ({ children }) => {
           
           setStats(prevStats => {
             // Only update if we didn't get API data or if API data is empty
-            if (!token || offlineMode || prevStats.totalPoints === 0) {
+            if (offlineMode || prevStats.totalPoints === 0) {
               return {
                 ...parsedStats,
                 level: calculateLevel(parsedStats.totalPoints || 0),

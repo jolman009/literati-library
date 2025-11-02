@@ -209,6 +209,18 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  /**
+   * Optional explicit verification (call when you need it)
+   * Now uses cookie-based authentication automatically
+   */
+  const verifyToken = useCallback(
+    async () => {
+      const data = await makeApiCall('/auth/profile');
+      return data;
+    },
+    [makeApiCall]
+  );
+
   // Verify cookie session if a stored user exists but cookies may be gone
   useEffect(() => {
     let cancelled = false;
@@ -231,18 +243,6 @@ export const AuthProvider = ({ children }) => {
     verifyIfNeeded();
     return () => { cancelled = true; };
   }, [user, verifyToken]);
-
-  /**
-   * Optional explicit verification (call when you need it)
-   * Now uses cookie-based authentication automatically
-   */
-  const verifyToken = useCallback(
-    async () => {
-      const data = await makeApiCall('/auth/profile');
-      return data;
-    },
-    [makeApiCall]
-  );
 
   /**
    * Auth actions
