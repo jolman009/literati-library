@@ -3,7 +3,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
+import { useSnackbar } from "../components/Material3";
 import ReadestReader from "../components/ReadestReader";
+import ThemeToggle from "../components/ThemeToggle";
 import FloatingNotepad from "../components/FloatingNotepad";
 // ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
@@ -17,7 +19,10 @@ const ReadBook = () => {
 
   // Get auth context
   const { user, loading: authLoading, isAuthenticated } = useAuth();
-  const { activeSession, hasActiveSession } = useReadingSession();
+  const { activeSession, hasActiveSession, stopReadingSession } = useReadingSession();
+  const { showSnackbar } = useSnackbar();
+  const [stopping, setStopping] = useState(false);
+  const [elapsedSec, setElapsedSec] = useState(0);
 
   console.log('✅ Auth state:', {
     hasUser: !!user,
@@ -127,6 +132,24 @@ const ReadBook = () => {
     });
   }, [authLoading, isAuthenticated, user, navigate, fetchBook]);
 
+  // Track elapsed time for the top-bar Stop button badge (complements the floating timer)
+  useEffect(() => {
+    if (!activeSession) {
+      setElapsedSec(0);
+      return;
+    }
+    const compute = () => {
+      const start = new Date(activeSession.startTime);
+      const now = new Date();
+      const current = Math.floor((now - start) / 1000);
+      const total = (activeSession.accumulatedTime || 0) + (activeSession.isPaused ? 0 : current);
+      setElapsedSec(Math.max(0, total));
+    };
+    compute();
+    const id = setInterval(compute, 1000);
+    return () => clearInterval(id);
+  }, [activeSession]);
+
   // Fallback: if PDF viewer (iframe) doesn't emit page, default to 1 after book loads.
   // Only set for PDFs, not EPUBs (EPUBs use currentLocator instead)
   useEffect(() => {
@@ -135,13 +158,44 @@ const ReadBook = () => {
     }
   }, [book, currentPage]);
 
-  const handleClose = () => navigate("/library");
+  const handleClose = async () => {
+    if (hasActiveSession) {
+      const ok = window.confirm('You have an active reading session. Do you want to stop it and leave the reader?');
+      if (!ok) return;
+      try {
+        const result = await stopReadingSession();
+        if (result?.success) {
+          showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
+        }
+      } catch {}
+    }
+    navigate("/library");
+  };
 
   // Optional deep-linking to EPUB location: /read/:bookId?cfi=epubcfi(...)
   const initialLocation = searchParams.get("cfi") || null;
 
   return (
     <>
+      {/* Reader Top Bar: dashboard link + theme toggle */}
+      {!loading && !error && book?.file_url && (
+        <div className="reader-topbar" role="navigation" aria-label="Reader toolbar">
+          <div className="reader-topbar-left">
+            <button
+              type="button"
+              className="reader-topbar-btn"
+              onClick={() => navigate('/dashboard')}
+              aria-label="Back to Dashboard"
+            >
+              <span className="reader-topbar-back">←</span>
+              <span className="reader-topbar-text">Dashboard</span>
+            </button>
+          </div>
+          <div className="reader-topbar-right">
+            <ThemeToggle ariaLabel="Toggle light/dark mode" />
+          </div>
+        </div>
+      )}
       {/* Loading overlay */}
       {loading && (
         <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
@@ -249,6 +303,64 @@ const ReadBook = () => {
       {/* Success: show reader + floating components */}
       {!loading && !error && book?.file_url && (
         <>
+          {/* Reader top bar */}
+          <div className="reader-topbar" role="navigation" aria-label="Reader toolbar">
+            <div className="reader-topbar-left">
+              <button
+                type="button"
+                className="reader-topbar-btn"
+                onClick={async () => {
+                  if (hasActiveSession) {
+                    const ok = window.confirm('You have an active reading session. Stop the session and return to Dashboard?');
+                    if (!ok) return;
+                    try {
+                      const result = await stopReadingSession();
+                      if (result?.success) {
+                        showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
+                      }
+                    } catch {}
+                  }
+                  navigate('/dashboard');
+                }}
+                aria-label="Back to Dashboard"
+              >
+                <span className="reader-topbar-back">←</span>
+                <span className="reader-topbar-text">Dashboard</span>
+              </button>
+            </div>
+            <div className="reader-topbar-right" style={{ gap: 8, display: 'flex', alignItems: 'center' }}>
+              {hasActiveSession && (
+                <button
+                  type="button"
+                  className="reader-topbar-btn"
+                  disabled={stopping}
+                  aria-disabled={stopping}
+                  onClick={async () => {
+                    if (stopping) return;
+                    setStopping(true);
+                    try {
+                      const result = await stopReadingSession();
+                      if (result?.success) {
+                        showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
+                      }
+                    } catch (e) {
+                      showSnackbar({ message: 'Failed to stop session', variant: 'error' });
+                    } finally {
+                      setStopping(false);
+                    }
+                  }}
+                  aria-label="Stop session"
+                >
+                  <span className="reader-topbar-text">{stopping ? 'Stopping…' : 'Stop Session'}</span>
+                  <span className="reader-topbar-badge" aria-label="elapsed minutes">
+                    {Math.floor(elapsedSec / 60)}m
+                  </span>
+                </button>
+              )}
+              <ThemeToggle ariaLabel="Toggle light/dark mode" />
+            </div>
+          </div>
+
           <ReadestReader
             book={book}
             onClose={handleClose}
