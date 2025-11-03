@@ -453,8 +453,8 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
         const serverNotesPoints = categories?.notes || 0;
         const noteActions = breakdown.find(b => b.action === 'note_created');
         const serverNotesCount = noteActions?.count || 0;
-        const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
-        const serverSessionCount = sessionActions?.count || 0;
+        // ✅ FIX: Get session count from stats API instead of broken breakdown
+        const serverSessionCount = statsResp?.data?.sessionsCompleted || 0;
 
         let localSessionCount = 0;
         try {
