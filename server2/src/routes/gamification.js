@@ -47,12 +47,36 @@ const calculateUserLevel = (points) => {
 
 const getUserPoints = async (userId) => {
   try {
-    const { data, error } = await supabase
-      .from('user_actions')
-      .select('points')
-      .eq('user_id', userId);
-    if (error) throw error;
-    return (data || []).reduce((sum, a) => sum + (a.points || 0), 0);
+    // Calculate points from actual activity tables (user_actions table deleted)
+    const [{ data: books }, { data: notes }, { data: sessions }] = await Promise.all([
+      supabase.from('books').select('id').eq('user_id', userId),
+      supabase.from('notes').select('type').eq('user_id', userId),
+      supabase.from('reading_sessions').select('duration').eq('user_id', userId),
+    ]);
+
+    // Point values
+    const BOOK_UPLOAD_POINTS = 25;
+    const NOTE_POINTS = 15;
+    const HIGHLIGHT_POINTS = 10;
+    const SESSION_COMPLETION_POINTS = 10;
+    const TIME_POINTS_PER_MINUTE = 1;
+
+    let totalPoints = 0;
+
+    // Books: 25 points each
+    totalPoints += (books || []).length * BOOK_UPLOAD_POINTS;
+
+    // Notes: 15 points per note, 10 per highlight
+    const notesList = notes || [];
+    totalPoints += notesList.filter(n => n.type === 'note').length * NOTE_POINTS;
+    totalPoints += notesList.filter(n => n.type === 'highlight').length * HIGHLIGHT_POINTS;
+
+    // Reading sessions: 10 points completion + 1 per minute
+    const sessionsList = sessions || [];
+    totalPoints += sessionsList.length * SESSION_COMPLETION_POINTS;
+    totalPoints += sessionsList.reduce((sum, s) => sum + (s.duration || 0), 0) * TIME_POINTS_PER_MINUTE;
+
+    return totalPoints;
   } catch (e) {
     console.error('Error calculating user points:', e);
     return 0;
@@ -149,15 +173,8 @@ const checkAchievements = async (userId, currentStats) => {
           unlocked_at: unlockedAt
         });
 
-        // Also award points by creating a user_actions entry so totals/breakdowns include it
-        // This keeps frontend stat cards and history in sync across devices
-        await supabase.from('user_actions').insert({
-          user_id: userId,
-          action: 'achievement_unlocked',
-          points: achievement.points || 0,
-          data: { id: achievement.id, title: achievement.title },
-          created_at: unlockedAt
-        });
+        // Note: Achievement points are now tracked via getUserPoints() calculation
+        // from actual activity tables, not user_actions table (which was deleted)
 
         newlyUnlocked.push(achievement);
       } catch (dbErr) {
@@ -531,29 +548,18 @@ export const gamificationRouter = (authenticateToken) => {
         default: points = 1;
       }
 
-      // Insert action to database
-      const { data: insertedData, error: insertError } = await supabase.from('user_actions').insert({
-        user_id: userId,
+      // Note: user_actions table was deleted. Points are now calculated from actual activity tables.
+      // This endpoint exists for backward compatibility but doesn't persist to database.
+      // Actual activities (notes, reading sessions, books) are tracked via their respective endpoints.
+
+      console.log(`ℹ️ Action logged (not persisted): ${action}, ${points} points`);
+      res.json({
+        success: true,
         action,
         points,
-        data: data || {},
-        created_at: timestamp || new Date().toISOString(),
-      }).select();
-
-      if (insertError) {
-        console.error('❌ Failed to save action to database:', insertError);
-        // Return success anyway for offline support, but log the error
-        return res.json({
-          success: true,
-          action,
-          points,
-          message: `${action} tracked successfully (local only)`,
-          warning: 'Database insert failed - action not persisted'
-        });
-      }
-
-      console.log('✅ Action saved to database:', insertedData);
-      res.json({ success: true, action, points, message: `${action} tracked successfully!` });
+        message: `${action} tracked successfully!`,
+        note: 'Points calculated from activity tables, not user_actions'
+      });
     } catch (e) {
       console.error('Error tracking action:', e);
       res.status(500).json({ error: 'Failed to track action' });
