@@ -32,8 +32,7 @@ API.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling ONLY
-// NOTE: Token refresh is handled exclusively by AuthContext to prevent race conditions
+// Response interceptor for error handling
 API.interceptors.response.use(
   (response) => {
     return response;
@@ -42,22 +41,50 @@ API.interceptors.response.use(
     const status = error.response?.status;
     const originalRequest = error.config || {};
 
-    // Log authentication errors for debugging
     if (status === 401) {
-      console.warn('⚠️ [API] 401 Unauthorized:', originalRequest.url);
-      console.log('    ↳ Token refresh will be handled by AuthContext');
-    } else if (status === 403) {
-      console.warn('⚠️ [API] 403 Forbidden:', originalRequest.url);
-    }
-
-    // Suppress 404 errors for optional gamification endpoints
-    if (status === 404 && originalRequest?.url?.includes('/gamification/')) {
-      console.log(`ℹ️ [API] Gamification endpoint not available: ${originalRequest.url} - using local storage fallback`);
+      console.warn('⚠️ 401 Unauthorized - Token may be expired:', originalRequest.url);
+    } else if (status === 404 && originalRequest?.url?.includes('/gamification/')) {
+      // Suppress 404 console errors for gamification endpoints that may not be implemented yet
+      // This allows frontend to work with localStorage fallback without console noise
+      // When backend endpoints are ready, they'll work automatically
+      console.log(`ℹ️ Gamification endpoint not available: ${originalRequest.url} - using local storage`);
+      // Don't show the red error in console
       return Promise.reject(error);
     }
 
-    // Let AuthContext handle 401/403 via makeAuthenticatedApiCall
-    // NO automatic refresh here to avoid race conditions with AuthContext refresh logic
+    // Attempt cookie-based refresh on 401/403, then retry once
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
+      // Avoid retrying refresh endpoint itself
+      if ((originalRequest.url || '').includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+      try {
+        const refreshResp = await API.post('/auth/refresh', {}, { withCredentials: true });
+        // If server returns token in body (compat), update localStorage for header fallback
+        const newToken = refreshResp?.data?.token;
+        if (newToken) {
+          try {
+            localStorage.setItem(environmentConfig.getTokenKey(), newToken);
+          } catch {}
+        }
+        return API.request(originalRequest);
+      } catch (refreshErr) {
+        // Broadcast a refresh failure so UI can prompt re-login
+        try {
+          window.dispatchEvent(new CustomEvent('auth-refresh-failed', {
+            detail: {
+              url: originalRequest?.url,
+              status,
+            }
+          }));
+        } catch {}
+        // Let caller (contexts) handle logout messaging
+        return Promise.reject(refreshErr);
+      }
+    }
+
     return Promise.reject(error);
   }
 );
