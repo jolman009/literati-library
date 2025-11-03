@@ -88,8 +88,28 @@ const PointsHistory = ({ limit = 10 }) => {
           }
         }
       } catch {}
+      // Helper: build timeAgo if backend didn't provide it
+      const toTimeAgo = (iso) => {
+        try {
+          const date = new Date(iso);
+          const seconds = Math.floor((new Date() - date) / 1000);
+          if (Number.isNaN(seconds)) return '';
+          if (seconds < 60) return 'Just now';
+          if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+          if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+          if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+          return date.toLocaleDateString();
+        } catch { return ''; }
+      };
+
       const byKey = new Map();
-      [...serverData, ...localData].forEach(item => {
+      [...serverData, ...localData].forEach(raw => {
+        const createdAt = raw.created_at || raw.timestamp || new Date().toISOString();
+        const item = {
+          ...raw,
+          created_at: createdAt,
+          timeAgo: raw.timeAgo || toTimeAgo(createdAt),
+        };
         const key = `${item.created_at || ''}_${item.action || ''}`;
         if (!byKey.has(key)) byKey.set(key, item);
       });
