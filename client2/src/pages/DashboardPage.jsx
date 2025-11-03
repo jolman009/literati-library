@@ -330,8 +330,9 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       const noteActions = breakdown.find(b => b.action === 'note_created');
       const serverNotesCount = noteActions?.count || 0;
 
-      const sessionActions = breakdown.find(b => b.action === 'reading_session_completed');
-      const serverSessionCount = sessionActions?.count || 0;
+      // ✅ FIX: Get session count from stats API instead of broken breakdown
+      const statsData = statsResp?.data || null;
+      const serverSessionCount = statsData?.sessionsCompleted || 0;
 
       let localSessionCount = 0;
       try {
@@ -345,7 +346,6 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       setReadingSessionsCount(prev => Math.max(prev, serverSessionCount, localSessionCount));
 
       // Prefer server totals from /stats when available, fallback to breakdown categories total
-      const statsData = statsResp?.data || null;
       const serverTotals = statsData?.totalPoints ?? categories?.total ?? 0;
       // 🔧 FIX: Never regress to 0
       setTotalPointsFromServer(prev => Math.max(prev, serverTotals));
