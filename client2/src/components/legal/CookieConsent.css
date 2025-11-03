@@ -22,8 +22,7 @@
 }
 
 .cookie-consent-container {
-  width: 100%;
-  max-width: 600px;
+  max-width: 50px;
   animation: slideUp 0.3s ease-out;
 }
 
@@ -57,11 +56,12 @@
 .cookie-consent-icon {
   font-size: 24px;
   line-height: 1;
+  margin: 0px 8px 10px 16px;
 }
 
 .cookie-consent-header h3 {
   color: #001848;
-  margin: 0;
+  margin: 0px 8px 10px 16px;
   font-family: var(--md-sys-typescale-title-large-font-family-name);
   font-size: var(--md-sys-typescale-title-large-font-size);
   font-weight: var(--md-sys-typescale-title-large-font-weight);
@@ -70,12 +70,12 @@
 }
 
 .cookie-consent-text {
-  color: #005cba;
-  margin: 0;
+  color: #000000;
+  margin: 0px 5px 10px 5px;
   font-family: var(--md-sys-typescale-body-medium-font-family-name);
-  font-size: var(--md-sys-typescale-body-medium-font-size);
+  font-size: 20px;
   font-weight: var(--md-sys-typescale-body-medium-font-weight);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
+  line-height: var(--md-sys-typescale-body-large-line-height);
   letter-spacing: var(--md-sys-typescale-body-medium-tracking);
 }
 
@@ -87,11 +87,12 @@
 }
 
 .cookie-link {
-  color: #005cba;
+  color: #000000;
   text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
+  background: rgba(55, 71, 79, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
   font-family: var(--md-sys-typescale-body-small-font-family-name);
   font-size: var(--md-sys-typescale-body-small-font-size);
   font-weight: var(--md-sys-typescale-body-small-font-weight);
