@@ -118,7 +118,7 @@
 .md3-text-field__input {
   /* Reset browser styles */
   border: 1px solid;
-  border-radius: 3px;
+  border-radius: 5px;
   outline: none;
   background: rgba(59, 130, 246, 0.2);
   margin: 0;
@@ -126,7 +126,7 @@
   
   /* Layout */
   width: 100%;
-  height: 48px;
+  height: 45px;
   
   /* Typography */
   font-family: inherit;
@@ -165,10 +165,10 @@
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-10%);
   
   /* Typography */
-  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  font-size: var(--md-sys-typescale-body-large-size, .8rem);
   font-weight: var(--md-sys-typescale-body-large-weight, 400);
   line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
