@@ -7,7 +7,7 @@
 .new-landing-container {
   min-height: 100vh;
   background: linear-gradient(180deg, 
-    rgb(var(--md-sys-color-surface)) 0%,
+    rgb(var(--md-sys-color-surface)) 90%,
     rgb(var(--md-sys-color-surface-container-low)) 100%
   );
   overflow-x: hidden; /* Prevent horizontal scroll */
@@ -149,7 +149,7 @@
 }
 
 .md3-button-filled {
-  background: rgb(var(--md-sys-color-primary));
+  background: rgba(86, 160, 211, 0.4);
   color: rgb(var(--md-sys-color-on-primary));
 }
 
@@ -160,14 +160,16 @@
 }
 
 .md3-button-outlined {
-  background: transparent;
+  background: rgba(86, 160, 211, 0.4);
   color: rgb(var(--md-sys-color-primary));
   border: 1.5px solid rgb(var(--md-sys-color-outline));
+
 }
 
 .md3-button-outlined:hover {
-  background: rgb(var(--md-sys-color-surface-container-highest));
-  border-color: rgb(var(--md-sys-color-primary));
+  background: rgb(var(--md-sys-color-primary-container));
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .md3-button-large {

@@ -28,7 +28,7 @@
   },
   "include": [
     "client2/src/**/*"
-  ],
+, "docs/landing/LandingPage.jsx"  ],
   "exclude": [
     "node_modules",
     "build",

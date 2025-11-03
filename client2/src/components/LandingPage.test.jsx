@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render, cleanupTest } from '../test-utils';
-import LandingPage from '../pages/LandingPage';
+import LandingPage from '../../../docs/landing/LandingPage';
 
 // Mock any external dependencies that might be problematic
 vi.mock('../contexts/AuthContext', () => ({

@@ -78,7 +78,7 @@ const NewLandingPage = () => {
               onClick={() => navigate('/signup')}
             >
               <span className="material-symbols-outlined">rocket_launch</span>
-              Get Started Free
+              Sign Up
             </button>
             <button
               className="md3-button md3-button-outlined"
