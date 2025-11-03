@@ -21,6 +21,8 @@
 .pdf-content-area {
   flex: 1;
   overflow: auto;
+  /* Leave room for the floating reader topbar so PDF controls are not covered */
+  padding-top: calc(64px + env(safe-area-inset-top, 0px));
   padding-left: 380px;  /* Space for floating notepad on left */
   padding-right: 100px; /* Space for timer on right */
   box-sizing: border-box;
@@ -47,6 +49,7 @@
 /* Tablet and smaller - reduce padding as widgets may collapse */
 @media (max-width: 1024px) {
   .pdf-content-area {
+    padding-top: calc(56px + env(safe-area-inset-top, 0px));
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -55,6 +58,7 @@
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .pdf-content-area {
+    padding-top: calc(52px + env(safe-area-inset-top, 0px));
     padding-left: 10px;
     padding-right: 10px;
   }

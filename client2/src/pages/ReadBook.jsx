@@ -19,7 +19,7 @@ const ReadBook = () => {
 
   // Get auth context
   const { user, loading: authLoading, isAuthenticated } = useAuth();
-  const { activeSession, hasActiveSession, stopReadingSession } = useReadingSession();
+  const { activeSession, hasActiveSession, stopReadingSession, startReadingSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
   const [stopping, setStopping] = useState(false);
   const [elapsedSec, setElapsedSec] = useState(0);
@@ -329,7 +329,21 @@ const ReadBook = () => {
               </button>
             </div>
             <div className="reader-topbar-right" style={{ gap: 8, display: 'flex', alignItems: 'center' }}>
-              {hasActiveSession && (
+              {/* Resume when session exists but is paused */}
+              {hasActiveSession && activeSession?.isPaused && (
+                <button
+                  type="button"
+                  className="reader-topbar-btn"
+                  onClick={async () => {
+                    try { await startReadingSession(activeSession.book); } catch {}
+                  }}
+                  aria-label="Resume session"
+                >
+                  <span className="reader-topbar-text">Resume</span>
+                </button>
+              )}
+
+              {hasActiveSession && !activeSession?.isPaused && (
                 <button
                   type="button"
                   className="reader-topbar-btn"

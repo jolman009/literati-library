@@ -232,6 +232,14 @@
   background: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent);
 }
 
+/* On touch devices, hide the inline delete link to prevent accidental taps.
+   Users can access Delete via the single menu button instead. */
+@media (hover: none) {
+  .delete-book-link {
+    display: none !important;
+  }
+}
+
 /* Ensure the simple MD3 book card doesn't clip inline actions */
 .md3-book-card {
   position: relative !important;
