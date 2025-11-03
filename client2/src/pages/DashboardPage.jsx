@@ -333,13 +333,16 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
         localSessionCount = rs?.totalSessions || 0;
       } catch {}
 
-      setNotesPoints(Math.max(serverNotesPoints, localNotesPoints));
-      setNotesCount(Math.max(serverNotesCount, localNotesCount));
-      setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
+      // 🔧 FIX: Defensive updates - never regress to lower values
+      setNotesPoints(prev => Math.max(prev, serverNotesPoints, localNotesPoints));
+      setNotesCount(prev => Math.max(prev, serverNotesCount, localNotesCount));
+      setReadingSessionsCount(prev => Math.max(prev, serverSessionCount, localSessionCount));
+
       // Prefer server totals from /stats when available, fallback to breakdown categories total
       const statsData = statsResp?.data || null;
       const serverTotals = statsData?.totalPoints ?? categories?.total ?? 0;
-      setTotalPointsFromServer(serverTotals);
+      // 🔧 FIX: Never regress to 0
+      setTotalPointsFromServer(prev => Math.max(prev, serverTotals));
       // Notify if server totals are being used over local to reassure cross-device sync
       const localTotals = stats?.totalPoints || 0;
       const serverBeatsLocal = serverTotals > localTotals;
@@ -358,14 +361,15 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
           }
         } catch {}
       }
-      // Time read pulled from stats when available; otherwise leave local value
-      if (typeof statsData?.totalReadingTime === 'number') {
-        setTotalMinutesRead(statsData.totalReadingTime);
+      // 🔧 FIX: Time read pulled from stats - defensive update
+      if (typeof statsData?.totalReadingTime === 'number' && statsData.totalReadingTime > 0) {
+        setTotalMinutesRead(prev => Math.max(prev, statsData.totalReadingTime));
       }
+
       // Notes count/points from stats when available (covers cases where user_actions lacks entries)
       if (typeof statsData?.notesCreated === 'number') {
-        setNotesCount(Math.max(serverNotesCount, statsData.notesCreated));
-        setNotesPoints(Math.max(serverNotesPoints, statsData.notesCreated * NOTES_POINTS_PER));
+        setNotesCount(prev => Math.max(prev, serverNotesCount, statsData.notesCreated));
+        setNotesPoints(prev => Math.max(prev, serverNotesPoints, statsData.notesCreated * NOTES_POINTS_PER));
       }
 
       console.log('✅ QuickStatsOverview: Data updated', {
@@ -400,10 +404,11 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
         console.warn('Could not read from localStorage:', localError);
       }
       
-      setNotesPoints(localNotesPoints);
-      setNotesCount(localNotesCount);
-      setReadingSessionsCount(localSessionCount);
-      setTotalPointsFromServer(stats?.totalPoints || 0);
+      // 🔧 FIX: Even in error fallback, use defensive updates
+      setNotesPoints(prev => Math.max(prev, localNotesPoints));
+      setNotesCount(prev => Math.max(prev, localNotesCount));
+      setReadingSessionsCount(prev => Math.max(prev, localSessionCount));
+      setTotalPointsFromServer(prev => Math.max(prev, stats?.totalPoints || 0));
 
       console.log('📊 QuickStatsOverview: Using local fallback data', {
         notesPoints: localNotesPoints,
@@ -451,15 +456,18 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
           localSessionCount = rs?.totalSessions || 0;
         } catch {}
 
-        setNotesPoints(Math.max(serverNotesPoints, stats?.notesCreated * NOTES_POINTS_PER || 0));
-        setNotesCount(Math.max(serverNotesCount, stats?.notesCreated || 0));
-        setReadingSessionsCount(Math.max(serverSessionCount, localSessionCount));
+        setNotesPoints(prev => Math.max(prev, serverNotesPoints, stats?.notesCreated * NOTES_POINTS_PER || 0));
+        setNotesCount(prev => Math.max(prev, serverNotesCount, stats?.notesCreated || 0));
+        setReadingSessionsCount(prev => Math.max(prev, serverSessionCount, localSessionCount));
+
         const pointsFromStats = statsResp?.data?.totalPoints;
-        setTotalPointsFromServer(
-          typeof pointsFromStats === 'number' ? pointsFromStats : (categories?.total || 0)
-        );
-        if (typeof statsResp?.data?.totalReadingTime === 'number') {
-          setTotalMinutesRead(statsResp.data.totalReadingTime);
+        const newTotalPoints = typeof pointsFromStats === 'number' ? pointsFromStats : (categories?.total || 0);
+        // 🔧 FIX: Defensive update - never regress to 0
+        setTotalPointsFromServer(prev => Math.max(prev, newTotalPoints));
+
+        // 🔧 FIX: Defensive update for reading time - never regress to 0
+        if (typeof statsResp?.data?.totalReadingTime === 'number' && statsResp.data.totalReadingTime > 0) {
+          setTotalMinutesRead(prev => Math.max(prev, statsResp.data.totalReadingTime));
         }
         if (typeof statsResp?.data?.notesCreated === 'number') {
           setNotesCount(prev => Math.max(prev, statsResp.data.notesCreated));
@@ -514,17 +522,42 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     if (stats) setLoading(false);
   }, [stats]);
 
-  // Fallback: keep reading sessions count in sync with local history
+  // 🔧 FIX: Defensive fallback for reading sessions - NEVER regress to 0
   useEffect(() => {
     const updateFromLocal = () => {
       try {
         const rs = typeof getReadingStats === 'function' ? getReadingStats() : null;
-        setReadingSessionsCount(rs?.totalSessions || 0);
+
+        // Defensive update: Only increase, never decrease
+        if (rs?.totalSessions) {
+          setReadingSessionsCount(prev => Math.max(prev, rs.totalSessions));
+        }
+
+        // Calculate total minutes defensively
         const activeExtra = activeSession && sessionStats?.readingTime
           ? Math.floor((sessionStats.readingTime || 0) / 60)
           : 0;
-        setTotalMinutesRead((rs?.totalMinutes || 0) + activeExtra);
-      } catch {}
+
+        const calculatedMinutes = (rs?.totalMinutes || 0) + activeExtra;
+
+        // 🔧 CRITICAL FIX: Never regress from valid data to 0 or lower values
+        setTotalMinutesRead(prev => {
+          // If we have a valid calculated value, use the max
+          if (calculatedMinutes > 0) {
+            return Math.max(prev, calculatedMinutes);
+          }
+          // If calculated is 0, keep the previous value (don't regress)
+          return prev;
+        });
+
+        console.log('📊 [DASHBOARD] Local update:', {
+          sessions: rs?.totalSessions,
+          minutes: calculatedMinutes,
+          activeExtra
+        });
+      } catch (error) {
+        console.error('❌ [DASHBOARD] Error updating from local:', error);
+      }
     };
 
     // Initialize from local on mount
@@ -532,11 +565,17 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
 
     // Update when reading session history changes (cross-tab via storage)
     const onStorage = (e) => {
-      if (!e || e.key === 'readingSessionHistory') updateFromLocal();
+      if (!e || e.key === 'readingSessionHistory') {
+        console.log('💾 [DASHBOARD] Storage event detected, updating from local');
+        updateFromLocal();
+      }
     };
 
     // Also update when gamification events fire
-    const onGamification = () => updateFromLocal();
+    const onGamification = () => {
+      console.log('🎮 [DASHBOARD] Gamification event detected, updating from local');
+      updateFromLocal();
+    };
 
     window.addEventListener('storage', onStorage);
     window.addEventListener('gamificationUpdate', onGamification);
@@ -574,7 +613,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   };
 
   // 🔍 DEBUG: Log what we're about to display
-  console.log('📊 QuickStatsOverview: Preparing stat cards with:', {
+  console.log('📊 [DASHBOARD] Preparing stat cards with:', {
     booksRead: stats?.booksRead,
     totalPoints: stats?.totalPoints,
     totalPointsFromServer,
@@ -582,7 +621,8 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     notesCount,
     readingSessionsCount,
     totalMinutesRead,
-    displayStreak
+    displayStreak,
+    timestamp: new Date().toISOString()
   });
 
   // Prefer explicit props from Dashboard (books API), fallback to gamification stats
@@ -639,7 +679,13 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     }
   ];
 
-  console.log('📊 QuickStatsOverview: Final stat cards:', statCards);
+  console.log('📊 [DASHBOARD] Final stat cards to render:', {
+    timeRead: statCards[4]?.value,
+    totalPoints: statCards[1]?.value,
+    notesPoints: statCards[2]?.value,
+    sessions: statCards[3]?.value,
+    timestamp: new Date().toISOString()
+  });
 
   if (loading) {
     return (
