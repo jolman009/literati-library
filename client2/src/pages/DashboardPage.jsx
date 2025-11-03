@@ -1027,8 +1027,32 @@ const CurrentlyReading = () => {
             )}
             {/** Removed overlay title banner — cover already shows title */}
 
-            {/* Quick actions: Stop (only for active session) and Complete */}
+            {/* Quick actions: Resume/Stop for active session */}
             <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 3 }}>
+              {/* Resume button when this book's session is paused or not currently active */}
+              {((activeSession?.book?.id === book.id && activeSession?.isPaused) || (book.status === 'paused')) && (
+                <button
+                  title="Resume reading"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    try { await startReadingSession(book); } catch {}
+                    navigate(`/read/${book.id}`);
+                  }}
+                  style={{
+                    position: 'relative',
+                    background: '#22c55e',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '6px 10px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>play_arrow</span>
+                </button>
+              )}
+
               {/* Show Stop only for the book with an ongoing reading session */}
               {activeSession?.book?.id === book.id && !activeSession?.isPaused && (
                 <button
