@@ -329,26 +329,18 @@ export const handleTokenRefresh = async (req, res) => {
   const userId = req.body.userId || (req.cookies?.refreshToken && jwt.decode(req.cookies.refreshToken)?.id);
 
   try {
-    // Prevent concurrent refresh attempts for the same user (MUTEX PATTERN)
+    // Prevent concurrent refresh attempts for the same user
     if (activeRefreshAttempts.has(userId)) {
-      console.warn(`🔒 [AUTH] Concurrent refresh attempt detected for user ${userId}`);
-      console.log('    ↳ Waiting for existing refresh to complete...');
-
+      console.warn(`🔒 Concurrent refresh attempt blocked for user ${userId}`);
       // Wait for the existing refresh to complete
       try {
-        const existingResult = await activeRefreshAttempts.get(userId);
-        console.log('✅ [AUTH] Existing refresh completed, returning cached result');
-
-        // Return the cached result to this concurrent caller
-        return res.json(existingResult);
+        await activeRefreshAttempts.get(userId);
       } catch (error) {
-        console.warn('⚠️ [AUTH] Existing refresh failed, proceeding with new refresh attempt');
-        // If the existing refresh failed, we'll proceed with a new refresh
+        // If the existing refresh failed, we can proceed
       }
     }
 
     // Create a promise to track this refresh attempt
-    console.log(`🔄 [AUTH] Starting new refresh for user ${userId}`);
     let resolveRefresh, rejectRefresh;
     const refreshPromise = new Promise((resolve, reject) => {
       resolveRefresh = resolve;

@@ -19,13 +19,6 @@ import { useNavigate } from 'react-router-dom';
 const USER_KEY = 'shelfquest_user';
 
 /**
- * Mutex to prevent concurrent refresh attempts
- * This is critical for avoiding token family breach detection false positives
- * When multiple requests fail simultaneously, they'll all wait for the same refresh
- */
-let refreshPromise = null;
-
-/**
  * Use centralized environment configuration for API URL
  * This ensures consistency across the application and proper environment handling
  */
@@ -124,72 +117,45 @@ export const AuthProvider = ({ children }) => {
   /**
    * Attempt to refresh the token using the refresh endpoint
    * Uses HttpOnly cookies - refresh token is automatically sent by browser
-   *
-   * CRITICAL: Uses mutex pattern to prevent concurrent refresh attempts
-   * This prevents token family breach detection false positives
    */
   const attemptTokenRefresh = useCallback(async () => {
-    // If refresh is already in progress, wait for it
-    if (refreshPromise) {
-      console.log('🔄 [AUTH] Refresh already in progress, waiting for existing refresh...');
-      return await refreshPromise;
-    }
+    try {
+      console.log('🔄 Attempting token refresh via cookies...');
+      const response = await fetch(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include', // Include HttpOnly cookies (refresh token)
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    // Create new refresh promise with mutex protection
-    refreshPromise = (async () => {
-      try {
-        console.log('🔄 [AUTH] Initiating token refresh via HttpOnly cookies...');
-        const refreshStartTime = Date.now();
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Token refresh successful - new cookies set automatically');
 
-        const response = await fetch(`${API_URL}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include', // Include HttpOnly cookies (refresh token)
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        const refreshDuration = Date.now() - refreshStartTime;
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(`✅ [AUTH] Token refresh successful (${refreshDuration}ms) - new cookies set by server`);
-
-          // Update user data if provided
-          if (data.user) {
-            setUser(data.user);
-            localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-            console.log('    ↳ User data updated in state and localStorage');
-          }
-
-          // If server returns token in body for backward compatibility, update localStorage
-          if (data?.token) {
-            try {
-              localStorage.setItem(environmentConfig.getTokenKey(), data.token);
-              console.log('    ↳ Token updated in localStorage (fallback for header auth)');
-            } catch (e) {
-              console.warn('    ⚠️ Could not update localStorage token:', e.message);
-            }
-          }
-
-          // Return true to indicate success
-          return true;
+        // Update user data if provided
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         }
 
-        console.warn(`❌ [AUTH] Token refresh failed (${refreshDuration}ms): ${response.status} ${response.statusText}`);
-        return false;
-      } catch (err) {
-        console.error('❌ [AUTH] Token refresh error:', err.message);
-        return false;
-      } finally {
-        // Clear the mutex after completion (success or failure)
-        console.log('🔓 [AUTH] Refresh mutex released');
-        refreshPromise = null;
-      }
-    })();
+        // If server returns token in body for compatibility, update localStorage
+        if (data?.token) {
+          try {
+            localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+          } catch {}
+        }
 
-    // Wait for and return the refresh promise
-    return await refreshPromise;
+        // Return true to indicate success (no need to return token - it's in cookies)
+        return true;
+      }
+
+      console.warn('❌ Token refresh failed');
+      return false;
+    } catch (err) {
+      console.warn('❌ Token refresh error:', err);
+      return false;
+    }
   }, []);
 
   /**
@@ -294,102 +260,52 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * Optional explicit verification (call when you need it)
-   * Uses simple makeApiCall to avoid triggering auto-refresh
-   * This is a CHECK operation, not a refresh operation
+   * Now uses cookie-based authentication automatically
    */
   const verifyToken = useCallback(
     async () => {
-      console.log('🔍 [AUTH] Verifying token validity...');
-      const data = await makeApiCall('/auth/profile');
-      console.log('✅ [AUTH] Token verification successful');
+      const data = await makeAuthenticatedApiCall('/auth/profile');
       return data;
     },
-    [makeApiCall]
+    [makeAuthenticatedApiCall]
   );
 
   // Verify cookie/header session after restoring user from storage
   useEffect(() => {
     let cancelled = false;
-
     const verifyIfNeeded = async () => {
-      if (!user) {
-        console.log('ℹ️ [AUTH] No user in state, skipping verification');
-        setLoading(false);
-        return;
-      }
+      if (!user) return;
 
-      console.log('🔍 [AUTH] User found in localStorage, verifying session...');
-
-      // Get dev header auth setting
       const devHeaderAuth = typeof environmentConfig.shouldUseDevHeaderAuth === 'function'
         ? environmentConfig.shouldUseDevHeaderAuth()
         : false;
+      const hasHeaderToken = (() => { try { return !!localStorage.getItem(environmentConfig.getTokenKey()); } catch { return false; } })();
 
-      // In production OR when dev header auth is disabled: rely on cookies only
-      // In dev with header auth enabled: check if token exists as fallback
-      if (import.meta.env.DEV && devHeaderAuth) {
-        let hasToken = false;
+      // In dev header-auth mode but no token: clear user and prompt sign-in
+      if (import.meta.env.DEV && devHeaderAuth && !hasHeaderToken) {
         try {
-          hasToken = !!localStorage.getItem(environmentConfig.getTokenKey());
-        } catch (e) {
-          console.warn('⚠️ [AUTH] Could not check localStorage for token:', e.message);
-        }
-
-        // Only log out if BOTH conditions are true:
-        // 1. Dev header auth is enabled
-        // 2. No token in localStorage AND verification fails
-        if (!hasToken) {
-          console.log('🔧 [AUTH] Dev header auth enabled but no token in localStorage');
-          console.log('    ↳ Attempting cookie-based verification anyway...');
-
-          // Try to verify with cookies first
-          try {
-            setLoading(true);
-            await verifyToken();
-            console.log('✅ [AUTH] Cookie verification successful despite missing header token');
-            if (!cancelled) setLoading(false);
-            return;
-          } catch (err) {
-            // Both cookie AND header auth failed
-            if (!cancelled) {
-              console.warn('❌ [AUTH] Both cookie and header auth failed in dev mode');
-              console.log('    ↳ Clearing session and prompting sign-in');
-
-              try {
-                showSnackbar({
-                  message: 'Session expired. Please sign in again.',
-                  variant: 'warning',
-                  duration: 5000,
-                  position: 'top-center',
-                  action: (
-                    <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
-                      Sign in
-                    </button>
-                  )
-                });
-              } catch (snackbarErr) {
-                console.warn('⚠️ [AUTH] Could not show snackbar:', snackbarErr.message);
-              }
-
-              localStorage.removeItem(USER_KEY);
-              setUser(null);
-            }
-            if (!cancelled) setLoading(false);
-            return;
-          }
-        } else {
-          console.log('✓ [AUTH] Dev header auth: token found in localStorage');
-        }
+          showSnackbar({
+            message: 'Session expired. Please sign in again.',
+            variant: 'warning',
+            duration: 5000,
+            position: 'top-center',
+            action: (
+              <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
+                Sign in
+              </button>
+            )
+          });
+        } catch {}
+        localStorage.removeItem(USER_KEY);
+        setUser(null);
+        return;
       }
 
-      // Normal verification flow (cookie-based, works in all modes)
       try {
         setLoading(true);
         await verifyToken();
-        console.log('✅ [AUTH] Session verification complete');
-      } catch (err) {
+      } catch {
         if (!cancelled) {
-          console.warn('❌ [AUTH] Token verification failed, clearing user:', err.message);
           localStorage.removeItem(USER_KEY);
           setUser(null);
         }
@@ -397,7 +313,6 @@ export const AuthProvider = ({ children }) => {
         if (!cancelled) setLoading(false);
       }
     };
-
     verifyIfNeeded();
     return () => { cancelled = true; };
   }, [user, verifyToken, showSnackbar, navigate]);
