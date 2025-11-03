@@ -1027,65 +1027,7 @@ const CurrentlyReading = () => {
             )}
             {/** Removed overlay title banner — cover already shows title */}
 
-            {/* Quick actions: Resume/Stop for active session */}
-            <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 10 }}>
-              {/* Resume button when this book's session is paused or not currently active */}
-              {((activeSession?.book?.id === book.id && activeSession?.isPaused) || (book.status === 'paused')) && (
-                <button
-                  title="Resume reading"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    try { await startReadingSession(book); } catch {}
-                    navigate(`/read/${book.id}`);
-                  }}
-                  style={{
-                    position: 'relative',
-                    background: '#22c55e',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    padding: '6px 10px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle', marginRight: 6 }}>play_arrow</span>
-                  <span style={{ fontWeight: 600 }}>Resume</span>
-                </button>
-              )}
-
-              {/* Show Stop only for the book with an ongoing reading session */}
-              {activeSession?.book?.id === book.id && !activeSession?.isPaused && (
-                <button
-                  title="Stop reading session"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    try { await stopReadingSession(); } catch {}
-                  }}
-                  style={{
-                    position: 'relative',
-                    background: '#ef4444',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: 8,
-                    padding: '6px 10px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>stop</span>
-                  <span
-                    className="reader-topbar-badge"
-                    aria-label="elapsed minutes"
-                    style={{ position: 'absolute', top: '-8px', right: '-10px' }}
-                  >
-                    {Math.floor(elapsedSec / 60)}m
-                  </span>
-                </button>
-              )}
-
-              {/* Removed 'Mark as completed' action per request */}
-            </div>
+            {/* Per-card quick action overlay removed intentionally */}
           </div>
         ))}
       </div>
@@ -1212,6 +1154,8 @@ const DashboardPage = () => {
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
+  // Needed for the global Resume banner and any resume/stop controls at this level
+  const { activeSession } = useReadingSession();
   const [checkInStreak, setCheckInStreak] = useState(0);
   const [books, setBooks] = useState([]);
 

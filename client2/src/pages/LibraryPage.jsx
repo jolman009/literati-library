@@ -732,8 +732,7 @@ const LibraryPage = () => {
                           <span className="material-symbols-outlined">stop</span>
                         </button>
                       )}
-                      {/* Menu Button (hidden when active session matches or reading) */}
-                      {activeSession?.book?.id !== book.id && !(book.is_reading || book.status === 'reading') && (
+                      {/* Menu Button: always available to access actions incl. Delete */}
                       <button
                         className="book-menu-button"
                         onClick={(e) => {
@@ -753,17 +752,20 @@ const LibraryPage = () => {
                           fontSize: '18px',
                           fontWeight: 'bold',
                           cursor: 'pointer',
-                          zIndex: 100,
+                          zIndex: 120,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           transition: 'all 0.2s ease',
                           boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                         }}
+                        aria-haspopup="menu"
+                        aria-expanded={openMenuBookId === book.id}
+                        aria-label={`Open menu for ${book.title}`}
+                        title="More actions"
                       >
                         ⋮
                       </button>
-                      )}
 
                       {/* Menu Dropdown */}
                       {openMenuBookId === book.id && (
@@ -934,17 +936,7 @@ const LibraryPage = () => {
                         </div>
                       )}
                     </div>
-                    {/* Dedicated Delete control, separate from the overflow menu */}
-                    <div className="md3-book-actions-row">
-                      <button
-                        className="md3-button md3-button--text delete-book-link"
-                        onClick={(e) => { e.stopPropagation(); setConfirmDelete(book); }}
-                        aria-label={`Delete ${book.title}`}
-                      >
-                        <span className="material-symbols-outlined" aria-hidden>delete</span>
-                        <span>Delete</span>
-                      </button>
-                    </div>
+                    {/* Inline Delete control removed: use overflow menu Delete instead to prevent accidental taps */}
                   </div>
                 ))}
               </div>
