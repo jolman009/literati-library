@@ -279,6 +279,7 @@ export const gamificationRouter = (authenticateToken) => {
         booksCompleted: (books || []).filter(b => b.status === 'completed').length || 0,
         pagesRead: (books || []).reduce((sum, b) => sum + (b.pages_read || 0), 0) || 0,
         totalReadingTime: (sessions || []).reduce((sum, s) => sum + (s.duration || 0), 0) || 0,
+        sessionsCompleted: sessions?.length || 0, // ✅ FIX: Add session count for Dashboard
         readingStreak,
         notesCreated: (notes || []).filter(n => n.type === 'note').length || 0,
         highlightsCreated: (notes || []).filter(n => n.type === 'highlight').length || 0,
