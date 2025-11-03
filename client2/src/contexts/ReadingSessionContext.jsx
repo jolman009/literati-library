@@ -131,21 +131,19 @@ export const ReadingSessionProvider = ({ children }) => {
         backendSessionId: null
       };
 
-      // ✅ CRITICAL FIX: Create backend reading session record
-      if (token) {
-        try {
-          const { data: backendSession } = await API.post('/api/reading/sessions/start', {
-            book_id: book.id,
-            page: book.current_page || 1,
-            position: null
-          });
+      // ✅ Always attempt to create backend session (cookies/header handled by API instance)
+      try {
+        const { data: backendSession } = await API.post('/api/reading/sessions/start', {
+          book_id: book.id,
+          page: book.current_page || 1,
+          position: null
+        });
 
-          sessionData.backendSessionId = backendSession.id;
-          console.log('✅ Backend reading session created:', backendSession.id);
-        } catch (error) {
-          console.warn('⚠️ Failed to create backend session (continuing with local only):', error);
-          // Continue with local session even if backend fails - graceful degradation
-        }
+        sessionData.backendSessionId = backendSession.id;
+        console.log('✅ Backend reading session created:', backendSession.id);
+      } catch (error) {
+        console.warn('⚠️ Failed to create backend session (continuing with local only):', error);
+        // Continue with local session even if backend fails - graceful degradation
       }
 
       // Update book's is_reading status in database
@@ -257,8 +255,8 @@ export const ReadingSessionProvider = ({ children }) => {
       // Flush any pending page increments before completing session
       await flushPendingPages();
 
-      // ✅ CRITICAL FIX: End backend reading session if it exists
-      if (activeSession.backendSessionId && token) {
+      // ✅ End backend reading session if it exists; fallback to single-shot creation
+      if (activeSession.backendSessionId) {
         try {
           await API.post(`/api/reading/sessions/${activeSession.backendSessionId}/end`, {
             end_page: activeSession.pagesRead || 0,
@@ -269,6 +267,20 @@ export const ReadingSessionProvider = ({ children }) => {
         } catch (error) {
           console.warn('⚠️ Failed to end backend session:', error);
           // Continue with local cleanup even if backend fails
+        }
+      } else {
+        // Fallback: create a session record in one call if start failed
+        try {
+          await API.post('/api/reading/session', {
+            bookId: activeSession.book.id,
+            duration: durationMinutes,
+            pagesRead: activeSession.pagesRead || 0,
+            startTime: activeSession.startTime,
+            endTime: endTime.toISOString()
+          });
+          console.log('✅ Fallback reading session recorded via /api/reading/session');
+        } catch (e) {
+          console.warn('⚠️ Failed to record fallback reading session:', e);
         }
       }
 
