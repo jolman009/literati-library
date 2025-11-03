@@ -494,18 +494,15 @@ export const GamificationProvider = ({ children }) => {
       Promise.resolve().then(async () => {
         try {
           console.log(`📤 GamificationContext: Calling /gamification/actions API...`);
-          // ✅ Fixed: Backend expects 'action', not 'actionType'
-          const response = await makeSafeApiCall('/api/gamification/actions', {
-            method: 'POST',
-            body: JSON.stringify({
-              action: actionType,  // ✅ Changed from 'actionType' to 'action'
-              data,
-              timestamp: new Date().toISOString()
-            })
+          // ✅ Post using axios instance to ensure credentials + interceptors
+          const response = await API.post('/api/gamification/actions', {
+            action: actionType,
+            data,
+            timestamp: new Date().toISOString()
           });
 
-          if (response) {
-            if (response.warning) {
+          if (response?.data) {
+            if (response.data.warning) {
               console.error(`⚠️ DATABASE INSERT FAILED: ${actionType}`, response.warning);
               console.error('👉 This action will NOT appear after refresh!');
             } else {
@@ -514,6 +511,8 @@ export const GamificationProvider = ({ children }) => {
           } else {
             console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
           }
+          // Refresh stats from server after a successful sync
+          try { fetchDataDebounced(); } catch {}
         } catch (error) {
           // ✅ Triple-layer error handling: catch ANY error
           console.error(`❌ Failed to sync action with server:`, error);
