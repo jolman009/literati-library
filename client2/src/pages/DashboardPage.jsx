@@ -1028,7 +1028,7 @@ const CurrentlyReading = () => {
             {/** Removed overlay title banner — cover already shows title */}
 
             {/* Quick actions: Resume/Stop for active session */}
-            <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 3 }}>
+            <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 10 }}>
               {/* Resume button when this book's session is paused or not currently active */}
               {((activeSession?.book?.id === book.id && activeSession?.isPaused) || (book.status === 'paused')) && (
                 <button
@@ -1049,7 +1049,8 @@ const CurrentlyReading = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>play_arrow</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle', marginRight: 6 }}>play_arrow</span>
+                  <span style={{ fontWeight: 600 }}>Resume</span>
                 </button>
               )}
 
@@ -1329,6 +1330,35 @@ const DashboardPage = () => {
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
 
       <div className="dashboard-content">
+        {/* Global Resume banner (always visible when a paused session exists) */}
+        {activeSession?.book?.id && (activeSession?.isPaused) && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '10px 12px',
+            marginBottom: 12,
+            border: '1px solid var(--md-sys-color-outline-variant)',
+            borderRadius: 10,
+            background: 'var(--md-sys-color-surface-container)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span className="material-symbols-outlined" aria-hidden style={{ color: '#22c55e' }}>play_arrow</span>
+              <div>
+                <div style={{ fontWeight: 600 }}>Resume reading</div>
+                <div style={{ opacity: 0.8, fontSize: 13 }}>{activeSession.book.title}</div>
+              </div>
+            </div>
+            <button
+              className="view-all-link"
+              onClick={() => navigate(`/read/${activeSession.book.id}`)}
+              style={{ fontWeight: 700 }}
+            >
+              Resume
+            </button>
+          </div>
+        )}
         {/* Metric Cards - Horizontal Scroll */}
         <QuickStatsOverview
           checkInStreak={checkInStreak}
