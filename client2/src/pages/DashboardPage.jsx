@@ -254,8 +254,16 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
             </div>
           </div>
 
-          {/* Level Progress Bar */}
+          {/* Level Progress Bar with Total Points */}
           <div className="level-progress-container">
+            <div className="level-progress-header">
+              <span className="level-progress-text">
+                {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
+              </span>
+              <span className="total-points-display" title="Total Points Earned">
+                ⭐ {stats?.totalPoints?.toLocaleString() || 0} pts
+              </span>
+            </div>
             <div className="level-progress-bar">
               <div
                 className="level-progress-fill"
@@ -263,9 +271,6 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
                 aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
               />
             </div>
-            <span className="level-progress-text">
-              {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
-            </span>
           </div>
         </div>
       </div>
@@ -287,7 +292,8 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
-  const [totalPointsFromServer, setTotalPointsFromServer] = useState(0);
+  // 🔧 FIX: Initialize with GamificationContext stats if available
+  const [totalPointsFromServer, setTotalPointsFromServer] = useState(stats?.totalPoints || 0);
   const [totalMinutesRead, setTotalMinutesRead] = useState(0);
   const { getReadingStats, activeSession, sessionStats } = useReadingSession();
   const { showSnackbar } = useSnackbar();
@@ -585,13 +591,19 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     };
   }, [getReadingStats, activeSession, sessionStats?.readingTime]);
 
-  // Fallback sync: ensure notes metrics reflect local stats when API breakdown is unavailable or delayed
+  // Fallback sync: ensure stats reflect GamificationContext when API is unavailable or delayed
   useEffect(() => {
     if (typeof stats?.notesCreated === 'number') {
-      setNotesCount(stats.notesCreated);
-      setNotesPoints(stats.notesCreated * NOTES_POINTS_PER);
+      setNotesCount(prev => Math.max(prev, stats.notesCreated));
+      setNotesPoints(prev => Math.max(prev, stats.notesCreated * NOTES_POINTS_PER));
     }
-  }, [stats?.notesCreated]);
+
+    // 🔧 FIX: Also sync total points from GamificationContext
+    if (typeof stats?.totalPoints === 'number') {
+      setTotalPointsFromServer(prev => Math.max(prev, stats.totalPoints));
+      console.log('📊 [DASHBOARD] Syncing total points from GamificationContext:', stats.totalPoints);
+    }
+  }, [stats?.notesCreated, stats?.totalPoints]);
 
   // Calculate growth percentage (mock data for now)
   const calculateGrowth = (value) => {
@@ -630,6 +642,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   const booksCompleted = (typeof completedBooks === 'number') ? completedBooks : (stats?.booksCompleted || 0);
   const booksInProgress = (typeof inProgressBooks === 'number') ? inProgressBooks : 0;
 
+  // 🎯 Total Points now displayed prominently in Welcome section (next to progress bar)
   const statCards = [
     {
       icon: '📚',
@@ -637,13 +650,6 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       label: 'Books in Library',
       subtitle: `${booksCompleted} completed • ${booksInProgress} in progress`,
       growth: calculateGrowth(booksCount),
-      trend: 'up'
-    },
-    {
-      icon: '⭐',
-      value: totalPointsFromServer || stats?.totalPoints || 0,
-      label: 'Total Points',
-      growth: calculateGrowth(totalPointsFromServer || stats?.totalPoints || 0),
       trend: 'up'
     },
     {
@@ -680,17 +686,17 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   ];
 
   console.log('📊 [DASHBOARD] Final stat cards to render:', {
-    timeRead: statCards[4]?.value,
-    totalPoints: statCards[1]?.value,
-    notesPoints: statCards[2]?.value,
-    sessions: statCards[3]?.value,
+    timeRead: statCards[3]?.value,  // Index changed after removing Total Points
+    notesPoints: statCards[1]?.value,
+    sessions: statCards[2]?.value,
+    dailyStreak: statCards[4]?.value,
     timestamp: new Date().toISOString()
   });
 
   if (loading) {
     return (
       <div className="simple-scroll-container">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <div key={i} className="stat-metric-card">
             <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
           </div>
