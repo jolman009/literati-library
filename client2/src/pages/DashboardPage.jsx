@@ -30,16 +30,34 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
 
   // Check if already checked in today and calculate streak on component mount
   const [checkInStreak, setCheckInStreak] = useState(0);
-  
+
   useEffect(() => {
     console.log(' WelcomeSection: useEffect for daily check-in');
-    const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
-    const today = new Date().toDateString();
-    setHasCheckedInToday(lastCheckIn === today);
-    
-    // Calculate check-in streak
-    const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
-    setCheckInStreak(streak);
+
+    // Load check-in status from backend
+    const loadCheckInStatus = async () => {
+      try {
+        const response = await API.get('/api/gamification/checkin/status');
+        const { hasCheckedInToday, currentStreak } = response.data;
+
+        setHasCheckedInToday(hasCheckedInToday);
+        setCheckInStreak(currentStreak);
+
+        console.log(`✅ Check-in status loaded: hasCheckedInToday=${hasCheckedInToday}, streak=${currentStreak}`);
+      } catch (error) {
+        console.warn('⚠️ Failed to load check-in status from backend, using localStorage fallback');
+
+        // Fallback to localStorage
+        const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
+        const today = new Date().toDateString();
+        setHasCheckedInToday(lastCheckIn === today);
+
+        const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
+        setCheckInStreak(streak);
+      }
+    };
+
+    loadCheckInStatus();
 
     // Onboarding spotlight disabled
   }, []);
@@ -73,79 +91,102 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
         return;
       }
 
-      // Check if already checked in today
-      const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
-      const today = new Date().toDateString();
-
-      if (lastCheckIn === today) {
-        showSnackbar({
-          message: '✨ You\'ve already checked in today! Come back tomorrow.',
-          variant: 'info'
-        });
-        return;
-      }
-      
-      // Calculate streak
-      let newStreak = 1;
-      const storedStreak = parseInt(localStorage.getItem('checkInStreak') || '0');
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayString = yesterday.toDateString();
-      
-      if (lastCheckIn === yesterdayString) {
-        // Continuing streak
-        newStreak = storedStreak + 1;
-      } else if (lastCheckIn && new Date(lastCheckIn) < yesterday) {
-        // Streak broken, starting over
-        newStreak = 1;
-      }
-      
-      // Save check-in and streak locally
-      localStorage.setItem('lastDailyCheckIn', today);
-      localStorage.setItem('checkInStreak', newStreak.toString());
-      setHasCheckedInToday(true);
-      setCheckInStreak(newStreak);
-      
-      // Update parent component
-      if (onCheckInUpdate) {
-        onCheckInUpdate(newStreak);
-      }
-      
-      // Track the action if trackAction exists
-      if (typeof trackAction === 'function') {
-        try {
-          await trackAction('daily_checkin', { 
-            points: 10,
-            streak: newStreak,
-            timestamp: new Date().toISOString() 
-          });
-        } catch (trackError) {
-          console.log('Tracking not available, but check-in recorded locally');
-        }
-      }
-      
-      // Show success message with streak info
-      const streakMessage = newStreak > 1
-        ? `🔥 ${newStreak} day streak!`
-        : '';
-      showSnackbar({
-        message: `✅ Daily check-in complete! +10 points earned! ${streakMessage}`,
-        variant: 'success'
-      });
-
-      // Sync with backend using the /actions endpoint
-      if (API && API.post) {
-        API.post('/api/gamification/actions', {
+      // Call backend API to handle check-in
+      try {
+        const response = await API.post('/api/gamification/actions', {
           action: 'daily_checkin',
-          data: { streak: newStreak },
+          data: {},
           timestamp: new Date().toISOString()
-        }).then(() => {
-          console.log('✅ Daily check-in synced with server');
-        }).catch((error) => {
-          console.log('ℹ️ Daily check-in saved locally, will sync when online');
         });
+
+        const { success, streak, points, message, error } = response.data;
+
+        if (!success && error) {
+          // Already checked in today
+          showSnackbar({
+            message: '✨ You\'ve already checked in today! Come back tomorrow.',
+            variant: 'info'
+          });
+          return;
+        }
+
+        // Update state with backend response
+        setHasCheckedInToday(true);
+        setCheckInStreak(streak);
+
+        // Save to localStorage as backup
+        const today = new Date().toDateString();
+        localStorage.setItem('lastDailyCheckIn', today);
+        localStorage.setItem('checkInStreak', streak.toString());
+
+        // Update parent component
+        if (onCheckInUpdate) {
+          onCheckInUpdate(streak);
+        }
+
+        // Track the action if trackAction exists
+        if (typeof trackAction === 'function') {
+          try {
+            await trackAction('daily_checkin', {
+              points: points,
+              streak: streak,
+              timestamp: new Date().toISOString()
+            });
+          } catch (trackError) {
+            console.log('Tracking not available, but check-in recorded');
+          }
+        }
+
+        // Show success message with streak info
+        const streakMessage = streak > 1 ? `🔥 ${streak}-day streak!` : '';
+        showSnackbar({
+          message: `✅ Daily check-in complete! +${points} points earned! ${streakMessage}`,
+          variant: 'success'
+        });
+
+        console.log(`✅ Daily check-in successful: streak=${streak}, points=${points}`);
+
+      } catch (apiError) {
+        console.error('❌ Check-in API error:', apiError);
+
+        // Fallback to localStorage-based check-in if backend fails
+        const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
+        const today = new Date().toDateString();
+
+        if (lastCheckIn === today) {
+          showSnackbar({
+            message: '✨ You\'ve already checked in today! Come back tomorrow.',
+            variant: 'info'
+          });
+          return;
+        }
+
+        // Calculate streak locally
+        let newStreak = 1;
+        const storedStreak = parseInt(localStorage.getItem('checkInStreak') || '0');
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayString = yesterday.toDateString();
+
+        if (lastCheckIn === yesterdayString) {
+          newStreak = storedStreak + 1;
+        }
+
+        // Save locally
+        localStorage.setItem('lastDailyCheckIn', today);
+        localStorage.setItem('checkInStreak', newStreak.toString());
+        setHasCheckedInToday(true);
+        setCheckInStreak(newStreak);
+
+        const streakMessage = newStreak > 1 ? `🔥 ${newStreak}-day streak!` : '';
+        showSnackbar({
+          message: `✅ Check-in saved locally! +10 points! ${streakMessage}`,
+          variant: 'success'
+        });
+
+        console.log('ℹ️ Check-in saved locally (offline mode)');
       }
-      
+
     } catch (error) {
       console.error('Daily check-in error:', error);
       showSnackbar({
