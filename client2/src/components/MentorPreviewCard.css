@@ -8,7 +8,7 @@
   border-radius: 24px;
   padding: 24px;
   margin-top: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(11, 83, 148, 0.5), 0 2px 4px rgba(0, 0, 0, 0.04);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--md-sys-color-outline-variant);
   overflow: hidden;
@@ -83,7 +83,7 @@
 
 .mentor-icon {
   color: var(--md-sys-color-primary);
-  filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
+  filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.9));
   animation: pulse 2.5s ease-in-out infinite;
 }
 
@@ -210,20 +210,19 @@
   );
   border-radius: 16px;
   font-size: 0.925rem;
-  color: var(--md-sys-color-on-surface);
-  box-shadow: var(--md-sys-elevation-level1);
+  color: #000000;
+  box-shadow: var(--md-sys-elevation-level4);
   transition: box-shadow 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
               background 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
-  border: 1px solid var(--md-sys-color-outline-variant);
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
-
 .current-book-info:hover {
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary-container) 30%, var(--md-sys-color-surface-container-high)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 24%, var(--md-sys-color-surface-container)) 100%
   );
+  box-shadow: var(--md-sys-elevation-level6);
   border-color: var(--md-sys-color-outline);
-  box-shadow: var(--md-sys-elevation-level2);
 }
 
 .mentor-preview-card.dark .current-book-info {
@@ -253,6 +252,7 @@
   flex: 1;
   min-width: 200px;
   font-weight: 500;
+  color: #000000
 }
 
 .book-title strong {
