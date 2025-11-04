@@ -489,37 +489,83 @@ export const gamificationRouter = (authenticateToken) => {
   });
 
   // GET /api/gamification/actions/history - Get recent point-earning actions
+  // ✅ Now queries actual activity tables instead of deleted user_actions table
   router.get('/actions/history', async (req, res) => {
     try {
       const userId = req.user.id;
-      const limit = parseInt(req.query.limit) || 20; // Default to 20 recent actions
+      const limit = parseInt(req.query.limit) || 20;
+      const actions = [];
 
-      const { data, error } = await supabase
-        .from('user_actions')
-        .select('*')
+      // Query recent reading sessions
+      const { data: sessions } = await supabase
+        .from('reading_sessions')
+        .select('id, duration, session_date, created_at')
+        .eq('user_id', userId)
+        .not('duration', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      (sessions || []).forEach(session => {
+        actions.push({
+          id: session.id,
+          action: 'reading_session_completed',
+          label: `Read for ${session.duration} minutes`,
+          icon: '📖',
+          points: Math.min(session.duration, 60), // 1 point per minute, max 60
+          created_at: session.created_at,
+          timeAgo: getTimeAgo(new Date(session.created_at))
+        });
+      });
+
+      // Query recent notes
+      const { data: notes } = await supabase
+        .from('notes')
+        .select('id, type, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      // Handle table not found or other errors gracefully
-      if (error) {
-        console.warn('user_actions table query failed:', error.message);
-        // Return empty array instead of throwing
-        return res.json([]);
-      }
+      (notes || []).forEach(note => {
+        const isHighlight = note.type === 'highlight';
+        actions.push({
+          id: note.id,
+          action: isHighlight ? 'highlight_created' : 'note_created',
+          label: isHighlight ? 'Highlighted text' : 'Created note',
+          icon: isHighlight ? '✨' : '📝',
+          points: isHighlight ? 10 : 15,
+          created_at: note.created_at,
+          timeAgo: getTimeAgo(new Date(note.created_at))
+        });
+      });
 
-      // Format actions with user-friendly labels
-      const formattedActions = (data || []).map(action => ({
-        ...action,
-        label: formatActionLabel(action.action),
-        icon: action.action === 'achievement_unlocked' ? '🏆' : getActionIcon(action.action),
-        timeAgo: getTimeAgo(new Date(action.created_at))
-      }));
+      // Query recent books added
+      const { data: books } = await supabase
+        .from('books')
+        .select('id, title, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-      res.json(formattedActions);
+      (books || []).forEach(book => {
+        actions.push({
+          id: book.id,
+          action: 'book_uploaded',
+          label: `Added "${book.title}"`,
+          icon: '📚',
+          points: 25,
+          created_at: book.created_at,
+          timeAgo: getTimeAgo(new Date(book.created_at))
+        });
+      });
+
+      // Sort all actions by timestamp and limit
+      const sortedActions = actions
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, limit);
+
+      res.json(sortedActions);
     } catch (e) {
       console.error('Error fetching action history:', e);
-      // Return empty array instead of 500 error for graceful degradation
       res.json([]);
     }
   });

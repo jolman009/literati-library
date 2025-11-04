@@ -192,7 +192,7 @@ app.use(cors({
 app.use('/api/auth', rateLimitSuite.auth, slowDownSuite.auth);
 // Other protected routes
 app.use('/notes', notesRouter(authenticateTokenEnhanced));
-app.use('/reading', readingRouter(authenticateTokenEnhanced));
+app.use('/api/reading', readingRouter(authenticateTokenEnhanced));
 // Gamification endpoints with specialized rate limiting
 app.use('/api/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
 
