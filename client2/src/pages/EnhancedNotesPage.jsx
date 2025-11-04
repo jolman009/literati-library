@@ -1461,10 +1461,12 @@ const EnhancedNotesPage = () => {
                     <div style={{ display: 'flex', gap: 8 }}>
                       <MD3Button
                         variant="filled"
+                        style={{ backgroundColor: 'var(--md-sys-color-primary-container)', color: 'var(--md-sys-color-on-primary-container)' }} 
+                        border="outlined" 
                         disabled={selectedNoteIds.length === 0 || summarizing}
                         onClick={handleSummarizeSelection}
                         icon={<FileText className="md3-icon" />}
-                      >
+                      > 
                         {summarizing ? 'Summarizing…' : 'Summarize Selection'}
                       </MD3Button>
                       <MD3Button

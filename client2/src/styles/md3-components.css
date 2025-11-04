@@ -18,11 +18,10 @@
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  max-width: 1400px;
   margin: 0 auto;
   background: var(--md-sys-color-surface);
   overflow: visible;
-  width: 100%;
+  max-width: 1200px !important;
 }
 
 /* ============================================================================

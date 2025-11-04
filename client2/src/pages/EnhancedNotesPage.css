@@ -16,15 +16,17 @@
 
 /* Enhanced Header */
 .md3-notes-header {
+  background: var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary);
   border-radius: 16px !important;
-  box-shadow: 0 8px 32px rgba(36, 168, 224, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(36, 168, 224, 0.3) !important;
 }
 
 .md3-notes-header-content {
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
+} 
 
 .md3-notes-header-text {
   text-align: center;
