@@ -558,6 +558,27 @@ export const gamificationRouter = (authenticateToken) => {
         });
       });
 
+      // Query recent daily check-ins
+      const { data: checkIns } = await supabase
+        .from('daily_checkins')
+        .select('id, check_in_date, streak, points, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      (checkIns || []).forEach(checkIn => {
+        const streakText = checkIn.streak > 1 ? ` (${checkIn.streak}-day streak!)` : '';
+        actions.push({
+          id: checkIn.id,
+          action: 'daily_checkin',
+          label: `Daily check-in${streakText}`,
+          icon: '✅',
+          points: checkIn.points,
+          created_at: checkIn.created_at,
+          timeAgo: getTimeAgo(new Date(checkIn.created_at))
+        });
+      });
+
       // Sort all actions by timestamp and limit
       const sortedActions = actions
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -567,6 +588,46 @@ export const gamificationRouter = (authenticateToken) => {
     } catch (e) {
       console.error('Error fetching action history:', e);
       res.json([]);
+    }
+  });
+
+  // GET /api/gamification/checkin/status - Get current check-in status
+  router.get('/checkin/status', async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const today = new Date().toISOString().split('T')[0];
+
+      // Check if user checked in today
+      const { data: todayCheckIn } = await supabase
+        .from('daily_checkins')
+        .select('id, check_in_date, streak, points, created_at')
+        .eq('user_id', userId)
+        .eq('check_in_date', today)
+        .single();
+
+      // Get the most recent check-in for streak calculation
+      const { data: latestCheckIn } = await supabase
+        .from('daily_checkins')
+        .select('id, check_in_date, streak, created_at')
+        .eq('user_id', userId)
+        .order('check_in_date', { ascending: false })
+        .limit(1)
+        .single();
+
+      res.json({
+        hasCheckedInToday: !!todayCheckIn,
+        todayCheckIn: todayCheckIn || null,
+        currentStreak: latestCheckIn?.streak || 0,
+        lastCheckIn: latestCheckIn || null
+      });
+    } catch (e) {
+      console.error('Error fetching check-in status:', e);
+      res.json({
+        hasCheckedInToday: false,
+        todayCheckIn: null,
+        currentStreak: 0,
+        lastCheckIn: null
+      });
     }
   });
 
@@ -593,6 +654,80 @@ export const gamificationRouter = (authenticateToken) => {
         case 'daily_login': points = 10; break;
         case 'daily_checkin': points = 10; break;
         default: points = 1;
+      }
+
+      // Special handling for daily check-in - persist to database
+      if (action === 'daily_checkin') {
+        try {
+          const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+          // Check if user already checked in today
+          const { data: existingCheckIn } = await supabase
+            .from('daily_checkins')
+            .select('id, check_in_date, streak')
+            .eq('user_id', userId)
+            .eq('check_in_date', today)
+            .single();
+
+          if (existingCheckIn) {
+            return res.status(400).json({
+              error: 'Already checked in today',
+              checkIn: existingCheckIn
+            });
+          }
+
+          // Calculate streak by checking yesterday's check-in
+          let streak = 1;
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+          const { data: yesterdayCheckIn } = await supabase
+            .from('daily_checkins')
+            .select('streak')
+            .eq('user_id', userId)
+            .eq('check_in_date', yesterdayStr)
+            .single();
+
+          if (yesterdayCheckIn) {
+            // Continue streak
+            streak = yesterdayCheckIn.streak + 1;
+          }
+
+          // Insert new check-in record
+          const { data: newCheckIn, error: insertError } = await supabase
+            .from('daily_checkins')
+            .insert([{
+              user_id: userId,
+              check_in_date: today,
+              streak: streak,
+              points: points
+            }])
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error('❌ Failed to insert daily check-in:', insertError);
+            throw insertError;
+          }
+
+          console.log(`✅ Daily check-in saved: user=${userId}, streak=${streak}`);
+          return res.json({
+            success: true,
+            action,
+            points,
+            streak,
+            checkIn: newCheckIn,
+            message: `Daily check-in complete! ${streak > 1 ? `${streak}-day streak!` : ''}`
+          });
+
+        } catch (dbError) {
+          console.error('❌ Database error during check-in:', dbError);
+          return res.status(500).json({
+            error: 'Failed to save check-in',
+            details: dbError.message
+          });
+        }
       }
 
       // Note: user_actions table was deleted. Points are now calculated from actual activity tables.
