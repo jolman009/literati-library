@@ -72,10 +72,35 @@
   opacity: 1 !important;
   visibility: visible !important;
   z-index: 10;
-  
+
   /* Ensure it's always on top */
   position: absolute;
-  
+
+  /* Strict size constraints to prevent stretching */
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
+
+  /* Prevent flex shrinking/growing */
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  /* Clip any overflow content */
+  overflow: hidden;
+
+  /* Remove padding that could add to width */
+  padding: 0 !important;
+
+  /* Centering */
+  align-items: center;
+  justify-content: center;
+
+  /* Circular button */
+  border-radius: 50%;
+
   /* Better accessibility */
   outline: none;
   -webkit-tap-highlight-color: transparent;
@@ -331,14 +356,19 @@
     max-width: none;
     width: 100%;
   }
-  
+
   .book-menu-button {
-    width: 36px;
-    height: 36px;
+    /* Smaller button on mobile with strict constraints */
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    max-width: 36px !important;
+    max-height: 36px !important;
     top: 6px;
     right: 6px;
   }
-  
+
   .book-actions-menu {
     right: 6px;
     top: 44px;

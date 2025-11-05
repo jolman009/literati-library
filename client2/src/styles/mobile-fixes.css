@@ -294,17 +294,27 @@ button {
   }
 
   /* Full width buttons on mobile */
-  button,
+  /* EXCEPT circular icon buttons and navigation arrows */
+  button:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not([style*="borderRadius: '50%'"]):not([style*="border-radius: 50%"]),
   .button,
   .Button,
-  [class*="button"],
-  [class*="Button"],
+  [class*="button"]:not([aria-label*="Scroll"]):not([aria-label*="scroll"]),
+  [class*="Button"]:not([aria-label*="Scroll"]):not([aria-label*="scroll"]),
   .btn,
   .Btn,
   [class*="btn"],
   [class*="Btn"] {
     width: 100% !important;
     max-width: 100% !important;
+  }
+
+  /* Keep circular icon buttons and navigation arrows at their specified size */
+  button[aria-label*="Scroll"],
+  button[aria-label*="scroll"],
+  button[style*="borderRadius: '50%'"],
+  button[style*="border-radius: 50%"] {
+    width: auto !important;
+    max-width: fit-content !important;
   }
 
   /* Adjust font sizes for mobile */

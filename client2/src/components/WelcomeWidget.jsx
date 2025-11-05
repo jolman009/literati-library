@@ -1,20 +1,23 @@
 // Dashboard-Compatible Welcome Widget
 // File: src/components/WelcomeWidget.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
-const WelcomeWidget = ({ 
-  user, 
-  books = [], 
+const WelcomeWidget = ({
+  user,
+  books = [],
   currentPage = 'library',
   onNavigate,
   analytics = {},
   viewMode = 'grid',
   onViewModeChange,
-  ...props 
+  ...props
 }) => {
   const [activeNavItem, setActiveNavItem] = useState(currentPage);
   const { actualTheme } = useMaterial3Theme();
+  const navigationRef = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
   // Calculate stats from books (with safety check)
   const booksArray = Array.isArray(books) ? books : [];
@@ -63,6 +66,56 @@ const WelcomeWidget = ({
   const handleNavigationClick = (itemId) => {
     setActiveNavItem(itemId);
     onNavigate?.(itemId);
+  };
+
+  // Check scroll position to show/hide arrows
+  const checkScrollPosition = () => {
+    const container = navigationRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+
+    // Show left arrow if not at start
+    setShowLeftArrow(scrollLeft > 5);
+
+    // Show right arrow if not at end
+    setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+  };
+
+  // Set up scroll listener
+  useEffect(() => {
+    const container = navigationRef.current;
+    if (!container) return;
+
+    // Initial check
+    checkScrollPosition();
+
+    // Add scroll listener
+    container.addEventListener('scroll', checkScrollPosition);
+
+    // Add resize listener to recheck on viewport changes
+    window.addEventListener('resize', checkScrollPosition);
+
+    return () => {
+      container.removeEventListener('scroll', checkScrollPosition);
+      window.removeEventListener('resize', checkScrollPosition);
+    };
+  }, []);
+
+  // Smooth scroll helper
+  const scrollNavigation = (direction) => {
+    const container = navigationRef.current;
+    if (!container) return;
+
+    const scrollAmount = 200; // pixels to scroll
+    const targetScroll = direction === 'left'
+      ? container.scrollLeft - scrollAmount
+      : container.scrollLeft + scrollAmount;
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -202,18 +255,126 @@ const WelcomeWidget = ({
       <div style={{
         marginTop: '16px',
         paddingTop: '16px',
-        borderTop: `1px solid rgba(255, 255, 255, 0.2)`
+        borderTop: `1px solid rgba(255, 255, 255, 0.2)`,
+        position: 'relative'
       }}>
+        {/* Left Arrow Indicator */}
+        {showLeftArrow && (
+          <button
+            onClick={() => scrollNavigation('left')}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              width: '32px',
+              height: '32px',
+              minWidth: '32px',
+              minHeight: '32px',
+              maxWidth: '32px',
+              maxHeight: '32px',
+              flexShrink: 0,
+              flexGrow: 0,
+              overflow: 'hidden',
+              padding: 0,
+              boxSizing: 'border-box',
+              borderRadius: '50%',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(4px)',
+              border: '2px solid rgba(255, 255, 255, 0.8)',
+              color: 'white',
+              fontSize: '18px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}
+            aria-label="Scroll left"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.8)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            ←
+          </button>
+        )}
+
+        {/* Right Arrow Indicator */}
+        {showRightArrow && (
+          <button
+            onClick={() => scrollNavigation('right')}
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              width: '32px',
+              height: '32px',
+              minWidth: '32px',
+              minHeight: '32px',
+              maxWidth: '32px',
+              maxHeight: '32px',
+              flexShrink: 0,
+              flexGrow: 0,
+              overflow: 'hidden',
+              padding: 0,
+              boxSizing: 'border-box',
+              borderRadius: '50%',
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(4px)',
+              border: '2px solid rgba(255, 255, 255, 0.8)',
+              color: 'white',
+              fontSize: '18px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}
+            aria-label="Scroll right"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.8)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+            }}
+          >
+            →
+          </button>
+        )}
+
         {/* Mobile/Tablet: Horizontal scrollable bar */}
-        <div 
+        <div
+          ref={navigationRef}
           className="navigation-container"
           style={{
             display: 'flex',
             justifyContent: window.innerWidth >= 1024 ? 'center' : 'flex-start',
             gap: '12px',
             overflowX: 'auto',
+            overflowY: 'hidden',
             scrollBehavior: 'smooth',
-            paddingBottom: '8px'
+            paddingBottom: '8px',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'thin',
+            scrollbarColor: actualTheme === 'dark' ? '#64748b transparent' : '#cbd5e1 transparent',
+            msOverflowStyle: 'auto',
+            position: 'relative',
+            maxWidth: '100%',
+            flexWrap: 'nowrap'
           }}
         >
           {navigationItems.map((item) => (
@@ -296,20 +457,46 @@ const WelcomeWidget = ({
           ))}
         </div>
         
-        {/* Add CSS for smooth scrolling */}
+        {/* Add CSS for smooth scrolling and animations */}
         <style jsx>{`
+          .navigation-container {
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x proximity;
+          }
           .navigation-container::-webkit-scrollbar {
-            height: 4px;
+            height: 6px;
           }
           .navigation-container::-webkit-scrollbar-track {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
           }
           .navigation-container::-webkit-scrollbar-thumb {
-            background-color: ${actualTheme === 'dark' ? '#475569' : '#cbd5e1'};
-            border-radius: 2px;
+            background-color: ${actualTheme === 'dark' ? '#64748b' : '#cbd5e1'};
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
           }
           .navigation-container::-webkit-scrollbar-thumb:hover {
-            background-color: ${actualTheme === 'dark' ? '#64748b' : '#94a3b8'};
+            background-color: ${actualTheme === 'dark' ? '#94a3b8' : '#94a3b8'};
+          }
+          .navigation-container::-webkit-scrollbar-thumb:active {
+            background-color: ${actualTheme === 'dark' ? '#cbd5e1' : '#64748b'};
+          }
+          /* Mobile-specific: show scrollbar on touch */
+          @media (max-width: 768px) {
+            .navigation-container::-webkit-scrollbar {
+              height: 8px;
+            }
+          }
+          /* Pulse animation for arrows */
+          @keyframes pulse {
+            0%, 100% {
+              opacity: 0.9;
+              transform: translateY(-50%) scale(1);
+            }
+            50% {
+              opacity: 1;
+              transform: translateY(-50%) scale(1.05);
+            }
           }
         `}</style>
       </div>
