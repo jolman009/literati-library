@@ -6,7 +6,8 @@ import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useSnackbar } from "../components/Material3";
 import ReadestReader from "../components/ReadestReader";
 import ThemeToggle from "../components/ThemeToggle";
-import FloatingNotepad from "../components/FloatingNotepad";
+import NotesSidebar from "../components/NotesSidebar";
+import MD3Fab from "../components/Material3/MD3Fab";
 // ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
 
@@ -37,6 +38,7 @@ const ReadBook = () => {
   const [currentLocator, setCurrentLocator] = useState(null); // <-- EPUB location { cfi, percent? }
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Notes sidebar state
 
   console.log('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
 
@@ -382,12 +384,25 @@ const ReadBook = () => {
             initialLocation={initialLocation}
             onPageChange={(p) => setCurrentPage(p)}            // ✅ PDF
           />
-          <FloatingNotepad
+
+          {/* Notes Sidebar */}
+          <NotesSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
             title={`Note — ${book.title}`}
             book={book}
             currentPage={currentPage}
             currentLocator={currentLocator}
           />
+
+          {/* Toggle Notes Button (FAB) */}
+          <MD3Fab
+            icon={isSidebarOpen ? '✕' : '📝'}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            ariaLabel={isSidebarOpen ? "Close notes" : "Open notes"}
+            variant="primary"
+          />
+
           {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
         </>
       )}

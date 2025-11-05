@@ -1,0 +1,182 @@
+/* src/components/Material3/MD3Fab.module.css */
+
+/* ===============================================
+   MATERIAL DESIGN 3 FLOATING ACTION BUTTON (FAB)
+   =============================================== */
+
+.fab {
+  /* Positioning */
+  position: fixed;
+  z-index: 9997;
+
+  /* Reset */
+  border: none;
+  cursor: pointer;
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* Typography - MD3 Label Large */
+  font-family: var(--md-sys-typescale-label-large-font-family, "Google Sans", "Inter", system-ui, sans-serif);
+  font-size: var(--md-sys-typescale-label-large-font-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-font-weight, 500);
+  line-height: var(--md-sys-typescale-label-large-line-height, 1.25rem);
+  letter-spacing: var(--md-sys-typescale-label-large-letter-spacing, 0.1px);
+
+  /* MD3 Level 3 Elevation */
+  box-shadow:
+    0px 2px 3px rgba(0, 0, 0, 0.3),
+    0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+
+  /* Transition */
+  transition:
+    transform 0.15s cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 0.15s cubic-bezier(0.2, 0, 0, 1),
+    background 0.15s cubic-bezier(0.2, 0, 0, 1);
+
+  /* Prevent text selection */
+  user-select: none;
+}
+
+/* ===== SIZES ===== */
+.fab.normal {
+  min-width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  padding: 0 16px;
+}
+
+.fab.small {
+  min-width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  padding: 0 12px;
+}
+
+/* Extended FAB has more padding for label */
+.fab.extended {
+  padding: 0 20px;
+}
+
+/* ===== VARIANTS (COLOR SCHEMES) ===== */
+
+/* Primary FAB (Default) */
+.fab.primary {
+  background: rgb(var(--md-sys-color-primary-container, 209, 221, 255));
+  color: rgb(var(--md-sys-color-on-primary-container, 0, 24, 72));
+}
+
+.fab.primary:hover:not(:disabled) {
+  background: rgba(var(--md-sys-color-primary-container, 209, 221, 255), 0.92);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.3),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Secondary FAB */
+.fab.secondary {
+  background: rgb(var(--md-sys-color-secondary-container, 213, 234, 216));
+  color: rgb(var(--md-sys-color-on-secondary-container, 13, 31, 18));
+}
+
+.fab.secondary:hover:not(:disabled) {
+  background: rgba(var(--md-sys-color-secondary-container, 213, 234, 216), 0.92);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.3),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Tertiary FAB */
+.fab.tertiary {
+  background: rgb(var(--md-sys-color-tertiary-container, 255, 221, 179));
+  color: rgb(var(--md-sys-color-on-tertiary-container, 45, 22, 0));
+}
+
+.fab.tertiary:hover:not(:disabled) {
+  background: rgba(var(--md-sys-color-tertiary-container, 255, 221, 179), 0.92);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.3),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* ===== INTERACTION STATES ===== */
+.fab:active:not(:disabled) {
+  transform: translateY(0) scale(0.95);
+  box-shadow:
+    0px 1px 2px rgba(0, 0, 0, 0.3),
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+
+.fab:disabled,
+.fab.disabled {
+  background: rgba(var(--md-sys-color-on-surface, 26, 26, 28), 0.12);
+  color: rgba(var(--md-sys-color-on-surface, 26, 26, 28), 0.38);
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+/* ===== ICON & LABEL ===== */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.fab.small .icon {
+  font-size: 20px;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .fab.normal {
+    min-width: 48px;
+    height: 48px;
+    padding: 0 12px;
+  }
+
+  .fab.normal .icon {
+    font-size: 20px;
+  }
+
+  .fab.small {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+  }
+
+  .fab.small .icon {
+    font-size: 18px;
+  }
+
+  /* Adjust default positioning for mobile */
+  .fab {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .fab {
+    transition: none;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.fab:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 0, 92, 186));
+  outline-offset: 2px;
+}
