@@ -1074,7 +1074,7 @@ const CurrentlyReading = () => {
         📖 Currently READING ({currentlyReading.length})
       </h3>
       <div className="simple-scroll-container covers-scroll">
-        {currentlyReading.slice(0, 4).map((book) => (
+        {currentlyReading.slice(0, 8).map((book) => (
           <div
             key={book.id}
             onClick={async () => {
