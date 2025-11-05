@@ -386,11 +386,12 @@ const WelcomeWidget = ({
                 flexDirection: window.innerWidth >= 768 ? 'column' : 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minWidth: window.innerWidth >= 768 ? '80px' : '120px',
+                minWidth: window.innerWidth >= 768 ? '80px' : '95px',
+                maxWidth: window.innerWidth >= 768 ? 'none' : '110px',
                 height: window.innerWidth >= 768 ? '64px' : '48px',
-                padding: window.innerWidth >= 768 ? '8px 4px' : '8px 12px',
+                padding: window.innerWidth >= 768 ? '8px 4px' : '6px 10px',
                 border: `1px solid rgba(255, 255, 255, 0.3)`,
-                background: activeNavItem === item.id 
+                background: activeNavItem === item.id
                   ? 'rgba(255, 255, 255, 0.3)'
                   : 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '12px',
@@ -413,21 +414,22 @@ const WelcomeWidget = ({
                 }
               }}
             >
-              <div style={{ 
-                fontSize: '20px', 
+              <div style={{
+                fontSize: window.innerWidth >= 768 ? '20px' : '18px',
                 marginBottom: window.innerWidth >= 768 ? '4px' : '0',
-                marginRight: window.innerWidth >= 768 ? '0' : '8px'
+                marginRight: window.innerWidth >= 768 ? '0' : '6px',
+                flexShrink: 0
               }}>
                 {item.icon}
               </div>
               <div style={{
-                fontSize: window.innerWidth >= 768 ? '11px' : '14px',
+                fontSize: window.innerWidth >= 768 ? '11px' : '12px',
                 fontWeight: '500',
                 textAlign: 'center',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                maxWidth: window.innerWidth >= 768 ? '72px' : '80px'
+                maxWidth: window.innerWidth >= 768 ? '72px' : '60px'
               }}>
                 {item.label}
               </div>
