@@ -7,7 +7,8 @@ import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useOfflineReading } from "../hooks/useOfflineReading";
 import { useNetworkStatus } from "../hooks/useOfflineDetection";
 import ReadestReader from "../components/ReadestReader";
-import FloatingNotepad from "../components/FloatingNotepad";
+import NotesSidebar from "../components/NotesSidebar";
+import MD3Fab from "../components/Material3/MD3Fab";
 // ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
 import { Download, Trash2, WifiOff, Wifi, CheckCircle } from "lucide-react";
@@ -55,6 +56,7 @@ const ReadBookEnhanced = () => {
   const [downloading, setDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showOfflineControls, setShowOfflineControls] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Notes sidebar state
 
   console.log('📊 ReadBookEnhanced state:', {
     bookId, loading, error, hasBook: !!book,
@@ -455,14 +457,22 @@ const ReadBookEnhanced = () => {
             }}
           />
 
-          {/* Enhanced floating notepad with offline support */}
-          <FloatingNotepad
+          {/* Notes Sidebar (with offline support) */}
+          <NotesSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
             title={`Note — ${book.title}`}
             book={book}
             currentPage={currentPage}
             currentLocator={currentLocator}
-            onSaveNote={handleNoteSave}
-            offlineMode={isOffline}
+          />
+
+          {/* Toggle Notes Button (FAB) */}
+          <MD3Fab
+            icon={isSidebarOpen ? '✕' : '📝'}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            ariaLabel={isSidebarOpen ? "Close notes" : "Open notes"}
+            variant="primary"
           />
 
           {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
