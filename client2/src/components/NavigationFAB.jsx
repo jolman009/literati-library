@@ -29,22 +29,16 @@ const NavigationFAB = ({ quickStats = {} }) => {
 
   const fabActions = [
     {
-      to: '/notes',
-      label: 'Notes',
-      icon: 'edit_note',
-      count: quickStats.notes,
-    },
-    {
       to: '/collections',
       label: 'Collections',
       icon: 'collections_bookmark',
       count: quickStats.collections,
     },
     {
-      to: '/upload',
-      label: 'Upload',
-      icon: 'upload',
-      count: quickStats.pendingUploads,
+      to: '/onboarding',
+      label: 'Guide',
+      icon: 'flag',
+      count: null,
     }
   ];
 

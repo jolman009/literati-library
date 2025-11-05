@@ -69,13 +69,6 @@ const AppLayout = () => {
         onNavigateToResult={navigateToResult}
       />
 
-      {/* Mobile Search FAB - hidden on Dashboard to free space */}
-      {!isDashboard && (
-        <div className="mobile-only" style={{ position: 'fixed', bottom: '24px', left: '24px', zIndex: 999 }}>
-          <GlobalSearchFAB position="bottom-left" />
-        </div>
-      )}
-
       {/* Footer moved inside content-area to avoid grid column clipping */}
 
       {/* Debug indicator - shows when service worker is disabled */}

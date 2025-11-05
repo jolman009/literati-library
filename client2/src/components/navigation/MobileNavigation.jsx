@@ -50,10 +50,10 @@ const MobileNavigation = () => {
       path: '/notes'
     },
     {
-      key: 'onboarding',
-      icon: 'flag',
-      label: 'Guide',
-      path: '/onboarding'
+      key: 'upload',
+      icon: 'upload',
+      label: 'Upload',
+      path: '/upload'
     },
   ];
 

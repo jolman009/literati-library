@@ -53,6 +53,13 @@ const LibraryPage = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Pull-to-refresh state
+  const [pullStartY, setPullStartY] = useState(0);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const pullThreshold = 80; // pixels to pull before triggering refresh
+
   // Temporarily disable virtualization to avoid react-window grid crash
   // TODO: Re-enable after stabilizing Grid sizing lifecycle
   useEffect(() => {
@@ -127,6 +134,70 @@ const LibraryPage = () => {
       setError('Failed to load your library');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Pull-to-refresh handlers
+  const handleTouchStart = (e) => {
+    // Only activate pull-to-refresh if we're at the top of the page
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (scrollTop === 0 && !isRefreshing) {
+      setPullStartY(e.touches[0].clientY);
+      setIsPulling(true);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isPulling || isRefreshing) return;
+
+    const currentY = e.touches[0].clientY;
+    const distance = currentY - pullStartY;
+
+    // Only allow pulling down (positive distance)
+    if (distance > 0) {
+      // Apply resistance: the further you pull, the harder it gets
+      const resistance = 0.5;
+      const adjustedDistance = Math.min(distance * resistance, 120); // Max 120px
+      setPullDistance(adjustedDistance);
+
+      // Prevent default scrolling when pulling
+      if (adjustedDistance > 10) {
+        e.preventDefault();
+      }
+
+      // Haptic feedback when reaching threshold
+      if (adjustedDistance >= pullThreshold && navigator.vibrate) {
+        navigator.vibrate(10);
+      }
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (!isPulling) return;
+
+    setIsPulling(false);
+
+    // Trigger refresh if pulled beyond threshold
+    if (pullDistance >= pullThreshold && !isRefreshing) {
+      setIsRefreshing(true);
+
+      // Haptic feedback for successful trigger
+      if (navigator.vibrate) {
+        navigator.vibrate([30, 20, 30]);
+      }
+
+      try {
+        await fetchBooks(0);
+        showSnackbar({ message: '✓ Library refreshed!', variant: 'success' });
+      } catch (error) {
+        showSnackbar({ message: 'Failed to refresh library', variant: 'error' });
+      } finally {
+        setIsRefreshing(false);
+        setPullDistance(0);
+      }
+    } else {
+      // Reset pull distance with animation
+      setPullDistance(0);
     }
   };
 
@@ -745,6 +816,10 @@ const LibraryPage = () => {
                           right: '8px',
                           width: '40px',
                           height: '40px',
+                          minWidth: '40px',
+                          minHeight: '40px',
+                          maxWidth: '40px',
+                          maxHeight: '40px',
                           borderRadius: '50%',
                           backgroundColor: 'rgba(0, 0, 0, 0.8)',
                           border: '2px solid rgba(255, 255, 255, 0.9)',
@@ -757,7 +832,10 @@ const LibraryPage = () => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           transition: 'all 0.2s ease',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                          flexShrink: 0,
+                          overflow: 'hidden',
+                          padding: 0
                         }}
                         aria-haspopup="menu"
                         aria-expanded={openMenuBookId === book.id}
@@ -948,11 +1026,66 @@ const LibraryPage = () => {
   };
 
   return (
-   <div 
-    className={`md3-library-page' actual-theme-${actualTheme}`}
+   <div
+    className={`md3-library-page actual-theme-${actualTheme}`}
    onDrop={handleDragDrop}
    onDragOver={handleDragOver}
+    onTouchStart={handleTouchStart}
+    onTouchMove={handleTouchMove}
+    onTouchEnd={handleTouchEnd}
+    style={{
+      position: 'relative',
+      transition: 'transform 0.3s ease',
+      transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)'
+    }}
     >
+    {/* Pull-to-Refresh Indicator */}
+    {(isPulling || isRefreshing) && (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: '50%',
+        transform: `translateX(-50%) translateY(${Math.max(pullDistance - 40, 0)}px)`,
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '12px 24px',
+        background: actualTheme === 'dark'
+          ? 'rgba(30, 41, 59, 0.95)'
+          : 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(8px)',
+        borderRadius: '0 0 16px 16px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        transition: 'transform 0.3s ease, opacity 0.3s ease',
+        opacity: isPulling ? Math.min(pullDistance / pullThreshold, 1) : 1
+      }}>
+        <div style={{
+          width: '32px',
+          height: '32px',
+          borderRadius: '50%',
+          border: `3px solid ${pullDistance >= pullThreshold ? '#10b981' : '#3b82f6'}`,
+          borderTopColor: 'transparent',
+          animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none',
+          transform: isPulling ? `rotate(${pullDistance * 3}deg)` : 'rotate(0deg)',
+          transition: 'border-color 0.3s ease'
+        }} />
+        <span style={{
+          fontSize: '13px',
+          fontWeight: '500',
+          color: actualTheme === 'dark' ? '#e2e8f0' : '#334155',
+          opacity: 0.9
+        }}>
+          {isRefreshing
+            ? 'Refreshing...'
+            : pullDistance >= pullThreshold
+            ? 'Release to refresh'
+            : 'Pull to refresh'}
+        </span>
+      </div>
+    )}
+
     {renderPageContent()}
 
     {/* Bulk Delete Confirmation Dialog */}
@@ -1009,7 +1142,7 @@ const LibraryPage = () => {
       </div>
     )}
 
-    <button 
+    <button
      className="md3-fab"
      onClick={() => navigate('/upload')}
     title="Upload new book"
@@ -1018,6 +1151,18 @@ const LibraryPage = () => {
     </button>
 
       {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
+
+    {/* Add CSS animation for pull-to-refresh spinner */}
+    <style>{`
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `}</style>
     </div>
   );
  };
