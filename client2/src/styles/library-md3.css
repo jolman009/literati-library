@@ -4,7 +4,7 @@
   padding: 0px 24px 24px 24px; /* Top padding handled by AppLayout.page-content */
   max-width: 1200px;
   margin: 30px auto 10 auto; /* Add top margin to clear navigation header */
-  background: var(--md-sys-color-primary);
+  background: var(--md-sys-color-surface);
   min-height: calc(100vh - 128px);
   color: var(--md-sys-color-on-background);
   position: relative;
