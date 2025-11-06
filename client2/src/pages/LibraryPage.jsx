@@ -54,6 +54,9 @@ const LibraryPage = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // CSV Export template selection
+  const [exportTemplate, setExportTemplate] = useState('spreadsheet');
+
   // Pull-to-refresh state
   const [pullStartY, setPullStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
@@ -376,7 +379,7 @@ const LibraryPage = () => {
       const booksToExport = books.filter(b => selectedBooks.includes(b.id));
       const filterName = getFilterName(filter);
       const result = exportBooksToCSV(booksToExport, {
-        template: 'spreadsheet', // Reading Tracker format
+        template: exportTemplate, // Use selected template
         filename: `shelfquest-selected-${filterName}-${new Date().toISOString().split('T')[0]}.csv`
       });
 
@@ -404,7 +407,7 @@ const LibraryPage = () => {
     try {
       const filterName = getFilterName(filter);
       const result = exportBooksToCSV(filteredBooks, {
-        template: 'spreadsheet', // Reading Tracker format with all essential columns
+        template: exportTemplate, // Use selected template
         filename: `shelfquest-${filterName}-${new Date().toISOString().split('T')[0]}.csv`
       });
 
@@ -697,7 +700,44 @@ const LibraryPage = () => {
                     </button>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* Export Format Selector */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <label htmlFor="export-template" className="md-body-small" style={{ whiteSpace: 'nowrap' }}>
+                      Format:
+                    </label>
+                    <select
+                      id="export-template"
+                      value={exportTemplate}
+                      onChange={(e) => setExportTemplate(e.target.value)}
+                      className="md3-select"
+                      style={{
+                        padding: '6px 32px 6px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--md-sys-color-outline)',
+                        background: 'var(--md-sys-color-surface-container-low)',
+                        color: 'var(--md-sys-color-on-surface)',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        outline: 'none',
+                        minWidth: '140px',
+                        appearance: 'none',
+                        backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E")',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 8px center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      title={EXPORT_TEMPLATES[exportTemplate]?.description}
+                    >
+                      {Object.entries(EXPORT_TEMPLATES).map(([key, template]) => (
+                        <option key={key} value={key}>
+                          {template.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* Export All Button - Always visible */}
                   <button
                     className="md3-button md3-button--outlined"
@@ -780,7 +820,44 @@ const LibraryPage = () => {
                     Showing {filteredBooks.length} book{filteredBooks.length !== 1 ? 's' : ''}
                   </span>
                 </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* Export Format Selector */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <label htmlFor="export-template-alt" className="md-body-small" style={{ whiteSpace: 'nowrap' }}>
+                      Format:
+                    </label>
+                    <select
+                      id="export-template-alt"
+                      value={exportTemplate}
+                      onChange={(e) => setExportTemplate(e.target.value)}
+                      className="md3-select"
+                      style={{
+                        padding: '6px 32px 6px 12px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--md-sys-color-outline)',
+                        background: 'var(--md-sys-color-surface-container-low)',
+                        color: 'var(--md-sys-color-on-surface)',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        outline: 'none',
+                        minWidth: '140px',
+                        appearance: 'none',
+                        backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M6 9L1 4h10z\'/%3E%3C/svg%3E")',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 8px center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      title={EXPORT_TEMPLATES[exportTemplate]?.description}
+                    >
+                      {Object.entries(EXPORT_TEMPLATES).map(([key, template]) => (
+                        <option key={key} value={key}>
+                          {template.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* Export All Button */}
                   <button
                     className="md3-button md3-button--outlined"
