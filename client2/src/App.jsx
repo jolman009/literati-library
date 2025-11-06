@@ -5,8 +5,9 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { initWebVitals } from './utils/webVitals';
 import { initOfflineReading } from './utils/offlineInit';
-import PerformanceMonitor from './components/PerformanceMonitor';
-import CacheMonitor from './components/CacheMonitor';
+// Temporarily disabled dev monitors
+// import PerformanceMonitor from './components/PerformanceMonitor';
+// import CacheMonitor from './components/CacheMonitor';
 
 // ⚠️ CRITICAL: Import mobile-fixes FIRST! ⚠️
 import './styles/mobile-fixes.css';
@@ -347,8 +348,9 @@ const App = () => {
                 <NoteSyncListener />
                 <AppRoutes />
                 <ReadingSessionTimer />
-                <PerformanceMonitor />
-                <CacheMonitor />
+                {/* Temporarily disabled dev monitors */}
+                {/* <PerformanceMonitor /> */}
+                {/* <CacheMonitor /> */}
                 <GamificationOnboarding />
                 <CookieConsent />
                 <PremiumModal />
