@@ -294,8 +294,8 @@ button {
   }
 
   /* Full width buttons on mobile */
-  /* EXCEPT circular icon buttons, navigation arrows, and book menu buttons */
-  button:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not([style*="borderRadius: '50%'"]):not([style*="border-radius: 50%"]):not(.book-menu-button),
+  /* EXCEPT circular icon buttons, navigation arrows, book menu buttons, and welcome widget nav buttons */
+  button:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not([style*="borderRadius: '50%'"]):not([style*="border-radius: 50%"]):not(.book-menu-button):not(.welcome-nav-scrollable button):not(.navigation-container button),
   .button,
   .Button,
   [class*="button"]:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not(.book-menu-button),
@@ -308,13 +308,15 @@ button {
     max-width: 100% !important;
   }
 
-  /* Keep circular icon buttons, navigation arrows, and book menu buttons at their specified size */
+  /* Keep circular icon buttons, navigation arrows, book menu buttons, and welcome widget nav buttons at their specified size */
   button[aria-label*="Scroll"],
   button[aria-label*="scroll"],
   button[style*="borderRadius: '50%'"],
   button[style*="border-radius: 50%"],
   .book-menu-button,
-  button.book-menu-button {
+  button.book-menu-button,
+  .welcome-nav-scrollable button,
+  .navigation-container button {
     width: auto !important;
     max-width: fit-content !important;
   }
