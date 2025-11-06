@@ -1,7 +1,7 @@
 // Dashboard-Compatible Welcome Widget
 // File: src/components/WelcomeWidget.jsx
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 const WelcomeWidget = ({
   user,
@@ -66,40 +66,6 @@ const WelcomeWidget = ({
     onNavigate?.(itemId);
   };
 
-  // Prevent page scroll when scrolling navigation container
-  useEffect(() => {
-    const container = navigationRef.current;
-    if (!container) return;
-
-    let isScrolling = false;
-
-    const handleTouchStart = (e) => {
-      // Check if touch is horizontal scroll attempt
-      isScrolling = true;
-    };
-
-    const handleTouchMove = (e) => {
-      if (isScrolling) {
-        // Prevent page scroll only if we're scrolling the container
-        e.stopPropagation();
-      }
-    };
-
-    const handleTouchEnd = () => {
-      isScrolling = false;
-    };
-
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-    return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, []);
-
   return (
     <div style={{
       background: actualTheme === 'dark' 
@@ -112,63 +78,6 @@ const WelcomeWidget = ({
       boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
       position: 'relative'
     }}>
-      {/* Grid/List Toggle - Top Right */}
-      {currentPage === 'library' && onViewModeChange && (
-        <div style={{
-          position: 'absolute',
-          top: '24px',
-          right: '32px',
-          display: 'flex',
-          gap: '0',
-          background: 'rgba(255, 255, 255, 0.2)',
-          borderRadius: '8px',
-          padding: '2px'
-        }}>
-          <button
-            onClick={() => onViewModeChange('grid')}
-            style={{
-              padding: '8px 16px',
-              background: viewMode === 'grid' ? 'rgba(255, 255, 255, 0.3)' : 'transparent',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-            title="Grid view"
-          >
-            <span>⊞</span>
-            Grid
-          </button>
-          <button
-            onClick={() => onViewModeChange('list')}
-            style={{
-              padding: '8px 16px',
-              background: viewMode === 'list' ? 'rgba(255, 255, 255, 0.3)' : 'transparent',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-            title="List view"
-          >
-            <span>☰</span>
-            List
-          </button>
-        </div>
-      )}
-      
       {/* Header Section */}
       <div style={{ marginBottom: '16px' }}>
         <h2 style={{
@@ -248,18 +157,21 @@ const WelcomeWidget = ({
             display: 'flex',
             justifyContent: window.innerWidth >= 1024 ? 'center' : 'flex-start',
             gap: '10px',
-            overflowX: 'scroll',
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
             overflowY: 'hidden',
             scrollBehavior: 'smooth',
             paddingBottom: '16px',
+            // Break out of parent container - THIS IS KEY for touch scrolling
+            marginLeft: window.innerWidth < 1024 ? '-24px' : '0',
+            marginRight: window.innerWidth < 1024 ? '-24px' : '0',
+            paddingLeft: window.innerWidth < 1024 ? '24px' : '0',
+            paddingRight: window.innerWidth < 1024 ? '24px' : '0',
             WebkitOverflowScrolling: 'touch',
             touchAction: 'pan-x',
             scrollbarWidth: 'thin',
             scrollbarColor: actualTheme === 'dark' ? '#94a3b8 rgba(255, 255, 255, 0.2)' : '#64748b rgba(0, 0, 0, 0.2)',
-            position: 'relative',
-            maxWidth: '100%',
-            width: '100%',
-            flexWrap: 'nowrap'
+            position: 'relative'
           }}
         >
           {navigationItems.map((item) => (
@@ -351,6 +263,10 @@ const WelcomeWidget = ({
           .welcome-nav-scrollable {
             -webkit-overflow-scrolling: touch !important;
             scroll-snap-type: x proximity;
+            overscroll-behavior-x: contain !important;
+            overscroll-behavior-y: none !important;
+            isolation: isolate;
+            cursor: default !important;
           }
 
           /* Force scrollbar to always be visible on WebKit browsers */
@@ -369,19 +285,22 @@ const WelcomeWidget = ({
             background-color: ${actualTheme === 'dark' ? '#cbd5e1' : '#475569'} !important;
             border-radius: 7px;
             border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer !important;
           }
 
           .welcome-nav-scrollable::-webkit-scrollbar-thumb:hover {
             background-color: ${actualTheme === 'dark' ? '#e2e8f0' : '#334155'} !important;
           }
 
-          .welcome-nav-scrollable::-webkit-scrollbar-thumb:active {
+          .welcome-nav-scrollbar::-webkit-scrollbar-thumb:active {
             background-color: ${actualTheme === 'dark' ? '#f1f5f9' : '#1e293b'} !important;
           }
 
           /* Ensure buttons inside nav don't expand */
           .welcome-nav-scrollable button {
             flex-shrink: 0 !important;
+            pointer-events: auto !important;
+            cursor: pointer !important;
           }
         `}</style>
       </div>

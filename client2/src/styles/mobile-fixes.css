@@ -131,17 +131,19 @@ pre {
    CONTAINER & WRAPPER FIXES
    ================================================ */
 
-/* Constrain all containers (except login container) */
+/* Constrain all containers (except login container, simple-scroll-container, and navigation-container) */
 .container:not(.login-container),
 .Container:not(.login-container),
-[class*="container"]:not(.simple-scroll-container):not([class*="login"]):not(.login-container),
+[class*="container"]:not(.simple-scroll-container):not(.navigation-container):not(.welcome-nav-scrollable):not([class*="login"]):not(.login-container),
 [class*="Container"]:not([class*="login"]):not(.login-container) {
   max-width: 100vw !important;
   overflow-x: hidden !important;
 }
 
 /* Exception: Allow horizontal scroll for designated scroll containers */
-.simple-scroll-container {
+.simple-scroll-container,
+.navigation-container,
+.welcome-nav-scrollable {
   overflow-x: auto !important;
   max-width: none !important;
 }
