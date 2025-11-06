@@ -5,7 +5,7 @@ export default {
   testTimeout: 10000,
   verbose: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/server.js',
