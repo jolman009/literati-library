@@ -7,6 +7,7 @@ import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates'
 import API from '../config/api';
 import '../components/EnhancedBookCard.css';
 import { useSnackbar } from '../components/Material3';
+import { exportBooksToCSV, getFilterName, EXPORT_TEMPLATES } from '../utils/csvExport';
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
@@ -364,6 +365,63 @@ const LibraryPage = () => {
     }
   };
 
+  // Export selected books to CSV
+  const handleExportSelected = () => {
+    if (!Array.isArray(selectedBooks) || selectedBooks.length === 0) {
+      showSnackbar({ message: 'No books selected', variant: 'warning' });
+      return;
+    }
+
+    try {
+      const booksToExport = books.filter(b => selectedBooks.includes(b.id));
+      const filterName = getFilterName(filter);
+      const result = exportBooksToCSV(booksToExport, {
+        template: 'spreadsheet', // Reading Tracker format
+        filename: `shelfquest-selected-${filterName}-${new Date().toISOString().split('T')[0]}.csv`
+      });
+
+      showSnackbar({
+        message: `✅ Exported ${result.count} book${result.count !== 1 ? 's' : ''} - ${EXPORT_TEMPLATES[result.template].name} format`,
+        variant: 'success',
+        duration: 4000
+      });
+    } catch (error) {
+      console.error('Export failed:', error);
+      showSnackbar({
+        message: error.message || 'Failed to export books',
+        variant: 'error'
+      });
+    }
+  };
+
+  // Export all filtered books to CSV
+  const handleExportAll = () => {
+    if (!filteredBooks || filteredBooks.length === 0) {
+      showSnackbar({ message: 'No books to export', variant: 'warning' });
+      return;
+    }
+
+    try {
+      const filterName = getFilterName(filter);
+      const result = exportBooksToCSV(filteredBooks, {
+        template: 'spreadsheet', // Reading Tracker format with all essential columns
+        filename: `shelfquest-${filterName}-${new Date().toISOString().split('T')[0]}.csv`
+      });
+
+      showSnackbar({
+        message: `✅ Exported ${result.count} book${result.count !== 1 ? 's' : ''} - ${EXPORT_TEMPLATES[result.template].name} format`,
+        variant: 'success',
+        duration: 4000
+      });
+    } catch (error) {
+      console.error('Export failed:', error);
+      showSnackbar({
+        message: error.message || 'Failed to export books',
+        variant: 'error'
+      });
+    }
+  };
+
   const handleDragDrop = (e) => {
     e.preventDefault();
     // TODO: Implement drag and drop functionality
@@ -630,7 +688,7 @@ const LibraryPage = () => {
               </div>
             ) : useVirtualization ? (
               <>
-              <div className="md3-notes-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '12px 0' }}>
+              <div className="md3-notes-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '12px 0', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span className="md-body-small">Selected: {selectedBooks.length}</span>
                   {selectedBooks.length > 0 && (
@@ -639,15 +697,41 @@ const LibraryPage = () => {
                     </button>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {/* Export All Button - Always visible */}
                   <button
-                    className="md3-button md3-button--filled"
-                    disabled={selectedBooks.length === 0}
-                    onClick={() => setConfirmDeleteBulk(true)}
-                    style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }}
+                    className="md3-button md3-button--outlined"
+                    onClick={handleExportAll}
+                    disabled={filteredBooks.length === 0}
+                    title={`Export all ${filteredBooks.length} ${filter === 'all' ? 'books' : filter + ' books'} to CSV`}
                   >
-                    Delete Selected
+                    <span className="material-symbols-outlined">download</span>
+                    Export All ({filteredBooks.length})
                   </button>
+
+                  {/* Export Selected Button - Only when books are selected */}
+                  {selectedBooks.length > 0 && (
+                    <button
+                      className="md3-button md3-button--filled"
+                      onClick={handleExportSelected}
+                      style={{ background: 'var(--md-sys-color-tertiary)', color: 'var(--md-sys-color-on-tertiary)' }}
+                    >
+                      <span className="material-symbols-outlined">file_download</span>
+                      Export Selected ({selectedBooks.length})
+                    </button>
+                  )}
+
+                  {/* Delete Selected Button */}
+                  {selectedBooks.length > 0 && (
+                    <button
+                      className="md3-button md3-button--filled"
+                      onClick={() => setConfirmDeleteBulk(true)}
+                      style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }}
+                    >
+                      <span className="material-symbols-outlined">delete</span>
+                      Delete Selected
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="md3-virtualized-container" style={{ height: '600px' }}>
@@ -688,6 +772,28 @@ const LibraryPage = () => {
               </div>
               </>
             ) : (
+              <>
+              {/* Toolbar for non-virtualized view */}
+              <div className="md3-notes-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, margin: '12px 0', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className="md-body-small">
+                    Showing {filteredBooks.length} book{filteredBooks.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {/* Export All Button */}
+                  <button
+                    className="md3-button md3-button--outlined"
+                    onClick={handleExportAll}
+                    disabled={filteredBooks.length === 0}
+                    title={`Export all ${filteredBooks.length} ${filter === 'all' ? 'books' : filter + ' books'} to CSV`}
+                  >
+                    <span className="material-symbols-outlined">download</span>
+                    Export to CSV
+                  </button>
+                </div>
+              </div>
+
               <div className={`md3-books-container ${viewMode}`}>
                 {filteredBooks.map(book => (
                   <div 
@@ -1018,6 +1124,7 @@ const LibraryPage = () => {
                   </div>
                 ))}
               </div>
+              </>
             )}
           </>
         )}
