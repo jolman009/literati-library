@@ -1,4 +1,4 @@
-<#!
+<#!>
 .SYNOPSIS
   ShelfQuest readiness script: runs tests, builds preview, executes Lighthouse, and aggregates artifacts.
 

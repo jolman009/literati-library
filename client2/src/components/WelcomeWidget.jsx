@@ -99,7 +99,7 @@ const WelcomeWidget = ({
           <div style={{
             textAlign: 'center',
             padding: '12px',
-            background: 'rgba(255, 255, 255, 0.2)',
+            background: 'rgba(255, 255, 255, 0.05)',
             borderRadius: '8px'
           }}>
             <div style={{
@@ -111,7 +111,7 @@ const WelcomeWidget = ({
             </div>
             <div style={{
               fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: 'rgba(44, 125, 255, 0.8)',
               marginTop: '4px'
             }}>
               Books
@@ -155,8 +155,8 @@ const WelcomeWidget = ({
           className="navigation-container welcome-nav-scrollable"
           style={{
             display: 'flex',
-            justifyContent: window.innerWidth >= 1024 ? 'center' : 'flex-start',
-            gap: '10px',
+            justifyContent: window.innerWidth >= 1040 ? 'center' : 'flex-start',
+            gap: '30px',
             flexWrap: 'nowrap',
             overflowX: 'auto',
             overflowY: 'hidden',
