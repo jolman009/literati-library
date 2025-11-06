@@ -3,7 +3,7 @@
 .md3-notes-page {
   min-height: 100vh;
   padding: 0;
-  background: var(--md-sys-color-background);
+
   color: var(--md-sys-color-on-background);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -11,15 +11,15 @@
 .md3-notes-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 15px 75px 5px 75px;
 }
 
 /* Enhanced Header */
 .md3-notes-header {
-  background: var(--md-sys-color-primary) !important;
+  background: var(--md-sys-color-background) !important;
   color: var(--md-sys-color-on-primary);
   border-radius: 16px !important;
-  box-shadow: 0 8px 32px rgba(36, 168, 224, 0.3) !important;
+  box-shadow: 0 8px 16px rgba(36, 168, 224, 0.2) !important;
 }
 
 .md3-notes-header-content {
@@ -121,7 +121,7 @@ div.md3-text-field.md3-notes-search {
   margin: 0 0 12px 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--md-sys-color-on-surface);
+  color: #000000 !important;
   line-height: 1.3;
 }
 
