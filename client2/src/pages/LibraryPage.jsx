@@ -715,7 +715,7 @@ const LibraryPage = () => {
                         padding: '6px 32px 6px 12px',
                         borderRadius: '8px',
                         border: '1px solid var(--md-sys-color-outline)',
-                        background: 'var(--md-sys-color-surface-container-low)',
+                        background: 'green',
                         color: 'var(--md-sys-color-on-surface)',
                         fontSize: '13px',
                         fontWeight: '500',
@@ -1220,8 +1220,9 @@ const LibraryPage = () => {
     style={{
       position: 'relative',
       transition: 'transform 0.3s ease',
-      transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)'
-    }}
+      transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)',
+      background: `var(--md-sys-color-surface)`,
+        }}
     >
     {/* Pull-to-Refresh Indicator */}
     {(isPulling || isRefreshing) && (
@@ -1237,8 +1238,8 @@ const LibraryPage = () => {
         gap: '8px',
         padding: '12px 24px',
         background: actualTheme === 'dark'
-          ? 'rgba(30, 41, 59, 0.95)'
-          : 'rgba(255, 255, 255, 0.95)',
+          ? 'rgba(30, 41, 59, 0.9)'
+          : 'rgba(0, 0, 0, 0.95)',
         backdropFilter: 'blur(8px)',
         borderRadius: '0 0 16px 16px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',

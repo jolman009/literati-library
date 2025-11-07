@@ -136,7 +136,7 @@
    ============================================================================ */
 
 .welcome-header {
-  border-radius: 16px;
+  border-radius: 56px;
   padding: 24px 32px;
   color: white;
   position: relative;
@@ -179,7 +179,7 @@
 
 /* Level Progress in Welcome */
 .level-progress-bar {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   height: 8px;
   overflow: hidden;

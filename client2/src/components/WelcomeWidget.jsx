@@ -70,7 +70,7 @@ const WelcomeWidget = ({
     <div style={{
       background: actualTheme === 'dark' 
         ? 'linear-gradient(135deg, #1e3a8a, #312e81)'
-        : 'linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end))',
+        : 'var(--brand-secondary)',
       borderRadius: '16px',
       padding: '24px 32px',
       color: 'white',
@@ -99,7 +99,7 @@ const WelcomeWidget = ({
           <div style={{
             textAlign: 'center',
             padding: '12px',
-            background: 'rgba(255, 255, 255, 0.05)',
+            background: 'rgba(255, 255, 255, 0.)',
             borderRadius: '8px'
           }}>
             <div style={{
@@ -111,7 +111,7 @@ const WelcomeWidget = ({
             </div>
             <div style={{
               fontSize: '12px',
-              color: 'rgba(44, 125, 255, 0.8)',
+              color: 'rgba(44, 125, 255, 0.9)',
               marginTop: '4px'
             }}>
               Books
@@ -189,7 +189,7 @@ const WelcomeWidget = ({
                 padding: window.innerWidth >= 768 ? '6px 4px' : '6px 8px',
                 border: `1px solid rgba(255, 255, 255, 0.3)`,
                 background: activeNavItem === item.id
-                  ? 'rgba(255, 255, 255, 0.3)'
+                  ? 'rgba(255, 255, 255, 0.)'
                   : 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '10px',
                 cursor: 'pointer',
