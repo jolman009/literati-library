@@ -4,7 +4,7 @@
   padding: 0px 24px 24px 24px; /* Top padding handled by AppLayout.page-content */
   max-width: 1200px;
   margin: 30px auto 10 auto; /* Add top margin to clear navigation header */
-  background: var(--md-sys-color-surface);
+
   min-height: calc(100vh - 128px);
   color: var(--md-sys-color-on-background);
   position: relative;
@@ -539,13 +539,13 @@
 
 @keyframes mainBookHighlight {
   0%, 100% { 
-    background: var(--md-sys-color-surface-container);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: var(--md-sys-color-surface);
+    box-shadow: 0 4px 12px rgba(160, 85, 15, 0.9);
     transform: translateY(0);
   }
-  50% { 
+  90% { 
     background: var(--md-sys-color-primary-container);
-    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.4);
+    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.9);
     transform: translateY(-4px) scale(1.02);
   }
 }
@@ -610,7 +610,7 @@
 .md3-book-placeholder {
   width: 100%;
   height: 100%;
-  background: rgba(245, 40, 145, 0.8);
+  background: rgba(30, 58, 138, 0.91);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -623,7 +623,7 @@
 }
 
 .md3-library-page.dark .md3-book-placeholder {
-  background: #334155;
+  background: rgba(30, 58, 138, 0.8);
   color: #94a3b8;
 }
 
@@ -745,6 +745,7 @@
   transition: all 0.2s;
   z-index: 50;
 }
+
 
 .md3-fab:hover {
   transform: scale(1.05);
