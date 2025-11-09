@@ -1210,20 +1210,23 @@ const LibraryPage = () => {
   };
 
   return (
-   <div
-    className={`md3-library-page actual-theme-${actualTheme}`}
-   onDrop={handleDragDrop}
-   onDragOver={handleDragOver}
-    onTouchStart={handleTouchStart}
-    onTouchMove={handleTouchMove}
-    onTouchEnd={handleTouchEnd}
-    style={{
-      position: 'relative',
-      transition: 'transform 0.3s ease',
-      transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)',
-      background: `var(--md-sys-color-surface)`,
-        }}
+    <div
+      className={`md3-library-page actual-theme-${actualTheme}`}
+      onDrop={handleDragDrop}
+      onDragOver={handleDragOver}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{
+        position: 'relative',
+        transition: 'transform 0.3s ease',
+        transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)',
+        background: 'var(--md-sys-color-surface)',
+        marginTop: '10px',
+        padding: '30px 40px 0 60px'
+      }}
     >
+
     {/* Pull-to-Refresh Indicator */}
     {(isPulling || isRefreshing) && (
       <div style={{
