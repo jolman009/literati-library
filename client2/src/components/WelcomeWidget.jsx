@@ -94,18 +94,18 @@ const WelcomeWidget = ({
           display: 'grid', 
           gridTemplateColumns: 'repeat(2, 1fr)', 
           gap: '16px',
-          marginTop: '16px'
+          marginTop: '16px',
         }}>
           <div style={{
             textAlign: 'center',
             padding: '12px',
-            background: 'rgba(255, 255, 255, 0.)',
-            borderRadius: '8px'
+            background: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
           }}>
             <div style={{
               fontSize: '20px',
               fontWeight: 'bold',
-              color: 'white'
+              color: 'red',
             }}>
               {totalBooks}
             </div>

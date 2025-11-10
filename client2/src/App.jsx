@@ -45,16 +45,17 @@ import './styles/accessibility.css'; // WCAG AA compliance styles
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { EntitlementsProvider } from './contexts/EntitlementsContext';
-import { GamificationProvider } from './contexts/GamificationContext';
 import './styles/dashboard-dark-mode-fix.css';
 
 // Material3 imports - Direct imports from Material3 barrel
 import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Material3';
 
 import AppLayout from './components/AppLayout';
-import { ReadingSessionProvider } from './contexts/ReadingSessionContext';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
 import GamificationOnboarding from './components/gamification/GamificationOnboarding';
+
+// Smart conditional provider loading
+import ConditionalProviders from './components/providers/ConditionalProviders';
 import CookieConsent from './components/legal/CookieConsent';
 import NoteSyncListener from './components/NoteSyncListener';
 import PremiumModal from './components/premium/PremiumModal';
@@ -342,8 +343,8 @@ const App = () => {
         <AuthProvider>
           <EntitlementsProvider>
             <Material3ThemeProvider defaultTheme="auto">
-              <GamificationProvider>
-                <ReadingSessionProvider>
+              {/* ConditionalProviders only loads gamification/sessions when authenticated */}
+              <ConditionalProviders>
                 <NetworkStatus isOnline={isOnline} isReconnecting={isReconnecting} />
                 <NoteSyncListener />
                 <AppRoutes />
@@ -361,8 +362,7 @@ const App = () => {
 
                 {/* Sentry Test Button (Development Only) */}
                 {/* <SentryTestButton /> */}
-              </ReadingSessionProvider>
-            </GamificationProvider>
+              </ConditionalProviders>
             </Material3ThemeProvider>
           </EntitlementsProvider>
         </AuthProvider>
