@@ -195,7 +195,7 @@ const WelcomeWidget = ({
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 position: 'relative',
-                color: 'white',
+                color: actualTheme === 'dark' ? 'white' : '#000000',
                 flexShrink: 0
               }}
               onMouseEnter={(e) => {
