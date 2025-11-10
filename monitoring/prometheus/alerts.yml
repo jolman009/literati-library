@@ -1,0 +1,247 @@
+# Prometheus Alert Rules for ShelfQuest
+# Production-ready alerting for critical issues
+
+groups:
+  # Application Health Alerts
+  - name: application_health
+    interval: 30s
+    rules:
+      # Service Down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} has been down for more than 2 minutes."
+
+      # High Error Rate
+      - alert: HighErrorRate
+        expr: (rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])) * 100 > 1
+        for: 5m
+        labels:
+          severity: critical
+          category: errors
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "Error rate is {{ $value | humanize }}% on {{ $labels.service }}"
+
+      # API Response Time Too High
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 10m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High API latency on {{ $labels.service }}"
+          description: "P95 latency is {{ $value | humanize }}s on {{ $labels.service }}"
+
+      # Very High API Latency
+      - alert: VeryHighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: critical
+          category: performance
+        annotations:
+          summary: "Very high API latency on {{ $labels.service }}"
+          description: "P95 latency is {{ $value | humanize }}s on {{ $labels.service }}"
+
+  # System Resource Alerts
+  - name: system_resources
+    interval: 30s
+    rules:
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          category: resources
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanize }}% on {{ $labels.instance }}"
+
+      # Critical CPU Usage
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: critical
+          category: resources
+        annotations:
+          summary: "Critical CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanize }}% on {{ $labels.instance }}"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          category: resources
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanize }}% on {{ $labels.instance }}"
+
+      # Critical Memory Usage
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 95
+        for: 5m
+        labels:
+          severity: critical
+          category: resources
+        annotations:
+          summary: "Critical memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value | humanize }}% on {{ $labels.instance }}"
+
+      # Low Disk Space
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 20
+        for: 5m
+        labels:
+          severity: warning
+          category: resources
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Only {{ $value | humanize }}% disk space available on {{ $labels.instance }}"
+
+      # Critical Disk Space
+      - alert: CriticalDiskSpace
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 2m
+        labels:
+          severity: critical
+          category: resources
+        annotations:
+          summary: "Critical disk space on {{ $labels.instance }}"
+          description: "Only {{ $value | humanize }}% disk space available on {{ $labels.instance }}"
+
+  # Database Alerts
+  - name: database
+    interval: 30s
+    rules:
+      # High Database Connections
+      - alert: HighDatabaseConnections
+        expr: database_connections_active / database_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "High database connection usage"
+          description: "Database connections at {{ $value | humanizePercentage }} of maximum"
+
+      # Slow Database Queries
+      - alert: SlowDatabaseQueries
+        expr: database_query_duration_seconds{quantile="0.95"} > 1
+        for: 10m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "P95 query time is {{ $value | humanize }}s"
+
+  # Security Alerts
+  - name: security
+    interval: 30s
+    rules:
+      # High Failed Login Rate
+      - alert: HighFailedLoginRate
+        expr: rate(failed_login_attempts_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High failed login rate detected"
+          description: "{{ $value | humanize }} failed login attempts per second"
+
+      # Brute Force Attack Detected
+      - alert: BruteForceAttack
+        expr: rate(failed_login_attempts_total[1m]) > 20
+        for: 2m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Potential brute force attack detected"
+          description: "{{ $value | humanize }} failed login attempts per second"
+
+      # High Rate Limit Violations
+      - alert: HighRateLimitViolations
+        expr: rate(rate_limit_violations_total[5m]) > 50
+        for: 5m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of rate limit violations"
+          description: "{{ $value | humanize }} rate limit violations per second"
+
+      # Security Events Spike
+      - alert: SecurityEventsSpike
+        expr: rate(security_events_total{severity="high"}[5m]) > 5
+        for: 3m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Spike in high-severity security events"
+          description: "{{ $value | humanize }} high-severity security events per second"
+
+  # Business Metrics Alerts
+  - name: business_metrics
+    interval: 1m
+    rules:
+      # Low User Signups
+      - alert: LowUserSignups
+        expr: rate(user_signups_total[1h]) < 1
+        for: 2h
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "User signup rate is low"
+          description: "Only {{ $value | humanize }} signups per hour in the last 2 hours"
+
+      # Dropping Active Users
+      - alert: DroppingActiveUsers
+        expr: (active_users_total - active_users_total offset 1h) / active_users_total offset 1h < -0.2
+        for: 15m
+        labels:
+          severity: warning
+          category: business
+        annotations:
+          summary: "Active user count dropping"
+          description: "Active users dropped by {{ $value | humanizePercentage }} in the last hour"
+
+  # Container Health
+  - name: container_health
+    interval: 30s
+    rules:
+      # Container Restarting
+      - alert: ContainerRestarting
+        expr: rate(container_last_seen[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: containers
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting"
+          description: "Container {{ $labels.name }} has restarted {{ $value }} times in the last 5 minutes"
+
+      # High Container Memory Usage
+      - alert: HighContainerMemory
+        expr: (container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          category: containers
+        annotations:
+          summary: "Container {{ $labels.name }} high memory usage"
+          description: "Container memory usage is {{ $value | humanize }}%"
