@@ -12,17 +12,17 @@
 .md3-footer-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 24px 24px;
+  padding: 32px 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
 }
 
 /* Brand Section */
 .md3-footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .md3-footer-logo-container {
@@ -61,13 +61,13 @@
 .md3-footer-links {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+  gap: 24px;
 }
 
 .md3-footer-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .md3-footer-column-title {
@@ -83,7 +83,7 @@
 .md3-footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .md3-footer-link {
@@ -135,14 +135,14 @@
 
 /* Bottom Bar */
 .md3-footer-bottom {
-  padding-top: 24px;
+  padding-top: 16px;
   border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .md3-footer-bottom-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   text-align: center;
 }
@@ -192,23 +192,109 @@
   }
 }
 
-@media (max-width: 767px) {
+/* Tablet: 2 columns */
+@media (min-width: 481px) and (max-width: 768px) {
   .md3-footer-container {
-    padding: 32px 16px 16px;
-    gap: 32px;
+    padding: 24px 20px 16px;
+    gap: 20px;
+  }
+
+  /* Add bottom padding to footer to account for fixed mobile navigation bar */
+  .md3-footer {
+    padding-bottom: 80px; /* Space for mobile nav bar */
   }
 
   .md3-footer-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
+    gap: 20px;
   }
 
   .md3-footer-column {
-    gap: 12px;
+    gap: 8px;
   }
 
   .md3-footer-nav {
+    gap: 6px;
+  }
+
+  .md3-footer-meta {
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Mobile: Minimal compact footer */
+@media (max-width: 480px) {
+  .md3-footer-container {
+    padding: 16px 16px 12px;
+    gap: 12px;
+  }
+
+  /* Add bottom padding to footer to account for fixed mobile navigation bar */
+  .md3-footer {
+    padding-bottom: 80px; /* Space for mobile nav bar */
+  }
+
+  /* Hide brand section on mobile to save space */
+  .md3-footer-brand {
+    display: none;
+  }
+
+  /* Make links inline instead of stacked columns */
+  .md3-footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .md3-footer-column {
+    gap: 6px;
+  }
+
+  .md3-footer-column-title {
+    font-size: 0.813rem;
+    margin-bottom: 2px;
+  }
+
+  .md3-footer-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .md3-footer-link {
+    font-size: 0.75rem;
+    position: relative;
+  }
+
+  /* Add separator between inline links */
+  .md3-footer-link:not(:last-child)::before {
+    content: '•';
+    position: absolute;
+    right: -8px;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  /* Remove hover underline on mobile */
+  .md3-footer-link::after {
+    display: none;
+  }
+
+  /* Compact bottom bar */
+  .md3-footer-bottom {
+    padding-top: 12px;
+  }
+
+  .md3-footer-bottom-content {
     gap: 8px;
+  }
+
+  .md3-footer-copyright,
+  .md3-footer-location,
+  .md3-footer-email {
+    font-size: 0.688rem;
   }
 
   .md3-footer-meta {
@@ -218,15 +304,6 @@
 
   .md3-footer-separator {
     display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .md3-footer-container {
-    padding: 24px 16px 16px;
-  }
-  .md3-footer-links {
-    grid-template-columns: 1fr;
   }
 }
 

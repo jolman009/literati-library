@@ -696,7 +696,7 @@
   .page-content {
     padding: 16px;
     padding-top: 16px;
-    padding-bottom: 120px; /* Space for FAB + navigation */
+    padding-bottom: 16px; /* Reduced to match other sides */
     min-height: calc(100vh - 64px - 80px);
   }
 
@@ -714,7 +714,7 @@
 
   .content-area {
     margin: 0;
-    margin-bottom: 80px;
+    /* Removed margin-bottom to eliminate gap before footer on mobile */
   }
 
   /* Show mobile-only elements on mobile screens */
@@ -821,7 +821,7 @@
 @media (max-width: 480px) {
   .page-content {
     padding: 12px;
-    padding-bottom: 120px;
+    padding-bottom: 12px;
   }
 
   /* Navigation FAB positioning is now handled in NavigationFAB.css */
