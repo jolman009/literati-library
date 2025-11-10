@@ -141,7 +141,7 @@ const Login = () => {
               )}
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="login-form">
+              <form onSubmit={handleSubmit} className="login-form" data-testid="login-form">
                 {isSignUp && (
                   <div className="login-field">
                     <TextField
@@ -153,6 +153,7 @@ const Login = () => {
                       required
                       disabled={isLoading}
                       className="w-full"
+                      data-testid="name-input"
                     />
                   </div>
                 )}
@@ -167,6 +168,7 @@ const Login = () => {
                     required
                     disabled={isLoading}
                     className="w-full"
+                    data-testid="email-input"
                   />
                 </div>
 
@@ -180,6 +182,7 @@ const Login = () => {
                     required
                     disabled={isLoading}
                     className="w-full"
+                    data-testid="password-input"
                   />
                 </div>
 
@@ -194,6 +197,7 @@ const Login = () => {
                       required
                       disabled={isLoading}
                       className="w-full"
+                      data-testid="confirm-password-input"
                     />
                   </div>
                 )}
@@ -204,6 +208,7 @@ const Login = () => {
                   variant="filled"
                   className="login-button-primary"
                   disabled={isLoading}
+                  data-testid="login-button"
                 >
                   {isLoading
                     ? (
@@ -234,6 +239,7 @@ const Login = () => {
                   className="secondary-button"
                   onClick={toggleMode}
                   disabled={isLoading}
+                  data-testid="toggle-auth-mode"
                 >
                   {isSignUp
                     ? 'Already have an account? Sign In'

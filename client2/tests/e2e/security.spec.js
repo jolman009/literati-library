@@ -610,7 +610,7 @@ test.describe('Security Testing', () => {
 
           // Should not expose stack traces, file paths, or internal details
           expect(errorText).not.toMatch(/at .+:\d+:\d+/)  // Stack traces
-          expect(errorText).not.toMatch(/\/[A-Za-z]:.*\\//) // File paths
+          expect(errorText).not.toMatch(/[A-Za-z]:\\/) // File paths (Windows)
           expect(errorText).not.toMatch(/database.*error/i) // Database errors
           expect(errorText).not.toMatch(/internal.*server/i) // Internal details
         }

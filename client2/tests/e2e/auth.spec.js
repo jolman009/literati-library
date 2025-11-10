@@ -1,8 +1,9 @@
-import { test, expect } from './fixtures.js'
+import { test, expect, handleOverlays } from './fixtures.js'
 
 test.describe('Authentication Flow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
+    await handleOverlays(page)
   })
 
   test('should display landing page for unauthenticated users', async ({ page }) => {

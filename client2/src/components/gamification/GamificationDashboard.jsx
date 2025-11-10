@@ -9,7 +9,7 @@ const AchievementNotification = ({ achievement, onDismiss }) => {
   if (!achievement) return null;
 
   return (
-    <div 
+    <div
       style={{
         position: 'fixed',
         top: '20px',
@@ -23,15 +23,16 @@ const AchievementNotification = ({ achievement, onDismiss }) => {
         minWidth: '300px',
         animation: 'slideInRight 0.5s ease'
       }}
+      data-testid="achievement-notification"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>🎉 Achievement Unlocked!</h3>
-        <button 
+        <button
           onClick={onDismiss}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            color: 'white', 
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'white',
             cursor: 'pointer',
             fontSize: '20px',
             padding: '0',
@@ -41,6 +42,7 @@ const AchievementNotification = ({ achievement, onDismiss }) => {
             alignItems: 'center',
             justifyContent: 'center'
           }}
+          data-testid="achievement-dismiss-button"
         >
           ✕
         </button>
@@ -77,7 +79,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
     : 100;
 
   return (
-    <MD3Card className="level-progress-card">
+    <MD3Card className="level-progress-card" data-testid="level-progress-card">
       <div style={{ textAlign: 'center', marginBottom: '16px' }}>
         <div style={{ 
           fontSize: '48px', 
@@ -199,19 +201,19 @@ const StatsGrid = ({ stats }) => {
       gap: '16px'
     }}>
       {statItems.map((item, index) => (
-        <MD3Card key={index} className="stat-item-card">
+        <MD3Card key={index} className="stat-item-card" data-testid={`stat-${item.label.toLowerCase().replace(/\s+/g, '-')}`}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '24px', marginBottom: '8px' }}>{item.icon}</div>
-            <div style={{ 
-              fontSize: '24px', 
-              fontWeight: 'bold', 
+            <div style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
               marginBottom: '4px',
               color: item.color
             }}>
               {item.value}
             </div>
-            <div style={{ 
-              fontSize: '12px', 
+            <div style={{
+              fontSize: '12px',
               color: 'rgb(var(--md-sys-color-on-surface-variant))',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
@@ -253,7 +255,7 @@ const GoalsSection = ({ goals }) => {
         const isCompleted = goal.current >= goal.target;
         
         return (
-          <MD3Card key={index} className="goal-card">
+          <MD3Card key={index} className="goal-card" data-testid="goal-card">
             <div style={{ marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                 <h4 style={{ 

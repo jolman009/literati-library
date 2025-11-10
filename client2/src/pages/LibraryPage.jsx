@@ -620,44 +620,50 @@ const LibraryPage = () => {
         {currentPage === 'library' && (
           <div className="md3-library-controls">
             <div className="md3-filter-chips">
-              <button 
+              <button
                 className={`md3-filter-chip ${filter === 'all' ? 'selected' : ''}`}
                 onClick={() => setFilter('all')}
+                data-testid="filter-all"
               >
                 All Books ({totalCount})
               </button>
-              <button 
+              <button
                 className={`md3-filter-chip ${filter === 'reading' ? 'selected' : ''}`}
                 onClick={() => setFilter('reading')}
+                data-testid="filter-reading"
               >
                 Currently Reading ({books.filter(b => b.is_reading && !b.completed).length})
               </button>
-              <button 
+              <button
                 className={`md3-filter-chip ${filter === 'completed' ? 'selected' : ''}`}
                 onClick={() => setFilter('completed')}
+                data-testid="filter-completed"
               >
                 Completed ({books.filter(b => b.completed).length})
               </button>
-              <button 
+              <button
                 className={`md3-filter-chip ${filter === 'unread' ? 'selected' : ''}`}
                 onClick={() => setFilter('unread')}
+                data-testid="filter-unread"
               >
                 Unread ({books.filter(b => !b.is_reading && !b.completed).length})
               </button>
             </div>
 
             <div className="md3-view-controls">
-              <button 
+              <button
                 className={`md3-icon-button ${viewMode === 'grid' ? 'selected' : ''}`}
                 onClick={() => setViewMode('grid')}
                 title="Grid view"
+                data-testid="view-grid"
               >
                 <span className="material-symbols-outlined">grid_view</span>
               </button>
-              <button 
+              <button
                 className={`md3-icon-button ${viewMode === 'list' ? 'selected' : ''}`}
                 onClick={() => setViewMode('list')}
                 title="List view"
+                data-testid="view-list"
               >
                 <span className="material-symbols-outlined">view_list</span>
               </button>
@@ -680,9 +686,10 @@ const LibraryPage = () => {
                   }
                 </p>
                 {filter === 'all' && (
-                  <button 
+                  <button
                     className="md3-button md3-button-filled"
                     onClick={() => navigate('/upload')}
+                    data-testid="upload-first-book-button"
                   >
                     <span className="material-symbols-outlined">upload</span>
                     Upload Your First Book
@@ -744,6 +751,7 @@ const LibraryPage = () => {
                     onClick={handleExportAll}
                     disabled={filteredBooks.length === 0}
                     title={`Export all ${filteredBooks.length} ${filter === 'all' ? 'books' : filter + ' books'} to CSV`}
+                    data-testid="export-all-button"
                   >
                     <span className="material-symbols-outlined">download</span>
                     Export All ({filteredBooks.length})
@@ -755,6 +763,7 @@ const LibraryPage = () => {
                       className="md3-button md3-button--filled"
                       onClick={handleExportSelected}
                       style={{ background: 'var(--md-sys-color-tertiary)', color: 'var(--md-sys-color-on-tertiary)' }}
+                      data-testid="export-selected-button"
                     >
                       <span className="material-symbols-outlined">file_download</span>
                       Export Selected ({selectedBooks.length})
@@ -767,6 +776,7 @@ const LibraryPage = () => {
                       className="md3-button md3-button--filled"
                       onClick={() => setConfirmDeleteBulk(true)}
                       style={{ background: 'var(--md-sys-color-error)', color: 'var(--md-sys-color-on-error)' }}
+                      data-testid="delete-selected-button"
                     >
                       <span className="material-symbols-outlined">delete</span>
                       Delete Selected

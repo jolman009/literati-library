@@ -46,7 +46,7 @@ const NewLandingPage = () => {
   return (
     <div className="new-landing-container">
       {/* Hero Section - Compact & Creative */}
-      <section className={`hero-compact ${isVisible ? 'fade-in' : ''}`}>
+      <section className={`hero-compact ${isVisible ? 'fade-in' : ''}`} data-testid="landing-hero">
         <div className="hero-content">
           {/* Logo with Animation */}
           <div className="logo-display">
@@ -76,6 +76,7 @@ const NewLandingPage = () => {
             <button
               className="md3-button md3-button-filled"
               onClick={() => navigate('/signup')}
+              data-testid="register-link"
             >
               <span className="material-symbols-outlined">rocket_launch</span>
               Sign Up
@@ -83,6 +84,7 @@ const NewLandingPage = () => {
             <button
               className="md3-button md3-button-outlined"
               onClick={() => navigate('/login')}
+              data-testid="login-link"
             >
               <span className="material-symbols-outlined">login</span>
               Sign In
@@ -150,6 +152,7 @@ const NewLandingPage = () => {
           <button
             className="md3-button md3-button-filled md3-button-large"
             onClick={() => navigate('/signup')}
+            data-testid="get-started-button"
           >
             Create Free Account
             <span className="material-symbols-outlined">arrow_forward</span>

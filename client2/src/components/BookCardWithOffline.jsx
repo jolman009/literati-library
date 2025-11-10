@@ -98,6 +98,8 @@ const BookCardWithOffline = ({ book }) => {
     <div
       className="relative bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-xl transition-all group"
       onClick={handleOpenBook}
+      data-testid="book-card"
+      data-book-id={book.id}
     >
       {/* Book Cover */}
       <div className="relative aspect-[2/3] bg-gray-200 dark:bg-gray-700">
@@ -147,6 +149,7 @@ const BookCardWithOffline = ({ book }) => {
               onClick={() => setShowMenu(!showMenu)}
               className="bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:scale-110 transition-transform"
               title={isCached ? 'Offline options' : 'Download for offline'}
+              data-testid="book-offline-menu-button"
             >
               {isCached ? (
                 <Check className="w-4 h-4 text-green-600" />
@@ -163,6 +166,7 @@ const BookCardWithOffline = ({ book }) => {
                     onClick={handleDownload}
                     disabled={downloading}
                     className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 disabled:opacity-50"
+                    data-testid="book-download-button"
                   >
                     <Download className="w-4 h-4" />
                     Download for offline
@@ -175,6 +179,7 @@ const BookCardWithOffline = ({ book }) => {
                     <button
                       onClick={handleRemove}
                       className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                      data-testid="book-remove-offline-button"
                     >
                       <Trash2 className="w-4 h-4" />
                       Remove offline copy

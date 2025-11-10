@@ -7,6 +7,40 @@ export const TEST_USER = {
   name: 'E2E Test User'
 }
 
+/**
+ * Helper function to handle page overlays that block interactions
+ * Dismisses cookie consent and waits for loading screen to disappear
+ */
+export async function handleOverlays(page) {
+  try {
+    // Check if loading screen exists and wait for it to be hidden
+    const loadingElement = page.locator('#app-loading')
+    const loadingExists = await loadingElement.count().then(count => count > 0)
+
+    if (loadingExists) {
+      await loadingElement.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {
+        // Continue if already hidden or timeout
+      })
+    }
+
+    // Give the page a moment to fully render after loading screen disappears
+    await page.waitForTimeout(500)
+
+    // Dismiss cookie consent if present
+    const cookieConsent = page.locator('[data-testid="cookie-consent-accept"]')
+    const isVisible = await cookieConsent.isVisible({ timeout: 3000 }).catch(() => false)
+
+    if (isVisible) {
+      await cookieConsent.click({ timeout: 2000 })
+      // Brief wait for consent animation to complete
+      await page.waitForTimeout(500)
+    }
+  } catch (error) {
+    // Log error but don't fail the test - overlays might not be present
+    console.debug('Overlay handling:', error.message)
+  }
+}
+
 // Extend base test with custom fixtures
 export const test = base.extend({
   // Authenticated page fixture
