@@ -252,6 +252,60 @@
   color: rgb(var(--md-sys-color-error, 186 26 26));
 }
 
+/* Password Toggle Button */
+.md3-text-field__password-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
+  width: 32px;
+  height: 32px;
+  margin: 0;
+}
+
+.md3-text-field__password-toggle:hover {
+  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 8%, transparent);
+  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+}
+
+.md3-text-field__password-toggle:active {
+  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 12%, transparent);
+}
+
+.md3-text-field__password-toggle:focus-visible {
+  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline-offset: 2px;
+}
+
+/* Dark mode adjustments for password toggle */
+[data-theme="dark"] .md3-text-field__password-toggle,
+.dark .md3-text-field__password-toggle {
+  color: #b0b0b0;
+}
+
+[data-theme="dark"] .md3-text-field__password-toggle:hover,
+.dark .md3-text-field__password-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #e0e0e0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .md3-text-field__password-toggle {
+    color: #b0b0b0;
+  }
+
+  .md3-text-field__password-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
+  }
+}
+
 /* ===============================================
    SUPPORTING TEXT
    =============================================== */
