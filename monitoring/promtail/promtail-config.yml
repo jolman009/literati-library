@@ -1,0 +1,159 @@
+# Promtail Configuration for ShelfQuest
+# Log shipping to Loki
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    timeout: 10s
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+
+scrape_configs:
+  # ShelfQuest Server Logs (Node.js/Express)
+  - job_name: shelfquest-server
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: shelfquest-server
+          service: server
+          app: shelfquest
+          __path__: /server/logs/*.log
+    pipeline_stages:
+      # Parse JSON logs
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            service: service
+            userId: userId
+            method: method
+            url: url
+            statusCode: statusCode
+            duration: duration
+            error: error
+      # Extract timestamp
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      # Add labels
+      - labels:
+          level:
+          service:
+      # Template for output
+      - template:
+          source: output
+          template: '{{ .message }}'
+      - output:
+          source: output
+
+  # ShelfQuest Client Logs (React/Vite)
+  - job_name: shelfquest-client
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: shelfquest-client
+          service: client
+          app: shelfquest
+          __path__: /client/logs/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            message: message
+            component: component
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+      - labels:
+          level:
+          component:
+
+  # ShelfQuest AI Service Logs (FastAPI/Python)
+  - job_name: shelfquest-ai-service
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: shelfquest-ai-service
+          service: ai-service
+          app: shelfquest
+          __path__: /ai-service/logs/*.log
+    pipeline_stages:
+      - regex:
+          expression: '(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) - (?P<level>\w+) - (?P<message>.*)'
+      - timestamp:
+          source: timestamp
+          format: '2006-01-02 15:04:05,000'
+      - labels:
+          level:
+
+  # System Logs
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: system
+          __path__: /var/log/syslog
+    pipeline_stages:
+      - regex:
+          expression: '(?P<timestamp>\w+ \d+ \d{2}:\d{2}:\d{2}) (?P<hostname>\S+) (?P<service>\S+): (?P<message>.*)'
+      - timestamp:
+          source: timestamp
+          format: 'Jan 02 15:04:05'
+      - labels:
+          hostname:
+          service:
+
+  # Docker Container Logs
+  - job_name: docker
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: docker
+          __path__: /var/lib/docker/containers/*/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            stream: stream
+            log: log
+            time: time
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - labels:
+          stream:
+      - output:
+          source: log
+
+  # Application Logs (General)
+  - job_name: app-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: app-logs
+          app: shelfquest
+          __path__: /app/logs/*.log
+    pipeline_stages:
+      - match:
+          selector: '{job="app-logs"}'
+          stages:
+            - regex:
+                expression: '(?P<level>INFO|WARN|ERROR|DEBUG)'
+            - labels:
+                level:

@@ -1,0 +1,105 @@
+# Prometheus Configuration for ShelfQuest
+# Metrics collection and scraping configuration
+
+global:
+  scrape_interval: 15s # Scrape targets every 15 seconds
+  evaluation_interval: 15s # Evaluate rules every 15 seconds
+  scrape_timeout: 10s
+
+  external_labels:
+    cluster: 'shelfquest-production'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Load alerting rules
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Node Exporter - System metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+
+  # cAdvisor - Container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'cadvisor'
+
+  # ShelfQuest Server (Express/Node.js)
+  - job_name: 'shelfquest-server'
+    static_configs:
+      - targets: ['host.docker.internal:5000'] # Adjust port as needed
+        labels:
+          service: 'server'
+          app: 'shelfquest'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # ShelfQuest AI Service (FastAPI/Python)
+  - job_name: 'shelfquest-ai-service'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        labels:
+          service: 'ai-service'
+          app: 'shelfquest'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # ShelfQuest Client (if serving metrics)
+  - job_name: 'shelfquest-client'
+    static_configs:
+      - targets: ['host.docker.internal:5173'] # Vite dev server
+        labels:
+          service: 'client'
+          app: 'shelfquest'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 5s
+
+  # Loki metrics
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+        labels:
+          service: 'loki'
+
+  # Tempo metrics
+  - job_name: 'tempo'
+    static_configs:
+      - targets: ['tempo:3200']
+        labels:
+          service: 'tempo'
+
+  # Grafana metrics
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+        labels:
+          service: 'grafana'
+    metrics_path: '/metrics'
+
+# Remote write configuration (optional - for long-term storage)
+# remote_write:
+#   - url: https://your-remote-prometheus-endpoint/api/v1/write
+#     basic_auth:
+#       username: your-username
+#       password: your-password

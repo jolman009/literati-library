@@ -1,0 +1,16 @@
+# Grafana Dashboard Provisioning for ShelfQuest
+# Auto-load dashboards on startup
+
+apiVersion: 1
+
+providers:
+  - name: 'ShelfQuest Dashboards'
+    orgId: 1
+    folder: 'ShelfQuest'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
