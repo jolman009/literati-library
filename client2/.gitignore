@@ -7,9 +7,16 @@
 
 # testing
 /coverage
+/test-results
+/playwright-report
+/lighthouse-reports
+*.log
+junit.xml
+results.json
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store

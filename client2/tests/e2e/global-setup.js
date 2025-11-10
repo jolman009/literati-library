@@ -10,7 +10,7 @@ async function globalSetup() {
   try {
     // Wait for services to be ready
     console.log('⏳ Waiting for client to be ready...')
-    await page.goto('http://localhost:3000', { waitUntil: 'networkidle' })
+    await page.goto('http://localhost:5173', { waitUntil: 'networkidle' })
     console.log('✅ Client is ready')
 
     console.log('⏳ Waiting for server to be ready...')

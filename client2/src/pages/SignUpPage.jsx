@@ -130,7 +130,7 @@ const SignUpPage = () => {
         )}
 
         {/* Sign Up Form */}
-        <form onSubmit={handleSubmit} className="md3-signup-form">
+        <form onSubmit={handleSubmit} className="md3-signup-form" data-testid="signup-form">
           <div className="md3-form-row">
             <MD3TextField
               label="Full Name"
@@ -143,6 +143,7 @@ const SignUpPage = () => {
               required
               autoFocus
               className="md3-signup-field"
+              data-testid="name-input"
             />
           </div>
 
@@ -157,6 +158,7 @@ const SignUpPage = () => {
               disabled={isLoading}
               required
               className="md3-signup-field"
+              data-testid="email-input"
             />
           </div>
 
@@ -171,6 +173,7 @@ const SignUpPage = () => {
               disabled={isLoading}
               required
               className="md3-signup-field"
+              data-testid="password-input"
             />
           </div>
 
@@ -185,6 +188,7 @@ const SignUpPage = () => {
               disabled={isLoading}
               required
               className="md3-signup-field"
+              data-testid="confirm-password-input"
             />
           </div>
 
@@ -230,6 +234,7 @@ const SignUpPage = () => {
             variant="filled"
             disabled={isLoading}
             className="md3-signup-submit"
+            data-testid="signup-button"
           >
             {isLoading ? (
               <>
@@ -249,7 +254,7 @@ const SignUpPage = () => {
         <div className="md3-signup-footer">
           <span className="md3-signup-footer-text">
             Already have an account?{' '}
-            <Link to="/login" className="md3-link md3-link-bold">
+            <Link to="/login" className="md3-link md3-link-bold" data-testid="login-link">
               Sign in
             </Link>
           </span>

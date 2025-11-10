@@ -161,6 +161,7 @@ const CookieConsent = () => {
                   variant="outlined"
                   onClick={handleAcceptEssential}
                   className="cookie-btn-secondary"
+                  data-testid="cookie-consent-essential"
                 >
                   Essential only
                 </MD3Button>
@@ -168,6 +169,7 @@ const CookieConsent = () => {
                   variant="filled"
                   onClick={handleAcceptAll}
                   className="cookie-btn-primary"
+                  data-testid="cookie-consent-accept"
                 >
                   Accept all cookies
                 </MD3Button>
