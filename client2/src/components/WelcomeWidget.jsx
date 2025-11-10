@@ -105,13 +105,13 @@ const WelcomeWidget = ({
             <div style={{
               fontSize: '20px',
               fontWeight: 'bold',
-              color: 'red',
+              color: 'white',
             }}>
               {totalBooks}
             </div>
             <div style={{
               fontSize: '12px',
-              color: 'rgba(44, 125, 255, 0.9)',
+              color: 'white',
               marginTop: '4px'
             }}>
               Books
