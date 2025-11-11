@@ -46,6 +46,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { EntitlementsProvider } from './contexts/EntitlementsContext';
 import './styles/dashboard-dark-mode-fix.css';
+import './styles/themes.css'; // Theme system with 6 unlockable themes
+import { loadThemePreference, applyTheme, getDefaultTheme } from './utils/themeUtils';
 
 // Material3 imports - Direct imports from Material3 barrel
 import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Material3';
@@ -331,6 +333,13 @@ const App = () => {
 
   useEffect(() => {
     initWebVitals(); // ✅ keep web vitals monitoring
+
+    // Initialize theme system early (before gamification context loads)
+    const savedTheme = loadThemePreference();
+    const themeToApply = savedTheme || getDefaultTheme().id;
+    const currentMode = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(themeToApply, currentMode);
+    console.log('🎨 Early theme initialization:', themeToApply);
 
     // Initialize offline reading system
     initOfflineReading().then(result => {
