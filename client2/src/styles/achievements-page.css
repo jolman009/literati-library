@@ -77,17 +77,19 @@
 
 /* Progress Bar */
 .achievements-progress {
-  background: var(--md-sys-color-surface-container-high);
-  padding: 16px 20px;
-  border-radius: 16px;
+  background: transparent;
+  padding: 12px 0;
+  margin-bottom: 8px;
 }
 
 .progress-bar {
-  height: 12px;
+  height: 8px;
   background: var(--md-sys-color-surface-container-highest);
-  border-radius: 6px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
@@ -99,12 +101,13 @@
   );
   border-radius: 6px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .progress-text {
   text-align: center;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--md-sys-color-on-surface-variant);
 }
 
@@ -115,8 +118,8 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 24px;
+  padding-bottom: 12px;
+  margin-bottom: 32px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -155,9 +158,10 @@
 }
 
 .category-tab.active {
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
   border-color: var(--md-sys-color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .category-tab .material-symbols-outlined {
@@ -173,8 +177,31 @@
 }
 
 .category-tab.active .tab-count {
-  background: var(--md-sys-color-primary);
+  background: rgba(255, 255, 255, 0.25);
   color: var(--md-sys-color-on-primary);
+  font-weight: 700;
+}
+
+/* Mobile: Icon-only tabs */
+@media (max-width: 768px) {
+  .category-tab {
+    min-width: auto;
+    padding: 10px 12px;
+  }
+
+  /* Hide text labels, keep icons and count badges */
+  .category-tab > span:not(.material-symbols-outlined):not(.tab-count) {
+    display: none;
+  }
+
+  .category-tab .material-symbols-outlined {
+    font-size: 22px;
+  }
+
+  .tab-count {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
 }
 
 /* ==============================================
@@ -184,7 +211,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-top: 0;
+  margin-bottom: 32px;
+  padding: 16px;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 12px;
   flex-wrap: wrap;
 }
 
@@ -201,26 +232,39 @@
 }
 
 .tier-btn {
-  padding: 6px 16px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 20px;
+  border-radius: 18px;
   border: 2px solid var(--md-sys-color-outline-variant);
   background: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
   font-size: 13px;
   font-weight: 600;
   text-transform: capitalize;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tier-btn:hover {
   background: var(--md-sys-color-surface-container);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tier-btn:active {
+  transform: translateY(0);
 }
 
 .tier-btn.active {
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
   border-color: var(--md-sys-color-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ==============================================
@@ -626,15 +670,24 @@
 
   .tier-filter {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .tier-filter label {
+    width: 100%;
   }
 
   .tier-buttons {
-    justify-content: stretch;
+    width: 100%;
+    gap: 6px;
   }
 
   .tier-btn {
     flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 
   .achievement-card {
