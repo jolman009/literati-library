@@ -67,6 +67,7 @@ import Login from './pages/Login';
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 // Library Page wrapper (lazy-loaded)
 const LibraryPageWrapper = lazy(() =>
   import('./components/wrappers/LibraryPageWrapper').catch(err => {
@@ -195,6 +196,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="dashboard" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your dashboard..." />}>
               <DashboardPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/progress" element={
+          <ErrorBoundary fallbackComponent="progress" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your progress..." />}>
+              <ProgressPage />
             </Suspense>
           </ErrorBoundary>
         } />
