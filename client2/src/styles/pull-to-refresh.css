@@ -1,0 +1,156 @@
+/**
+ * Pull-to-Refresh Styles
+ * Native mobile feel with smooth animations
+ */
+
+.pull-to-refresh-indicator {
+  position: fixed;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.ptr-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--md-sys-color-surface-container-high);
+  border-radius: 24px;
+  box-shadow: var(--md-sys-elevation-level3);
+  backdrop-filter: blur(10px);
+}
+
+/* Icon states */
+.ptr-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-primary);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ptr-icon .material-symbols-outlined {
+  font-size: 32px;
+}
+
+.ptr-icon-success {
+  color: var(--md-sys-color-tertiary);
+  animation: ptr-success-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes ptr-success-pop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Text */
+.ptr-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Spinner (loading state) */
+.ptr-spinner {
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.spinner-ring {
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--md-sys-color-outline-variant);
+  border-top-color: var(--md-sys-color-primary);
+  border-radius: 50%;
+  animation: ptr-spin 0.8s linear infinite;
+}
+
+@keyframes ptr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Progress circle (background) */
+.ptr-progress-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.ptr-progress-fill {
+  transition: stroke-dasharray 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .pull-to-refresh-indicator {
+    top: -50px;
+  }
+
+  .ptr-content {
+    padding: 10px 20px;
+  }
+
+  .ptr-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .ptr-icon .material-symbols-outlined {
+    font-size: 28px;
+  }
+
+  .ptr-text {
+    font-size: 11px;
+  }
+
+  .ptr-spinner {
+    width: 28px;
+    height: 28px;
+  }
+
+  .ptr-progress-circle {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Dark mode adjustments */
+[data-actual-theme="dark"] .ptr-content {
+  background: var(--md-sys-color-surface-container);
+  box-shadow: var(--md-sys-elevation-level4);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .pull-to-refresh-indicator,
+  .ptr-icon,
+  .spinner-ring,
+  .ptr-progress-fill {
+    animation: none !important;
+    transition: none !important;
+  }
+}

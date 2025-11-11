@@ -1,0 +1,215 @@
+/**
+ * Reading Mode Styles
+ * Distraction-free fullscreen reading experience
+ */
+
+/* FAB (Floating Action Button) */
+.reading-mode-fab {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: none;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow: var(--md-sys-elevation-level3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reading-mode-fab:hover {
+  box-shadow: var(--md-sys-elevation-level4);
+  transform: scale(1.05);
+}
+
+.reading-mode-fab:active {
+  transform: scale(0.95);
+}
+
+.reading-mode-fab.active {
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.reading-mode-fab .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* FAB Positioning */
+.reading-mode-fab-bottom-right {
+  bottom: 24px;
+  right: 24px;
+}
+
+.reading-mode-fab-bottom-left {
+  bottom: 24px;
+  left: 24px;
+}
+
+.reading-mode-fab-top-right {
+  top: 24px;
+  right: 24px;
+}
+
+.reading-mode-fab-top-left {
+  top: 24px;
+  left: 24px;
+}
+
+/* Mobile adjustments for FAB */
+@media (max-width: 768px) {
+  .reading-mode-fab {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .reading-mode-fab-bottom-right {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .reading-mode-fab-bottom-left {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .reading-mode-fab .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  /* Adjust position when mobile nav is present */
+  .reading-mode-fab-bottom-right,
+  .reading-mode-fab-bottom-left {
+    bottom: 96px; /* Above bottom navigation */
+  }
+}
+
+/* Button Variant */
+.reading-mode-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reading-mode-button:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.reading-mode-button:active {
+  transform: scale(0.98);
+}
+
+.reading-mode-button .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* Icon Button Variant */
+.reading-mode-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reading-mode-icon-btn:hover {
+  background: var(--md-sys-color-surface-container);
+}
+
+.reading-mode-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.reading-mode-icon-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* Reading Mode Active State Styles */
+.reading-mode-active {
+  /* Additional styles when reading mode is active */
+}
+
+/* Hide elements in reading mode */
+.reading-mode-active .mobile-navigation,
+.reading-mode-active .navigation-pane,
+.reading-mode-active .content-area > header {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Show elements when UI is visible */
+.reading-mode-active.ui-visible .mobile-navigation,
+.reading-mode-active.ui-visible .navigation-pane,
+.reading-mode-active.ui-visible .content-area > header {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Dark mode adjustments */
+[data-actual-theme="dark"] .reading-mode-fab {
+  background: var(--md-sys-color-primary-container);
+  box-shadow: var(--md-sys-elevation-level3),
+              0 0 0 1px var(--md-sys-color-outline-variant);
+}
+
+[data-actual-theme="dark"] .reading-mode-fab.active {
+  background: var(--md-sys-color-tertiary-container);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .reading-mode-fab,
+  .reading-mode-button,
+  .reading-mode-icon-btn,
+  .mobile-navigation,
+  .navigation-pane,
+  .content-area > header {
+    transition: none !important;
+  }
+}
+
+/* Fullscreen mode specific styles */
+:fullscreen {
+  background: var(--md-sys-color-surface);
+}
+
+:-webkit-full-screen {
+  background: var(--md-sys-color-surface);
+}
+
+:-moz-full-screen {
+  background: var(--md-sys-color-surface);
+}
+
+:-ms-fullscreen {
+  background: var(--md-sys-color-surface);
+}
+
+/* Focus states for accessibility */
+.reading-mode-fab:focus-visible,
+.reading-mode-button:focus-visible,
+.reading-mode-icon-btn:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
