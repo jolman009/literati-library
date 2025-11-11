@@ -70,6 +70,7 @@ import Login from './pages/Login';
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
+const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 // Library Page wrapper (lazy-loaded)
 const LibraryPageWrapper = lazy(() =>
   import('./components/wrappers/LibraryPageWrapper').catch(err => {
@@ -205,6 +206,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="progress" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your progress..." />}>
               <ProgressPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/achievements" element={
+          <ErrorBoundary fallbackComponent="achievements" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your achievements..." />}>
+              <AchievementsPage />
             </Suspense>
           </ErrorBoundary>
         } />
