@@ -324,7 +324,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
 
 
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
-const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBooks = null, inProgressBooks = null }) => {
+const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const { isAuthenticated } = useAuth();
@@ -736,7 +736,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
 
   if (loading) {
     return (
-      <div className="simple-scroll-container">
+      <div className={`simple-scroll-container ${className}`}>
         {[...Array(5)].map((_, i) => (
           <div key={i} className="stat-metric-card">
             <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
@@ -747,7 +747,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   }
 
   return (
-    <div className="simple-scroll-container" style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
+    <div className={`simple-scroll-container ${className}`} style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
       {statCards.map((stat, index) => (
         <div key={index} className="stat-metric-card" style={{ position: 'relative' }}>
           {refreshing && index === 0 && (
@@ -1240,12 +1240,134 @@ const RecentlyAdded = () => {
   );
 };
 
+// Mobile Hero Reading Card Component
+const MobileHeroReadingCard = ({ activeSession, navigate }) => {
+  // If no active session, show Browse Library card
+  if (!activeSession?.book) {
+    return (
+      <div className="dashboard-hero-reading-card dashboard-mobile-only">
+        <div className="hero-reading-content">
+          <div className="hero-reading-cover hero-reading-cover-empty">
+            <span style={{ fontSize: '3rem' }}>📚</span>
+          </div>
+          <div className="hero-reading-info">
+            <h2 className="hero-reading-title">Start Your Reading Journey</h2>
+            <p className="hero-reading-author">Browse your library and pick a book</p>
+            <button
+              className="hero-reading-cta"
+              onClick={() => navigate('/library')}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">library_books</span>
+              Browse Library
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const book = activeSession.book;
+  const coverUrl = book.cover_url || book.coverUrl || book.cover;
+
+  return (
+    <div className="dashboard-hero-reading-card dashboard-mobile-only">
+      <div className="hero-reading-content">
+        {coverUrl && (
+          <div
+            className="hero-reading-cover"
+            style={{ backgroundImage: `url(${coverUrl})` }}
+            role="img"
+            aria-label={`Cover of ${book.title}`}
+          />
+        )}
+        <div className="hero-reading-info">
+          <h2 className="hero-reading-title">{book.title}</h2>
+          {book.author && <p className="hero-reading-author">by {book.author}</p>}
+          <button
+            className="hero-reading-cta"
+            onClick={() => navigate(`/read/${book.id}`)}
+          >
+            <span className="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            Continue Reading
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Mobile Compact Stats Badge Component
+const MobileCompactStatsBadge = ({ stats, checkInStreak }) => {
+  return (
+    <div className="dashboard-compact-stats-badge dashboard-mobile-only">
+      <div className="compact-stats-item">
+        <span className="compact-stats-icon">🔥</span>
+        <span>{checkInStreak || 0} day streak</span>
+      </div>
+      <div className="compact-stats-divider" />
+      <div className="compact-stats-item">
+        <span className="compact-stats-icon">⭐</span>
+        <span>Level {stats?.level || 1}</span>
+      </div>
+      <div className="compact-stats-divider" />
+      <div className="compact-stats-item">
+        <span className="compact-stats-icon">📚</span>
+        <span>{stats?.booksRead || 0} books</span>
+      </div>
+    </div>
+  );
+};
+
+// Mobile Quick Actions Component
+const MobileQuickActions = ({ navigate }) => {
+  return (
+    <div className="dashboard-mobile-quick-actions dashboard-mobile-only">
+      <button className="mobile-quick-action-btn" onClick={() => navigate('/library')}>
+        <span className="mobile-action-icon">📚</span>
+        <span className="mobile-action-label">Library</span>
+      </button>
+      <button className="mobile-quick-action-btn" onClick={() => navigate('/upload')}>
+        <span className="mobile-action-icon">📤</span>
+        <span className="mobile-action-label">Upload</span>
+      </button>
+      <button className="mobile-quick-action-btn" onClick={() => navigate('/notes')}>
+        <span className="mobile-action-icon">📝</span>
+        <span className="mobile-action-label">Notes</span>
+      </button>
+    </div>
+  );
+};
+
+// Mobile Expandable Stats Component
+const MobileExpandableStats = ({ children }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="dashboard-expandable-stats dashboard-mobile-only">
+      <button
+        className="expandable-stats-toggle"
+        onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+      >
+        <span className="expandable-stats-label">View Detailed Stats</span>
+        <span className={`expandable-stats-icon ${isExpanded ? 'expanded' : ''}`}>
+          ▼
+        </span>
+      </button>
+      <div className={`expandable-stats-content ${isExpanded ? 'expanded' : ''}`}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 // Main Dashboard Component
 const DashboardPage = () => {
   console.log('🔄 DashboardPage: Rendering');
   const { user } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
+  const { stats } = useGamification();
   const navigate = useNavigate();
   // Needed for the global Resume banner and any resume/stop controls at this level
   const { activeSession } = useReadingSession();
@@ -1367,9 +1489,18 @@ const DashboardPage = () => {
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
 
       <div className="dashboard-content">
-        {/* Global Resume banner (always visible when a paused session exists) */}
+        {/* Mobile-Only: Hero Reading Card */}
+        <MobileHeroReadingCard activeSession={activeSession} navigate={navigate} />
+
+        {/* Mobile-Only: Compact Stats Badge */}
+        <MobileCompactStatsBadge stats={stats} checkInStreak={checkInStreak} />
+
+        {/* Mobile-Only: Quick Actions */}
+        <MobileQuickActions navigate={navigate} />
+
+        {/* Global Resume banner (desktop only - mobile uses hero card) */}
         {activeSession?.book?.id && (activeSession?.isPaused) && (
-          <div style={{
+          <div className="desktop-only" style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -1396,8 +1527,19 @@ const DashboardPage = () => {
             </button>
           </div>
         )}
-        {/* Metric Cards - Horizontal Scroll */}
+        {/* Mobile: Expandable Stats - wraps the stat cards */}
+        <MobileExpandableStats>
+          <QuickStatsOverview
+            checkInStreak={checkInStreak}
+            totalBooks={Array.isArray(books) ? books.length : 0}
+            completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
+            inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
+          />
+        </MobileExpandableStats>
+
+        {/* Desktop: Metric Cards - Horizontal Scroll (hidden on mobile) */}
         <QuickStatsOverview
+          className="mobile-hide"
           checkInStreak={checkInStreak}
           totalBooks={Array.isArray(books) ? books.length : 0}
           completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
@@ -1406,8 +1548,8 @@ const DashboardPage = () => {
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
 
-          {/* Left Column - Welcome Section (replaces Transaction History) */}
-          <div className="dashboard-content-left">
+          {/* Left Column - Welcome Section (hidden on mobile) */}
+          <div className="dashboard-content-left mobile-hide">
             <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} onStartTour={startDashboardTour} />
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
@@ -1438,20 +1580,20 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Currently Reading Sessions (replaces Open Projects) */}
+          {/* Right Column - Currently Reading Sessions */}
           <div className="dashboard-content-right">
             <CurrentlyReading />
 
-            {/* Points History - Show recent point-earning actions */}
-            <div style={{ marginTop: '20px' }}>
+            {/* Points History - Show recent point-earning actions (hidden on mobile) */}
+            <div className="mobile-hide" style={{ marginTop: '20px' }}>
               <PointsHistory limit={10} />
             </div>
           </div>
 
         </div>
 
-        {/* Bottom Row - Point Categories (How to Earn Points) */}
-        <div className="dashboard-bottom-row">
+        {/* Bottom Row - Point Categories (hidden on mobile) */}
+        <div className="dashboard-bottom-row mobile-hide">
           <PointCategoriesSection />
         </div>
       </div>
