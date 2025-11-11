@@ -1233,7 +1233,7 @@ const LibraryPage = () => {
         transform: isPulling ? `translateY(${pullDistance}px)` : 'translateY(0)',
         background: 'var(--md-sys-color-surface)',
         marginTop: '10px',
-        padding: '30px 40px 0 60px'
+        paddingTop: '30px'
       }}
     >
 
