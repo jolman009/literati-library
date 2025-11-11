@@ -15,6 +15,8 @@ import { RefreshCw } from 'lucide-react';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
+import usePullToRefresh from '../hooks/usePullToRefresh';
+import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
@@ -1469,6 +1471,36 @@ const DashboardPage = () => {
     setCheckInStreak(streak);
   }, []);
 
+  // Pull-to-refresh handler
+  const handleRefresh = useCallback(async () => {
+    console.log('🔄 Dashboard: Pull-to-refresh triggered');
+
+    try {
+      // Reload books
+      const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
+      const { items = [] } = response.data || {};
+      setBooks(items);
+
+      // Reload check-in streak
+      const checkInResponse = await API.get('/api/gamification/checkin/status');
+      if (checkInResponse.data?.currentStreak !== undefined) {
+        setCheckInStreak(checkInResponse.data.currentStreak);
+      }
+
+      showSnackbar('Dashboard refreshed successfully', 'success');
+      console.log('✅ Dashboard: Refresh completed');
+    } catch (error) {
+      console.error('❌ Dashboard: Refresh failed:', error);
+      showSnackbar('Failed to refresh dashboard', 'error');
+    }
+  }, [showSnackbar]);
+
+  // Pull-to-refresh hook (only active on mobile)
+  const pullToRefresh = usePullToRefresh(handleRefresh, {
+    threshold: 80,
+    enabled: window.innerWidth <= 768, // Only on mobile
+  });
+
   // Load books data for statistics
   useEffect(() => {
     const loadBooks = async () => {
@@ -1487,6 +1519,8 @@ const DashboardPage = () => {
 
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
+      {/* Pull-to-Refresh Indicator (Mobile Only) */}
+      <PullToRefreshIndicator {...pullToRefresh} />
 
       <div className="dashboard-content">
         {/* Mobile-Only: Hero Reading Card */}
