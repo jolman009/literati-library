@@ -1,8 +1,8 @@
 [{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "org.shelfquest.app",
-    "sha256_cert_fingerprints": ["08:7D:5B:05:20:BA:51:E3:B4:8C:99:54:FB:66:C7:C2:2B:B7:19:89:FD:91:E3:94:2C:AD:9D:C9:C2:83:6B:41"]
-  }
-}]
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "org.shelfquest.app",
+        "sha256_cert_fingerprints": ["6F:87:47:98:85:2A:0D:84:42:DC:DB:99:CD:91:44:2B:05:F4:A6:C9:57:23:B3:57:A8:B9:8B:ED:87:D1:85:95"]
+      }
+    }]
