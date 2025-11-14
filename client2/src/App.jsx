@@ -46,6 +46,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { EntitlementsProvider } from './contexts/EntitlementsContext';
 import './styles/dashboard-dark-mode-fix.css';
+import './styles/themes.css'; // Theme system with 6 unlockable themes
+import { loadThemePreference, applyTheme, getDefaultTheme } from './utils/themeUtils';
 
 // Material3 imports - Direct imports from Material3 barrel
 import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Material3';
@@ -67,6 +69,9 @@ import Login from './pages/Login';
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ProgressPage = lazy(() => import('./pages/ProgressPage'));
+const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 // Library Page wrapper (lazy-loaded)
 const LibraryPageWrapper = lazy(() =>
   import('./components/wrappers/LibraryPageWrapper').catch(err => {
@@ -198,6 +203,27 @@ const AppRoutes = () => {
             </Suspense>
           </ErrorBoundary>
         } />
+        <Route path="/progress" element={
+          <ErrorBoundary fallbackComponent="progress" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your progress..." />}>
+              <ProgressPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/achievements" element={
+          <ErrorBoundary fallbackComponent="achievements" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your achievements..." />}>
+              <AchievementsPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/analytics" element={
+          <ErrorBoundary fallbackComponent="analytics" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading analytics..." />}>
+              <AnalyticsPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
         <Route path="/library" element={
           <LibraryErrorBoundary>
             <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
@@ -323,6 +349,13 @@ const App = () => {
 
   useEffect(() => {
     initWebVitals(); // ✅ keep web vitals monitoring
+
+    // Initialize theme system early (before gamification context loads)
+    const savedTheme = loadThemePreference();
+    const themeToApply = savedTheme || getDefaultTheme().id;
+    const currentMode = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(themeToApply, currentMode);
+    console.log('🎨 Early theme initialization:', themeToApply);
 
     // Initialize offline reading system
     initOfflineReading().then(result => {

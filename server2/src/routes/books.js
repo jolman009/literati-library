@@ -1,6 +1,7 @@
 // src/routes/books.js
 import express from 'express';
 import multer from 'multer';
+import axios from 'axios';
 import { ensureCoverForBook } from '../services/covers.js';
 import { supabase } from "../config/supabaseClient.js";
 import { dbOptimizer } from '../services/database-optimization.js';
@@ -366,6 +367,146 @@ export function booksRouter(authenticateToken) {
     } catch (error) {
       console.error("Book upload error:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Import book from Google Drive
+  router.post("/import/googledrive", authenticateToken, async (req, res) => {
+    try {
+      const { fileId, fileName, mimeType, sizeBytes, accessToken } = req.body;
+
+      // Validate required fields
+      if (!fileId || !fileName || !accessToken) {
+        return res.status(400).json({ error: "Missing required fields: fileId, fileName, accessToken" });
+      }
+
+      // Validate file type
+      const allowedMimeTypes = [
+        'application/pdf',
+        'application/epub+zip',
+        'application/epub'
+      ];
+      if (!allowedMimeTypes.includes(mimeType)) {
+        return res.status(400).json({ error: "Only PDF and EPUB files are allowed" });
+      }
+
+      // Validate file size (50MB limit)
+      const maxSize = 50 * 1024 * 1024;
+      if (sizeBytes && sizeBytes > maxSize) {
+        return res.status(400).json({ error: "File size exceeds 50MB limit" });
+      }
+
+      console.log(`📥 Downloading file from Google Drive: ${fileName} (${fileId})`);
+
+      // Download file from Google Drive using the access token
+      // Security: OAuth token is only used server-side, never exposed to client
+      const downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+      const driveResponse = await axios.get(downloadUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        responseType: 'arraybuffer',
+        maxContentLength: maxSize,
+        timeout: 60000, // 60 second timeout
+      });
+
+      const fileBuffer = Buffer.from(driveResponse.data);
+
+      console.log(`✅ Downloaded file from Google Drive: ${fileBuffer.length} bytes`);
+
+      // Upload file to Supabase Storage - sanitize filename
+      const sanitizedFilename = fileName
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9._-]/g, '_')
+        .replace(/_{2,}/g, '_');
+
+      const storagePath = `books/${req.user.id}/${Date.now()}-${sanitizedFilename}`;
+
+      const { data: fileData, error: uploadError } = await supabase.storage
+        .from('book-files')
+        .upload(storagePath, fileBuffer, {
+          contentType: mimeType,
+          cacheControl: '3600',
+        });
+
+      if (uploadError) {
+        console.error("Supabase upload error:", uploadError);
+        return res.status(500).json({ error: "Failed to upload file to storage" });
+      }
+
+      // Get public URL for the uploaded file
+      const { data: urlData } = supabase.storage
+        .from('book-files')
+        .getPublicUrl(storagePath);
+
+      // Extract metadata from filename (title and author if possible)
+      const fileNameWithoutExt = fileName.replace(/\.(pdf|epub)$/i, '');
+      const titleGuess = fileNameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+      // Create book record in database
+      const bookData = {
+        user_id: req.user.id,
+        title: titleGuess, // Auto-extracted from filename
+        author: 'Unknown', // User can edit later
+        genre: null,
+        description: `Imported from Google Drive`,
+        file_url: urlData.publicUrl,
+        file_path: storagePath,
+        file_size: fileBuffer.length,
+        file_type: mimeType,
+        filename: fileName,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      console.log("📚 Creating book record from Google Drive import:", {
+        title: bookData.title,
+        user_id: bookData.user_id
+      });
+
+      const { data: book, error: dbError } = await supabase
+        .from("books")
+        .insert(bookData)
+        .select()
+        .single();
+
+      if (dbError) {
+        console.error("Database insert error:", dbError);
+        // Clean up uploaded file
+        await supabase.storage.from('book-files').remove([storagePath]);
+        return res.status(500).json({
+          error: "Failed to save book to database",
+          details: dbError.message || "Unknown database error"
+        });
+      }
+
+      // Try to generate a cover (non-blocking)
+      try {
+        const coverResult = await ensureCoverForBook(book);
+        if (coverResult.cover_url) {
+          book.cover_url = coverResult.cover_url;
+        }
+      } catch (coverError) {
+        console.error("Cover generation failed (non-critical):", coverError);
+      }
+
+      console.log(`✅ Successfully imported book from Google Drive: ${book.title}`);
+      res.status(201).json(book);
+
+    } catch (error) {
+      console.error("Google Drive import error:", error);
+
+      // Handle specific error types
+      if (error.response?.status === 401) {
+        return res.status(401).json({ error: "Invalid or expired Google Drive access token" });
+      } else if (error.response?.status === 404) {
+        return res.status(404).json({ error: "File not found in Google Drive" });
+      } else if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+        return res.status(504).json({ error: "Google Drive download timeout - file may be too large" });
+      }
+
+      res.status(500).json({ error: "Failed to import from Google Drive" });
     }
   });
 

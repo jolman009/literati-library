@@ -1,0 +1,96 @@
+/**
+ * Swipe Indicator Styles
+ * Visual feedback for page swipe gestures
+ */
+
+.swipe-indicator {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: 16px;
+  box-shadow: var(--md-sys-elevation-level4);
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  backdrop-filter: blur(10px);
+}
+
+.swipe-indicator-left {
+  right: 20px;
+  flex-direction: row-reverse;
+}
+
+.swipe-indicator-right {
+  left: 20px;
+  flex-direction: row;
+}
+
+.swipe-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border-radius: 50%;
+}
+
+.swipe-icon .material-symbols-outlined {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.swipe-text {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .swipe-indicator {
+    padding: 12px 16px;
+  }
+
+  .swipe-indicator-left {
+    right: 12px;
+  }
+
+  .swipe-indicator-right {
+    left: 12px;
+  }
+
+  .swipe-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .swipe-icon .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .swipe-text {
+    font-size: 12px;
+  }
+}
+
+/* Dark mode */
+[data-actual-theme="dark"] .swipe-indicator {
+  background: var(--md-sys-color-primary-container);
+  box-shadow: var(--md-sys-elevation-level4),
+              0 0 0 1px var(--md-sys-color-outline-variant);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .swipe-indicator {
+    transition: none !important;
+  }
+}

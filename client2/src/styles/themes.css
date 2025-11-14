@@ -1,0 +1,584 @@
+/**
+ * ShelfQuest Theme System
+ * 6 unlockable themes with full MD3 token support
+ * Each theme includes light and dark mode variants
+ */
+
+/* ==============================================
+   THEME 1: CLASSIC (Default - 0 points)
+   ============================================== */
+[data-theme="classic"][data-actual-theme="light"] {
+  /* Primary - Blue */
+  --md-sys-color-primary: #24A8E0;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #d4e9f7;
+  --md-sys-color-on-primary-container: #001f2a;
+
+  /* Secondary - Purple */
+  --md-sys-color-secondary: #7c5dc7;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #ecdcff;
+  --md-sys-color-on-secondary-container: #270059;
+
+  /* Tertiary - Teal */
+  --md-sys-color-tertiary: #006a6a;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #6ff7f7;
+  --md-sys-color-on-tertiary-container: #002020;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface */
+  --md-sys-color-background: #fcfcff;
+  --md-sys-color-on-background: #1a1c1e;
+  --md-sys-color-surface: #fcfcff;
+  --md-sys-color-on-surface: #1a1c1e;
+  --md-sys-color-surface-variant: #dde3ea;
+  --md-sys-color-on-surface-variant: #41484d;
+
+  /* Outline */
+  --md-sys-color-outline: #71787e;
+  --md-sys-color-outline-variant: #c1c7ce;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f6f9fc;
+  --md-sys-color-surface-container: #f0f3f7;
+  --md-sys-color-surface-container-high: #eaeef1;
+  --md-sys-color-surface-container-highest: #e5e8ec;
+}
+
+[data-theme="classic"][data-actual-theme="dark"] {
+  /* Primary - Blue */
+  --md-sys-color-primary: #9cd0ed;
+  --md-sys-color-on-primary: #003547;
+  --md-sys-color-primary-container: #004d66;
+  --md-sys-color-on-primary-container: #d4e9f7;
+
+  /* Secondary - Purple */
+  --md-sys-color-secondary: #d7bbff;
+  --md-sys-color-on-secondary: #3f008a;
+  --md-sys-color-secondary-container: #5c29a5;
+  --md-sys-color-on-secondary-container: #ecdcff;
+
+  /* Tertiary - Teal */
+  --md-sys-color-tertiary: #4ddada;
+  --md-sys-color-on-tertiary: #003737;
+  --md-sys-color-tertiary-container: #004f4f;
+  --md-sys-color-on-tertiary-container: #6ff7f7;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface */
+  --md-sys-color-background: #1a1c1e;
+  --md-sys-color-on-background: #e2e2e5;
+  --md-sys-color-surface: #1a1c1e;
+  --md-sys-color-on-surface: #e2e2e5;
+  --md-sys-color-surface-variant: #41484d;
+  --md-sys-color-on-surface-variant: #c1c7ce;
+
+  /* Outline */
+  --md-sys-color-outline: #8b9198;
+  --md-sys-color-outline-variant: #41484d;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #0f1113;
+  --md-sys-color-surface-container-low: #1a1c1e;
+  --md-sys-color-surface-container: #1e2022;
+  --md-sys-color-surface-container-high: #282a2c;
+  --md-sys-color-surface-container-highest: #333537;
+}
+
+/* ==============================================
+   THEME 2: WARM SEPIA (501 points)
+   ============================================== */
+[data-theme="warm-sepia"][data-actual-theme="light"] {
+  /* Primary - Warm Brown */
+  --md-sys-color-primary: #8b6914;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #ffedb8;
+  --md-sys-color-on-primary-container: #2b1f00;
+
+  /* Secondary - Soft Orange */
+  --md-sys-color-secondary: #cc7a30;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #ffdcc3;
+  --md-sys-color-on-secondary-container: #301400;
+
+  /* Tertiary - Muted Olive */
+  --md-sys-color-tertiary: #6b6c3f;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #f3f3ba;
+  --md-sys-color-on-tertiary-container: #232400;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface - Warm tones */
+  --md-sys-color-background: #fffbf5;
+  --md-sys-color-on-background: #1f1b13;
+  --md-sys-color-surface: #fffbf5;
+  --md-sys-color-on-surface: #1f1b13;
+  --md-sys-color-surface-variant: #ede1cf;
+  --md-sys-color-on-surface-variant: #4c4639;
+
+  /* Outline */
+  --md-sys-color-outline: #7d7667;
+  --md-sys-color-outline-variant: #d0c5b4;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #fef5ed;
+  --md-sys-color-surface-container: #f8efe7;
+  --md-sys-color-surface-container-high: #f2e9e1;
+  --md-sys-color-surface-container-highest: #ede4dc;
+}
+
+[data-theme="warm-sepia"][data-actual-theme="dark"] {
+  /* Primary - Warm Brown */
+  --md-sys-color-primary: #f3d184;
+  --md-sys-color-on-primary: #482f00;
+  --md-sys-color-primary-container: #664800;
+  --md-sys-color-on-primary-container: #ffedb8;
+
+  /* Secondary - Soft Orange */
+  --md-sys-color-secondary: #f8bc93;
+  --md-sys-color-on-secondary: #502400;
+  --md-sys-color-secondary-container: #954f1a;
+  --md-sys-color-on-secondary-container: #ffdcc3;
+
+  /* Tertiary - Muted Olive */
+  --md-sys-color-tertiary: #d6d79f;
+  --md-sys-color-on-tertiary: #393a15;
+  --md-sys-color-tertiary-container: #525329;
+  --md-sys-color-on-tertiary-container: #f3f3ba;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface - Warm dark tones */
+  --md-sys-color-background: #1f1b13;
+  --md-sys-color-on-background: #ebe1d2;
+  --md-sys-color-surface: #1f1b13;
+  --md-sys-color-on-surface: #ebe1d2;
+  --md-sys-color-surface-variant: #4c4639;
+  --md-sys-color-on-surface-variant: #d0c5b4;
+
+  /* Outline */
+  --md-sys-color-outline: #999080;
+  --md-sys-color-outline-variant: #4c4639;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #19160f;
+  --md-sys-color-surface-container-low: #1f1b13;
+  --md-sys-color-surface-container: #231f17;
+  --md-sys-color-surface-container-high: #2e2921;
+  --md-sys-color-surface-container-highest: #39342b;
+}
+
+/* ==============================================
+   THEME 3: OCEAN BLUE (1,501 points)
+   ============================================== */
+[data-theme="ocean-blue"][data-actual-theme="light"] {
+  /* Primary - Deep Ocean Blue */
+  --md-sys-color-primary: #006497;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #cae6ff;
+  --md-sys-color-on-primary-container: #001e31;
+
+  /* Secondary - Teal */
+  --md-sys-color-secondary: #4f616e;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #d2e5f5;
+  --md-sys-color-on-secondary-container: #0b1d29;
+
+  /* Tertiary - Aqua */
+  --md-sys-color-tertiary: #00687a;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #a7eeff;
+  --md-sys-color-on-tertiary-container: #001f26;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface - Cool blue tones */
+  --md-sys-color-background: #f6fafe;
+  --md-sys-color-on-background: #181c1f;
+  --md-sys-color-surface: #f6fafe;
+  --md-sys-color-on-surface: #181c1f;
+  --md-sys-color-surface-variant: #dde3ea;
+  --md-sys-color-on-surface-variant: #41484d;
+
+  /* Outline */
+  --md-sys-color-outline: #71787e;
+  --md-sys-color-outline-variant: #c1c7ce;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f0f4f8;
+  --md-sys-color-surface-container: #eaeef2;
+  --md-sys-color-surface-container-high: #e4e9ed;
+  --md-sys-color-surface-container-highest: #dfe3e7;
+}
+
+[data-theme="ocean-blue"][data-actual-theme="dark"] {
+  /* Primary - Deep Ocean Blue */
+  --md-sys-color-primary: #8dceff;
+  --md-sys-color-on-primary: #003351;
+  --md-sys-color-primary-container: #004b73;
+  --md-sys-color-on-primary-container: #cae6ff;
+
+  /* Secondary - Teal */
+  --md-sys-color-secondary: #b6c9d9;
+  --md-sys-color-on-secondary: #21323e;
+  --md-sys-color-secondary-container: #384956;
+  --md-sys-color-on-secondary-container: #d2e5f5;
+
+  /* Tertiary - Aqua */
+  --md-sys-color-tertiary: #83d3e4;
+  --md-sys-color-on-tertiary: #00363f;
+  --md-sys-color-tertiary-container: #004e5b;
+  --md-sys-color-on-tertiary-container: #a7eeff;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface - Cool dark tones */
+  --md-sys-color-background: #181c1f;
+  --md-sys-color-on-background: #e0e3e6;
+  --md-sys-color-surface: #181c1f;
+  --md-sys-color-on-surface: #e0e3e6;
+  --md-sys-color-surface-variant: #41484d;
+  --md-sys-color-on-surface-variant: #c1c7ce;
+
+  /* Outline */
+  --md-sys-color-outline: #8b9198;
+  --md-sys-color-outline-variant: #41484d;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #0d1113;
+  --md-sys-color-surface-container-low: #181c1f;
+  --md-sys-color-surface-container: #1c2023;
+  --md-sys-color-surface-container-high: #262a2d;
+  --md-sys-color-surface-container-highest: #313538;
+}
+
+/* ==============================================
+   THEME 4: FOREST GREEN (3,001 points)
+   ============================================== */
+[data-theme="forest-green"][data-actual-theme="light"] {
+  /* Primary - Deep Forest Green */
+  --md-sys-color-primary: #2d6b3f;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #b4f1ba;
+  --md-sys-color-on-primary-container: #00210a;
+
+  /* Secondary - Sage */
+  --md-sys-color-secondary: #52634f;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #d5e8cf;
+  --md-sys-color-on-secondary-container: #101f10;
+
+  /* Tertiary - Mint */
+  --md-sys-color-tertiary: #38656b;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #bbebf2;
+  --md-sys-color-on-tertiary-container: #001f23;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface - Natural green tones */
+  --md-sys-color-background: #f7fbf4;
+  --md-sys-color-on-background: #191d18;
+  --md-sys-color-surface: #f7fbf4;
+  --md-sys-color-on-surface: #191d18;
+  --md-sys-color-surface-variant: #dee5d9;
+  --md-sys-color-on-surface-variant: #424940;
+
+  /* Outline */
+  --md-sys-color-outline: #727970;
+  --md-sys-color-outline-variant: #c2c9bd;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f1f5ec;
+  --md-sys-color-surface-container: #ebefe6;
+  --md-sys-color-surface-container-high: #e5e9e1;
+  --md-sys-color-surface-container-highest: #e0e4db;
+}
+
+[data-theme="forest-green"][data-actual-theme="dark"] {
+  /* Primary - Deep Forest Green */
+  --md-sys-color-primary: #99d4a0;
+  --md-sys-color-on-primary: #003917;
+  --md-sys-color-primary-container: #145228;
+  --md-sys-color-on-primary-container: #b4f1ba;
+
+  /* Secondary - Sage */
+  --md-sys-color-secondary: #b9ccb4;
+  --md-sys-color-on-secondary: #253424;
+  --md-sys-color-secondary-container: #3b4b39;
+  --md-sys-color-on-secondary-container: #d5e8cf;
+
+  /* Tertiary - Mint */
+  --md-sys-color-tertiary: #a0cfd6;
+  --md-sys-color-on-tertiary: #00373c;
+  --md-sys-color-tertiary-container: #1f4d53;
+  --md-sys-color-on-tertiary-container: #bbebf2;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface - Natural dark tones */
+  --md-sys-color-background: #191d18;
+  --md-sys-color-on-background: #e1e4dc;
+  --md-sys-color-surface: #191d18;
+  --md-sys-color-on-surface: #e1e4dc;
+  --md-sys-color-surface-variant: #424940;
+  --md-sys-color-on-surface-variant: #c2c9bd;
+
+  /* Outline */
+  --md-sys-color-outline: #8c9389;
+  --md-sys-color-outline-variant: #424940;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #0e1113;
+  --md-sys-color-surface-container-low: #191d18;
+  --md-sys-color-surface-container: #1d211c;
+  --md-sys-color-surface-container-high: #272b26;
+  --md-sys-color-surface-container-highest: #323631;
+}
+
+/* ==============================================
+   THEME 5: ROYAL PURPLE (5,001 points)
+   ============================================== */
+[data-theme="royal-purple"][data-actual-theme="light"] {
+  /* Primary - Rich Purple */
+  --md-sys-color-primary: #6e3ab4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #ebddff;
+  --md-sys-color-on-primary-container: #250059;
+
+  /* Secondary - Mauve */
+  --md-sys-color-secondary: #645a70;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #ebdef7;
+  --md-sys-color-on-secondary-container: #1f182b;
+
+  /* Tertiary - Rose */
+  --md-sys-color-tertiary: #7f525e;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #ffd9e1;
+  --md-sys-color-on-tertiary-container: #31101c;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface - Purple tones */
+  --md-sys-color-background: #fef7ff;
+  --md-sys-color-on-background: #1d1b1e;
+  --md-sys-color-surface: #fef7ff;
+  --md-sys-color-on-surface: #1d1b1e;
+  --md-sys-color-surface-variant: #e7e0eb;
+  --md-sys-color-on-surface-variant: #49454e;
+
+  /* Outline */
+  --md-sys-color-outline: #7a757f;
+  --md-sys-color-outline-variant: #cac4cf;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f8f1fa;
+  --md-sys-color-surface-container: #f2ebf4;
+  --md-sys-color-surface-container-high: #ece5ee;
+  --md-sys-color-surface-container-highest: #e6e0e9;
+}
+
+[data-theme="royal-purple"][data-actual-theme="dark"] {
+  /* Primary - Rich Purple */
+  --md-sys-color-primary: #d3bbff;
+  --md-sys-color-on-primary: #3e0082;
+  --md-sys-color-primary-container: #561b9b;
+  --md-sys-color-on-primary-container: #ebddff;
+
+  /* Secondary - Mauve */
+  --md-sys-color-secondary: #cec2da;
+  --md-sys-color-on-secondary: #342d40;
+  --md-sys-color-secondary-container: #4b4358;
+  --md-sys-color-on-secondary-container: #ebdef7;
+
+  /* Tertiary - Rose */
+  --md-sys-color-tertiary: #f1b8c5;
+  --md-sys-color-on-tertiary: #4a2531;
+  --md-sys-color-tertiary-container: #643b47;
+  --md-sys-color-on-tertiary-container: #ffd9e1;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface - Purple dark tones */
+  --md-sys-color-background: #1d1b1e;
+  --md-sys-color-on-background: #e6e1e6;
+  --md-sys-color-surface: #1d1b1e;
+  --md-sys-color-on-surface: #e6e1e6;
+  --md-sys-color-surface-variant: #49454e;
+  --md-sys-color-on-surface-variant: #cac4cf;
+
+  /* Outline */
+  --md-sys-color-outline: #948f99;
+  --md-sys-color-outline-variant: #49454e;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #121013;
+  --md-sys-color-surface-container-low: #1d1b1e;
+  --md-sys-color-surface-container: #211f22;
+  --md-sys-color-surface-container-high: #2b292c;
+  --md-sys-color-surface-container-highest: #363437;
+}
+
+/* ==============================================
+   THEME 6: LEGENDARY GOLD (10,001 points)
+   ============================================== */
+[data-theme="legendary-gold"][data-actual-theme="light"] {
+  /* Primary - Rich Gold */
+  --md-sys-color-primary: #996300;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #ffddb5;
+  --md-sys-color-on-primary-container: #321e00;
+
+  /* Secondary - Amber */
+  --md-sys-color-secondary: #735a3f;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #ffddb9;
+  --md-sys-color-on-secondary-container: #291804;
+
+  /* Tertiary - Bronze */
+  --md-sys-color-tertiary: #58633b;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #dce8b6;
+  --md-sys-color-on-tertiary-container: #161e00;
+
+  /* Error */
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  /* Background & Surface - Warm gold tones */
+  --md-sys-color-background: #fffbf7;
+  --md-sys-color-on-background: #1f1b16;
+  --md-sys-color-surface: #fffbf7;
+  --md-sys-color-on-surface: #1f1b16;
+  --md-sys-color-surface-variant: #ede1d0;
+  --md-sys-color-on-surface-variant: #4d4639;
+
+  /* Outline */
+  --md-sys-color-outline: #7f7667;
+  --md-sys-color-outline-variant: #d0c5b4;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #fef5ed;
+  --md-sys-color-surface-container: #f8efe7;
+  --md-sys-color-surface-container-high: #f2e9e1;
+  --md-sys-color-surface-container-highest: #ede4dc;
+}
+
+[data-theme="legendary-gold"][data-actual-theme="dark"] {
+  /* Primary - Rich Gold */
+  --md-sys-color-primary: #ffba4d;
+  --md-sys-color-on-primary: #523400;
+  --md-sys-color-primary-container: #744900;
+  --md-sys-color-on-primary-container: #ffddb5;
+
+  /* Secondary - Amber */
+  --md-sys-color-secondary: #e2c19e;
+  --md-sys-color-on-secondary: #422c17;
+  --md-sys-color-secondary-container: #5a422a;
+  --md-sys-color-on-secondary-container: #ffddb9;
+
+  /* Tertiary - Bronze */
+  --md-sys-color-tertiary: #c0cb9c;
+  --md-sys-color-on-tertiary: #2b3412;
+  --md-sys-color-tertiary-container: #404b26;
+  --md-sys-color-on-tertiary-container: #dce8b6;
+
+  /* Error */
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  /* Background & Surface - Warm dark gold tones */
+  --md-sys-color-background: #1f1b16;
+  --md-sys-color-on-background: #ebe1d9;
+  --md-sys-color-surface: #1f1b16;
+  --md-sys-color-on-surface: #ebe1d9;
+  --md-sys-color-surface-variant: #4d4639;
+  --md-sys-color-on-surface-variant: #d0c5b4;
+
+  /* Outline */
+  --md-sys-color-outline: #999080;
+  --md-sys-color-outline-variant: #4d4639;
+
+  /* Additional surface tones */
+  --md-sys-color-surface-container-lowest: #19160f;
+  --md-sys-color-surface-container-low: #1f1b16;
+  --md-sys-color-surface-container: #23201a;
+  --md-sys-color-surface-container-high: #2e2a24;
+  --md-sys-color-surface-container-highest: #39342e;
+}
+
+/* ==============================================
+   SMOOTH THEME TRANSITIONS
+   ============================================== */
+[data-theme] {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Transition all MD3 color tokens smoothly */
+* {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Don't transition transforms and opacity (used for other animations) */
+* {
+  transition-property: background-color, color, border-color, box-shadow;
+}

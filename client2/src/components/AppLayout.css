@@ -1048,4 +1048,35 @@
   to { transform: rotate(360deg); }
 }
 
+/* ============================================================================
+   MOBILE RESPONSIVE - Hide desktop navigation and header
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  /* Hide desktop sidebar navigation on mobile */
+  .premium-app-layout .navigation-pane {
+    display: none !important;
+  }
+
+  /* Hide desktop header on mobile */
+  .premium-app-layout .content-area > header {
+    display: none !important;
+  }
+
+  /* Adjust layout to single column on mobile */
+  .premium-app-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* Add padding bottom for mobile navigation bar */
+  .premium-app-layout .page-content {
+    padding-bottom: 100px;
+  }
+
+  /* Hide footer on mobile (already have bottom nav) */
+  .premium-app-layout .content-area > footer {
+    display: none !important;
+  }
+}
+
 
