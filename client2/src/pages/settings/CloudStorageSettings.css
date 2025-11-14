@@ -1,0 +1,358 @@
+/* Cloud Storage Settings Page Styles */
+
+.cloud-storage-settings-page {
+  min-height: 100vh;
+  background: var(--md-sys-color-surface-container-lowest);
+  padding: 24px;
+}
+
+.cloud-storage-settings-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header */
+.settings-header {
+  position: relative;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--md-sys-color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-bottom: 16px;
+}
+
+.back-button:hover {
+  opacity: 0.8;
+}
+
+.settings-header h1 {
+  margin: 0 0 8px 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.settings-subtitle {
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.admin-icon {
+  font-size: 16px;
+}
+
+/* Message Banner */
+.message-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message-banner.success {
+  background: var(--md-sys-color-success-container, #d1f4dd);
+  color: var(--md-sys-color-on-success-container, #005221);
+  border: 1px solid var(--md-sys-color-success, #28a745);
+}
+
+.message-banner.error {
+  background: var(--md-sys-color-error-container, #fdd);
+  color: var(--md-sys-color-on-error-container, #c33);
+  border: 1px solid var(--md-sys-color-error, #dc3545);
+}
+
+.message-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.message-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  color: inherit;
+}
+
+.message-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Settings Card */
+.settings-card {
+  padding: 24px;
+}
+
+.settings-card h2 {
+  margin: 0 0 8px 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.settings-description {
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0 0 24px 0;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+}
+
+.spinner {
+  font-size: 48px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px;
+  gap: 12px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 400px;
+}
+
+/* Connections List */
+.connections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.connection-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 12px;
+  gap: 16px;
+}
+
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.connection-icon {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-primary-container);
+  border-radius: 12px;
+}
+
+.connection-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.connection-details h3 {
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.connection-details p {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Security Info */
+.security-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.security-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.security-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.security-item h3 {
+  margin: 0 0 4px 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.security-item p {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Danger Card */
+.danger-card {
+  border: 2px solid var(--md-sys-color-error);
+}
+
+.danger-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.danger-button {
+  border-color: var(--md-sys-color-error);
+  color: var(--md-sys-color-error);
+}
+
+.danger-button:hover {
+  background: var(--md-sys-color-error-container);
+}
+
+/* Help Links */
+.help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.help-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.help-link:hover {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.help-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-sys-color-secondary-container);
+  border-radius: 8px;
+}
+
+.help-link h3 {
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.help-link p {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .cloud-storage-settings-page {
+    padding: 16px;
+  }
+
+  .cloud-storage-settings-container {
+    gap: 16px;
+  }
+
+  .settings-card {
+    padding: 20px;
+  }
+
+  .connection-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .connection-item button {
+    width: 100%;
+  }
+
+  .security-item {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+}

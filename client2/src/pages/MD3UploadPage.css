@@ -691,3 +691,24 @@
     font-size: 1rem;
   }
 }
+
+/* Cloud Storage Divider */
+.md3-upload-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  color: rgb(var(--md-sys-color-on-surface-variant));
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgb(var(--md-sys-color-outline-variant));
+}
+
+.divider-text {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
