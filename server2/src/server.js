@@ -42,6 +42,7 @@ import { initializeSecurity, getSecurityStatus } from './config/securityConfig.j
 import { createHTTPSServer, configureCloudHTTPS } from './config/httpsConfig.js';
 import secureAuthRouter from './routes/secureAuth.js';
 import { booksRouter } from './routes/books.js';
+import { cloudStorageRouter } from './routes/cloudStorage.js';
 import { coversRouter } from './routes/covers.js';
 import coversEnhancedRouter from './routes/coversEnhanced.js';
 import { uploadCover } from './services/covers.js';
@@ -255,6 +256,7 @@ app.use('/auth/secure', secureAuthRouter);
 
 // ----- API Routers (namespaced) -----
 app.use('/books', booksRouter(authenticateTokenEnhanced));
+app.use('/api/cloud-storage', cloudStorageRouter(authenticateTokenEnhanced));
 app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
 app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));

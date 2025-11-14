@@ -515,3 +515,23 @@
     width: 24px;
   }
 }
+/* Cloud Storage Divider */
+.upload-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  color: #666;
+}
+
+.upload-divider .divider-line {
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.upload-divider .divider-text {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}

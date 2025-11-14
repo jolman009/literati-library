@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
 import { useGamification } from '../contexts/GamificationContext';
+import GoogleDriveUploader from '../components/cloud/GoogleDriveUploader';
 import {
   MD3Card,
   MD3Button,
@@ -243,6 +244,30 @@ const MD3UploadPage = () => {
                   style={{ display: 'none' }}
                 />
               </div>
+
+              {/* Cloud Storage Import Options */}
+              <div className="md3-upload-divider">
+                <span className="divider-line"></span>
+                <span className="divider-text">or import from</span>
+                <span className="divider-line"></span>
+              </div>
+
+              <GoogleDriveUploader
+                onUploadSuccess={(book) => {
+                  showSnackbar({
+                    message: `"${book.title}" imported successfully! +25 points earned!`,
+                    variant: 'success'
+                  });
+                  setTimeout(() => navigate('/library'), 2000);
+                }}
+                onUploadError={(error) => {
+                  showSnackbar({
+                    message: `Import failed: ${error}`,
+                    variant: 'error'
+                  });
+                }}
+                disabled={isUploading}
+              />
             </div>
           )}
 

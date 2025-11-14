@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
 import { useGamification } from '../contexts/GamificationContext';
+import GoogleDriveUploader from '../components/cloud/GoogleDriveUploader';
 import '../styles/upload-page.css';
 
 const UploadPage = () => {
@@ -293,6 +294,26 @@ const UploadPage = () => {
                 {message}
               </div>
             )}
+
+            {/* Cloud Storage Import Options */}
+            <div className="upload-divider">
+              <span className="divider-line"></span>
+              <span className="divider-text">or import from</span>
+              <span className="divider-line"></span>
+            </div>
+
+            <GoogleDriveUploader
+              onUploadSuccess={(book) => {
+                setMessage(`"${book.title}" imported successfully!`);
+                setIsError(false);
+                setTimeout(() => navigate('/library'), 2000);
+              }}
+              onUploadError={(error) => {
+                setMessage(error);
+                setIsError(true);
+              }}
+              disabled={isUploading}
+            />
           </div>
         )}
 

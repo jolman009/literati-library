@@ -127,6 +127,7 @@ const PrivacyPolicyPage = () => {
             <li><strong>AI Processing:</strong> Google Gemini API for note summarization (no personal data stored)</li>
             <li><strong>Hosting Services:</strong> Secure cloud hosting for data storage and app delivery</li>
             <li><strong>Authentication:</strong> Supabase for secure user authentication and data storage</li>
+            <li><strong>Cloud Storage Providers:</strong> Google Drive API and Dropbox API for importing books you select (OAuth 2.0 read-only access). We never store your cloud storage passwords and only access files you explicitly authorize.</li>
           </ul>
 
           <h3 className="md-title-large">Legal Requirements</h3>
@@ -135,6 +136,49 @@ const PrivacyPolicyPage = () => {
             <li><strong>Protection:</strong> To protect our rights, property, or safety, or that of our users</li>
             <li><strong>Enforcement:</strong> To enforce our Terms of Service or investigate violations</li>
           </ul>
+        </>
+      )
+    },
+    {
+      id: 'cloud-storage',
+      title: 'Third-Party Cloud Storage',
+      content: (
+        <>
+          <p className="md-body-medium">
+            When you choose to import books from cloud storage services, we implement strict security and privacy measures.
+          </p>
+
+          <h3 className="md-title-large">Authentication and Access</h3>
+          <ul className="legal-list">
+            <li><strong>OAuth 2.0:</strong> Industry-standard protocol - we never access your passwords</li>
+            <li><strong>Limited Access:</strong> Only files you explicitly select through the picker</li>
+            <li><strong>Minimal Scopes:</strong> Read-only access to selected files only</li>
+            <li><strong>Encrypted Storage:</strong> OAuth tokens encrypted using AES-256</li>
+            <li><strong>User Control:</strong> Revoke access anytime through Settings</li>
+          </ul>
+
+          <h3 className="md-title-large">Data Minimization</h3>
+          <ul className="legal-list">
+            <li>We do not access files you don't explicitly select</li>
+            <li>We do not scan or index your cloud storage</li>
+            <li>We do not retain access after import (unless Quick Import is enabled)</li>
+            <li>We do not share your cloud data with other third parties</li>
+          </ul>
+
+          <h3 className="md-title-large">Revoking Cloud Access</h3>
+          <p className="md-body-medium">
+            You can disconnect cloud storage providers at any time:
+          </p>
+          <ol className="legal-list">
+            <li>Go to <strong>Settings → Cloud Storage Connections</strong></li>
+            <li>Click "Disconnect" for the provider</li>
+            <li>All stored tokens are immediately deleted</li>
+          </ol>
+          <p className="md-body-medium">
+            You can also revoke access directly through your{' '}
+            <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account</a> or{' '}
+            <a href="https://www.dropbox.com/account/connected_apps" target="_blank" rel="noopener noreferrer">Dropbox Account</a>.
+          </p>
         </>
       )
     },
@@ -151,6 +195,9 @@ const PrivacyPolicyPage = () => {
             <li><strong>Correction:</strong> Request correction of inaccurate information</li>
             <li><strong>Deletion:</strong> Request deletion of your personal information</li>
             <li><strong>Portability:</strong> Request a copy of your data in a portable format</li>
+            <li><strong>Revoke Cloud Access:</strong> Disconnect cloud storage providers at any time through Settings</li>
+            <li><strong>Token Deletion:</strong> Request immediate deletion of stored OAuth tokens</li>
+            <li><strong>Access Review:</strong> View which cloud services are currently connected to your account</li>
           </ul>
 
           <h3 className="md-title-large">How to Exercise Your Rights</h3>
