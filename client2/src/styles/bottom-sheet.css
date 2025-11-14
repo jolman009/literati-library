@@ -1,0 +1,205 @@
+/**
+ * Bottom Sheet Modal Styles
+ * Native mobile slide-up modal with drag-to-close
+ */
+
+/* Overlay */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1300;
+  display: flex;
+  align-items: flex-end;
+  animation: bottomsheet-fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes bottomsheet-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sheet Container */
+.bottom-sheet {
+  width: 100%;
+  max-width: 100vw;
+  background: var(--md-sys-color-surface-container);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  box-shadow: var(--md-sys-elevation-level5);
+  display: flex;
+  flex-direction: column;
+  animation: bottomsheet-slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes bottomsheet-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet.dragging {
+  transition: none; /* Disable transitions during drag for immediate feedback */
+}
+
+/* Drag Handle */
+.bottom-sheet-handle-container {
+  width: 100%;
+  padding: 12px 0 8px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--md-sys-color-on-surface-variant);
+  border-radius: 2px;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+
+.bottom-sheet:active .bottom-sheet-handle,
+.bottom-sheet-handle-container:hover .bottom-sheet-handle {
+  opacity: 0.6;
+}
+
+/* Header */
+.bottom-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px 16px 24px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.bottom-sheet-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  flex: 1;
+}
+
+.bottom-sheet-close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bottom-sheet-close-btn:hover {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.bottom-sheet-close-btn:active {
+  transform: scale(0.95);
+}
+
+.bottom-sheet-close-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* Content Area */
+.bottom-sheet-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px 24px 24px;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Scrollbar styling */
+.bottom-sheet-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bottom-sheet-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bottom-sheet-content::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: 3px;
+}
+
+.bottom-sheet-content::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-outline);
+}
+
+/* Tablet & Desktop */
+@media (min-width: 768px) {
+  .bottom-sheet {
+    max-width: 600px;
+    margin: 0 auto;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+  }
+
+  .bottom-sheet-overlay {
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes bottomsheet-slide-up {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Dark mode adjustments */
+[data-actual-theme="dark"] .bottom-sheet {
+  background: var(--md-sys-color-surface);
+  box-shadow: var(--md-sys-elevation-level5),
+              0 0 0 1px var(--md-sys-color-outline-variant);
+}
+
+[data-actual-theme="dark"] .bottom-sheet-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-sheet,
+  .bottom-sheet-overlay {
+    animation: none !important;
+    transition: opacity 0.1s !important;
+  }
+
+  .bottom-sheet.dragging {
+    transition: none !important;
+  }
+}
+
+/* Safe area support for devices with notches */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-sheet-content {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}

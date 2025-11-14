@@ -3,7 +3,7 @@
   "name": "ShelfQuest",
   "short_name": "ShelfQuest",
   "description": "ShelfQuest - Your digital library companion for managing books with reading tracking and annotations",
-  "start_url": "/",
+  "start_url": "https://shelfquest.org/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
   "background_color": "#fff7fe",
