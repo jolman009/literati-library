@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "dev:https": "ENABLE_DEV_HTTPS=true pnpm exec nodemon src/server.js",
-    "start": "pnpm exec node src/server.js",
+    "start": "node src/server.js",
     "start:https": "ENABLE_DEV_HTTPS=true node src/server.js",
     "build": "echo \"(skip if JS-only)\"",
     "test": "cross-env NODE_ENV=test jest",
