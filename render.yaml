@@ -5,8 +5,8 @@ services:
     runtime: node
     plan: starter
     rootDir: server2
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: corepack enable && corepack prepare pnpm@8.15.6 --activate && pnpm install
+    startCommand: pnpm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -45,7 +45,7 @@ services:
       - key: UPLOAD_TIMEOUT
         value: 300000
       - key: USE_CLOUD_HTTPS
-        value: true
+        value: "true"
     autoDeploy: true
     branch: main
 
