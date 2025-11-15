@@ -4,9 +4,8 @@ services:
     name: shelfquest-server
     runtime: node
     plan: starter
-    rootDir: server2
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: corepack enable && corepack prepare pnpm@8.15.6 --activate && pnpm install --filter server2...
+    startCommand: cd server2 && pnpm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
