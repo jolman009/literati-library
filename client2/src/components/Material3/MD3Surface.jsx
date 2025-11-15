@@ -1,14 +1,14 @@
 // src/components/Material3/MD3Surface.jsx
-import React, { memo, forwardRef } from 'react';
+import React from 'react';
 import './MD3Surface.css';
 
-const MD3Surface = memo(forwardRef(({
+const MD3Surface = React.forwardRef(function MD3Surface({
   level = 'surface',
   elevation = 0,
   children,
   className = '',
   ...props
-}, ref) => {
+}, ref) {
   const classes = [
     'md3-surface',
     `md3-surface--${level}`,
@@ -25,8 +25,6 @@ const MD3Surface = memo(forwardRef(({
       {children}
     </div>
   );
-}));
+});
 
-MD3Surface.displayName = 'MD3Surface';
-
-export default MD3Surface;
+export default React.memo(MD3Surface);
