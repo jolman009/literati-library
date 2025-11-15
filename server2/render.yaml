@@ -5,7 +5,7 @@ services:
     runtime: node
     plan: starter
     buildCommand: corepack enable && corepack prepare pnpm@8.15.6 --activate && pnpm install --filter server2...
-    startCommand: cd server2 && pnpm start
+    startCommand: pnpm --filter server2 start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
