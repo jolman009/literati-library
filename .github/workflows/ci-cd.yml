@@ -30,7 +30,7 @@ jobs:
       - name: 🔧 Setup pnpm
         uses: ./.github/actions/setup-pnpm-corepack
         with:
-          version: latest
+          version: 8.15.6
           
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
@@ -70,7 +70,7 @@ jobs:
       - name: 🔧 Setup pnpm
         uses: ./.github/actions/setup-pnpm-corepack
         with:
-          version: latest
+          version: 8.15.6
           
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
