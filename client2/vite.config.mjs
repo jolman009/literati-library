@@ -289,9 +289,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
-      // Force react-is to use version 19.2.0 (fixes recharts React 19 compatibility)
-      'react-is': path.resolve(__dirname, './node_modules/react-is/index.js'),
     },
+    // Force single instance of react-is (fixes recharts React 19 compatibility)
+    dedupe: ['react', 'react-dom', 'react-is'],
   },
 })
 
