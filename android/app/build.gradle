@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'org.shelfquest.app'
+    namespace 'org.shelfquest.library'
     compileSdk 35
 
     defaultConfig {
-        applicationId "org.shelfquest.app"
+        applicationId "org.shelfquest.library"
         minSdk 24
         targetSdk 35
         versionCode 4
