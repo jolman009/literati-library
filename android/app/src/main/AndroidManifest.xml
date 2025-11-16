@@ -96,7 +96,7 @@
 
             <!-- File Provider Authority -->
             <meta-data android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
-                       android:value="org.shelfquest.library.fileprovider" />
+                       android:value="org.shelfquest.app.fileprovider" />
 
             <!-- Splash Screen Duration -->
             <meta-data android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
@@ -115,7 +115,7 @@
         <!-- File Provider for sharing functionality -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.shelfquest.library.fileprovider"
+            android:authorities="org.shelfquest.app.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
