@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace 'org.shelfquest.library'
+    namespace 'org.shelfquest.app'
     compileSdk 35
 
     defaultConfig {
-        applicationId "org.shelfquest.library"
+        applicationId "org.shelfquest.app"
         minSdk 24
         targetSdk 35
-        versionCode 4
-        versionName "1.0.4"
+        versionCode 5
+        versionName "1.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -26,10 +26,10 @@ android {
             defaultUrl: "https://shelfquest.org",
             launchUrl: "/",
             appName: "ShelfQuest",
-            themeColor: "#56a0d3 ",
+            themeColor: "#56a0d3",
             backgroundColor: "#FFFBFE",
             navigationBarColor: "#FFFBFE",
-            statusBarColor: "#56a0d3 ",
+            statusBarColor: "#56a0d3",
             enableNotification: "true",
             enableLocationDelegation: "false",
             enableSharing: "true",
