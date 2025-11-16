@@ -71,7 +71,6 @@ const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
-const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 // Library Page wrapper (lazy-loaded)
 const LibraryPageWrapper = lazy(() =>
   import('./components/wrappers/LibraryPageWrapper').catch(err => {
@@ -214,13 +213,6 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="achievements" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your achievements..." />}>
               <AchievementsPage />
-            </Suspense>
-          </ErrorBoundary>
-        } />
-        <Route path="/analytics" element={
-          <ErrorBoundary fallbackComponent="analytics" variant="full">
-            <Suspense fallback={<AppLoadingSpinner message="Loading analytics..." />}>
-              <AnalyticsPage />
             </Suspense>
           </ErrorBoundary>
         } />
