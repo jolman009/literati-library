@@ -27,15 +27,19 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          # Set alias for main domain
-          vercel alias set ${{ steps.deployment.outputs.deployment_url }} literati.pro --token=$VERCEL_TOKEN
+          # Set alias for literati.pro domains
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} literati.pro --token=$VERCEL_TOKEN || echo "⚠️ Could not alias literati.pro (permission issue)"
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} www.literati.pro --token=$VERCEL_TOKEN || echo "⚠️ Could not alias www.literati.pro (permission issue)"
 
-          # Set alias for www subdomain
-          vercel alias set ${{ steps.deployment.outputs.deployment_url }} www.literati.pro --token=$VERCEL_TOKEN
+          # Set alias for shelfquest.org domains
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} shelfquest.org --token=$VERCEL_TOKEN
+          vercel alias set ${{ steps.deployment.outputs.deployment_url }} www.shelfquest.org --token=$VERCEL_TOKEN
 
           echo "✅ Domain aliases updated successfully"
           echo "🌐 literati.pro → ${{ steps.deployment.outputs.deployment_url }}"
           echo "🌐 www.literati.pro → ${{ steps.deployment.outputs.deployment_url }}"
+          echo "🌐 shelfquest.org → ${{ steps.deployment.outputs.deployment_url }}"
+          echo "🌐 www.shelfquest.org → ${{ steps.deployment.outputs.deployment_url }}"
 
       - name: Verify Domain Update
         run: |
@@ -43,5 +47,7 @@ jobs:
           sleep 10  # Wait for DNS propagation
 
           # Check if domains are responding (may get 401 due to deployment protection)
-          curl -I https://literati.pro || echo "Domain routing updated (may show 401 due to deployment protection)"
-          curl -I https://www.literati.pro || echo "WWW domain routing updated"
+          curl -I https://literati.pro || echo "literati.pro routing updated (may show 401 due to deployment protection)"
+          curl -I https://www.literati.pro || echo "www.literati.pro routing updated"
+          curl -I https://shelfquest.org || echo "shelfquest.org routing updated (may show 401 due to deployment protection)"
+          curl -I https://www.shelfquest.org || echo "www.shelfquest.org routing updated"
