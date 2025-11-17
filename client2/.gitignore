@@ -26,6 +26,7 @@ results.json
 .env
 .env.local
 .env.*.local
+.env.development
 
 npm-debug.log*
 yarn-debug.log*
