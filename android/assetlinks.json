@@ -4,7 +4,8 @@
     "namespace": "android_app",
     "package_name": "org.shelfquest.app",
     "sha256_cert_fingerprints": [
-      "08:7D:5B:05:20:BA:51:E3:B4:8C:99:54:FB:66:C7:C2:2B:B7:19:89:FD:91:E3:94:2C:AD:9D:C9:C2:83:6B:41"
+      "08:7D:5B:05:20:BA:51:E3:B4:8C:99:54:FB:66:C7:C2:2B:B7:19:89:FD:91:E3:94:2C:AD:9D:C9:C2:83:6B:41",
+      "AD:C7:D6:05:33:48:D6:EC:B9:81:54:B1:5F:45:EE:9D:AB:3B:7E:30:CC:66:34:3E:AB:36:22:CE:EF:60:BD:41"
     ]
   }
 }]
