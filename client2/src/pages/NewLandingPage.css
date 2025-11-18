@@ -720,3 +720,39 @@ body, html {
     font-size: 0.875rem;
   }
 }
+
+/* Dark Mode Specific Styles */
+@media (prefers-color-scheme: dark) {
+  .store-button {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .store-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .store-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .store-name {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .download-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .store-button.coming-soon {
+    opacity: 0.6;
+  }
+
+  .store-button.coming-soon:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
