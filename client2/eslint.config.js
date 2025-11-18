@@ -22,7 +22,8 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.es2021,
-        ...globals.node
+        ...globals.node,
+        WebAssembly: 'readonly'
       },
       parserOptions: {
         ecmaFeatures: {
@@ -66,6 +67,35 @@ export default [
     rules: {
       'no-console': 'off',
       'no-unused-vars': 'off'
+    }
+  },
+
+  // Worker files and minified files - disable most rules
+  {
+    files: ['public/**/*.worker.*.js', 'public/**/*.worker.*.mjs', '**/*.min.js', '**/*.min.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.worker,
+        WebAssembly: 'readonly',
+        importScripts: 'readonly',
+        self: 'readonly'
+      }
+    },
+    rules: {
+      // Disable all rules for minified and worker files
+      // These are third-party libraries and should not be linted
+      'no-console': 'off',
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
+      'no-case-declarations': 'off',
+      'no-prototype-builtins': 'off',
+      'no-empty': 'off',
+      'no-control-regex': 'off',
+      'getter-return': 'off',
+      'no-redeclare': 'off',
+      'no-fallthrough': 'off',
+      'no-cond-assign': 'off'
     }
   }
 ];
