@@ -13,7 +13,7 @@ import { initOfflineReading } from './utils/offlineInit';
 import './styles/mobile-fixes.css';
 
 // Import enhanced UX components
-import { LoadingSpinner, PageTransition, NetworkStatus } from './components/ui/LoadingStates';
+import { LoadingSpinner, NetworkStatus } from './components/ui/LoadingStates';
 import ErrorBoundary, {
   LibraryErrorBoundary,
   ReaderErrorBoundary,
@@ -23,7 +23,7 @@ import ErrorBoundary, {
 import { useNetworkStatus } from './hooks/useNetworkStatus';
 
 // PWA Components
-import { InstallPrompt, UpdateNotification } from './components/PWA';
+import { InstallPrompt } from './components/PWA';
 import OfflineIndicator from './components/OfflineIndicator';
 
 // Sentry testing (development only)
