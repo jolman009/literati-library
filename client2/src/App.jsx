@@ -168,17 +168,10 @@ const AppRoutes = () => {
   const { user, loading, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    console.log('🔍 AUTH DEBUG:', {
-      user: user ? `${user.name} (${user.email})` : 'null',
-      loading,
-      isAuthenticated,
-      hasToken: !!localStorage.getItem('shelfquest_token'),
-      currentPath: window.location.pathname
-    });
+    // Auth state monitoring - removed for production
   }, [user, loading, isAuthenticated]);
 
   if (loading) {
-    console.log('🔄 Loading auth state...');
     return <AppLoadingSpinner message="Initializing ShelfQuest..." />;
   }
 
@@ -273,14 +266,11 @@ const AppRoutes = () => {
           </ErrorBoundary>
         } />
         <Route path="/read/:bookId" element={
-          <>
-            {console.log('🛣️ App.jsx: /read/:bookId route matched!')}
-            <ReaderErrorBoundary>
-              <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
-                <ReadBookWrapper />
-              </Suspense>
-            </ReaderErrorBoundary>
-          </>
+          <ReaderErrorBoundary>
+            <Suspense fallback={<AppLoadingSpinner message="Preparing your reading session..." />}>
+              <ReadBookWrapper />
+            </Suspense>
+          </ReaderErrorBoundary>
         } />
         <Route path="/mentor" element={
           <ErrorBoundary fallbackComponent="mentor" variant="full">
@@ -347,14 +337,10 @@ const App = () => {
     const themeToApply = savedTheme || getDefaultTheme().id;
     const currentMode = document.documentElement.getAttribute('data-theme') || 'light';
     applyTheme(themeToApply, currentMode);
-    console.log('🎨 Early theme initialization:', themeToApply);
 
     // Initialize offline reading system
     initOfflineReading().then(result => {
-      if (result.success) {
-        console.log('📚 Offline reading initialized successfully');
-        console.log('💾 Storage available:', result.storage);
-      } else {
+      if (!result.success) {
         console.warn('⚠️ Offline reading initialization failed:', result.error);
       }
     }).catch(error => {

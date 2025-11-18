@@ -231,7 +231,12 @@ jobs:
 
       - name: 🏃 Run Lighthouse CI
         working-directory: ./client2
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         run: |
-          lhci autorun --collect.staticDistDir=./dist || echo "Lighthouse CI completed with warnings"
+          # Run Lighthouse CI without GitHub integration if token is not available
+          if [ -n "${{ secrets.LHCI_GITHUB_APP_TOKEN }}" ]; then
+            export LHCI_GITHUB_APP_TOKEN="${{ secrets.LHCI_GITHUB_APP_TOKEN }}"
+            lhci autorun --collect.staticDistDir=./dist || echo "Lighthouse CI completed with warnings"
+          else
+            echo "⚠️ LHCI_GITHUB_APP_TOKEN not configured - running without GitHub integration"
+            lhci autorun --collect.staticDistDir=./dist --upload.target=temporary-public-storage || echo "Lighthouse CI completed with warnings"
+          fi
