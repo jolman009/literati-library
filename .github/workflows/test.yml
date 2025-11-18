@@ -54,14 +54,6 @@ jobs:
       - name: Run unit tests with coverage
         run: pnpm run test:coverage
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          flags: client
-          directory: ./client2/coverage
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -126,14 +118,6 @@ jobs:
         env:
           NODE_ENV: test
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          flags: server
-          directory: ./server2/coverage
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -178,14 +162,6 @@ jobs:
         env:
           ENVIRONMENT: test
           GOOGLE_API_KEY: test-api-key
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          flags: ai-service
-          directory: ./ai-service
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -382,7 +358,7 @@ jobs:
           echo "- Security Tests: ${{ needs.security-tests.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Coverage Reports" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage reports have been uploaded to Codecov." >> $GITHUB_STEP_SUMMARY
+          echo "Coverage reports are available in the test artifacts." >> $GITHUB_STEP_SUMMARY
 
       - name: Report test status
         if: ${{ needs.client-tests.result == 'failure' || needs.server-tests.result == 'failure' || needs.ai-service-tests.result == 'failure' || needs.e2e-tests.result == 'failure' }}
