@@ -1,11 +1,9 @@
 // APIKeyConfiguration.jsx - Secure API Key Entry Interface
 import React, { useState, useEffect } from 'react';
-import { 
-  Settings, 
-  Key, 
-  Eye, 
-  EyeOff, 
-  CheckCircle, 
+import {
+  Eye,
+  EyeOff,
+  CheckCircle,
   AlertTriangle,
   Save,
   Trash2,
@@ -17,7 +15,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import './APIKeyConfiguration.css';
 
 const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
-  const { actualTheme } = useMaterial3Theme();
+  const { actualTheme: _actualTheme } = useMaterial3Theme();
   
   const [activeProvider, setActiveProvider] = useState('gemini');
   const [keyInputs, setKeyInputs] = useState({});
@@ -110,7 +108,7 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
           [provider]: { error: result.error }
         });
       }
-    } catch (error) {
+    } catch (_error) {
       setValidationStatus({
         ...validationStatus,
         [provider]: { error: 'Validation failed. Please check your key.' }

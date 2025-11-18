@@ -27,7 +27,7 @@ export const isTokenNearExpiry = (token) => {
     
     // Return true if token expires in less than 5 minutes
     return timeUntilExpiry < 5 * 60 * 1000;
-  } catch (error) {
+  } catch (_error) {
     return true; // If we can't parse, assume expired
   }
 };
