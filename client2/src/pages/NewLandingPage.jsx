@@ -91,6 +91,40 @@ const NewLandingPage = () => {
             </button>
           </div>
 
+          {/* Download Buttons */}
+          <div className="download-section">
+            <p className="download-label">Or download the app:</p>
+            <div className="download-buttons">
+              <a
+                href="https://apps.microsoft.com/detail/9P23Z6MBNGSH"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="store-button microsoft-button"
+                aria-label="Download from Microsoft Store"
+              >
+                <svg className="store-icon" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0h11v11H0z" fill="#F25022"/>
+                  <path d="M12 0h11v11H12z" fill="#7FBA00"/>
+                  <path d="M0 12h11v11H0z" fill="#00A4EF"/>
+                  <path d="M12 12h11v11H12z" fill="#FFB900"/>
+                </svg>
+                <div className="store-text">
+                  <span className="store-label">Download on the</span>
+                  <span className="store-name">Microsoft Store</span>
+                </div>
+              </a>
+              <div className="store-button google-button coming-soon">
+                <svg className="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="#3DDC84"/>
+                </svg>
+                <div className="store-text">
+                  <span className="store-label">Coming Dec 1</span>
+                  <span className="store-name">Google Play</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Key Features Highlights */}
           <div className="stats-strip">
             <div className="stat-item">
