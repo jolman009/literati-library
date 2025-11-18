@@ -230,7 +230,7 @@ export class CachedApiService {
   /**
    * Prefetch commonly accessed data
    */
-  async prefetchData(userId) {
+  async prefetchData(_userId) {
     console.log('🔄 Prefetching critical data...');
     
     const prefetchPromises = [
@@ -260,7 +260,7 @@ export class CachedApiService {
       }
       
       return null;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -349,7 +349,7 @@ export class CachedApiService {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.sub || payload.user_id || payload.id;
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to extract user ID from token');
     }
     

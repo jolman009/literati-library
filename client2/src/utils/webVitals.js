@@ -117,7 +117,7 @@ export const initWebVitals = () => {
         }
       });
       observer.observe({ entryTypes: ['first-input'] });
-    } catch (e) {
+    } catch {
       console.warn('Performance Observer not supported for first-input');
     }
     
@@ -131,7 +131,7 @@ export const initWebVitals = () => {
         }
       });
       longTaskObserver.observe({ entryTypes: ['longtask'] });
-    } catch (e) {
+    } catch {
       console.warn('Performance Observer not supported for longtask');
     }
   }

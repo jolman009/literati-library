@@ -7,12 +7,10 @@ import NavigationFAB from './NavigationFAB';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useEntitlements } from '../contexts/EntitlementsContext';
 import GlobalSearch from './GlobalSearch';
-import GlobalSearchFAB from './GlobalSearchFAB';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import './AppLayout.css';
 import MD3Footer from './MD3Footer';
 import ChatGuide from './ChatGuide/ChatGuide';
-import GoPremiumBanner from './premium/GoPremiumBanner';
 
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();

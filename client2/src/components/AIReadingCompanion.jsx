@@ -10,7 +10,6 @@ import {
   BookOpen,
   MessageCircle,
   TrendingUp,
-  Zap,
   Eye,
   Target,
   Sparkles
@@ -26,7 +25,7 @@ const AIReadingCompanion = ({
   onNoteCreate,
   className = ''
 }) => {
-  const { actualTheme } = useMaterial3Theme();
+  const { actualTheme: _actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
   const { isPremium, openPremiumModal } = useEntitlements();
   

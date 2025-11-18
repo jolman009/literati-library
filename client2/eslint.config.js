@@ -5,6 +5,17 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import globals from 'globals';
 
 export default [
+  // Ignore build output and dependencies
+  {
+    ignores: [
+      'dist/**',
+      'build/**',
+      'node_modules/**',
+      '*.config.js',
+      'vite.config.js'
+    ]
+  },
+
   // Base JS config
   js.configs.recommended,
 
@@ -64,6 +75,21 @@ export default [
   // Test files - more lenient rules
   {
     files: ['**/*.test.{js,jsx}', '**/__tests__/**/*.{js,jsx}', '**/tests/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        describe: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        vi: 'readonly',
+        it: 'readonly'
+      }
+    },
     rules: {
       'no-console': 'off',
       'no-unused-vars': 'off'

@@ -1,5 +1,6 @@
 # Integrated CI/CD Pipeline - Production Ready
 # Combines testing, building, and deployment with the new environment system
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
 name: Production Ready CI/CD
 
@@ -188,17 +189,17 @@ jobs:
           VITE_AI_SERVICE_URL: https://literati-ai-staging.onrender.com
           VITE_ENABLE_SERVICE_WORKER: true
           VITE_APP_ENV: staging
-          VITE_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY || 'placeholder_key' }}
+          VITE_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL || 'https://placeholder.supabase.co' }} # pragma: allowlist secret
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY || 'placeholder_key' }} # pragma: allowlist secret
         run: pnpm run build:staging
 
       - name: 🚀 Deploy to Vercel (Staging)
         uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # pragma: allowlist secret
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # pragma: allowlist secret
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # pragma: allowlist secret
           working-directory: ./client2
           vercel-args: '--local-config ../vercel.staging.json --prod'
           alias-domains: staging-literati.vercel.app
@@ -243,24 +244,24 @@ jobs:
           VITE_AI_SERVICE_URL: https://literati-ai-production.onrender.com
           VITE_ENABLE_SERVICE_WORKER: true
           VITE_APP_ENV: production
-          VITE_SUPABASE_URL: ${{ secrets.PRODUCTION_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.PRODUCTION_SUPABASE_ANON_KEY || 'placeholder_key' }}
+          VITE_SUPABASE_URL: ${{ secrets.PRODUCTION_SUPABASE_URL || 'https://placeholder.supabase.co' }} # pragma: allowlist secret
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.PRODUCTION_SUPABASE_ANON_KEY || 'placeholder_key' }} # pragma: allowlist secret
         run: pnpm run build:production
 
       - name: 🚀 Deploy to Vercel (Production)
         id: vercel-deploy
         uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # pragma: allowlist secret
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # pragma: allowlist secret
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # pragma: allowlist secret
           working-directory: ./client2
           vercel-args: '--prod'
 
       - name: 🌐 Update Custom Domain Aliases
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }} # pragma: allowlist secret
         run: |
           echo "🔗 Updating domain aliases to point to latest deployment..."
           echo "📍 Deployment URL: ${{ steps.vercel-deploy.outputs.preview-url }}"
