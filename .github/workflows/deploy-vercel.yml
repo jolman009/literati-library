@@ -37,7 +37,7 @@ jobs:
 
       - name: 🧪 Run tests
         working-directory: ./client2
-        run: pnpm run test:unit --run
+        run: pnpm run test
 
       - name: 🔍 Lint code
         working-directory: ./client2
