@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/pages/EnhancedNotesPage.jsx - Interactive Notes with Visualizations
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
@@ -15,11 +17,8 @@ import {
   MD3Menu,
   MD3MenuItem,
   MD3MenuDivider,
-  MD3IconButton,
-  MD3Surface,
   useSnackbar
 } from '../components/Material3';
-import AIReadingCompanion from '../components/AIReadingCompanion';
 import ReadingAssistant from '../services/ReadingAssistant';
 import {
   PlusCircle,
@@ -34,7 +33,6 @@ import {
   BarChart3,
   Cloud,
   Grid,
-  List,
   Filter,
   TrendingUp,
   Hash,
@@ -425,9 +423,7 @@ const EnhancedNotesPage = () => {
   const [viewMode, setViewMode] = useState('grid'); // grid, timeline, cloud, stats
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedTags, setSelectedTags] = useState(new Set());
-  const [dateRange, setDateRange] = useState({ start: null, end: null });
-  const [showAICompanion, setShowAICompanion] = useState(false);
-  const [selectedBook, setSelectedBook] = useState(null);
+  const [dateRange] = useState({ start: null, end: null });
   
   // Form state
   const [noteForm, setNoteForm] = useState({
@@ -439,7 +435,7 @@ const EnhancedNotesPage = () => {
   
   // Debug: Watch modal state changes
   useEffect(() => {
-    console.log('🔍 Modal state changed:', isModalOpen);
+    
   }, [isModalOpen]);
 
   // Load data
@@ -448,9 +444,9 @@ const EnhancedNotesPage = () => {
       fetchNotes();
       fetchBooks();
     }
-  }, [user]);
+  }, [fetchNotes, user]);
   
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       setLoading(true);
       const response = await API.get('/notes', { timeout: 30000 });
@@ -464,7 +460,7 @@ const EnhancedNotesPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  });
   
   const fetchBooks = async () => {
     try {
@@ -479,7 +475,7 @@ const EnhancedNotesPage = () => {
   
   // Note management functions
   const handleOpenModal = (note = null) => {
-    console.log('📝 handleOpenModal called with note:', note);
+    
     if (note) {
       setEditingNote(note);
       setNoteForm({
@@ -662,10 +658,10 @@ const EnhancedNotesPage = () => {
           matchesFilter = note.tags && note.tags.length > 0;
           break;
         case 'recent':
-          const weekAgo = new Date();
+          { const weekAgo = new Date();
           weekAgo.setDate(weekAgo.getDate() - 7);
           matchesFilter = new Date(note.created_at) > weekAgo;
-          break;
+          break; }
         default:
           matchesFilter = true;
       }
