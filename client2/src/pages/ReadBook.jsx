@@ -7,6 +7,7 @@ import { useSnackbar } from "../components/Material3";
 import ReadestReader from "../components/ReadestReader";
 import ThemeToggle from "../components/ThemeToggle";
 import NotesSidebar from "../components/NotesSidebar";
+import BottomSheetNotes from "../components/BottomSheetNotes";
 import MD3Fab from "../components/Material3/MD3Fab";
 // ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
@@ -39,8 +40,20 @@ const ReadBook = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Notes sidebar state
+  const [isMobile, setIsMobile] = useState(false); // Mobile detection for bottom sheet
 
   console.log('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
+
+  // ===== MOBILE DETECTION =====
+  useEffect(() => {
+    const updateMobileState = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    updateMobileState();
+    window.addEventListener('resize', updateMobileState);
+    return () => window.removeEventListener('resize', updateMobileState);
+  }, []);
 
   // --- fetch book (cancellable) ---
   const fetchBook = useCallback(async () => {
@@ -385,15 +398,26 @@ const ReadBook = () => {
             onPageChange={(p) => setCurrentPage(p)}            // ✅ PDF
           />
 
-          {/* Notes Sidebar */}
-          <NotesSidebar
-            isOpen={isSidebarOpen}
-            onClose={() => setIsSidebarOpen(false)}
-            title={`Note — ${book.title}`}
-            book={book}
-            currentPage={currentPage}
-            currentLocator={currentLocator}
-          />
+          {/* Notes: BottomSheet on mobile, Sidebar on desktop */}
+          {isMobile ? (
+            <BottomSheetNotes
+              isOpen={isSidebarOpen}
+              onClose={() => setIsSidebarOpen(false)}
+              title={`Note — ${book.title}`}
+              book={book}
+              currentPage={currentPage}
+              currentLocator={currentLocator}
+            />
+          ) : (
+            <NotesSidebar
+              isOpen={isSidebarOpen}
+              onClose={() => setIsSidebarOpen(false)}
+              title={`Note — ${book.title}`}
+              book={book}
+              currentPage={currentPage}
+              currentLocator={currentLocator}
+            />
+          )}
 
           {/* Toggle Notes Button (FAB) */}
           <MD3Fab
