@@ -17,7 +17,7 @@ import Login from './pages/Login';
 // Lazy load page components with proper wrappers
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LibraryPageWrapper = lazy(() => {
-  console.log('🔍 DIAGNOSTIC: Attempting to load LibraryPageWrapper...');
+  
   return import('./components/wrappers/LibraryPageWrapper').catch(error => {
     console.error('❌ DIAGNOSTIC: LibraryPageWrapper import failed:', {
       message: error.message,
@@ -74,21 +74,15 @@ const AppRoutes = () => {
 
   // 🔍 DEBUG: Monitor auth state changes
   useEffect(() => {
-    console.log('🔍 AUTH STATE DEBUG:', {
-      user: user ? `${user.name} (${user.email})` : 'null',
-      loading,
-      isAuthenticated,
-      hasToken: !!localStorage.getItem('shelfquest_token'),
-      currentPath: window.location.pathname
-    });
+    
   }, [user, loading, isAuthenticated]);
 
   if (loading) {
-    console.log('🔄 Still loading auth state...');
+    
     return <LoadingSpinner />;
   }
 
-  console.log('🔍 Rendering routes with user:', user ? 'authenticated' : 'not authenticated');
+  
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
