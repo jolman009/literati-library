@@ -294,8 +294,7 @@ export const useBundleOptimizer = () => {
 
 // Development helper component
 export const BundleAnalyzer = () => {
-  if (process.env.NODE_ENV !== 'development') return null;
-
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const [analysis, setAnalysis] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
 
@@ -306,6 +305,9 @@ export const BundleAnalyzer = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Check if we should render (after all hooks)
+  if (process.env.NODE_ENV !== 'development') return null;
 
   if (!analysis) return null;
 

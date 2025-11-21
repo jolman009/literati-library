@@ -15,7 +15,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import './APIKeyConfiguration.css';
 
 const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
-  const { actualTheme: _actualTheme } = useMaterial3Theme();
+  const { actualTheme } = useMaterial3Theme();
   
   const [activeProvider, setActiveProvider] = useState('gemini');
   const [keyInputs, setKeyInputs] = useState({});

@@ -1,5 +1,6 @@
 // src/services/crashReporting.js - Crash Reporting with Sentry Integration
 import * as Sentry from '@sentry/react';
+import React from 'react';
 import environmentConfig from '../config/environment.js';
 
 class CrashReportingService {

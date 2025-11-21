@@ -27,49 +27,7 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     return result;
   }, [file, book?.file_url, token]);
 
-  // Check if we have a valid PDF file
-  if (!pdfFile) {
-    return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: 'var(--md-sys-color-surface, #121212)',
-        color: 'var(--md-sys-color-on-surface, #ffffff)'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <h2>No PDF file specified.</h2>
-          {book && (
-            <>
-              <p style={{ marginTop: '10px' }}>Book: {book.title || 'Unknown'}</p>
-              <p style={{ fontSize: '14px', opacity: 0.7 }}>
-                File URL: {book.file_url || 'Missing'}
-              </p>
-            </>
-          )}
-          {onClose && (
-            <button 
-              onClick={onClose}
-              style={{
-                marginTop: '20px',
-                padding: '10px 20px',
-                background: 'var(--md-sys-color-primary)',
-                color: 'var(--md-sys-color-on-primary)',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer'
-              }}
-            >
-              Go Back
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Now use pdfFile instead of file in the component
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const containerRef = useRef(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(initialPage || 1);
@@ -170,6 +128,48 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
       onPageChange(pageNumber);
     }
   }, [pageNumber, onPageChange]);
+
+  // Check if we have a valid PDF file (after all hooks)
+  if (!pdfFile) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: 'var(--md-sys-color-surface, #121212)',
+        color: 'var(--md-sys-color-on-surface, #ffffff)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2>No PDF file specified.</h2>
+          {book && (
+            <>
+              <p style={{ marginTop: '10px' }}>Book: {book.title || 'Unknown'}</p>
+              <p style={{ fontSize: '14px', opacity: 0.7 }}>
+                File URL: {book.file_url || 'Missing'}
+              </p>
+            </>
+          )}
+          {onClose && (
+            <button
+              onClick={onClose}
+              style={{
+                marginTop: '20px',
+                padding: '10px 20px',
+                background: 'var(--md-sys-color-primary)',
+                color: 'var(--md-sys-color-on-primary)',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              Go Back
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pdf-reader-container">

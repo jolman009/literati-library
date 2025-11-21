@@ -1,4 +1,5 @@
 // Integration-specific test setup: use actual app contexts instead of global mocks
+import { vi } from 'vitest';
 import './setupTests.js'
 
 // Override global mocks from setupTests to use the real implementations

@@ -1,18 +1,17 @@
 import * as ReactPdf from 'react-pdf';
 
 import { GlobalWorkerOptions } from 'pdfjs-dist';
-GlobalWorkerOptions.workerSrc = new URL(
+
+const workerUrl = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url
 ).toString();
 
 // Set for direct pdfjs-dist usage
-if (!GlobalWorkerOptions.workerSrc) {
-  GlobalWorkerOptions.workerSrc = workerUrl;
-}
+GlobalWorkerOptions.workerSrc = workerUrl;
 
 // Also set for react-pdf (if you use it)
-if (ReactPdf?.pdfjs?.GlobalWorkerOptions && !ReactPdf.pdfjs.GlobalWorkerOptions.workerSrc) {
+if (ReactPdf?.pdfjs?.GlobalWorkerOptions) {
   ReactPdf.pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 }
 

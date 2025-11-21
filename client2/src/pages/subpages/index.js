@@ -1,4 +1,5 @@
 // src/components/Collections/index.js
+import EnhancedCollectionsPage from './EnhancedCollectionsPage';
 
 // Main Collections Component
 export { default as EnhancedCollectionsPage } from './EnhancedCollectionsPage';

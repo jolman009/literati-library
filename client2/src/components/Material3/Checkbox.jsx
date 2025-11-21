@@ -2,27 +2,17 @@
 import React from 'react';
 
 // Material 3 Checkbox Component
-const Checkbox = ({ checked, onChange, label, id = 'm3-checkbox' }) => {
-  return (
-    <label htmlFor={id} className="flex items-center space-x-3 cursor-pointer">
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        className="w-5 h-5 rounded border border-outline checked:bg-primary checked:border-transparent focus:ring-2 focus:ring-primary focus:outline-none transition-colors"
-      />
-      <span className="text-sm text-on-surface">{label}</span>
-    </label>
-);
+const Checkbox = ({ checked, onChange, label, id = 'm3-checkbox', disabled = false, className = '', indeterminate = false, handleChange }) => {
+  // Use handleChange if provided, otherwise use onChange
+  const onChangeHandler = handleChange || onChange;
 
-return (
-  <label className={`inline-flex items-center gap-3 ${disabled ? 'opacity-38 cursor-not-allowed' : 'cursor-pointer'} ${className}`}>
+  return (
+    <label className={`inline-flex items-center gap-3 ${disabled ? 'opacity-38 cursor-not-allowed' : 'cursor-pointer'} ${className}`}>
     <span className="relative inline-flex items-center justify-center">
       <input
           type="checkbox"
           checked={checked}
-          onChange={handleChange}
+          onChange={onChangeHandler}
           disabled={disabled}
           className="sr-only peer"
           ref={(el) => {

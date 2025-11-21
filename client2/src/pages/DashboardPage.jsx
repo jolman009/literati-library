@@ -424,7 +424,6 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       console.warn('✅ QuickStatsOverview: Data updated', {
         notesPoints: categories?.notes || 0,
         notesCount: noteActions?.count || 0,
-        sessionCount: sessionActions?.count || 0,
         totalPoints: categories?.total || 0,
         rawCategories: categories,
         rawBreakdown: breakdown,
