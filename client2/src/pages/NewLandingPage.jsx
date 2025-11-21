@@ -201,6 +201,8 @@ const NewLandingPage = () => {
           {' '}•{' '}
           <a href="/contact" className="footer-link">Contact Us</a>
           {' '}•{' '}
+          <a href="/jolman-press" className="footer-link">About Jolman Press</a>
+          {' '}•{' '}
           <a href="/legal/privacy-policy" className="footer-link">Privacy Policy</a>
           {' '}•{' '}
           <a href="/legal/terms-of-service" className="footer-link">Terms</a>
