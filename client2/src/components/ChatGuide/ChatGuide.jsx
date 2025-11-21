@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -13,10 +13,7 @@ const initialSuggestions = [
 ];
 
 export default function ChatGuide() {
-  // Feature flag
-  const enabled = import.meta.env.VITE_CHAT_GUIDE_ENABLED === 'true';
-  if (!enabled) return null;
-
+  // All hooks must be called before any early returns
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { user, makeAuthenticatedApiCall } = useAuth();
@@ -43,6 +40,10 @@ export default function ChatGuide() {
     }
   }, [open, messages]);
 
+  // Feature flag check - after all hooks
+  const enabled = import.meta.env.VITE_CHAT_GUIDE_ENABLED === 'true';
+  if (!enabled) return null;
+
   const send = async (text) => {
     if (!text || busy) return;
     const userMsg = { id: `u${Date.now()}`, role: 'user', content: text };
@@ -59,7 +60,7 @@ export default function ChatGuide() {
       if (Array.isArray(reply.actions) && reply.actions.length) {
         performActions(reply.actions);
       }
-    } catch (e) {
+    } catch {
       setMessages(prev => [...prev, { id: `e${Date.now()}`, role: 'assistant', content: 'Sorry, I could not process that request.' }]);
     } finally {
       setBusy(false);
@@ -126,7 +127,7 @@ export default function ChatGuide() {
         content: String(c?.content || '').slice(0, 1200)
       }));
       setPreviewItems(items);
-    } catch (e) {
+    } catch {
       setPreviewError('Failed to load source preview.');
     } finally {
       setPreviewLoading(false);
