@@ -27,17 +27,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm-corepack
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
-
-      - name: Setup pnpm
-        uses: ./.github/actions/setup-pnpm-corepack
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -101,17 +101,17 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm-corepack
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
-
-      - name: Setup pnpm
-        uses: ./.github/actions/setup-pnpm-corepack
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
