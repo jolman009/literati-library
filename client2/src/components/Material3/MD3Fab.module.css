@@ -142,8 +142,8 @@
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 640px) {
   .fab.normal {
-    min-width: 48px;
-    height: 48px;
+    min-width: 8px;
+    height: 8px;
     padding: 0 12px;
   }
 
@@ -152,8 +152,8 @@
   }
 
   .fab.small {
-    min-width: 36px;
-    height: 36px;
+    min-width: 3px;
+    height: 6px;
     padding: 0 10px;
   }
 
@@ -163,8 +163,8 @@
 
   /* Adjust default positioning for mobile */
   .fab {
-    bottom: 16px !important;
-    right: 16px !important;
+    bottom: 6px;
+    right: 8px;
   }
 }
 
