@@ -14,6 +14,10 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
+
+// Unmock AuthContext for these tests - we want to test the real implementation
+vi.unmock('../AuthContext');
+
 import { AuthProvider, useAuth } from '../AuthContext';
 import { BrowserRouter } from 'react-router-dom';
 

@@ -2,6 +2,14 @@ import '@testing-library/jest-dom'
 import { expect, afterEach, vi, beforeEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
+// Setup environment variables for tests
+import.meta.env.VITE_API_BASE_URL = 'http://localhost:5000'
+import.meta.env.VITE_SUPABASE_URL = 'https://test.supabase.co'
+import.meta.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key'
+import.meta.env.VITE_AI_SERVICE_URL = 'http://localhost:8000'
+import.meta.env.NODE_ENV = 'test'
+import.meta.env.MODE = 'test'
+
 // Make vi globally available
 global.vi = vi
 
@@ -100,6 +108,7 @@ vi.mock('react-router-dom', () => ({
 
 // Mock Material3 components and hooks
 vi.mock('./components/Material3', () => ({
+  Material3ThemeProvider: ({ children }) => children,
   MD3SnackbarProvider: ({ children }) => children,
   useSnackbar: () => ({
     showSnackbar: vi.fn(),

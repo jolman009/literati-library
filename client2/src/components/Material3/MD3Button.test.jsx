@@ -162,7 +162,8 @@ describe('MD3Button', () => {
       )
 
       const button = screen.getByRole('button')
-      await userEvent.click(button)
+      // Use fireEvent instead of userEvent since the button has pointer-events: none
+      fireEvent.click(button)
 
       expect(handleClick).not.toHaveBeenCalled()
     })
@@ -176,7 +177,8 @@ describe('MD3Button', () => {
       )
 
       const button = screen.getByRole('button')
-      await userEvent.click(button)
+      // Use fireEvent instead of userEvent since the button has pointer-events: none
+      fireEvent.click(button)
 
       expect(handleClick).not.toHaveBeenCalled()
     })
