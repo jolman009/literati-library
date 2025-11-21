@@ -100,7 +100,7 @@ const BottomSheetNotes = ({
       if (sheetState === 'closed') {
         setSheetState('peek');
         controls.start({
-          y: `calc(100% - ${SNAP_POINTS.PEEK}vh)`,
+          y: `${100 - SNAP_POINTS.PEEK}vh`,
           transition: { type: 'spring', damping: 25, stiffness: 280 }
         });
       }
@@ -109,7 +109,7 @@ const BottomSheetNotes = ({
       if (sheetState !== 'closed') {
         setSheetState('closed');
         controls.start({
-          y: '100%',
+          y: '100vh',
           transition: { duration: 0.3, ease: 'easeInOut' }
         });
       }
@@ -178,7 +178,7 @@ const BottomSheetNotes = ({
       // Auto-expand to half state when starting voice recording
       if (sheetState === 'peek') {
         setSheetState('half');
-        controls.start({ y: `calc(100% - ${SNAP_POINTS.HALF}vh)` });
+        controls.start({ y: `${100 - SNAP_POINTS.HALF}vh` });
       }
       recognitionRef.current.start();
       setIsRecording(true);
@@ -233,7 +233,7 @@ const BottomSheetNotes = ({
     if (nextState !== 'closed') {
       setSheetState(nextState);
       controls.start({
-        y: `calc(100% - ${SNAP_POINTS[nextState.toUpperCase()]}vh)`,
+        y: `${100 - SNAP_POINTS[nextState.toUpperCase()]}vh`,
         transition: { type: 'spring', damping: 30, stiffness: 300 }
       });
     }
@@ -321,7 +321,7 @@ const BottomSheetNotes = ({
         setTagInput("");
         setIsSaving(false);
         setSheetState('peek');
-        controls.start({ y: `calc(100% - ${SNAP_POINTS.PEEK}vh)` });
+        controls.start({ y: `${100 - SNAP_POINTS.PEEK}vh` });
 
       } catch (error) {
         console.error('❌ Failed to save note:', error);
@@ -376,7 +376,7 @@ const BottomSheetNotes = ({
   const expandToFull = () => {
     setSheetState('full');
     controls.start({
-      y: `calc(100% - ${SNAP_POINTS.FULL}vh)`,
+      y: `${100 - SNAP_POINTS.FULL}vh`,
       transition: { type: 'spring', damping: 30, stiffness: 300 }
     });
   };
@@ -410,7 +410,7 @@ const BottomSheetNotes = ({
         onClick={() => {
           if (sheetState !== 'peek') {
             setSheetState('peek');
-            controls.start({ y: `calc(100% - ${SNAP_POINTS.PEEK}vh)` });
+            controls.start({ y: `${100 - SNAP_POINTS.PEEK}vh` });
           } else {
             onClose();
           }
@@ -422,7 +422,7 @@ const BottomSheetNotes = ({
       <motion.div
         ref={sheetRef}
         className={`${styles.sheet} ${isDark ? styles.dark : styles.light} ${styles[sheetState]}`}
-        initial={{ y: 0 }}
+        initial={{ y: '100vh' }}
         animate={controls}
         drag="y"
         dragConstraints={{ top: 0, bottom: 0 }}
@@ -486,7 +486,7 @@ const BottomSheetNotes = ({
                 className={styles.minimizeButton}
                 onClick={() => {
                   setSheetState('peek');
-                  controls.start({ y: `calc(100% - ${SNAP_POINTS.PEEK}vh)` });
+                  controls.start({ y: `${100 - SNAP_POINTS.PEEK}vh` });
                 }}
                 aria-label="Minimize"
                 type="button"
