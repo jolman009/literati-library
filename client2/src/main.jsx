@@ -44,13 +44,13 @@ if (shouldRegisterSW) {
     },
 
     onOfflineReady() {
-      console.log('[PWA] App ready to work offline');
+      console.warn('[PWA] App ready to work offline');
       // Optional: Show toast notification
       // showToast('App is ready to work offline!');
     },
 
     onRegistered(registration) {
-      console.log('[PWA] Service Worker registered:', registration);
+      console.warn('[PWA] Service Worker registered:', registration);
 
       // Check for updates every hour
       setInterval(() => {

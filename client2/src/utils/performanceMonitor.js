@@ -166,7 +166,7 @@ class ShelfQuestPerformanceMonitor {
       for (const entry of list.getEntries()) {
         if (entry.name === 'first-contentful-paint') {
           this.metrics.fcp = entry.startTime;
-          console.log(`📊 FCP: ${entry.startTime.toFixed(1)}ms`);
+          console.warn(`📊 FCP: ${entry.startTime.toFixed(1)}ms`);
         }
       }
     });
@@ -181,7 +181,7 @@ class ShelfQuestPerformanceMonitor {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
       this.metrics.lcp = lastEntry.startTime;
-      console.log(`📊 LCP: ${lastEntry.startTime.toFixed(1)}ms`);
+      console.warn(`📊 LCP: ${lastEntry.startTime.toFixed(1)}ms`);
     });
 
     lcpObserver.observe({ 
@@ -262,9 +262,9 @@ class ShelfQuestPerformanceMonitor {
     // Real-time logging for debugging
     if (interaction.exceededThreshold) {
       console.group(`⚠️ Performance Warning: ${interaction.type}`);
-      console.log('Duration:', `${interaction.duration.toFixed(1)}ms`);
-      console.log('Threshold:', `${this.getThresholdForType(interaction.type)}ms`);
-      console.log('Details:', interaction);
+      console.warn('Duration:', `${interaction.duration.toFixed(1)}ms`);
+      console.warn('Threshold:', `${this.getThresholdForType(interaction.type)}ms`);
+      console.warn('Details:', interaction);
       console.groupEnd();
     }
 
@@ -322,7 +322,7 @@ class ShelfQuestPerformanceMonitor {
       });
       */
 
-    console.log('Performance reports (analytics disabled):', reports);
+    console.warn('Performance reports (analytics disabled):', reports);
     
   } catch (error) {
     console.error('Failed to send performance reports:', error);
@@ -399,16 +399,16 @@ class ShelfQuestPerformanceMonitor {
   // Console logging with performance data
   logPerformanceReport() {
     console.group('📊 ShelfQuest Performance Report');
-    console.log('Current Metrics:', this.metrics);
-    console.log('Recent Interactions:', this.interactions.slice(-10));
-    console.log('Summary:', this.getPerformanceSummary());
+    console.warn('Current Metrics:', this.metrics);
+    console.warn('Recent Interactions:', this.interactions.slice(-10));
+    console.warn('Summary:', this.getPerformanceSummary());
     console.groupEnd();
   }
 
   // Start monitoring specific to your console issues
   startConsoleMonitoring() {
-    console.log('🚀 ShelfQuest Performance Monitor Started');
-    console.log('Monitoring button interactions, keyboard input, and pointer events...');
+    console.warn('🚀 ShelfQuest Performance Monitor Started');
+    console.warn('Monitoring button interactions, keyboard input, and pointer events...');
     
     // Log performance every 30 seconds
     setInterval(() => {

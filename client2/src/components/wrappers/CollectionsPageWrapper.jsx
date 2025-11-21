@@ -11,7 +11,7 @@ import API from '../../config/api';
 const useOptionalGamification = () => {
   const [gamificationContext, setGamificationContext] = useState({
     trackAction: async (action, data) => {
-      console.log(`🎯 Gamification action: ${action}`, data);
+      console.warn(`🎯 Gamification action: ${action}`, data);
       return Promise.resolve();
     },
     stats: { level: 1, points: 0, streak: 0, totalReadingTime: 0 },
@@ -25,11 +25,11 @@ const useOptionalGamification = () => {
       try {
         // Use dynamic import instead of require()
         const module = await import('../../contexts/GamificationContext');
-        console.log('✅ Gamification module loaded successfully');
+        console.warn('✅ Gamification module loaded successfully');
         // Note: We can't call useGamification here since hooks must be called in component scope
         // The gamification will be handled by the parent component that provides the context
       } catch (error) {
-        console.log('⚠️ Gamification not available:', error.message);
+        console.warn('⚠️ Gamification not available:', error.message);
       }
     };
 
@@ -83,10 +83,10 @@ const CollectionsPageContent = () => {
         throw new Error('Please log in to view your collections');
       }
 
-      console.log('🔍 Fetching books for collections page...');
-      console.log('🔍 API base URL:', API.defaults.baseURL);
-      console.log('🔍 Making request to:', `${API.defaults.baseURL}/books`);
-      console.log('🔍 User authenticated:', !!user);
+      console.warn('🔍 Fetching books for collections page...');
+      console.warn('🔍 API base URL:', API.defaults.baseURL);
+      console.warn('🔍 Making request to:', `${API.defaults.baseURL}/books`);
+      console.warn('🔍 User authenticated:', !!user);
 
       const response = await API.get('/books', { params: { limit: 200, offset: 0 }, timeout: 30000 });
 
@@ -97,8 +97,8 @@ const CollectionsPageContent = () => {
       setError(null);
       setServerStatus('online');
 
-      console.log('✅ Books loaded successfully for collections:', booksData.length);
-      console.log('📖 Currently reading books:', booksData.filter(b => b.is_reading).length);
+      console.warn('✅ Books loaded successfully for collections:', booksData.length);
+      console.warn('📖 Currently reading books:', booksData.filter(b => b.is_reading).length);
 
       // Track collections page visit
       if (gamificationContext?.trackAction) {
@@ -158,7 +158,7 @@ const CollectionsPageContent = () => {
 
   // Book update handler - ensures data consistency with Dashboard
   const handleBookUpdate = async (updatedBook) => {
-    console.log('📚 Updating book from collections page:', updatedBook.title, 'Status:', {
+    console.warn('📚 Updating book from collections page:', updatedBook.title, 'Status:', {
       is_reading: updatedBook.is_reading,
       completed: updatedBook.completed
     });
@@ -199,7 +199,7 @@ const CollectionsPageContent = () => {
         }
       }
 
-      console.log('✅ Book status updated successfully from collections page');
+      console.warn('✅ Book status updated successfully from collections page');
       showNotification(
         updatedBook.completed
           ? `Marked "${updatedBook.title}" as completed! 🎉`
@@ -217,7 +217,7 @@ const CollectionsPageContent = () => {
 
   // Retry function
   const handleRetry = () => {
-    console.log('🔄 Retrying server connection...');
+    console.warn('🔄 Retrying server connection...');
     fetchBooks();
   };
 

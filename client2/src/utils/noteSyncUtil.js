@@ -13,11 +13,11 @@ export const syncPendingNotes = async () => {
     const pendingNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
 
     if (pendingNotes.length === 0) {
-      console.log('📝 No pending notes to sync');
+      console.warn('📝 No pending notes to sync');
       return { synced: 0, failed: 0, errors: [] };
     }
 
-    console.log(`📝 Syncing ${pendingNotes.length} pending notes...`);
+    console.warn(`📝 Syncing ${pendingNotes.length} pending notes...`);
 
     const results = {
       synced: 0,
@@ -35,7 +35,7 @@ export const syncPendingNotes = async () => {
           timeout: 10000
         });
 
-        console.log(`✅ Synced note from ${timestamp}:`, response.data.id);
+        console.warn(`✅ Synced note from ${timestamp}:`, response.data.id);
         results.synced++;
       } catch (error) {
         console.error(`❌ Failed to sync note:`, error);
@@ -52,12 +52,12 @@ export const syncPendingNotes = async () => {
       if (results.failed === 0) {
         // All synced - clear all
         localStorage.removeItem('pendingNotes');
-        console.log(`✅ All ${results.synced} pending notes synced successfully`);
+        console.warn(`✅ All ${results.synced} pending notes synced successfully`);
       } else {
         // Some failed - keep only the failed ones
         const failedNotes = results.errors.map(e => e.note);
         localStorage.setItem('pendingNotes', JSON.stringify(failedNotes));
-        console.log(`⚠️ ${results.synced} synced, ${results.failed} failed`);
+        console.warn(`⚠️ ${results.synced} synced, ${results.failed} failed`);
       }
     }
 
@@ -91,5 +91,5 @@ export const getPendingNotesCount = () => {
  */
 export const clearPendingNotes = () => {
   localStorage.removeItem('pendingNotes');
-  console.log('🗑️ Cleared all pending notes');
+  console.warn('🗑️ Cleared all pending notes');
 };

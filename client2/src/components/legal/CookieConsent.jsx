@@ -100,7 +100,7 @@ const CookieConsent = () => {
 
   const initializeAnalytics = () => {
     // Initialize analytics services here
-    console.log('Analytics initialized with user consent');
+    console.warn('Analytics initialized with user consent');
     // Example: gtag('config', 'GA_MEASUREMENT_ID');
     if (window.gtag && localStorage.getItem('shelfquest_child_mode') !== 'true') {
       try {

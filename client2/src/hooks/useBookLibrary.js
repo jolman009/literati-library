@@ -207,7 +207,7 @@ export const useBookLibrary = () => {
               totalPages: book?.total_pages,
               completedAt: updates.completed_at
             });
-            console.log(`✅ Book completion tracked - "${book?.title}" - 100 points awarded`);
+            console.warn(`✅ Book completion tracked - "${book?.title}" - 100 points awarded`);
           } catch (trackError) {
             console.error('Failed to track book completion:', trackError);
             // Don't fail the progress update if tracking fails

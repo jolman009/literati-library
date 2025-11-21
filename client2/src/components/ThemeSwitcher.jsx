@@ -119,7 +119,7 @@ const ThemeSwitcher = () => {
   // Handle theme selection
   const handleThemeSelect = (themeId) => {
     if (!isThemeUnlocked(themeId, userPoints)) {
-      console.log('Theme is locked:', themeId);
+      console.warn('Theme is locked:', themeId);
       return;
     }
 
@@ -134,7 +134,7 @@ const ThemeSwitcher = () => {
     applyTheme(themeId, actualTheme);
     saveThemePreference(themeId);
 
-    console.log(`✨ Theme switched to: ${themeId}`);
+    console.warn(`✨ Theme switched to: ${themeId}`);
   };
 
   return (

@@ -48,7 +48,7 @@ const MentorPreviewCard = () => {
             setInsight(generateFallbackInsight());
           }
         } catch (error) {
-          console.log('Using fallback insight:', error);
+          console.warn('Using fallback insight:', error);
           setInsight(generateFallbackInsight());
         }
       } else if (!hasKeys) {

@@ -18,7 +18,7 @@ class IntegrationValidator {
    * Run full integration test suite
    */
   async runFullValidation() {
-    console.log('🚀 Starting Week One Integration & Performance Validation...');
+    console.warn('🚀 Starting Week One Integration & Performance Validation...');
     
     try {
       // Test 1: Bundle & Loading Performance
@@ -52,7 +52,7 @@ class IntegrationValidator {
    * Test 1: Bundle & Loading Performance
    */
   async testBundlePerformance() {
-    console.log('📦 Testing bundle optimization...');
+    console.warn('📦 Testing bundle optimization...');
     
     const bundleStart = performance.now();
     
@@ -67,14 +67,14 @@ class IntegrationValidator {
         chunkSplittingWorking: !!LibraryComponent.default
       };
       
-      console.log(`✅ Bundle: Dynamic import in ${Math.round(importTime)}ms`);
+      console.warn(`✅ Bundle: Dynamic import in ${Math.round(importTime)}ms`);
       
     } catch (error) {
       this.results.bundlePerformance = {
         status: 'failed',
         error: error.message
       };
-      console.log('❌ Bundle: Dynamic import failed');
+      console.warn('❌ Bundle: Dynamic import failed');
     }
   }
 
@@ -82,7 +82,7 @@ class IntegrationValidator {
    * Test 2: Virtual Scrolling Performance
    */
   async testVirtualScrolling() {
-    console.log('📜 Testing virtual scrolling performance...');
+    console.warn('📜 Testing virtual scrolling performance...');
     
     // Create mock data for performance testing
     const mockBooks = Array.from({ length: 1000 }, (_, i) => ({
@@ -114,14 +114,14 @@ class IntegrationValidator {
       status: renderTime < 1 ? 'excellent' : renderTime < 5 ? 'good' : 'needs improvement'
     };
     
-    console.log(`✅ Virtual Scrolling: Rendered ${renderedItems.length} items in ${Math.round(renderTime * 1000)}μs`);
+    console.warn(`✅ Virtual Scrolling: Rendered ${renderedItems.length} items in ${Math.round(renderTime * 1000)}μs`);
   }
 
   /**
    * Test 3: Caching System Integration
    */
   async testCachingIntegration() {
-    console.log('💾 Testing multi-layer caching integration...');
+    console.warn('💾 Testing multi-layer caching integration...');
     
     const cacheStart = performance.now();
     
@@ -157,7 +157,7 @@ class IntegrationValidator {
         status: cacheTime < 10 && retrievedData ? 'excellent' : 'needs improvement'
       };
       
-      console.log(`✅ Caching: Operations completed in ${Math.round(cacheTime)}ms, hit rate ${metrics.hitRate}`);
+      console.warn(`✅ Caching: Operations completed in ${Math.round(cacheTime)}ms, hit rate ${metrics.hitRate}`);
       
       // Cleanup test data
       await cacheManager.invalidate('books', null, testKey);
@@ -167,7 +167,7 @@ class IntegrationValidator {
         status: 'failed',
         error: error.message
       };
-      console.log('❌ Caching: Integration test failed');
+      console.warn('❌ Caching: Integration test failed');
     }
   }
 
@@ -175,7 +175,7 @@ class IntegrationValidator {
    * Test 4: Web Vitals Monitoring
    */
   async testWebVitalsMonitoring() {
-    console.log('📊 Testing Web Vitals monitoring...');
+    console.warn('📊 Testing Web Vitals monitoring...');
     
     try {
       // Test custom metric measurement
@@ -196,14 +196,14 @@ class IntegrationValidator {
         status: testMetric ? 'excellent' : 'partial'
       };
       
-      console.log(`✅ Web Vitals: Custom metric measurement working, result: ${testMetric}`);
+      console.warn(`✅ Web Vitals: Custom metric measurement working, result: ${testMetric}`);
       
     } catch (error) {
       this.results.webVitalsMonitoring = {
         status: 'failed',
         error: error.message
       };
-      console.log('❌ Web Vitals: Monitoring test failed');
+      console.warn('❌ Web Vitals: Monitoring test failed');
     }
   }
 
@@ -211,7 +211,7 @@ class IntegrationValidator {
    * Test 5: Database Optimization Impact
    */
   async testDatabaseOptimization() {
-    console.log('🗄️ Testing database optimization impact...');
+    console.warn('🗄️ Testing database optimization impact...');
     
     // Simulate database query performance
     const queryStart = performance.now();
@@ -241,14 +241,14 @@ class IntegrationValidator {
         status: queryTime < 50 ? 'excellent' : queryTime < 100 ? 'good' : 'needs improvement'
       };
       
-      console.log(`✅ Database: Query completed in ${Math.round(queryTime)}ms (cached: ${result.cached})`);
+      console.warn(`✅ Database: Query completed in ${Math.round(queryTime)}ms (cached: ${result.cached})`);
       
     } catch (error) {
       this.results.databaseOptimization = {
         status: 'failed',
         error: error.message
       };
-      console.log('❌ Database: Optimization test failed');
+      console.warn('❌ Database: Optimization test failed');
     }
   }
 
@@ -256,7 +256,7 @@ class IntegrationValidator {
    * Test 6: Service Worker & Offline Capabilities
    */
   async testServiceWorkerIntegration() {
-    console.log('⚡ Testing service worker & offline capabilities...');
+    console.warn('⚡ Testing service worker & offline capabilities...');
     
     try {
       const swRegistration = await navigator.serviceWorker.getRegistration();
@@ -276,14 +276,14 @@ class IntegrationValidator {
         status: swActive && cacheAPIAvailable ? 'excellent' : 'partial'
       };
       
-      console.log(`✅ Service Worker: Active: ${swActive}, Cache API: ${cacheAPIAvailable}, Online: ${onlineStatus}`);
+      console.warn(`✅ Service Worker: Active: ${swActive}, Cache API: ${cacheAPIAvailable}, Online: ${onlineStatus}`);
       
     } catch (error) {
       this.results.serviceWorkerIntegration = {
         status: 'failed',
         error: error.message
       };
-      console.log('❌ Service Worker: Integration test failed');
+      console.warn('❌ Service Worker: Integration test failed');
     }
   }
 
@@ -293,8 +293,8 @@ class IntegrationValidator {
   generateValidationReport() {
     const totalTime = performance.now() - this.startTime;
     
-    console.log('\n🎉 Week One Integration & Performance Validation Report\n');
-    console.log('='.repeat(60));
+    console.warn('\n🎉 Week One Integration & Performance Validation Report\n');
+    console.warn('='.repeat(60));
     
     // Overall status
     const allTests = Object.values(this.results).filter(test => test.status);
@@ -302,10 +302,10 @@ class IntegrationValidator {
     const goodTests = allTests.filter(test => test.status === 'good').length;
     const failedTests = allTests.filter(test => test.status === 'failed').length;
     
-    console.log(`📊 Overall Performance Grade: ${this.calculateOverallGrade(excellentTests, goodTests, failedTests)}`);
-    console.log(`⏱️  Total validation time: ${Math.round(totalTime)}ms`);
-    console.log(`✅ Tests passed: ${excellentTests + goodTests}/${allTests.length}`);
-    console.log(`❌ Tests failed: ${failedTests}/${allTests.length}\n`);
+    console.warn(`📊 Overall Performance Grade: ${this.calculateOverallGrade(excellentTests, goodTests, failedTests)}`);
+    console.warn(`⏱️  Total validation time: ${Math.round(totalTime)}ms`);
+    console.warn(`✅ Tests passed: ${excellentTests + goodTests}/${allTests.length}`);
+    console.warn(`❌ Tests failed: ${failedTests}/${allTests.length}\n`);
     
     // Individual test results
     Object.entries(this.results).forEach(([testName, result]) => {
@@ -317,15 +317,15 @@ class IntegrationValidator {
         failed: '🔴'
       }[result.status] || '⚪';
       
-      console.log(`${statusIcon} ${this.formatTestName(testName)}: ${result.status.toUpperCase()}`);
+      console.warn(`${statusIcon} ${this.formatTestName(testName)}: ${result.status.toUpperCase()}`);
       
       if (result.error) {
-        console.log(`   Error: ${result.error}`);
+        console.warn(`   Error: ${result.error}`);
       }
     });
     
-    console.log('\n' + '='.repeat(60));
-    console.log('🚀 Week One Optimization Initiative: VALIDATION COMPLETE!');
+    console.warn('\n' + '='.repeat(60));
+    console.warn('🚀 Week One Optimization Initiative: VALIDATION COMPLETE!');
     
     // Store results globally for inspection
     window.integrationValidationResults = this.results;
@@ -357,7 +357,7 @@ if (process.env.NODE_ENV === 'development') {
     
     // Auto-run after 3 seconds
     setTimeout(() => {
-      console.log('🚀 Auto-running Week One Integration Test...');
+      console.warn('🚀 Auto-running Week One Integration Test...');
       validator.runFullValidation();
     }, 3000);
   }, 1000);

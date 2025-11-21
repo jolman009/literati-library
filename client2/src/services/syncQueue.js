@@ -36,7 +36,7 @@ export async function queueAction(type, payload, options = {}) {
 
   try {
     const id = await setItem(STORES.SYNC_QUEUE, action);
-    console.log(`📤 Queued ${type} action (ID: ${id})`);
+    console.warn(`📤 Queued ${type} action (ID: ${id})`);
 
     // Dispatch event for sync manager
     window.dispatchEvent(new CustomEvent('sync-queue-updated', { detail: { actionId: id, action } }));
@@ -103,7 +103,7 @@ export async function markActionSyncing(actionId) {
 export async function markActionCompleted(actionId, result = null) {
   try {
     await deleteItem(STORES.SYNC_QUEUE, actionId);
-    console.log(`✅ Action ${actionId} completed and removed from queue`);
+    console.warn(`✅ Action ${actionId} completed and removed from queue`);
 
     // Optionally store result for audit
     if (result) {
@@ -151,7 +151,7 @@ export async function clearCompletedActions() {
     for (const action of completed) {
       await deleteItem(STORES.SYNC_QUEUE, action.id);
     }
-    console.log(`🗑️ Cleared ${completed.length} completed actions`);
+    console.warn(`🗑️ Cleared ${completed.length} completed actions`);
   } catch (error) {
     console.error('Failed to clear completed actions:', error);
   }

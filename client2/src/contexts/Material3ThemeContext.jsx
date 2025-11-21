@@ -73,7 +73,7 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
       // Store user preference
       localStorage.setItem('shelfquest-theme', theme);
 
-      console.log(`🎨 Theme applied: ${theme}`);
+      console.warn(`🎨 Theme applied: ${theme}`);
     } catch (error) {
       console.warn('Failed to apply theme to DOM:', error);
     }

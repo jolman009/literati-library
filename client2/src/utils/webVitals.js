@@ -63,7 +63,7 @@ const reportWebVitals = (metric) => {
   
   // Console logging with color coding
   const color = rating === 'good' ? '🟢' : rating === 'needs-improvement' ? '🟡' : '🔴';
-  console.log(`${color} Web Vital [${name}]: ${formattedValue} (${rating})`);
+  console.warn(`${color} Web Vital [${name}]: ${formattedValue} (${rating})`);
   
   // Send to analytics (if available)
   if (window.gtag) {
@@ -96,7 +96,7 @@ const reportWebVitals = (metric) => {
 
 // Initialize all Web Vitals measurements
 export const initWebVitals = () => {
-  console.log('🚀 Initializing Web Vitals monitoring...');
+  console.warn('🚀 Initializing Web Vitals monitoring...');
   
   // Measure all Core Web Vitals
   getCLS(reportWebVitals);
@@ -112,7 +112,7 @@ export const initWebVitals = () => {
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'first-input') {
-            console.log('⚡ First Input Delay:', Math.round(entry.processingStart - entry.startTime), 'ms');
+            console.warn('⚡ First Input Delay:', Math.round(entry.processingStart - entry.startTime), 'ms');
           }
         }
       });
@@ -151,7 +151,7 @@ export const initWebVitals = () => {
           'Load Complete': navigation.loadEventEnd - navigation.loadEventStart
         };
         
-        console.log('📊 Navigation Timing Breakdown:');
+        console.warn('📊 Navigation Timing Breakdown:');
         console.table(metrics);
       }
     }, 0);
@@ -211,13 +211,13 @@ export const showPerformanceDashboard = () => {
   const summary = getPerformanceSummary();
   
   console.group('🎯 Web Vitals Performance Dashboard');
-  console.log('📊 Overall Rating:', summary.overallRating.toUpperCase());
-  console.log('📈 Metrics:', summary.metrics);
+  console.warn('📊 Overall Rating:', summary.overallRating.toUpperCase());
+  console.warn('📈 Metrics:', summary.metrics);
   
   if (summary.recommendations.length > 0) {
     console.group('💡 Recommendations');
     summary.recommendations.forEach((rec, index) => {
-      console.log(`${index + 1}. ${rec}`);
+      console.warn(`${index + 1}. ${rec}`);
     });
     console.groupEnd();
   }
@@ -232,7 +232,7 @@ export const measureCustomMetric = (name, startTime) => {
   const endTime = performance.now();
   const duration = endTime - startTime;
   
-  console.log(`⏱️ Custom Metric [${name}]: ${Math.round(duration)}ms`);
+  console.warn(`⏱️ Custom Metric [${name}]: ${Math.round(duration)}ms`);
   
   return {
     name,

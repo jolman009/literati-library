@@ -34,7 +34,7 @@ export function useOfflineDetection() {
 
   useEffect(() => {
     const handleOnline = () => {
-      console.log('🌐 Network: ONLINE');
+      console.warn('🌐 Network: ONLINE');
       setNetworkStatus(prev => ({
         ...prev,
         isOnline: true,
@@ -48,7 +48,7 @@ export function useOfflineDetection() {
     };
 
     const handleOffline = () => {
-      console.log('📵 Network: OFFLINE');
+      console.warn('📵 Network: OFFLINE');
       setNetworkStatus(prev => ({
         ...prev,
         isOnline: false,
@@ -162,7 +162,7 @@ export function useNetworkStatus() {
       setIsChecking(false);
       return reachable;
     } catch (error) {
-      console.log('Server unreachable:', error.message);
+      console.warn('Server unreachable:', error.message);
       setServerReachable(false);
       setIsChecking(false);
       return false;

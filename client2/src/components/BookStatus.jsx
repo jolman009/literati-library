@@ -105,7 +105,7 @@ export const BookStatusDropdown = ({ book, onStatusChange, className = "" }) => 
     setIsUpdating(true);
     
     setTimeout(() => {
-      console.log(`Status changed from ${currentStatus} to ${newStatus} for "${book.title}"`);
+      console.warn(`Status changed from ${currentStatus} to ${newStatus} for "${book.title}"`);
       const updatedBook = applyCanonicalStatus(book, newStatus);
 
       // Attempt to persist to backend so Dashboard/Currently Reading reflect changes

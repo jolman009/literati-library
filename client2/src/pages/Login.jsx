@@ -24,7 +24,7 @@ const Login = () => {
     setError('');
     setIsLoading(true);
 
-    console.log('🔐 Attempting login/signup:', { email, isSignUp });
+    console.warn('🔐 Attempting login/signup:', { email, isSignUp });
 
     try {
       if (isSignUp) {
@@ -57,12 +57,12 @@ const Login = () => {
         }
       } else {
         // Sign in existing user
-        console.log('🔐 Calling auth.login...');
+        console.warn('🔐 Calling auth.login...');
         const result = await auth.login(email, password);
-        console.log('🔐 Login result:', result);
+        console.warn('🔐 Login result:', result);
 
         if (result.success) {
-          console.log('✅ Login successful, navigating to dashboard');
+          console.warn('✅ Login successful, navigating to dashboard');
           navigate('/dashboard', { replace: true });
         } else {
           console.error('❌ Login failed:', result.error);

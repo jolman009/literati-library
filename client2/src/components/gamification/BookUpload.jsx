@@ -99,7 +99,7 @@ const BookUpload = ({ onUploadComplete }) => { // Add onUploadComplete prop
 
       // Get the uploaded book from the response
       const uploadedBook = response.data;
-      console.log('📚 Book uploaded successfully:', uploadedBook);
+      console.warn('📚 Book uploaded successfully:', uploadedBook);
 
       setMessage('Book uploaded successfully!');
       setIsError(false);

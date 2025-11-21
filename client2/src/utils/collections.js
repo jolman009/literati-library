@@ -78,7 +78,7 @@ export const migrateDuplicateCollections = () => {
     // Clear any potentially duplicate collections from both storage keys
     localStorage.removeItem('bookCollections'); // Old key
     localStorage.removeItem('book_collections'); // Current key
-    console.log('✅ Collections storage cleared - duplicates removed');
+    console.warn('✅ Collections storage cleared - duplicates removed');
   } catch (error) {
     console.error('Error during collection migration:', error);
   }

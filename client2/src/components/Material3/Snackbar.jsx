@@ -55,7 +55,7 @@ function MyComponent() {
         action={{
           label: 'Undo',
           onClick: () => {
-            console.log('Undo action');
+            console.warn('Undo action');
             setSnackbarOpen(false);
           }
         }}

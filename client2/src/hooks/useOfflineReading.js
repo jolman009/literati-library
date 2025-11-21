@@ -98,7 +98,7 @@ export function useOfflineReading(bookId) {
       // Queue for sync if offline or server unreachable
       if (!networkStatus.fullyOnline) {
         await queueAction(SYNC_ACTIONS.UPDATE_PROGRESS, progress);
-        console.log('📝 Progress saved offline, will sync when online');
+        console.warn('📝 Progress saved offline, will sync when online');
       } else {
         // Sync immediately if online
         await queueAction(SYNC_ACTIONS.UPDATE_PROGRESS, progress);
@@ -130,7 +130,7 @@ export function useOfflineReading(bookId) {
       await queueAction(SYNC_ACTIONS.CREATE_NOTE, { ...note, noteId });
 
       if (!networkStatus.fullyOnline) {
-        console.log('📝 Note saved offline, will sync when online');
+        console.warn('📝 Note saved offline, will sync when online');
       }
 
       return { ...note, id: noteId };
@@ -152,7 +152,7 @@ export function useOfflineReading(bookId) {
       await queueAction(SYNC_ACTIONS.UPDATE_NOTE, payload);
 
       if (!networkStatus.fullyOnline) {
-        console.log('📝 Note update saved offline, will sync when online');
+        console.warn('📝 Note update saved offline, will sync when online');
       }
 
       return payload;
@@ -168,7 +168,7 @@ export function useOfflineReading(bookId) {
       await queueAction(SYNC_ACTIONS.DELETE_NOTE, { noteId });
 
       if (!networkStatus.fullyOnline) {
-        console.log('🗑️ Note deletion saved offline, will sync when online');
+        console.warn('🗑️ Note deletion saved offline, will sync when online');
       }
     } catch (err) {
       console.error('Error deleting note:', err);
@@ -203,7 +203,7 @@ export function useOfflineReading(bookId) {
       await queueAction(SYNC_ACTIONS.CREATE_HIGHLIGHT, highlight);
 
       if (!networkStatus.fullyOnline) {
-        console.log('✨ Highlight saved offline, will sync when online');
+        console.warn('✨ Highlight saved offline, will sync when online');
       }
 
       return highlight;
@@ -225,7 +225,7 @@ export function useOfflineReading(bookId) {
       });
 
       if (!networkStatus.fullyOnline) {
-        console.log('🔖 Bookmark saved offline, will sync when online');
+        console.warn('🔖 Bookmark saved offline, will sync when online');
       }
     } catch (err) {
       console.error('Error saving bookmark:', err);

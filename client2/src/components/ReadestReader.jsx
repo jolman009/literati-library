@@ -24,7 +24,7 @@ const ReadestReader = ({
 }) => {
   const format = (book?.format || "").toLowerCase();
 
-  console.log('📚 ReadestReader - Selecting reader:', {
+  console.warn('📚 ReadestReader - Selecting reader:', {
     bookTitle: book?.title,
     format: format,
     rawFormat: book?.format,
@@ -33,7 +33,7 @@ const ReadestReader = ({
   });
 
   if (format === "epub") {
-    console.log('✅ Loading EPUB reader for:', book?.title);
+    console.warn('✅ Loading EPUB reader for:', book?.title);
     return (
       <EpubReader
         book={book}
@@ -45,7 +45,7 @@ const ReadestReader = ({
   }
 
   // Default to PDF
-  console.log('✅ Loading PDF reader for:', book?.title);
+  console.warn('✅ Loading PDF reader for:', book?.title);
   return (
     <PdfReader
       book={book}

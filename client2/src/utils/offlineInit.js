@@ -9,7 +9,7 @@ import { cleanupExpiredBooks } from '../services/bookCacheService';
  * Initialize offline reading infrastructure
  */
 export async function initOfflineReading() {
-  console.log('🚀 Initializing offline reading...');
+  console.warn('🚀 Initializing offline reading...');
 
   try {
     // Check storage availability
@@ -20,7 +20,7 @@ export async function initOfflineReading() {
       return { success: false, error: storageCheck.reason };
     }
 
-    console.log('💾 Storage available:', {
+    console.warn('💾 Storage available:', {
       usage: storageCheck.estimate?.usageInMB + ' MB',
       quota: storageCheck.estimate?.quotaInMB + ' MB',
       percentage: storageCheck.estimate?.percentage + '%',
@@ -28,17 +28,17 @@ export async function initOfflineReading() {
 
     // Initialize IndexedDB
     await initDB();
-    console.log('✅ IndexedDB initialized');
+    console.warn('✅ IndexedDB initialized');
 
     // Start sync manager
     syncManager.start();
-    console.log('✅ Sync manager started');
+    console.warn('✅ Sync manager started');
 
     // Clean up old cached books (run in background)
     setTimeout(async () => {
       try {
         await cleanupExpiredBooks();
-        console.log('✅ Cache cleanup complete');
+        console.warn('✅ Cache cleanup complete');
       } catch (error) {
         console.error('Cache cleanup failed:', error);
       }
@@ -47,14 +47,14 @@ export async function initOfflineReading() {
     // Listen for visibility changes to sync when app becomes active
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && navigator.onLine) {
-        console.log('📱 App visible, triggering sync...');
+        console.warn('📱 App visible, triggering sync...');
         syncManager.sync();
       }
     });
 
     // Listen for app going to background (pause event on mobile)
     window.addEventListener('pagehide', () => {
-      console.log('📱 App going to background');
+      console.warn('📱 App going to background');
       // Could save current state here
     });
 

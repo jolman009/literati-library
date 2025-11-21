@@ -75,7 +75,7 @@ export const performanceTest = {
     const results = [];
     
     for (const size of sizes) {
-      console.log(`🧪 Testing virtual scrolling with ${size} books...`);
+      console.warn(`🧪 Testing virtual scrolling with ${size} books...`);
       
       const startTime = performance.now();
       const books = generateMockBooks(size);
@@ -97,7 +97,7 @@ export const performanceTest = {
         booksPerMs: Math.round(size / generationTime * 100) / 100
       });
       
-      console.log(`✅ ${size} books: ${Math.round(generationTime)}ms generation, ${Math.round(memoryDiff / 1024)}KB memory`);
+      console.warn(`✅ ${size} books: ${Math.round(generationTime)}ms generation, ${Math.round(memoryDiff / 1024)}KB memory`);
     }
     
     return results;
@@ -112,7 +112,7 @@ export const performanceTest = {
     
     const interval = setInterval(() => {
       const memory = performance.memory;
-      console.log(`📊 Memory: ${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB used, ${Math.round(memory.totalJSHeapSize / 1024 / 1024)}MB total`);
+      console.warn(`📊 Memory: ${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB used, ${Math.round(memory.totalJSHeapSize / 1024 / 1024)}MB total`);
     }, 5000);
     
     return () => clearInterval(interval);
@@ -143,7 +143,7 @@ export const performanceTest = {
 export const loadMockDataToStorage = (count = 100) => {
   const books = generateMockBooks(count);
   localStorage.setItem('mock_books_test_data', JSON.stringify(books));
-  console.log(`📚 Generated and saved ${count} mock books to localStorage`);
+  console.warn(`📚 Generated and saved ${count} mock books to localStorage`);
   return books;
 };
 

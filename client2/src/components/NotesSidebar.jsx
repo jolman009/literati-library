@@ -194,7 +194,7 @@ const NotesSidebar = ({
   // ===== SAVE LOGIC (Ported from FloatingNotepad) =====
   const handleSave = async () => {
     try {
-      console.log('💾 NotesSidebar: Save button clicked');
+      console.warn('💾 NotesSidebar: Save button clicked');
 
       if (!content.trim()) {
         console.warn('⚠️ NotesSidebar: Cannot save empty note');
@@ -203,7 +203,7 @@ const NotesSidebar = ({
       }
 
       if (isSaving) {
-        console.log('⏳ NotesSidebar: Already saving, ignoring duplicate click');
+        console.warn('⏳ NotesSidebar: Already saving, ignoring duplicate click');
         return;
       }
 
@@ -215,12 +215,12 @@ const NotesSidebar = ({
       let tags = [];
 
       if (currentPage) {
-        console.log('📄 Saving PDF note with page:', currentPage);
+        console.warn('📄 Saving PDF note with page:', currentPage);
         locationPrefix = `[p.${currentPage}] `;
         locationMetadata.page_number = currentPage;
         tags.push(`page:${currentPage}`);
       } else if (currentLocator) {
-        console.log('📖 Saving EPUB note with locator:', currentLocator);
+        console.warn('📖 Saving EPUB note with locator:', currentLocator);
         // Future: Add EPUB location tracking here
       }
 
@@ -238,13 +238,13 @@ const NotesSidebar = ({
         tags: allTags
       };
 
-      console.log('📝 Attempting to save note:', noteData);
+      console.warn('📝 Attempting to save note:', noteData);
 
       try {
         const response = await API.post("/notes", noteData, {
           timeout: 10000
         });
-        console.log('✅ Note saved successfully:', response.data.id);
+        console.warn('✅ Note saved successfully:', response.data.id);
 
         const serverGamification = response.data?.gamification;
 
@@ -257,7 +257,7 @@ const NotesSidebar = ({
               page: currentPage,
               timestamp: new Date().toISOString()
             }, { serverSnapshot: serverGamification });
-            console.log('✅ Gamification action tracked (+15 points)');
+            console.warn('✅ Gamification action tracked (+15 points)');
           } catch (trackError) {
             console.warn('⚠️ Failed to track gamification:', trackError);
           }
@@ -274,7 +274,7 @@ const NotesSidebar = ({
         setTagInput("");
         setIsSaving(false);
 
-        console.log('✅ Save workflow completed');
+        console.warn('✅ Save workflow completed');
       } catch (error) {
         console.error('❌ Failed to save note:', error);
 

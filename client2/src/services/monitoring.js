@@ -25,7 +25,7 @@ class MonitoringService {
       await this.analytics.initialize?.();
 
       this.isInitialized = true;
-      console.log('📊 Monitoring services initialized');
+      console.warn('📊 Monitoring services initialized');
 
       // Track initialization
       this.trackEvent('monitoring_initialized', {
@@ -393,7 +393,7 @@ class MonitoringService {
         component: 'monitoring_test'
       });
 
-      console.log('✅ Monitoring services test completed');
+      console.warn('✅ Monitoring services test completed');
       return true;
     } catch (error) {
       console.error('❌ Monitoring services test failed:', error);
@@ -422,7 +422,7 @@ const monitoring = new MonitoringService();
 // Expose on window for debugging (development only)
 if (typeof window !== 'undefined' && environmentConfig.isDevelopment) {
   window.shelfquestMonitoring = monitoring;
-  console.log('🔧 Monitoring service available at window.shelfquestMonitoring');
+  console.warn('🔧 Monitoring service available at window.shelfquestMonitoring');
 }
 
 export default monitoring;

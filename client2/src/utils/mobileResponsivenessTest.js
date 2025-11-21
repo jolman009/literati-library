@@ -35,9 +35,9 @@ class MobileResponsivenessTester {
    * Run full mobile responsiveness test
    */
   async runMobileTests() {
-    console.log('📱 Running mobile responsiveness & performance tests...');
-    console.log(`📱 Device: ${this.deviceInfo.isMobile ? 'Mobile' : this.deviceInfo.isTablet ? 'Tablet' : 'Desktop'}`);
-    console.log(`📐 Viewport: ${this.deviceInfo.viewportWidth}x${this.deviceInfo.viewportHeight}`);
+    console.warn('📱 Running mobile responsiveness & performance tests...');
+    console.warn(`📱 Device: ${this.deviceInfo.isMobile ? 'Mobile' : this.deviceInfo.isTablet ? 'Tablet' : 'Desktop'}`);
+    console.warn(`📐 Viewport: ${this.deviceInfo.viewportWidth}x${this.deviceInfo.viewportHeight}`);
     
     this.testViewportConfiguration();
     this.testResponsiveBreakpoints();
@@ -55,7 +55,7 @@ class MobileResponsivenessTester {
    * Test viewport configuration
    */
   testViewportConfiguration() {
-    console.log('📐 Testing viewport configuration...');
+    console.warn('📐 Testing viewport configuration...');
     
     // Check for viewport meta tag
     const viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -76,14 +76,14 @@ class MobileResponsivenessTester {
       status: hasViewportMeta && hasWidthDevice && hasInitialScale ? 'excellent' : 'needs improvement'
     };
     
-    console.log(`✅ Viewport: ${hasViewportMeta ? 'Configured' : 'Missing'} (${viewportContent})`);
+    console.warn(`✅ Viewport: ${hasViewportMeta ? 'Configured' : 'Missing'} (${viewportContent})`);
   }
 
   /**
    * Test responsive breakpoints
    */
   testResponsiveBreakpoints() {
-    console.log('📱 Testing responsive breakpoints...');
+    console.warn('📱 Testing responsive breakpoints...');
     
     const breakpoints = {
       mobile: 480,
@@ -114,14 +114,14 @@ class MobileResponsivenessTester {
       status: 'excellent' // Media queries are well-supported
     };
     
-    console.log(`✅ Responsive: Active breakpoint ${activeBreakpoint} (${currentWidth}px)`);
+    console.warn(`✅ Responsive: Active breakpoint ${activeBreakpoint} (${currentWidth}px)`);
   }
 
   /**
    * Test touch interactions
    */
   testTouchInteractions() {
-    console.log('👆 Testing touch interactions...');
+    console.warn('👆 Testing touch interactions...');
     
     const touchTests = {
       touchEventsSupport: 'ontouchstart' in window,
@@ -155,14 +155,14 @@ class MobileResponsivenessTester {
               'excellent' : passedTouchTests >= 2 ? 'good' : 'partial'
     };
     
-    console.log(`✅ Touch: ${passedTouchTests}/${Object.keys(touchTests).length} APIs, ${Math.round(touchTargetScore * 100)}% good target sizes`);
+    console.warn(`✅ Touch: ${passedTouchTests}/${Object.keys(touchTests).length} APIs, ${Math.round(touchTargetScore * 100)}% good target sizes`);
   }
 
   /**
    * Test mobile performance
    */
   async testMobilePerformance() {
-    console.log('⚡ Testing mobile performance...');
+    console.warn('⚡ Testing mobile performance...');
     
     const performanceStart = performance.now();
     
@@ -230,14 +230,14 @@ class MobileResponsivenessTester {
               'excellent' : firstContentfulPaint < 4000 ? 'good' : 'needs improvement'
     };
     
-    console.log(`✅ Mobile Performance: FCP ${Math.round(firstContentfulPaint)}ms, scroll ${Math.round(scrollPerformance.avgScrollTime)}ms`);
+    console.warn(`✅ Mobile Performance: FCP ${Math.round(firstContentfulPaint)}ms, scroll ${Math.round(scrollPerformance.avgScrollTime)}ms`);
   }
 
   /**
    * Test scroll behavior
    */
   testScrollBehavior() {
-    console.log('📜 Testing scroll behavior...');
+    console.warn('📜 Testing scroll behavior...');
     
     const scrollTests = {
       smoothScrollSupport: CSS.supports('scroll-behavior', 'smooth'),
@@ -262,14 +262,14 @@ class MobileResponsivenessTester {
       status: passedScrollTests >= 3 ? 'excellent' : passedScrollTests >= 2 ? 'good' : 'partial'
     };
     
-    console.log(`✅ Scroll: ${passedScrollTests}/${Object.keys(scrollTests).length} features, scrollable: ${isScrollable}`);
+    console.warn(`✅ Scroll: ${passedScrollTests}/${Object.keys(scrollTests).length} features, scrollable: ${isScrollable}`);
   }
 
   /**
    * Test image optimization for mobile
    */
   testImageOptimization() {
-    console.log('🖼️ Testing image optimization...');
+    console.warn('🖼️ Testing image optimization...');
     
     const images = document.querySelectorAll('img');
     const imageTests = Array.from(images).slice(0, 10).map(img => {
@@ -311,14 +311,14 @@ class MobileResponsivenessTester {
               'excellent' : 'good'
     };
     
-    console.log(`✅ Images: ${appropriatelySizedImages}/${imageTests.length} optimized, ${imagesWithAlt}/${imageTests.length} with alt text`);
+    console.warn(`✅ Images: ${appropriatelySizedImages}/${imageTests.length} optimized, ${imagesWithAlt}/${imageTests.length} with alt text`);
   }
 
   /**
    * Test text readability on mobile
    */
   testTextReadability() {
-    console.log('📖 Testing text readability...');
+    console.warn('📖 Testing text readability...');
     
     // Sample different text elements
     const textElements = [
@@ -367,20 +367,20 @@ class MobileResponsivenessTester {
               'excellent' : readableTexts / readabilityTests.length >= 0.7 ? 'good' : 'needs improvement'
     };
     
-    console.log(`✅ Text: ${readableTexts}/${readabilityTests.length} readable, ${recommendedTexts}/${readabilityTests.length} recommended size`);
+    console.warn(`✅ Text: ${readableTexts}/${readabilityTests.length} readable, ${recommendedTexts}/${readabilityTests.length} recommended size`);
   }
 
   /**
    * Generate mobile responsiveness report
    */
   generateMobileReport() {
-    console.log('\n📱 Mobile Responsiveness & Performance Report\n');
-    console.log('='.repeat(55));
-    console.log(`📱 Device Type: ${this.deviceInfo.isMobile ? 'Mobile' : this.deviceInfo.isTablet ? 'Tablet' : 'Desktop'}`);
-    console.log(`📐 Screen: ${this.deviceInfo.screenWidth}x${this.deviceInfo.screenHeight} (${this.deviceInfo.devicePixelRatio}x DPR)`);
-    console.log(`🔍 Viewport: ${this.deviceInfo.viewportWidth}x${this.deviceInfo.viewportHeight}`);
-    console.log(`👆 Touch: ${this.deviceInfo.touchSupport ? 'Supported' : 'Not supported'}`);
-    console.log('='.repeat(55));
+    console.warn('\n📱 Mobile Responsiveness & Performance Report\n');
+    console.warn('='.repeat(55));
+    console.warn(`📱 Device Type: ${this.deviceInfo.isMobile ? 'Mobile' : this.deviceInfo.isTablet ? 'Tablet' : 'Desktop'}`);
+    console.warn(`📐 Screen: ${this.deviceInfo.screenWidth}x${this.deviceInfo.screenHeight} (${this.deviceInfo.devicePixelRatio}x DPR)`);
+    console.warn(`🔍 Viewport: ${this.deviceInfo.viewportWidth}x${this.deviceInfo.viewportHeight}`);
+    console.warn(`👆 Touch: ${this.deviceInfo.touchSupport ? 'Supported' : 'Not supported'}`);
+    console.warn('='.repeat(55));
 
     // Calculate overall mobile score
     const allTests = Object.values(this.results);
@@ -389,7 +389,7 @@ class MobileResponsivenessTester {
     const needsImprovement = allTests.filter(test => test.status === 'needs improvement').length;
 
     const overallGrade = this.calculateMobileGrade(excellentTests, goodTests, needsImprovement);
-    console.log(`\n📊 Overall Mobile Experience: ${overallGrade}\n`);
+    console.warn(`\n📊 Overall Mobile Experience: ${overallGrade}\n`);
 
     // Individual test results
     Object.entries(this.results).forEach(([category, result]) => {
@@ -400,22 +400,22 @@ class MobileResponsivenessTester {
         'needs improvement': '🔴'
       }[result.status] || '⚪';
 
-      console.log(`${statusIcon} ${category.replace(/([A-Z])/g, ' $1').toUpperCase()}: ${result.status.toUpperCase()}`);
+      console.warn(`${statusIcon} ${category.replace(/([A-Z])/g, ' $1').toUpperCase()}: ${result.status.toUpperCase()}`);
       
       // Show specific scores where available
       if (result.score) {
-        console.log(`   📊 Score: ${result.score}`);
+        console.warn(`   📊 Score: ${result.score}`);
       }
       if (result.optimizationScore) {
-        console.log(`   🎯 Optimization: ${result.optimizationScore}%`);
+        console.warn(`   🎯 Optimization: ${result.optimizationScore}%`);
       }
       if (result.readabilityScore) {
-        console.log(`   📖 Readability: ${result.readabilityScore}%`);
+        console.warn(`   📖 Readability: ${result.readabilityScore}%`);
       }
     });
 
-    console.log('\n' + '='.repeat(55));
-    console.log('📱 Mobile responsiveness validation complete!');
+    console.warn('\n' + '='.repeat(55));
+    console.warn('📱 Mobile responsiveness validation complete!');
     
     // Store results globally
     window.mobileTestResults = {
@@ -445,7 +445,7 @@ if (process.env.NODE_ENV === 'development') {
     
     // Auto-run mobile test after 7 seconds
     setTimeout(() => {
-      console.log('📱 Auto-running Mobile Responsiveness Test...');
+      console.warn('📱 Auto-running Mobile Responsiveness Test...');
       tester.runMobileTests();
     }, 7000);
   }, 3000);

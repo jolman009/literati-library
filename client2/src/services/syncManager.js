@@ -23,7 +23,7 @@ class SyncManager {
    * Start sync manager - listen for network changes and process queue
    */
   start() {
-    console.log('🔄 Sync Manager started');
+    console.warn('🔄 Sync Manager started');
 
     // Listen for network online events
     window.addEventListener('network-online', () => this.processQueue());
@@ -52,7 +52,7 @@ class SyncManager {
    * Stop sync manager
    */
   stop() {
-    console.log('🛑 Sync Manager stopped');
+    console.warn('🛑 Sync Manager stopped');
     window.removeEventListener('network-online', () => this.processQueue());
     window.removeEventListener('sync-queue-updated', () => this.processQueue());
 
@@ -85,7 +85,7 @@ class SyncManager {
         return;
       }
 
-      console.log(`🔄 Processing ${actions.length} sync actions...`);
+      console.warn(`🔄 Processing ${actions.length} sync actions...`);
 
       let successCount = 0;
       let failCount = 0;
@@ -104,7 +104,7 @@ class SyncManager {
       }
 
       const message = `Synced ${successCount} actions${failCount > 0 ? `, ${failCount} failed` : ''}`;
-      console.log(`✅ ${message}`);
+      console.warn(`✅ ${message}`);
 
       this.notifyListeners({
         status: 'completed',

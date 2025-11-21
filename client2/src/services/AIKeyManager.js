@@ -350,11 +350,11 @@ class AIKeyManager {
   debugKeyData(provider) {
     try {
       const stored = localStorage.getItem(`ai_key_${provider}`);
-      console.log(`Debug ${provider} localStorage:`, stored);
+      console.warn(`Debug ${provider} localStorage:`, stored);
 
       if (stored) {
         const parsed = JSON.parse(stored);
-        console.log(`Debug ${provider} parsed:`, parsed);
+        console.warn(`Debug ${provider} parsed:`, parsed);
         return parsed;
       }
       return null;
@@ -371,7 +371,7 @@ class AIKeyManager {
     try {
       localStorage.removeItem(`ai_key_${provider}`);
       this.keys.delete(provider);
-      console.log(`Cleaned corrupted data for ${provider}`);
+      console.warn(`Cleaned corrupted data for ${provider}`);
       return true;
     } catch (error) {
       console.error(`Failed to clean ${provider}:`, error);

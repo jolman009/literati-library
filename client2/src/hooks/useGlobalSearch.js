@@ -41,7 +41,7 @@ export const useGlobalSearch = () => {
         });
         break;
       default:
-        console.log('Unknown result type:', result.type);
+        console.warn('Unknown result type:', result.type);
     }
     closeSearch();
   }, [navigate, closeSearch]);

@@ -67,7 +67,7 @@ const GoogleDriveUploader = ({
           // Picker API is loaded and ready
           setGapiReady(true);
           setPickerReady(true);
-          console.log('✅ Google Picker API initialized successfully');
+          console.warn('✅ Google Picker API initialized successfully');
         } catch (err) {
           console.error('Failed to initialize Google Picker API:', err);
           setError('Failed to initialize Google Picker API');
@@ -130,7 +130,7 @@ const GoogleDriveUploader = ({
     setError(null);
 
     try {
-      console.log('📁 Importing file from Google Drive:', fileData.name);
+      console.warn('📁 Importing file from Google Drive:', fileData.name);
 
       // Validate file type before sending to backend
       const allowedMimeTypes = [
@@ -165,7 +165,7 @@ const GoogleDriveUploader = ({
         },
       });
 
-      console.log('✅ Book imported successfully:', response.data);
+      console.warn('✅ Book imported successfully:', response.data);
       setIsUploading(false);
       setUploadProgress(100);
 
@@ -238,9 +238,9 @@ const GoogleDriveUploader = ({
 
           const accessToken = response.access_token;
 
-          console.log('🔑 Access token received, building Picker...');
-          console.log('🔐 OAuth Token:', accessToken.substring(0, 20) + '...');
-          console.log('🔑 API Key:', GOOGLE_API_KEY.substring(0, 20) + '...');
+          console.warn('🔑 Access token received, building Picker...');
+          console.warn('🔐 OAuth Token:', accessToken.substring(0, 20) + '...');
+          console.warn('🔑 API Key:', GOOGLE_API_KEY.substring(0, 20) + '...');
 
           // SIMPLEST POSSIBLE PICKER - Just one view
           const picker = new window.google.picker.PickerBuilder()
@@ -249,12 +249,12 @@ const GoogleDriveUploader = ({
             .setOrigin(window.location.protocol + '//' + window.location.host)
             .addView(window.google.picker.ViewId.DOCS)
             .setCallback(async (data) => {
-              console.log('📊 Picker callback:', data.action, data);
-              console.log('📊 Full data:', JSON.stringify(data, null, 2));
+              console.warn('📊 Picker callback:', data.action, data);
+              console.warn('📊 Full data:', JSON.stringify(data, null, 2));
 
               if (data.action === window.google.picker.Action.PICKED) {
                 const file = data.docs[0];
-                console.log('📁 Selected file:', file);
+                console.warn('📁 Selected file:', file);
 
                 // Validate file type on the client side
                 const allowedMimeTypes = [
@@ -274,7 +274,7 @@ const GoogleDriveUploader = ({
             })
             .build();
 
-          console.log('✅ Picker built successfully, showing...');
+          console.warn('✅ Picker built successfully, showing...');
           picker.setVisible(true);
         },
       });
@@ -294,7 +294,7 @@ const GoogleDriveUploader = ({
     // Check if already loaded
     if (window.google?.accounts?.oauth2) {
       setGisReady(true);
-      console.log('✅ Google Identity Services already loaded');
+      console.warn('✅ Google Identity Services already loaded');
       return;
     }
 
@@ -307,7 +307,7 @@ const GoogleDriveUploader = ({
       setTimeout(() => {
         if (window.google?.accounts?.oauth2) {
           setGisReady(true);
-          console.log('✅ Google Identity Services loaded successfully');
+          console.warn('✅ Google Identity Services loaded successfully');
         } else {
           console.error('❌ Google Identity Services failed to load');
           setError('Failed to load Google authentication');

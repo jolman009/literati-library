@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 /* eslint-disable react-hooks/exhaustive-deps */
 // src/pages/EnhancedNotesPage.jsx - Interactive Notes with Visualizations
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -493,9 +493,9 @@ const EnhancedNotesPage = () => {
         tags: ''
       });
     }
-    console.log('✅ About to set isModalOpen to true');
+    console.warn('✅ About to set isModalOpen to true');
     setIsModalOpen(true);
-    console.log('✅ setIsModalOpen(true) called');
+    console.warn('✅ setIsModalOpen(true) called');
   };
   
   const handleCloseModal = () => {
@@ -544,10 +544,10 @@ const EnhancedNotesPage = () => {
 
         // Track locally so Dashboard stats refresh without waiting for server breakdown
         try {
-          console.log('🎯 EnhancedNotesPage: About to call trackAction for note_created');
+          console.warn('🎯 EnhancedNotesPage: About to call trackAction for note_created');
           const serverGamification = response?.data?.gamification;
-          console.log('📊 EnhancedNotesPage: Server gamification snapshot:', serverGamification);
-          console.log('🎮 EnhancedNotesPage: trackAction function exists?', typeof trackAction);
+          console.warn('📊 EnhancedNotesPage: Server gamification snapshot:', serverGamification);
+          console.warn('🎮 EnhancedNotesPage: trackAction function exists?', typeof trackAction);
 
           await trackAction('note_created', {
             noteId: response?.data?.id,
@@ -556,7 +556,7 @@ const EnhancedNotesPage = () => {
             hasTags: Array.isArray(noteData.tags) && noteData.tags.length > 0
           }, { serverSnapshot: serverGamification });
 
-          console.log('✅ EnhancedNotesPage: trackAction completed successfully');
+          console.warn('✅ EnhancedNotesPage: trackAction completed successfully');
         } catch (trackErr) {
           console.error('❌ EnhancedNotesPage: note_created local tracking failed:', trackErr);
         }
@@ -1076,7 +1076,7 @@ const EnhancedNotesPage = () => {
               {/* Create Note Button */}
               <button
                 onClick={() => {
-                  console.log('New Note button clicked!');
+                  console.warn('New Note button clicked!');
                   handleOpenModal();
                 }}
                 style={{

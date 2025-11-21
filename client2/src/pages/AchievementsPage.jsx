@@ -164,7 +164,7 @@ const AchievementsPage = () => {
         haptics.success();
       }
     } catch (error) {
-      console.log('Share cancelled or failed:', error);
+      console.warn('Share cancelled or failed:', error);
     }
   };
 

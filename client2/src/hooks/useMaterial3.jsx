@@ -19,7 +19,7 @@ export const useMaterial3 = () => {
     // Utility functions
     applyDynamicTheme: async (imageUrl) => {
       // TODO: Implement dynamic color extraction from book covers
-      console.log('Dynamic theme extraction from:', imageUrl);
+      console.warn('Dynamic theme extraction from:', imageUrl);
     },
     
     // Color utilities

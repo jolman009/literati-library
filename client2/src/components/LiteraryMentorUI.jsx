@@ -73,7 +73,7 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
     const hasKeys = !!(anthropicKey || openaiKey || geminiKey || perplexityKey);
     setHasApiKeys(hasKeys);
 
-    console.log('API Keys check:', {
+    console.warn('API Keys check:', {
       hasKeys,
       anthropic: !!anthropicKey,
       openai: !!openaiKey,
@@ -86,12 +86,12 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
     try {
       // Check if user is authenticated
       if (!user) {
-        console.log('No user logged in, cannot load books');
+        console.warn('No user logged in, cannot load books');
         setUserBooks([]);
         return;
       }
 
-      console.log('Loading books from API for Literary Mentor...');
+      console.warn('Loading books from API for Literary Mentor...');
       
       // Fetch books from the API (same as library page) with pagination params
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
@@ -100,7 +100,7 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
       const { items = [] } = response.data || {};
       booksData = items;
       
-      console.log(`Loaded ${booksData.length} books from API`);
+      console.warn(`Loaded ${booksData.length} books from API`);
       setUserBooks(booksData);
       
       // Set first book as selected if none selected
@@ -125,7 +125,7 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
             getAllRequest.onsuccess = function(event) {
               const books = event.target.result;
               if (books && books.length > 0) {
-                console.log('Loaded cached books from IndexedDB:', books.length);
+                console.warn('Loaded cached books from IndexedDB:', books.length);
                 setUserBooks(books);
                 if (!selectedBookId && books.length > 0) {
                   setSelectedBookId(books[0].id);
@@ -250,7 +250,7 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
         setActiveTab('insights');
         break;
       default:
-        console.log('Action clicked:', action);
+        console.warn('Action clicked:', action);
     }
   };
 

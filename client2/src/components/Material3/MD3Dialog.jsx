@@ -27,9 +27,9 @@ const MD3Dialog = memo(({
 
   // Handle dialog open/close animations
   useEffect(() => {
-    console.log('🎭 MD3Dialog useEffect triggered:', { open, isVisible });
+    console.warn('🎭 MD3Dialog useEffect triggered:', { open, isVisible });
     if (open) {
-      console.log('🎭 Dialog opening - setting isVisible to true');
+      console.warn('🎭 Dialog opening - setting isVisible to true');
       setIsVisible(true);
       setIsAnimating(true);
       previousFocusRef.current = document.activeElement;
@@ -45,7 +45,7 @@ const MD3Dialog = memo(({
         setIsAnimating(false);
       }, 50);
     } else if (isVisible) {
-      console.log('🎭 Dialog closing - setting isVisible to false');
+      console.warn('🎭 Dialog closing - setting isVisible to false');
       setIsAnimating(true);
       setTimeout(() => {
         setIsVisible(false);
@@ -84,9 +84,9 @@ const MD3Dialog = memo(({
     }
   };
 
-  console.log('🎭 MD3Dialog render - isVisible:', isVisible, 'open:', open);
+  console.warn('🎭 MD3Dialog render - isVisible:', isVisible, 'open:', open);
   if (!isVisible) {
-    console.log('🎭 Dialog not rendering - isVisible is false');
+    console.warn('🎭 Dialog not rendering - isVisible is false');
     return null;
   }
 

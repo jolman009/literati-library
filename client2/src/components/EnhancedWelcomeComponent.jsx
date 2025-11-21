@@ -10,19 +10,11 @@ const EnhancedWelcomeComponent = ({
   className = ''
 }) => {
   const [currentHour] = useState(new Date().getHours());
-  
-  // Try to get gamification data, fallback gracefully
-  let gamificationStats = {};
-  let gamificationAvailable = false;
-  
-  try {
-    const { stats } = useGamification();
-    gamificationStats = stats || {};
-    gamificationAvailable = true;
-  } catch (error) {
-    console.warn('Gamification not available in welcome component');
-    gamificationAvailable = false;
-  }
+
+  // Always call the hook, but handle the case where the context might not be available
+  const gamification = useGamification();
+  const gamificationStats = gamification?.stats || {};
+  const gamificationAvailable = !!gamification;
 
   // Enhanced analytics combining gamification and regular analytics
   const enhancedAnalytics = useMemo(() => {

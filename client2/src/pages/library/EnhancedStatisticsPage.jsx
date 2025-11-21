@@ -757,7 +757,7 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
           <GoalSystem 
             goals={GOALS}
             onComplete={(goal) => {
-              console.log('Goal completed:', goal);
+              console.warn('Goal completed:', goal);
               trackAction('goal_completed', { goalId: goal.id, reward: goal.reward });
             }}
           />

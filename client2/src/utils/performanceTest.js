@@ -15,8 +15,8 @@ export const testVirtualScrolling = async (bookCount = 1000) => {
   
   const dataGenTime = measureCustomMetric('Data Generation', startTime);
   
-  console.log(`📚 Generated ${bookCount} books in ${Math.round(dataGenTime.duration)}ms`);
-  console.log(`⚡ Generation Rate: ${Math.round(bookCount / (dataGenTime.duration / 1000))} books/second`);
+  console.warn(`📚 Generated ${bookCount} books in ${Math.round(dataGenTime.duration)}ms`);
+  console.warn(`⚡ Generation Rate: ${Math.round(bookCount / (dataGenTime.duration / 1000))} books/second`);
   
   // Memory usage test
   const memBefore = performance.memory ? performance.memory.usedJSHeapSize : 0;
@@ -27,8 +27,8 @@ export const testVirtualScrolling = async (bookCount = 1000) => {
   const memAfter = performance.memory ? performance.memory.usedJSHeapSize : 0;
   const memoryDiff = memAfter - memBefore;
   
-  console.log(`🧠 Memory Usage: ${Math.round(memoryDiff / 1024)}KB for ${bookCount} books`);
-  console.log(`📊 Memory per Book: ${Math.round(memoryDiff / bookCount)} bytes`);
+  console.warn(`🧠 Memory Usage: ${Math.round(memoryDiff / 1024)}KB for ${bookCount} books`);
+  console.warn(`📊 Memory per Book: ${Math.round(memoryDiff / bookCount)} bytes`);
   
   console.groupEnd();
   
@@ -63,7 +63,7 @@ export const testBundleLoading = () => {
     console.table(metrics);
     
     const totalTime = navigation.loadEventEnd - navigation.fetchStart;
-    console.log(`⏱️ Total Page Load: ${Math.round(totalTime)}ms`);
+    console.warn(`⏱️ Total Page Load: ${Math.round(totalTime)}ms`);
     
     loadTimes.push({
       metric: 'Total Page Load',
@@ -76,11 +76,11 @@ export const testBundleLoading = () => {
   const resources = performance.getEntriesByType('resource');
   const jsResources = resources.filter(r => r.name.includes('.js'));
   
-  console.log('📄 JavaScript Bundle Loading:');
+  console.warn('📄 JavaScript Bundle Loading:');
   jsResources.forEach(resource => {
     const loadTime = resource.responseEnd - resource.requestStart;
     const fileName = resource.name.split('/').pop();
-    console.log(`  ${fileName}: ${Math.round(loadTime)}ms (${Math.round(resource.transferSize / 1024)}KB)`);
+    console.warn(`  ${fileName}: ${Math.round(loadTime)}ms (${Math.round(resource.transferSize / 1024)}KB)`);
     
     loadTimes.push({
       metric: fileName,
@@ -117,7 +117,7 @@ export const testLazyLoading = async () => {
       success: true
     });
     
-    console.log('✅ StatisticsPage lazy load:', Math.round(loadTime.duration), 'ms');
+    console.warn('✅ StatisticsPage lazy load:', Math.round(loadTime.duration), 'ms');
   } catch (error) {
     console.error('❌ StatisticsPage lazy load failed:', error);
     tests.push({
@@ -139,7 +139,7 @@ export const testLazyLoading = async () => {
       success: true
     });
     
-    console.log('✅ EnhancedCollectionsPage lazy load:', Math.round(loadTime.duration), 'ms');
+    console.warn('✅ EnhancedCollectionsPage lazy load:', Math.round(loadTime.duration), 'ms');
   } catch (error) {
     console.error('❌ EnhancedCollectionsPage lazy load failed:', error);
     tests.push({
@@ -154,7 +154,7 @@ export const testLazyLoading = async () => {
     ? successfulTests.reduce((sum, t) => sum + t.loadTime, 0) / successfulTests.length 
     : 0;
   
-  console.log(`📊 Average Lazy Load Time: ${Math.round(avgLoadTime)}ms`);
+  console.warn(`📊 Average Lazy Load Time: ${Math.round(avgLoadTime)}ms`);
   console.groupEnd();
   
   return {
@@ -167,7 +167,7 @@ export const testLazyLoading = async () => {
 // Comprehensive performance benchmark
 export const runPerformanceBenchmark = async () => {
   console.group('🏁 Comprehensive Performance Benchmark');
-  console.log('🚀 Starting performance tests...');
+  console.warn('🚀 Starting performance tests...');
   
   const results = {
     timestamp: new Date().toISOString(),
@@ -192,15 +192,15 @@ export const runPerformanceBenchmark = async () => {
       jsHeapSizeLimit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
     };
     
-    console.log('🧠 Current Memory Usage:', results.tests.memory.usedJSHeapSize, 'MB');
+    console.warn('🧠 Current Memory Usage:', results.tests.memory.usedJSHeapSize, 'MB');
   }
   
-  console.log('✅ Performance benchmark complete!');
+  console.warn('✅ Performance benchmark complete!');
   console.groupEnd();
   
   // Save results to localStorage for analysis
   localStorage.setItem('performance_benchmark_results', JSON.stringify(results, null, 2));
-  console.log('💾 Results saved to localStorage as "performance_benchmark_results"');
+  console.warn('💾 Results saved to localStorage as "performance_benchmark_results"');
   
   return results;
 };
@@ -214,5 +214,5 @@ if (typeof window !== 'undefined') {
     runBenchmark: runPerformanceBenchmark
   };
   
-  console.log('🛠️ Performance testing available via window.performanceTest');
+  console.warn('🛠️ Performance testing available via window.performanceTest');
 }

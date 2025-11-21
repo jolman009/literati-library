@@ -132,7 +132,7 @@ const MD3UploadPage = () => {
           fileType: selectedFile.type,
           fileSize: selectedFile.size
         });
-        console.log('✅ Book upload tracked successfully - 25 points awarded');
+        console.warn('✅ Book upload tracked successfully - 25 points awarded');
       } catch (trackError) {
         console.error('Failed to track book upload:', trackError);
         // Don't fail the upload if tracking fails

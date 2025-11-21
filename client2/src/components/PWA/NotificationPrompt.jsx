@@ -15,7 +15,7 @@ const NotificationPrompt = () => {
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        console.log('Notifications enabled');
+        console.warn('Notifications enabled');
       }
     } catch (error) {
       console.error('Failed to enable notifications:', error);
