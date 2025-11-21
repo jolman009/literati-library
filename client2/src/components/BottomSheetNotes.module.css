@@ -59,13 +59,15 @@
 
 /* ===== LIGHT THEME ===== */
 .sheet.light {
-  background: rgb(var(--md-sys-color-surface, 253, 252, 255));
+  /* Fully opaque background for readability */
+  background: rgba(253, 252, 255, 1.0);
   color: rgb(var(--md-sys-color-on-surface, 26, 26, 28));
 }
 
 /* ===== DARK THEME ===== */
 .sheet.dark {
-  background: rgb(var(--md-sys-color-surface, 26, 26, 28));
+  /* Fully opaque background for readability */
+  background: rgba(26, 26, 28, 1.0);
   color: rgb(var(--md-sys-color-on-surface, 227, 226, 230));
 }
 
