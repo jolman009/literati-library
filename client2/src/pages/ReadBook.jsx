@@ -182,7 +182,7 @@ const ReadBook = () => {
         if (result?.success) {
           showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
         }
-      } catch {}
+      } catch { /* empty */ }
     }
     navigate("/library");
   };
@@ -333,7 +333,7 @@ const ReadBook = () => {
                       if (result?.success) {
                         showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
                       }
-                    } catch {}
+                    } catch { /* empty */ }
                   }
                   navigate('/dashboard');
                 }}
@@ -350,7 +350,7 @@ const ReadBook = () => {
                   type="button"
                   className="reader-topbar-btn"
                   onClick={async () => {
-                    try { await startReadingSession(activeSession.book); } catch {}
+                    try { await startReadingSession(activeSession.book); } catch { /* empty */ }
                   }}
                   aria-label="Resume session"
                 >
@@ -372,6 +372,7 @@ const ReadBook = () => {
                       if (result?.success) {
                         showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
                       }
+                    // eslint-disable-next-line no-unused-vars
                     } catch (e) {
                       showSnackbar({ message: 'Failed to stop session', variant: 'error' });
                     } finally {

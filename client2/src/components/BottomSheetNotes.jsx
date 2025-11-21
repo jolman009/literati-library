@@ -67,9 +67,7 @@ const BottomSheetNotes = ({
   title,
   book = null,
   initialContent = "",
-  currentPage = null,
-  currentLocator = null
-}) => {
+  currentPage = null}) => {
   // ===== CONTEXTS =====
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
@@ -181,6 +179,7 @@ const BottomSheetNotes = ({
 
   // ===== DRAG HANDLING =====
   const handleDragEnd = (event, info) => {
+    // eslint-disable-next-line no-unused-vars
     const { offset, velocity } = info;
     const currentY = parseFloat(getComputedStyle(sheetRef.current).transform.split(',')[5] || 0);
     const viewportHeight = window.innerHeight;
@@ -337,6 +336,7 @@ const BottomSheetNotes = ({
             });
 
             setContent("");
+          // eslint-disable-next-line no-unused-vars
           } catch (localError) {
             showSnackbar({
               message: "⚠️ Failed to save. Please copy your note before closing",
