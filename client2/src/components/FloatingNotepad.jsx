@@ -148,7 +148,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
   const handleSave = async () => {
     // ⚠️ CRITICAL: Wrap entire function to catch ALL errors (prevent error boundary navigation)
     try {
-      console.log('💾 FloatingNotepad: Save button clicked');
+      console.warn('💾 FloatingNotepad: Save button clicked');
 
       if (!content.trim()) {
         console.warn('⚠️ FloatingNotepad: Cannot save empty note');
@@ -157,7 +157,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
       // Prevent double-clicking
       if (isSaving) {
-        console.log('⏳ FloatingNotepad: Already saving, ignoring duplicate click');
+        console.warn('⏳ FloatingNotepad: Already saving, ignoring duplicate click');
         return;
       }
 
@@ -170,13 +170,13 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
 
     if (currentPage) {
       // PDF: use page number
-      console.log('📄 Saving PDF note with page:', currentPage);
+      console.warn('📄 Saving PDF note with page:', currentPage);
       locationPrefix = `[p.${currentPage}] `;
       locationMetadata.page_number = currentPage;
       tags.push(`page:${currentPage}`);
     } else {
       // EPUB: location tracking disabled for now (will revisit in future)
-      console.log('📖 Saving EPUB note (no location tracking)');
+      console.warn('📖 Saving EPUB note (no location tracking)');
     }
 
     const userTags = tagInput
@@ -193,7 +193,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       tags: allTags
     };
 
-    console.log('📝 Attempting to save note:', {
+    console.warn('📝 Attempting to save note:', {
       ...noteData,
       bookId,
       hasBookId: !!bookId,
@@ -202,32 +202,32 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
     });
 
     try {
-      console.log('💾 FloatingNotepad: Starting note save...');
+      console.warn('💾 FloatingNotepad: Starting note save...');
       const response = await API.post("/notes", noteData, {
         timeout: 10000 // 10 second timeout
       });
-      console.log('✅ FloatingNotepad: Note saved successfully to server:', {
+      console.warn('✅ FloatingNotepad: Note saved successfully to server:', {
         noteId: response.data.id,
         hasGamification: !!response.data?.gamification
       });
 
       const serverGamification = response.data?.gamification;
       if (serverGamification) {
-        console.log('🎯 FloatingNotepad: Server gamification snapshot received:', serverGamification);
+        console.warn('🎯 FloatingNotepad: Server gamification snapshot received:', serverGamification);
       }
 
       // Track gamification action for note creation (+15 points)
       // ⚠️ CRITICAL: Wrap in try-catch to prevent errors from bubbling to error boundary
       if (trackAction) {
         try {
-          console.log('🎮 FloatingNotepad: Tracking gamification action...');
+          console.warn('🎮 FloatingNotepad: Tracking gamification action...');
           await trackAction('note_created', {
             book_id: bookId,
             note_id: response.data.id,
             page: currentPage,
             timestamp: new Date().toISOString()
           }, { serverSnapshot: serverGamification });
-          console.log('✅ FloatingNotepad: Gamification action tracked successfully (+15 points)');
+          console.warn('✅ FloatingNotepad: Gamification action tracked successfully (+15 points)');
         } catch (trackError) {
           // ⚠️ CRITICAL: Log but don't throw - note is already saved
           console.warn('⚠️ FloatingNotepad: Failed to track gamification (note still saved):', trackError);
@@ -244,7 +244,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
       setIsSaving(false);
       setTagInput("");
       setTagInput("");
-      console.log('✅ FloatingNotepad: Save workflow completed successfully');
+      console.warn('✅ FloatingNotepad: Save workflow completed successfully');
     } catch (error) {
       console.error('❌ Failed to save note:', {
         error,
@@ -273,7 +273,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             variant: "warning"
           });
 
-          console.log('📦 Note saved to localStorage (auth expired)');
+          console.warn('📦 Note saved to localStorage (auth expired)');
           setContent(""); // Clear content since it's saved locally
         } catch (localError) {
           console.error('Failed to save locally:', localError);
@@ -298,7 +298,7 @@ const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage 
             variant: "warning"
           });
 
-          console.log('📦 Note saved to localStorage (network error)');
+          console.warn('📦 Note saved to localStorage (network error)');
           setContent(""); // Clear content since it's saved locally
         } catch (localError) {
           console.error('Failed to save locally:', localError);

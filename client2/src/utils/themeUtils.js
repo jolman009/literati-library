@@ -139,7 +139,7 @@ export const applyTheme = (themeId, mode = 'light') => {
   root.setAttribute('data-theme', themeId);
   root.setAttribute('data-actual-theme', mode);
 
-  console.log(`🎨 Theme applied: ${themeId} (${mode} mode)`);
+  console.warn(`🎨 Theme applied: ${themeId} (${mode} mode)`);
 };
 
 /**
@@ -149,7 +149,7 @@ export const applyTheme = (themeId, mode = 'light') => {
 export const saveThemePreference = (themeId) => {
   try {
     localStorage.setItem('shelfquest_theme', themeId);
-    console.log(`💾 Theme preference saved: ${themeId}`);
+    console.warn(`💾 Theme preference saved: ${themeId}`);
   } catch (error) {
     console.error('Failed to save theme preference:', error);
   }

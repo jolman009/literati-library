@@ -55,7 +55,7 @@ class ErrorBoundary extends React.Component {
         userAgent: navigator.userAgent
       };
       
-      console.log('Would report error:', errorReport);
+      console.warn('Would report error:', errorReport);
       // await fetch('/api/errors', { method: 'POST', body: JSON.stringify(errorReport) });
     } catch (reportingError) {
       console.error('Failed to report error:', reportingError);

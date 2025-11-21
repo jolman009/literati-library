@@ -60,7 +60,7 @@ export const ReadingSessionProvider = ({ children }) => {
         bookTitle: activeSession.book.title,
         timestamp: new Date().toISOString()
       });
-      console.log(`✅ Flushed ${pages} pending page(s) via ${actionType}`);
+      console.warn(`✅ Flushed ${pages} pending page(s) via ${actionType}`);
     } catch (err) {
       console.warn('Failed to flush pending pages (non-fatal):', err);
     }
@@ -140,7 +140,7 @@ export const ReadingSessionProvider = ({ children }) => {
         });
 
         sessionData.backendSessionId = backendSession.id;
-        console.log('✅ Backend reading session created:', backendSession.id);
+        console.warn('✅ Backend reading session created:', backendSession.id);
       } catch (error) {
         console.warn('⚠️ Failed to create backend session (continuing with local only):', error);
         // Continue with local session even if backend fails - graceful degradation
@@ -161,7 +161,7 @@ export const ReadingSessionProvider = ({ children }) => {
         // Also set localStorage flag for cross-tab communication
         localStorage.setItem('books_updated', Date.now().toString());
 
-        console.log('✅ Book reading status updated successfully');
+        console.warn('✅ Book reading status updated successfully');
       } catch (error) {
         console.warn('❌ Failed to update book reading status:', error);
         // Don't fail the session start if the API call fails
@@ -175,7 +175,7 @@ export const ReadingSessionProvider = ({ children }) => {
             bookTitle: book.title,
             timestamp: new Date().toISOString()
           });
-          console.log('✅ Reading session start tracked - 5 points awarded');
+          console.warn('✅ Reading session start tracked - 5 points awarded');
         } catch (error) {
           console.warn('Failed to track reading start:', error);
         }
@@ -190,7 +190,7 @@ export const ReadingSessionProvider = ({ children }) => {
       });
       // Store in localStorage for persistence
       localStorage.setItem('active_reading_session', JSON.stringify(sessionData));
-      console.log('📖 Reading session started for:', book.title);
+      console.warn('📖 Reading session started for:', book.title);
       return { success: true, session: sessionData };
     } catch (error) {
       console.error('Failed to start reading session:', error);
@@ -215,7 +215,7 @@ export const ReadingSessionProvider = ({ children }) => {
       localStorage.setItem('active_reading_session', JSON.stringify(pausedSession));
       setActiveSession(pausedSession);
       
-      console.log('📖 Reading session paused');
+      console.warn('📖 Reading session paused');
       return { success: true };
     } catch (error) {
       console.error('Failed to pause reading session:', error);
@@ -237,7 +237,7 @@ export const ReadingSessionProvider = ({ children }) => {
       localStorage.setItem('active_reading_session', JSON.stringify(resumedSession));
       setActiveSession(resumedSession);
       
-      console.log('📖 Reading session resumed');
+      console.warn('📖 Reading session resumed');
       return { success: true };
     } catch (error) {
       console.error('Failed to resume reading session:', error);
@@ -263,7 +263,7 @@ export const ReadingSessionProvider = ({ children }) => {
             end_position: null,
             notes: activeSession.notes || null
           });
-          console.log('✅ Backend reading session ended:', activeSession.backendSessionId);
+          console.warn('✅ Backend reading session ended:', activeSession.backendSessionId);
         } catch (error) {
           console.warn('⚠️ Failed to end backend session:', error);
           // Continue with local cleanup even if backend fails
@@ -278,7 +278,7 @@ export const ReadingSessionProvider = ({ children }) => {
             startTime: activeSession.startTime,
             endTime: endTime.toISOString()
           });
-          console.log('✅ Fallback reading session recorded via /api/reading/session');
+          console.warn('✅ Fallback reading session recorded via /api/reading/session');
         } catch (e) {
           console.warn('⚠️ Failed to record fallback reading session:', e);
         }
@@ -312,7 +312,7 @@ export const ReadingSessionProvider = ({ children }) => {
             pagesRead: activeSession.pagesRead || 0,
             timestamp: endTime.toISOString()
           });
-          console.log(`✅ Reading session completed tracked - 10 points + ${durationMinutes} minutes reading time`);
+          console.warn(`✅ Reading session completed tracked - 10 points + ${durationMinutes} minutes reading time`);
         } catch (error) {
           console.warn('Failed to track reading session completion:', error);
         }
@@ -336,7 +336,7 @@ export const ReadingSessionProvider = ({ children }) => {
         pagesRead: 0,
         startTime: null
       });
-      console.log('📖 Reading session ended');
+      console.warn('📖 Reading session ended');
       
       // 🔧 FIX: Dispatch event to notify dashboard of reading session completion
       window.dispatchEvent(new CustomEvent('readingSessionCompleted', {
@@ -394,13 +394,13 @@ export const ReadingSessionProvider = ({ children }) => {
             } else {
               scheduleFlush();
             }
-            console.log(`📖 Queued ${newPages} new page(s), pending total = ${pendingPagesRef.current}`);
+            console.warn(`📖 Queued ${newPages} new page(s), pending total = ${pendingPagesRef.current}`);
           }
         } catch (error) {
           console.warn('Failed to track pages read:', error);
         }
       }
-      console.log(`📊 Progress updated: ${pagesRead} pages`);
+      console.warn(`📊 Progress updated: ${pagesRead} pages`);
       return { success: true };
     } catch (error) {
       console.error('Failed to update progress:', error);
@@ -489,7 +489,7 @@ export const ReadingSessionProvider = ({ children }) => {
       pagesRead: 0,
       startTime: null
     });
-    console.log('🧹 All reading sessions cleared');
+    console.warn('🧹 All reading sessions cleared');
   }, []);
 
   // Context value

@@ -100,11 +100,11 @@ const LibraryPage = () => {
 
   const fetchBooks = async (offset = 0) => {
     try {
-      console.log('📚 LibraryPage: Starting to fetch books...');
+      console.warn('📚 LibraryPage: Starting to fetch books...');
       setLoading(true);
       const response = await makeAuthenticatedApiCall(`/books?limit=${PAGE_LIMIT}&offset=${offset}`);
 
-      console.log('📚 LibraryPage: Response received:', {
+      console.warn('📚 LibraryPage: Response received:', {
         dataType: typeof response,
         isArray: Array.isArray(response),
         hasBooks: !!response?.books,
@@ -116,7 +116,7 @@ const LibraryPage = () => {
       const { items = [], total } = response || {};
       const booksData = items;
 
-      console.log('📚 LibraryPage: Books data processed:', {
+      console.warn('📚 LibraryPage: Books data processed:', {
         bookCount: booksData.length,
         totalCount: typeof total === 'number' ? total : booksData.length,
         firstBook: booksData[0],
@@ -126,7 +126,7 @@ const LibraryPage = () => {
       setBooks(booksData);
       setTotalCount(typeof total === 'number' ? total : booksData.length);
       setError(null);
-      console.log('✅ LibraryPage: Books set successfully!');
+      console.warn('✅ LibraryPage: Books set successfully!');
     } catch (error) {
       console.error('❌ LibraryPage: Failed to fetch books:', error);
       console.error('Error details:', {
@@ -245,13 +245,13 @@ const LibraryPage = () => {
   });
 
   const handleBookClick = (book) => {
-    console.log('📖 LibraryPage: handleBookClick called for book:', {
+    console.warn('📖 LibraryPage: handleBookClick called for book:', {
       id: book.id,
       title: book.title,
       navigatingTo: `/read/${book.id}`
     });
     navigate(`/read/${book.id}`);
-    console.log('✅ LibraryPage: navigate() called successfully');
+    console.warn('✅ LibraryPage: navigate() called successfully');
   };
 
   const handleBookUpdate = async (updatedBook) => {
@@ -268,7 +268,7 @@ const LibraryPage = () => {
   };
 
   const handleRead = (book) => {
-    console.log('📖 LibraryPage: handleRead called for book:', {
+    console.warn('📖 LibraryPage: handleRead called for book:', {
       id: book.id,
       title: book.title,
       format: book.format,
@@ -276,14 +276,14 @@ const LibraryPage = () => {
       navigatingTo: `/read/${book.id}`
     });
     navigate(`/read/${book.id}`);
-    console.log('✅ LibraryPage: navigate() to reader called successfully');
+    console.warn('✅ LibraryPage: navigate() to reader called successfully');
   };
 
   // Reading session handlers
   const handleStartSession = async (book) => {
     const result = await startReadingSession(book);
     if (result.success) {
-      console.log('📖 Reading session started for:', book.title);
+      console.warn('📖 Reading session started for:', book.title);
     }
     setOpenMenuBookId(null);
   };
@@ -291,7 +291,7 @@ const LibraryPage = () => {
   const handlePauseSession = async () => {
     const result = await pauseReadingSession();
     if (result.success) {
-      console.log('⏸️ Reading session paused');
+      console.warn('⏸️ Reading session paused');
     }
     setOpenMenuBookId(null);
   };
@@ -299,7 +299,7 @@ const LibraryPage = () => {
   const handleResumeSession = async () => {
     const result = await resumeReadingSession();
     if (result.success) {
-      console.log('▶️ Reading session resumed');
+      console.warn('▶️ Reading session resumed');
     }
     setOpenMenuBookId(null);
   };
@@ -307,13 +307,13 @@ const LibraryPage = () => {
   const handleEndSession = async () => {
     const result = await stopReadingSession();
     if (result.success) {
-      console.log('⏹️ Reading session ended');
+      console.warn('⏹️ Reading session ended');
     }
     setOpenMenuBookId(null);
   };
 
   const handleEdit = (book) => {
-    console.log('Edit book:', book);
+    console.warn('Edit book:', book);
     // TODO: Implement edit functionality
   };
 
@@ -511,7 +511,7 @@ const LibraryPage = () => {
           <NotesSubpage 
             books={books} 
             onNoteAction={(action, noteData) => {
-              console.log('Note action:', action, noteData);
+              console.warn('Note action:', action, noteData);
             }}
           />
         );
@@ -807,7 +807,7 @@ const LibraryPage = () => {
                 }}
                 onEditBook={(book) => {
                   // Placeholder: open read page as edit entry point or emit event
-                  console.log('Edit book requested:', book.id);
+                  console.warn('Edit book requested:', book.id);
                   // You could navigate to an edit dialog/page here
                 }}
                 onDeleteBook={(book) => {
@@ -1168,7 +1168,7 @@ const LibraryPage = () => {
                               className="book-menu-item"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Edit book requested:', book.id);
+                                console.warn('Edit book requested:', book.id);
                                 // TODO: Implement edit UI
                                 setOpenMenuBookId(null);
                               }}

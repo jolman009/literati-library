@@ -10,14 +10,14 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
 
   useEffect(() => {
     const applyTheme = (themeName) => {
-      console.log('🎨 ThemeProvider: Applying theme:', themeName);
+      console.warn('🎨 ThemeProvider: Applying theme:', themeName);
       
       try {
         const root = document.documentElement;
         const properties = createCSSCustomProperties(themeName === 'dark');
         
-        console.log('🎨 ThemeProvider: Generated properties count:', Object.keys(properties).length);
-        console.log('🎨 ThemeProvider: Sample properties:', {
+        console.warn('🎨 ThemeProvider: Generated properties count:', Object.keys(properties).length);
+        console.warn('🎨 ThemeProvider: Sample properties:', {
           primary: properties['--md-sys-color-primary'],
           surface: properties['--md-sys-color-surface'],
           onSurface: properties['--md-sys-color-on-surface'],
@@ -38,19 +38,19 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
           }
         });
         
-        console.log(`🎨 ThemeProvider: Applied ${successCount} properties, ${errorCount} errors`);
+        console.warn(`🎨 ThemeProvider: Applied ${successCount} properties, ${errorCount} errors`);
         
         root.setAttribute('data-theme', themeName);
         setIsDark(themeName === 'dark');
         
-        console.log('🎨 ThemeProvider: Theme applied successfully. isDark:', themeName === 'dark');
-        console.log('🎨 ThemeProvider: Root data-theme attribute:', root.getAttribute('data-theme'));
+        console.warn('🎨 ThemeProvider: Theme applied successfully. isDark:', themeName === 'dark');
+        console.warn('🎨 ThemeProvider: Root data-theme attribute:', root.getAttribute('data-theme'));
         
         // Verify a few key properties were actually set
         const verifyProps = ['--md-sys-color-primary', '--md-sys-color-surface', '--md-sys-color-on-surface'];
         verifyProps.forEach(prop => {
           const computedValue = getComputedStyle(root).getPropertyValue(prop);
-          console.log(`🎨 ThemeProvider: Verified ${prop}:`, computedValue.trim() || 'NOT SET');
+          console.warn(`🎨 ThemeProvider: Verified ${prop}:`, computedValue.trim() || 'NOT SET');
         });
         
       } catch (error) {

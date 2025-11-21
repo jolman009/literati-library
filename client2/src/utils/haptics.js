@@ -32,7 +32,7 @@ const isEnabled = () => {
 export const setHapticsEnabled = (enabled) => {
   try {
     localStorage.setItem('shelfquest_haptics_enabled', enabled ? 'true' : 'false');
-    console.log(`📳 Haptics ${enabled ? 'enabled' : 'disabled'}`);
+    console.warn(`📳 Haptics ${enabled ? 'enabled' : 'disabled'}`);
   } catch (error) {
     console.warn('Failed to save haptics preference:', error);
   }
@@ -44,12 +44,12 @@ export const setHapticsEnabled = (enabled) => {
  */
 const vibrate = (pattern) => {
   if (!isSupported()) {
-    console.log('📳 Vibration API not supported');
+    console.warn('📳 Vibration API not supported');
     return false;
   }
 
   if (!isEnabled()) {
-    console.log('📳 Haptics disabled by user');
+    console.warn('📳 Haptics disabled by user');
     return false;
   }
 

@@ -57,7 +57,7 @@ export class CacheManager {
     const value = this.memoryCache.get(key);
     if (value) {
       this.metrics.hits++;
-      console.log(`💾 Memory cache hit: ${key}`);
+      console.warn(`💾 Memory cache hit: ${key}`);
       return value;
     }
     
@@ -102,7 +102,7 @@ export class CacheManager {
       }
       
       this.metrics.hits++;
-      console.log(`💿 Storage cache hit: ${key}`);
+      console.warn(`💿 Storage cache hit: ${key}`);
       return data;
       
     } catch (error) {
@@ -187,7 +187,7 @@ export class CacheManager {
       await this.setInIndexedDB(key, value, ttl);
     }
     
-    console.log(`💾 Cached: ${key} (${dataSize} bytes, ${ttl}ms TTL)`);
+    console.warn(`💾 Cached: ${key} (${dataSize} bytes, ${ttl}ms TTL)`);
   }
 
   /**
@@ -216,14 +216,14 @@ export class CacheManager {
     }
     keysToRemove.forEach(key => localStorage.removeItem(key));
     
-    console.log(`🗑️ Cache invalidated: ${fullPattern} (${keysToRemove.length} items)`);
+    console.warn(`🗑️ Cache invalidated: ${fullPattern} (${keysToRemove.length} items)`);
   }
 
   /**
    * Smart cache warming for frequently accessed data
    */
   async warmCache(userId, priorities = ['books', 'stats']) {
-    console.log(`🔥 Warming cache for user ${userId}...`);
+    console.warn(`🔥 Warming cache for user ${userId}...`);
     
     for (const priority of priorities) {
       try {
@@ -356,7 +356,7 @@ export class CacheManager {
     }
     
     keysToRemove.forEach(key => localStorage.removeItem(key));
-    console.log(`🧹 Cleaned ${keysToRemove.length} expired cache entries`);
+    console.warn(`🧹 Cleaned ${keysToRemove.length} expired cache entries`);
   }
 
   /**
@@ -456,7 +456,7 @@ export class CacheManager {
     // Clear IndexedDB
     indexedDB.deleteDatabase('ShelfQuestCache');
     
-    console.log('🗑️ All cache data cleared');
+    console.warn('🗑️ All cache data cleared');
     this.metrics = { hits: 0, misses: 0, stores: 0, invalidations: 0 };
   }
 }
@@ -480,5 +480,5 @@ export const getCacheMetrics = () =>
 // Make available globally for debugging
 if (typeof window !== 'undefined') {
   window.cacheManager = cacheManager;
-  console.log('🛠️ Cache manager available via window.cacheManager');
+  console.warn('🛠️ Cache manager available via window.cacheManager');
 }

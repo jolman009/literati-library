@@ -10,13 +10,13 @@ export const useNetworkStatus = () => {
     const handleOnline = () => {
       setIsOnline(true);
       setIsReconnecting(false);
-      console.log('🌐 Connection restored');
+      console.warn('🌐 Connection restored');
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setIsReconnecting(false);
-      console.log('📴 Connection lost');
+      console.warn('📴 Connection lost');
     };
 
     const handleVisibilityChange = () => {
@@ -80,12 +80,12 @@ export const useNetworkStatus = () => {
       
       if (!actuallyOnline && navigator.onLine) {
         // Browser thinks we're online but we're not
-        console.log('🔄 Browser reports online but no connectivity');
+        console.warn('🔄 Browser reports online but no connectivity');
       }
       
       return actuallyOnline;
     } catch (error) {
-      console.log('🔄 Connectivity test failed:', error.message);
+      console.warn('🔄 Connectivity test failed:', error.message);
       setIsOnline(false);
       return false;
     } finally {
@@ -117,7 +117,7 @@ export const useOfflineState = () => {
           setHasOfflineData(hasData);
         }
       } catch (error) {
-        console.log('Error checking offline data:', error);
+        console.warn('Error checking offline data:', error);
       }
     };
 
@@ -131,13 +131,13 @@ export const useOfflineState = () => {
   const processOfflineQueue = async () => {
     if (!isOnline || offlineQueue.length === 0) return;
 
-    console.log(`🔄 Processing ${offlineQueue.length} offline actions`);
+    console.warn(`🔄 Processing ${offlineQueue.length} offline actions`);
     
     for (const action of offlineQueue) {
       try {
         // Process the queued action
         await action.execute();
-        console.log('✅ Processed offline action:', action.type);
+        console.warn('✅ Processed offline action:', action.type);
       } catch (error) {
         console.error('❌ Failed to process offline action:', action.type, error);
       }
@@ -205,7 +205,7 @@ export const useOfflineAPI = () => {
             return cachedResponse;
           }
         } catch (error) {
-          console.log('Cache access failed:', error);
+          console.warn('Cache access failed:', error);
         }
         throw new Error('No cached data available for this request.');
       }

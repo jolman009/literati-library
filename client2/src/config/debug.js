@@ -117,7 +117,7 @@ export class ConfigDebugger {
     }
 
     if (issues.length === 0 && warnings.length === 0) {
-      console.log('✅ Configuration validation passed');
+      console.warn('✅ Configuration validation passed');
     }
 
     return {
@@ -137,7 +137,7 @@ export class ConfigDebugger {
     }
 
     try {
-      console.log(`🔍 Testing API connectivity to: ${this.config.apiUrl}`);
+      console.warn(`🔍 Testing API connectivity to: ${this.config.apiUrl}`);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -150,7 +150,7 @@ export class ConfigDebugger {
       clearTimeout(timeoutId);
 
       if (response.ok) {
-        console.log('✅ API connection successful');
+        console.warn('✅ API connection successful');
         return true;
       } else {
         console.warn(`⚠️ API responded with status: ${response.status}`);
@@ -205,7 +205,7 @@ if (typeof window !== 'undefined' && environmentConfig.isDevelopment) {
     export: () => configDebugger.exportConfig()
   };
 
-  console.log('🔧 Debug utilities available at window.shelfquestDebug');
+  console.warn('🔧 Debug utilities available at window.shelfquestDebug');
 }
 
 export default configDebugger;

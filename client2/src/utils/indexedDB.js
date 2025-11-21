@@ -64,7 +64,7 @@ export function initDB() {
         metaStore.createIndex('cachedAt', 'cachedAt', { unique: false });
       }
 
-      console.log('📚 IndexedDB initialized with version', DB_VERSION);
+      console.warn('📚 IndexedDB initialized with version', DB_VERSION);
     };
   });
 }

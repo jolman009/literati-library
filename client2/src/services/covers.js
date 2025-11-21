@@ -13,7 +13,7 @@ export async function ensureCoverForBook(book) {
       return { cover_url: book.cover_url, cover_base: book.cover_base };
     }
 
-    console.log(`🔍 Fetching cover for: "${book.title}" by ${book.author}`);
+    console.warn(`🔍 Fetching cover for: "${book.title}" by ${book.author}`);
 
     // Call server API to resolve cover
     const response = await API.post('/covers/resolve', { 
@@ -22,13 +22,13 @@ export async function ensureCoverForBook(book) {
       author: book.author 
     });
     
-    console.log(`📝 Server response for "${book.title}":`, response.data);
+    console.warn(`📝 Server response for "${book.title}":`, response.data);
     
     if (response.data && response.data.cover_url) {
       return response.data;
     }
     
-    console.log(`❌ No cover found for "${book.title}"`);
+    console.warn(`❌ No cover found for "${book.title}"`);
     return { cover_url: null, cover_base: null };
   } catch (error) {
     console.error(`❌ Cover fetch failed for book "${book.title}":`, {

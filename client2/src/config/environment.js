@@ -6,7 +6,7 @@ class EnvironmentConfig {
 
     // Log configuration in development mode
     if (this.isDevelopment) {
-      console.log('🔧 Environment Configuration Loaded:', {
+      console.warn('🔧 Environment Configuration Loaded:', {
         mode: this.config.mode,
         apiUrl: this.config.apiUrl,
         environment: this.config.environment,

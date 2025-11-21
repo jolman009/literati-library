@@ -39,7 +39,7 @@ const useReadingMode = (options = {}) => {
   // Enter fullscreen
   const enterFullscreen = useCallback(async () => {
     if (!enabled || !isFullscreenSupported()) {
-      console.log('📱 Fullscreen not supported, using reading mode only');
+      console.warn('📱 Fullscreen not supported, using reading mode only');
       return false;
     }
 
@@ -105,7 +105,7 @@ const useReadingMode = (options = {}) => {
     // Start auto-hide timer
     startAutoHideTimer();
 
-    console.log('📖 Reading mode activated');
+    console.warn('📖 Reading mode activated');
   }, [enterFullscreen]);
 
   // Exit reading mode
@@ -119,7 +119,7 @@ const useReadingMode = (options = {}) => {
       clearTimeout(hideTimeout);
     }
 
-    console.log('📖 Reading mode deactivated');
+    console.warn('📖 Reading mode deactivated');
   }, [exitFullscreen]);
 
   // Toggle reading mode

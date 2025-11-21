@@ -167,10 +167,10 @@ class RoutePreloader {
     try {
       const importFunction = ROUTE_IMPORTS[route];
       if (importFunction) {
-        console.log(`🚀 Preloading route: ${route}`);
+        console.warn(`🚀 Preloading route: ${route}`);
         await importFunction();
         this.preloadedRoutes.add(route);
-        console.log(`✅ Preloaded route: ${route}`);
+        console.warn(`✅ Preloaded route: ${route}`);
       }
     } catch (error) {
       console.warn(`Failed to preload route ${route}:`, error);

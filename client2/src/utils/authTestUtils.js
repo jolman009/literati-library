@@ -16,12 +16,12 @@
  * 3. Watch the console for refresh messages
  */
 export function testTokenRefresh() {
-  console.log('🧪 Testing automatic token refresh...');
-  console.log('📝 Instructions:');
-  console.log('1. Delete the accessToken cookie manually in DevTools');
-  console.log('2. Make any API call (navigate to a page, refresh, etc.)');
-  console.log('3. Watch for automatic refresh in console');
-  console.log('4. Verify new accessToken appears in cookies');
+  console.warn('🧪 Testing automatic token refresh...');
+  console.warn('📝 Instructions:');
+  console.warn('1. Delete the accessToken cookie manually in DevTools');
+  console.warn('2. Make any API call (navigate to a page, refresh, etc.)');
+  console.warn('3. Watch for automatic refresh in console');
+  console.warn('4. Verify new accessToken appears in cookies');
 
   return {
     instructions: 'Delete accessToken cookie in DevTools → Application → Cookies, then navigate to trigger API call',
@@ -48,11 +48,11 @@ export function checkAuthStatus() {
   const userDataRaw = localStorage.getItem('shelfquest_user');
   const userData = userDataRaw ? JSON.parse(userDataRaw) : null;
 
-  console.log('🔍 Auth Status Check:');
-  console.log('User data in localStorage:', userData ? '✅ Present' : '❌ Missing');
-  console.log('User:', userData);
-  console.log('⚠️ Note: HttpOnly cookies are not visible to JavaScript (this is correct!)');
-  console.log('To view auth cookies, use DevTools → Application → Cookies');
+  console.warn('🔍 Auth Status Check:');
+  console.warn('User data in localStorage:', userData ? '✅ Present' : '❌ Missing');
+  console.warn('User:', userData);
+  console.warn('⚠️ Note: HttpOnly cookies are not visible to JavaScript (this is correct!)');
+  console.warn('To view auth cookies, use DevTools → Application → Cookies');
 
   return {
     hasUserData: !!userData,
@@ -65,7 +65,7 @@ export function checkAuthStatus() {
  * Test logout flow
  */
 export async function testLogout() {
-  console.log('🧪 Testing logout flow...');
+  console.warn('🧪 Testing logout flow...');
 
   try {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
@@ -78,8 +78,8 @@ export async function testLogout() {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('✅ Logout API call successful:', data);
-      console.log('📝 Check DevTools → Cookies to verify both tokens were cleared');
+      console.warn('✅ Logout API call successful:', data);
+      console.warn('📝 Check DevTools → Cookies to verify both tokens were cleared');
       return data;
     } else {
       console.error('❌ Logout failed:', response.status);
@@ -96,10 +96,10 @@ if (typeof window !== 'undefined' && import.meta.env.DEV) {
     checkAuthStatus,
     testLogout,
   };
-  console.log('🧪 Auth test utilities loaded. Available commands:');
-  console.log('  - window.authTestUtils.checkAuthStatus()');
-  console.log('  - window.authTestUtils.testTokenRefresh()');
-  console.log('  - window.authTestUtils.testLogout()');
+  console.warn('🧪 Auth test utilities loaded. Available commands:');
+  console.warn('  - window.authTestUtils.checkAuthStatus()');
+  console.warn('  - window.authTestUtils.testTokenRefresh()');
+  console.warn('  - window.authTestUtils.testLogout()');
 }
 
 export default {

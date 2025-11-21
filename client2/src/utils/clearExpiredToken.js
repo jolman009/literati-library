@@ -13,7 +13,7 @@ export const clearExpiredToken = () => {
       const now = Date.now();
       
       if (now >= exp) {
-        console.log('Token is expired, clearing...');
+        console.warn('Token is expired, clearing...');
         localStorage.removeItem(tokenKey);
         localStorage.removeItem('shelfquest_user');
         

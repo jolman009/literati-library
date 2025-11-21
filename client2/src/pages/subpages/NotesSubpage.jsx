@@ -26,7 +26,7 @@ const NotesSubpage = ({ books = [], onNoteAction }) => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      console.log('🔍 NotesSubpage fetching notes from:', `${API.defaults.baseURL}/notes`);
+      console.warn('🔍 NotesSubpage fetching notes from:', `${API.defaults.baseURL}/notes`);
       const response = await API.get('/notes', { timeout: 30000 });
       setNotes(response.data || []);
     } catch (error) {

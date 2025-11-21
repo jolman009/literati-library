@@ -33,7 +33,7 @@ class AnalyticsService {
       this.isInitialized = true;
       this.flushQueue();
 
-      console.log('📊 Analytics initialized successfully');
+      console.warn('📊 Analytics initialized successfully');
     } catch (error) {
       console.error('❌ Analytics initialization failed:', error);
     }
@@ -80,7 +80,7 @@ class AnalyticsService {
         allow_ad_personalization_signals: false
       });
 
-      console.log('📊 Google Analytics 4 initialized');
+      console.warn('📊 Google Analytics 4 initialized');
     } catch (error) {
       console.error('❌ Google Analytics initialization failed:', error);
     }

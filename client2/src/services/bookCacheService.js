@@ -13,7 +13,7 @@ export async function cacheBook(bookId, bookData) {
   try {
     const { url, title, author, coverUrl, fileType, fileSize } = bookData;
 
-    console.log(`📥 Caching book: ${title} (${bookId})`);
+    console.warn(`📥 Caching book: ${title} (${bookId})`);
 
     // Fetch the book file
     const response = await fetch(url);
@@ -58,7 +58,7 @@ export async function cacheBook(bookId, bookData) {
       await cacheResource(coverUrl, 'img-cache');
     }
 
-    console.log(`✅ Book cached successfully: ${title}`);
+    console.warn(`✅ Book cached successfully: ${title}`);
 
     // Check cache limits
     await enforceBookCacheLimit();
@@ -118,7 +118,7 @@ export async function uncacheBook(bookId) {
       await setItem(STORES.METADATA, metadata);
     }
 
-    console.log(`🗑️ Book ${bookId} removed from cache`);
+    console.warn(`🗑️ Book ${bookId} removed from cache`);
   } catch (error) {
     console.error(`Failed to uncache book ${bookId}:`, error);
   }
@@ -150,7 +150,7 @@ export async function enforceBookCacheLimit() {
         .sort((a, b) => a.lastAccessed - b.lastAccessed)
         .slice(0, cachedBooks.length - MAX_CACHED_BOOKS);
 
-      console.log(`🗑️ Removing ${booksToRemove.length} old cached books to enforce limit`);
+      console.warn(`🗑️ Removing ${booksToRemove.length} old cached books to enforce limit`);
 
       for (const book of booksToRemove) {
         await uncacheBook(book.bookId);
@@ -175,7 +175,7 @@ export async function cleanupExpiredBooks() {
     });
 
     if (expiredBooks.length > 0) {
-      console.log(`🗑️ Cleaning up ${expiredBooks.length} expired cached books`);
+      console.warn(`🗑️ Cleaning up ${expiredBooks.length} expired cached books`);
 
       for (const book of expiredBooks) {
         await uncacheBook(book.bookId);
@@ -224,7 +224,7 @@ export async function preloadBook(bookId, bookData, options = {}) {
     // Check if already cached
     const isCached = await isBookCached(bookId);
     if (isCached && !options.force) {
-      console.log(`📚 Book ${bookId} already cached`);
+      console.warn(`📚 Book ${bookId} already cached`);
       return;
     }
 
@@ -269,7 +269,7 @@ async function cacheResource(url, cacheName) {
 export async function batchCacheBooks(books, options = {}) {
   const { maxConcurrent = 2, onProgress } = options;
 
-  console.log(`📥 Batch caching ${books.length} books...`);
+  console.warn(`📥 Batch caching ${books.length} books...`);
 
   const results = [];
   const chunks = [];
@@ -298,7 +298,7 @@ export async function batchCacheBooks(books, options = {}) {
   const successful = results.filter(r => r.status === 'fulfilled').length;
   const failed = results.filter(r => r.status === 'rejected').length;
 
-  console.log(`✅ Batch cache complete: ${successful} successful, ${failed} failed`);
+  console.warn(`✅ Batch cache complete: ${successful} successful, ${failed} failed`);
 
   return {
     total: books.length,

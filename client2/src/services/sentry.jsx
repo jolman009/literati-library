@@ -20,7 +20,7 @@ export function initializeSentry() {
 
   // Skip in development unless explicitly enabled
   if (environmentConfig.isDevelopment && !import.meta.env.VITE_SENTRY_DEV_ENABLED) {
-    console.log('🔧 Sentry disabled in development');
+    console.warn('🔧 Sentry disabled in development');
     return false;
   }
 
@@ -78,7 +78,7 @@ export function initializeSentry() {
       }
     });
 
-    console.log('🚨 Sentry crash reporting initialized');
+    console.warn('🚨 Sentry crash reporting initialized');
     return true;
   } catch (error) {
     console.error('❌ Failed to initialize Sentry:', error);

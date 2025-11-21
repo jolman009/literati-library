@@ -15,7 +15,7 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         : book.file_url
     ) : null);
 
-    console.log('📄 PdfReader - Preparing PDF file:', {
+    console.warn('📄 PdfReader - Preparing PDF file:', {
       hasFile: !!file,
       hasBook: !!book,
       file_url: book?.file_url,
@@ -113,7 +113,7 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     setNumPages(numPages);
     // Guard: if current page > numPages (e.g., new doc), clamp to last
     setPageNumber(p => Math.max(1, Math.min(p, numPages)));
-    // Debug (optional): console.log('PDF pages:', numPages);
+    // Debug (optional): console.warn('PDF pages:', numPages);
   }, []);
 
   const nextPage = useCallback(() => {

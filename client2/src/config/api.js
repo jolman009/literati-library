@@ -45,14 +45,14 @@ API.interceptors.response.use(
     // Log authentication errors for debugging
     if (status === 401) {
       console.warn('⚠️ [API] 401 Unauthorized:', originalRequest.url);
-      console.log('    ↳ Token refresh will be handled by AuthContext');
+      console.warn('    ↳ Token refresh will be handled by AuthContext');
     } else if (status === 403) {
       console.warn('⚠️ [API] 403 Forbidden:', originalRequest.url);
     }
 
     // Suppress 404 errors for optional gamification endpoints
     if (status === 404 && originalRequest?.url?.includes('/gamification/')) {
-      console.log(`ℹ️ [API] Gamification endpoint not available: ${originalRequest.url} - using local storage fallback`);
+      console.warn(`ℹ️ [API] Gamification endpoint not available: ${originalRequest.url} - using local storage fallback`);
       return Promise.reject(error);
     }
 

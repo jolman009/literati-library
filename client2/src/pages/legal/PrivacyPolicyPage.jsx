@@ -36,7 +36,7 @@ const PrivacyPolicyPage = () => {
       if (scrolledToBottom) {
         setHasScrolledToBottom(true);
         // Log privacy policy view completion for compliance
-        console.log('Privacy policy fully viewed');
+        console.warn('Privacy policy fully viewed');
       }
     };
 

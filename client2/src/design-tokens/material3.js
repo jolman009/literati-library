@@ -573,10 +573,10 @@ export const components = {
 
 // Helper function to create CSS custom properties
 export const createCSSCustomProperties = (isDark = false) => {
-  console.log('🔧 createCSSCustomProperties: isDark =', isDark);
+  console.warn('🔧 createCSSCustomProperties: isDark =', isDark);
   const colors = isDark ? darkThemeColors : lightThemeColors;
   
-  console.log('🔧 createCSSCustomProperties: Using colors:', {
+  console.warn('🔧 createCSSCustomProperties: Using colors:', {
     primary: colors.primary,
     surface: colors.surface,
     onSurface: colors.onSurface,
@@ -608,7 +608,7 @@ export const createCSSCustomProperties = (isDark = false) => {
     const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(cleanHex);
     if (result) {
       const rgb = `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`;
-      console.log(`🔧 hexToRgb: ${hex} -> ${rgb}`);
+      console.warn(`🔧 hexToRgb: ${hex} -> ${rgb}`);
       return rgb;
     }
     
@@ -624,7 +624,7 @@ export const createCSSCustomProperties = (isDark = false) => {
     
     // Log a few key properties for debugging
     if (['primary', 'surface', 'onSurface', 'background'].includes(key)) {
-      console.log(`🔧 ${cssKey}: ${value} -> ${rgbValue}`);
+      console.warn(`🔧 ${cssKey}: ${value} -> ${rgbValue}`);
     }
   });
   

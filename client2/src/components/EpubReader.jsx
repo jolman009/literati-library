@@ -21,7 +21,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const epubUrl = `${apiBaseUrl}/books/${book?.id}/file`;
 
-  console.log('📖 EpubReader - Initializing custom EPUB.js reader:', {
+  console.warn('📖 EpubReader - Initializing custom EPUB.js reader:', {
     bookTitle: book?.title,
     bookId: book?.id,
     proxy_epub_url: epubUrl,
@@ -41,7 +41,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
   useEffect(() => {
     if (!viewerRef.current || !epubUrl) return;
 
-    console.log('📚 Initializing EPUB.js with URL:', epubUrl);
+    console.warn('📚 Initializing EPUB.js with URL:', epubUrl);
 
     let rendition = null;
     let epubBook = null;
@@ -57,7 +57,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
     }, 30000); // 30 second timeout
 
     // Fetch the file with credentials, then load into EPUB.js
-    console.log('🔧 Fetching EPUB file with credentials...');
+    console.warn('🔧 Fetching EPUB file with credentials...');
 
     fetch(epubUrl, {
       method: 'GET',
@@ -70,32 +70,32 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       if (!response.ok) {
         throw new Error(`Failed to fetch EPUB: ${response.status} ${response.statusText}`);
       }
-      console.log('✅ EPUB file fetched successfully');
+      console.warn('✅ EPUB file fetched successfully');
       return response.arrayBuffer();
     })
     .then(arrayBuffer => {
-      console.log('📦 Creating EPUB book from arrayBuffer, size:', arrayBuffer.byteLength);
+      console.warn('📦 Creating EPUB book from arrayBuffer, size:', arrayBuffer.byteLength);
 
       // Create book instance from the arrayBuffer
       epubBook = ePub(arrayBuffer);
       bookRef.current = epubBook;
 
-      console.log('📘 EPUB book instance created');
+      console.warn('📘 EPUB book instance created');
 
       // Wait for book to be ready
       return epubBook.ready;
     })
     .then(() => {
       clearTimeout(loadTimeout);
-      console.log('✅ EPUB book ready!');
+      console.warn('✅ EPUB book ready!');
 
       if (isCleanedUp || !viewerRef.current) {
-        console.log('⚠️ Component unmounted during load, skipping render');
+        console.warn('⚠️ Component unmounted during load, skipping render');
         return;
       }
 
       // Create rendition (the visual display)
-      console.log('🎨 Creating rendition in viewer element');
+      console.warn('🎨 Creating rendition in viewer element');
       rendition = epubBook.renderTo(viewerRef.current, {
         width: '100%',
         height: '100%',
@@ -106,7 +106,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       });
 
       renditionRef.current = rendition;
-      console.log('✅ Rendition created');
+      console.warn('✅ Rendition created');
 
       // Apply theme for readability
       rendition.themes.default({
@@ -136,7 +136,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
 
       // Listen for location changes (chapter/section navigation)
       rendition.on('relocated', (location) => {
-        console.log('📍 Location changed:', location.start.cfi);
+        console.warn('📍 Location changed:', location.start.cfi);
         setCanGoPrev(!location.atStart);
         setCanGoNext(!location.atEnd);
       });
@@ -152,7 +152,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       return displayPromise;
     })
     .then(() => {
-      console.log('✅ EPUB rendered successfully');
+      console.warn('✅ EPUB rendered successfully');
       setIsLoading(false);
       setError(null);
     })
@@ -183,7 +183,7 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       document.removeEventListener('keydown', handleKeyDown);
       renditionRef.current?.destroy();
       bookRef.current?.destroy();
-      console.log('🧹 EPUB reader cleaned up');
+      console.warn('🧹 EPUB reader cleaned up');
     };
   }, [epubUrl, initialLocation]); // Removed onLocationChange - using ref instead
 

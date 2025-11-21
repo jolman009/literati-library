@@ -55,20 +55,20 @@ const PointsHistory = ({ limit = 10 }) => {
 
   // 🔔 Listen for gamification updates and auto-refresh history
   useEffect(() => {
-    console.log('🔧 PointsHistory: Setting up gamificationUpdate event listener');
+    console.warn('🔧 PointsHistory: Setting up gamificationUpdate event listener');
 
     const handleGamificationUpdate = (event) => {
-      console.log('🔔 PointsHistory: Received gamificationUpdate event', event.detail);
-      console.log('📊 PointsHistory: Auto-refreshing history after action:', event.detail.action);
+      console.warn('🔔 PointsHistory: Received gamificationUpdate event', event.detail);
+      console.warn('📊 PointsHistory: Auto-refreshing history after action:', event.detail.action);
       fetchHistory();
     };
 
     window.addEventListener('gamificationUpdate', handleGamificationUpdate);
-    console.log('👂 PointsHistory: Listening for gamificationUpdate events');
+    console.warn('👂 PointsHistory: Listening for gamificationUpdate events');
 
     return () => {
       window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
-      console.log('👋 PointsHistory: Stopped listening for gamificationUpdate events');
+      console.warn('👋 PointsHistory: Stopped listening for gamificationUpdate events');
     };
   }, [limit]);
 
@@ -76,7 +76,7 @@ const PointsHistory = ({ limit = 10 }) => {
     try {
       setLoading(true);
       setError(null);
-      console.log(`📊 PointsHistory: Fetching history (limit: ${limit})...`);
+      console.warn(`📊 PointsHistory: Fetching history (limit: ${limit})...`);
       const response = await API.get(`/api/gamification/actions/history?limit=${limit}`);
       const serverData = response.data || [];
       let localData = [];
@@ -115,7 +115,7 @@ const PointsHistory = ({ limit = 10 }) => {
       });
       const merged = Array.from(byKey.values()).sort((a,b)=> new Date(b.created_at)-new Date(a.created_at)).slice(0, limit);
       setHistory(merged);
-      console.log(`✅ PointsHistory: Fetched ${response.data?.length || 0} history entries`);
+      console.warn(`✅ PointsHistory: Fetched ${response.data?.length || 0} history entries`);
     } catch (err) {
       console.error('❌ PointsHistory: Failed to fetch points history:', err);
       setError(err.message);

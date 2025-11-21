@@ -366,9 +366,9 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
               <p>Primary provider: {AIKeyManager.getPrimaryProvider() || 'None'}</p>
               <button
                 onClick={() => {
-                  console.log('=== DEBUG: Anthropic Key Data ===');
+                  console.warn('=== DEBUG: Anthropic Key Data ===');
                   AIKeyManager.debugKeyData('anthropic');
-                  console.log('=== END DEBUG ===');
+                  console.warn('=== END DEBUG ===');
                 }}
                 className="debug-button"
                 style={{

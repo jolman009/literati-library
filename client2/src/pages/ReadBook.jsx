@@ -13,7 +13,7 @@ import MD3Fab from "../components/Material3/MD3Fab";
 import API from "../config/api";
 
 const ReadBook = () => {
-  console.log('🚀 ReadBook component mounting...');
+  console.warn('🚀 ReadBook component mounting...');
 
   const { bookId } = useParams();
   const navigate = useNavigate();
@@ -26,13 +26,13 @@ const ReadBook = () => {
   const [stopping, setStopping] = useState(false);
   const [elapsedSec, setElapsedSec] = useState(0);
 
-  console.log('✅ Auth state:', {
+  console.warn('✅ Auth state:', {
     hasUser: !!user,
     isAuthenticated,
     authLoading,
     userId: user?.id
   });
-  console.log('✅ Reading session state:', { hasActiveSession });
+  console.warn('✅ Reading session state:', { hasActiveSession });
 
   const [book, setBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);  // (PDF-only; iframe can't update)
@@ -42,7 +42,7 @@ const ReadBook = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Notes sidebar state
   const [isMobile, setIsMobile] = useState(false); // Mobile detection for bottom sheet
 
-  console.log('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
+  console.warn('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
 
   // ===== MOBILE DETECTION =====
   useEffect(() => {
@@ -74,7 +74,7 @@ const ReadBook = () => {
 
       const bookData = res.data || null;
 
-      console.log('📖 Book data received:', {
+      console.warn('📖 Book data received:', {
         id: bookData?.id,
         title: bookData?.title,
         file_url: bookData?.file_url,
@@ -95,7 +95,7 @@ const ReadBook = () => {
         } else {
           bookData.format = 'pdf';
         }
-        console.log(`📚 Derived book format: ${bookData.format} from file_type: ${bookData.file_type}, filename: ${bookData.filename}`);
+        console.warn(`📚 Derived book format: ${bookData.format} from file_type: ${bookData.file_type}, filename: ${bookData.filename}`);
       }
 
       // Validate file_url exists
@@ -106,7 +106,7 @@ const ReadBook = () => {
         return;
       }
 
-      console.log(`✅ Book ready to render: format=${bookData.format}, file_url=${bookData.file_url}`);
+      console.warn(`✅ Book ready to render: format=${bookData.format}, file_url=${bookData.file_url}`);
 
       setBook(bookData);
       setError(null);
@@ -120,7 +120,7 @@ const ReadBook = () => {
   }, [bookId]);
 
   useEffect(() => {
-    console.log('🔄 ReadBook useEffect triggered', {
+    console.warn('🔄 ReadBook useEffect triggered', {
       authLoading,
       isAuthenticated,
       hasUser: !!user
@@ -128,7 +128,7 @@ const ReadBook = () => {
 
     // Wait for auth to finish loading
     if (authLoading) {
-      console.log('⏳ Auth still loading, waiting...');
+      console.warn('⏳ Auth still loading, waiting...');
       return;
     }
 
@@ -139,7 +139,7 @@ const ReadBook = () => {
       return;
     }
 
-    console.log('✅ User authenticated, fetching book...');
+    console.warn('✅ User authenticated, fetching book...');
     fetchBook().catch(err => {
       console.error('❌ fetchBook failed in useEffect:', err);
       setError(err.message);

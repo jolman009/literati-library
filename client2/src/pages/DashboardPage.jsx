@@ -34,7 +34,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
   const [checkInStreak, setCheckInStreak] = useState(0);
 
   useEffect(() => {
-    console.log(' WelcomeSection: useEffect for daily check-in');
+    console.warn(' WelcomeSection: useEffect for daily check-in');
 
     // Load check-in status from backend
     const loadCheckInStatus = async () => {
@@ -45,7 +45,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
         setHasCheckedInToday(hasCheckedInToday);
         setCheckInStreak(currentStreak);
 
-        console.log(`✅ Check-in status loaded: hasCheckedInToday=${hasCheckedInToday}, streak=${currentStreak}`);
+        console.warn(`✅ Check-in status loaded: hasCheckedInToday=${hasCheckedInToday}, streak=${currentStreak}`);
       } catch (error) {
         console.warn('⚠️ Failed to load check-in status from backend, using localStorage fallback');
 
@@ -135,7 +135,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
               timestamp: new Date().toISOString()
             });
           } catch (trackError) {
-            console.log('Tracking not available, but check-in recorded');
+            console.warn('Tracking not available, but check-in recorded');
           }
         }
 
@@ -146,7 +146,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
           variant: 'success'
         });
 
-        console.log(`✅ Daily check-in successful: streak=${streak}, points=${points}`);
+        console.warn(`✅ Daily check-in successful: streak=${streak}, points=${points}`);
 
       } catch (apiError) {
         console.error('❌ Check-in API error:', apiError);
@@ -186,7 +186,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
           variant: 'success'
         });
 
-        console.log('ℹ️ Check-in saved locally (offline mode)');
+        console.warn('ℹ️ Check-in saved locally (offline mode)');
       }
 
     } catch (error) {
@@ -344,10 +344,10 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   const NOTES_POINTS_PER = 15;
 
   // 🔍 DEBUG: Log stats on every render
-  console.log('🔍 QuickStatsOverview: Component rendering');
-  console.log('🔍 QuickStatsOverview: stats =', stats);
-  console.log('🔍 QuickStatsOverview: loading =', loading);
-  console.log('🔍 QuickStatsOverview: notesPoints =', notesPoints);
+  console.warn('🔍 QuickStatsOverview: Component rendering');
+  console.warn('🔍 QuickStatsOverview: stats =', stats);
+  console.warn('🔍 QuickStatsOverview: loading =', loading);
+  console.warn('🔍 QuickStatsOverview: notesPoints =', notesPoints);
 
   // Use prop or fallback to localStorage
   const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
@@ -355,7 +355,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   // Fetch notes-specific points, reading sessions count, total points and time read from APIs
   const fetchGamificationData = useCallback(async () => {
     try {
-      console.log('📊 QuickStatsOverview: Fetching gamification breakdown data...');
+      console.warn('📊 QuickStatsOverview: Fetching gamification breakdown data...');
       const [breakdownResp, statsResp] = await Promise.all([
         API.get('/api/gamification/actions/breakdown'),
         API.get('/api/gamification/stats').catch((e) => {
@@ -421,7 +421,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
         setNotesPoints(prev => Math.max(prev, serverNotesPoints, statsData.notesCreated * NOTES_POINTS_PER));
       }
 
-      console.log('✅ QuickStatsOverview: Data updated', {
+      console.warn('✅ QuickStatsOverview: Data updated', {
         notesPoints: categories?.notes || 0,
         notesCount: noteActions?.count || 0,
         sessionCount: sessionActions?.count || 0,
@@ -459,7 +459,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       setReadingSessionsCount(prev => Math.max(prev, localSessionCount));
       setTotalPointsFromServer(prev => Math.max(prev, stats?.totalPoints || 0));
 
-      console.log('📊 QuickStatsOverview: Using local fallback data', {
+      console.warn('📊 QuickStatsOverview: Using local fallback data', {
         notesPoints: localNotesPoints,
         notesCount: localNotesCount,
         sessionCount: localSessionCount,
@@ -478,13 +478,13 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
       // Debounce: Prevent fetching more than once every 3 seconds
       const now = Date.now();
       if (now - lastFetchTime < 3000) {
-        console.log(`⏱️ Skipping fetch - last fetch was ${now - lastFetchTime}ms ago`);
+        console.warn(`⏱️ Skipping fetch - last fetch was ${now - lastFetchTime}ms ago`);
         return;
       }
       lastFetchTime = now;
 
       try {
-        console.log(`🔄 QuickStatsOverview: Fetching data (${source})...`);
+        console.warn(`🔄 QuickStatsOverview: Fetching data (${source})...`);
         const [breakdownResp, statsResp] = await Promise.all([
           API.get('/api/gamification/actions/breakdown'),
           API.get('/api/gamification/stats').catch(() => null)
@@ -523,7 +523,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
           setNotesPoints(prev => Math.max(prev, (statsResp.data.notesCreated * NOTES_POINTS_PER)));
         }
 
-        console.log(`✅ QuickStatsOverview: ${source} refresh completed`, {
+        console.warn(`✅ QuickStatsOverview: ${source} refresh completed`, {
           serverSessionCount,
           localSessionCount,
           finalSessionCount: Math.max(serverSessionCount, localSessionCount),
@@ -536,13 +536,13 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
 
     // Event handler for reading session completion
     const handleReadingSessionCompleted = () => {
-      console.log('📊 Reading session completed, refreshing stats...');
+      console.warn('📊 Reading session completed, refreshing stats...');
       setTimeout(() => fetchLatestData('session-completed'), 1000);
     };
 
     // Event handler for gamification updates
     const handleGamificationUpdate = (event) => {
-      console.log('🔔 QuickStatsOverview: *** RECEIVED GAMIFICATION UPDATE EVENT ***', event.detail);
+      console.warn('🔔 QuickStatsOverview: *** RECEIVED GAMIFICATION UPDATE EVENT ***', event.detail);
       setTimeout(() => fetchLatestData('gamification-update'), 1000);
     };
 
@@ -599,7 +599,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
           return prev;
         });
 
-        console.log('📊 [DASHBOARD] Local update:', {
+        console.warn('📊 [DASHBOARD] Local update:', {
           sessions: rs?.totalSessions,
           minutes: calculatedMinutes,
           activeExtra
@@ -615,14 +615,14 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     // Update when reading session history changes (cross-tab via storage)
     const onStorage = (e) => {
       if (!e || e.key === 'readingSessionHistory') {
-        console.log('💾 [DASHBOARD] Storage event detected, updating from local');
+        console.warn('💾 [DASHBOARD] Storage event detected, updating from local');
         updateFromLocal();
       }
     };
 
     // Also update when gamification events fire
     const onGamification = () => {
-      console.log('🎮 [DASHBOARD] Gamification event detected, updating from local');
+      console.warn('🎮 [DASHBOARD] Gamification event detected, updating from local');
       updateFromLocal();
     };
 
@@ -644,7 +644,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     // 🔧 FIX: Also sync total points from GamificationContext
     if (typeof stats?.totalPoints === 'number') {
       setTotalPointsFromServer(prev => Math.max(prev, stats.totalPoints));
-      console.log('📊 [DASHBOARD] Syncing total points from GamificationContext:', stats.totalPoints);
+      console.warn('📊 [DASHBOARD] Syncing total points from GamificationContext:', stats.totalPoints);
     }
   }, [stats?.notesCreated, stats?.totalPoints]);
 
@@ -668,7 +668,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   };
 
   // 🔍 DEBUG: Log what we're about to display
-  console.log('📊 [DASHBOARD] Preparing stat cards with:', {
+  console.warn('📊 [DASHBOARD] Preparing stat cards with:', {
     booksRead: stats?.booksRead,
     totalPoints: stats?.totalPoints,
     totalPointsFromServer,
@@ -728,7 +728,7 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     }
   ];
 
-  console.log('📊 [DASHBOARD] Final stat cards to render:', {
+  console.warn('📊 [DASHBOARD] Final stat cards to render:', {
     timeRead: statCards[3]?.value,  // Index changed after removing Total Points
     notesPoints: statCards[1]?.value,
     sessions: statCards[2]?.value,
@@ -883,7 +883,7 @@ const RecentAchievements = () => {
     if (!achievements || achievements.length === 0 || !unlockedAchievements) return [];
 
     // Debug logging to understand the data structure
-    console.log('🔍 Recent Achievements Debug:', {
+    console.warn('🔍 Recent Achievements Debug:', {
       totalAchievements: achievements.length,
       unlockedAchievements: unlockedAchievements,
       firstAchievement: achievements[0],
@@ -897,7 +897,7 @@ const RecentAchievements = () => {
           unlockedAchievements.has(achievement.id) ||
           (achievement.unlockedAt && new Date(achievement.unlockedAt) <= new Date());
 
-        console.log(`Achievement ${achievement.id || achievement.title}: unlocked = ${isUnlocked}`);
+        console.warn(`Achievement ${achievement.id || achievement.title}: unlocked = ${isUnlocked}`);
         return isUnlocked;
       })
       .sort((a, b) => {
@@ -908,7 +908,7 @@ const RecentAchievements = () => {
         return 0;
       });
 
-    console.log('🏆 Unlocked achievements found:', unlockedAchievementsList);
+    console.warn('🏆 Unlocked achievements found:', unlockedAchievementsList);
 
     // Return the 3 most recent unlocked achievements
     return unlockedAchievementsList.slice(0, 3);
@@ -998,7 +998,7 @@ const CurrentlyReading = () => {
               }
             }
           } catch (sessionError) {
-            console.log('Session data parsing error:', sessionError);
+            console.warn('Session data parsing error:', sessionError);
           }
         }
 
@@ -1040,7 +1040,7 @@ const CurrentlyReading = () => {
                   }
                 }
               } catch (sessionError) {
-                console.log('Session data parsing error:', sessionError);
+                console.warn('Session data parsing error:', sessionError);
               }
             }
 
@@ -1068,7 +1068,7 @@ const CurrentlyReading = () => {
   if (loading) return <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}><h3>Loading currently reading...</h3></div>;
 
   // Debug: Always show the component with information
-  console.log('📖 CurrentlyReading render - books count:', currentlyReading.length);
+  console.warn('📖 CurrentlyReading render - books count:', currentlyReading.length);
   
   return (
     <div id="dashboard-currently-reading" className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}>
@@ -1202,7 +1202,7 @@ const RecentlyAdded = () => {
   if (loading) return <div className="section-card-compact"><h3>Loading recent books...</h3></div>;
 
   // Debug: Always show the component with information
-  console.log('📚 RecentlyAdded render - books count:', recentBooks.length);
+  console.warn('📚 RecentlyAdded render - books count:', recentBooks.length);
   
   return (
     <div className="section-card-compact">
@@ -1365,7 +1365,7 @@ const MobileExpandableStats = ({ children }) => {
 
 // Main Dashboard Component
 const DashboardPage = () => {
-  console.log('🔄 DashboardPage: Rendering');
+  console.warn('🔄 DashboardPage: Rendering');
   const { user } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
@@ -1466,14 +1466,14 @@ const DashboardPage = () => {
   
   // Load check-in streak on mount
   useEffect(() => {
-    console.log(' DashboardPage: useEffect for check-in streak');
+    console.warn(' DashboardPage: useEffect for check-in streak');
     const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
     setCheckInStreak(streak);
   }, []);
 
   // Pull-to-refresh handler
   const handleRefresh = useCallback(async () => {
-    console.log('🔄 Dashboard: Pull-to-refresh triggered');
+    console.warn('🔄 Dashboard: Pull-to-refresh triggered');
 
     try {
       // Reload books
@@ -1488,7 +1488,7 @@ const DashboardPage = () => {
       }
 
       showSnackbar('Dashboard refreshed successfully', 'success');
-      console.log('✅ Dashboard: Refresh completed');
+      console.warn('✅ Dashboard: Refresh completed');
     } catch (error) {
       console.error('❌ Dashboard: Refresh failed:', error);
       showSnackbar('Failed to refresh dashboard', 'error');

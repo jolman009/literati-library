@@ -12,7 +12,7 @@ export const useOptionalGamification = () => {
         const context = useGamification();
         setGamificationContext(context);
       } catch (error) {
-        console.log('Gamification not available:', error.message);
+        console.warn('Gamification not available:', error.message);
         // Provide fallback
         setGamificationContext({
           trackAction: () => Promise.resolve(),

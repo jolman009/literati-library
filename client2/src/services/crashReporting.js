@@ -109,7 +109,7 @@ class CrashReportingService {
       this.setupGlobalErrorHandlers();
 
       this.isInitialized = true;
-      console.log('🚨 Crash reporting initialized with Sentry');
+      console.warn('🚨 Crash reporting initialized with Sentry');
     } catch (error) {
       console.error('❌ Failed to initialize crash reporting:', error);
     }
@@ -548,7 +548,7 @@ class CrashReportingService {
       timestamp: Date.now()
     });
 
-    console.log('Test message sent to Sentry');
+    console.warn('Test message sent to Sentry');
   }
 
   testErrorReporting() {
@@ -563,7 +563,7 @@ class CrashReportingService {
       component: 'crash_reporting_test'
     });
 
-    console.log('Test error sent to Sentry');
+    console.warn('Test error sent to Sentry');
   }
 }
 

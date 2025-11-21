@@ -140,7 +140,7 @@ class BookStorageService {
         });
       }
       
-      console.log(`Cached ${books.length} books locally`);
+      console.warn(`Cached ${books.length} books locally`);
     } catch (error) {
       console.error('Failed to cache books:', error);
     }
@@ -172,19 +172,19 @@ class BookStorageService {
       if (!forceRefresh) {
         const cachedBooks = await this.getBooksFromCache();
         if (cachedBooks.length > 0) {
-          console.log(`Loaded ${cachedBooks.length} books from cache`);
+          console.warn(`Loaded ${cachedBooks.length} books from cache`);
           return cachedBooks;
         }
       }
 
       // Fetch from API
-      console.log('Fetching books from API...');
+      console.warn('Fetching books from API...');
       const books = await this.makeAuthenticatedRequest('/books');
       
       // Cache the results
       await this.storeBooksInCache(books);
       
-      console.log(`Fetched ${books.length} books from API`);
+      console.warn(`Fetched ${books.length} books from API`);
       return books;
     } catch (error) {
       console.error('Failed to fetch books:', error);
@@ -238,7 +238,7 @@ class BookStorageService {
       }
 
       const result = await response.json();
-      console.log('Book uploaded successfully:', result);
+      console.warn('Book uploaded successfully:', result);
       
       // Clear cache to force refresh
       await this.clearBooksCache();
@@ -278,7 +278,7 @@ class BookStorageService {
       };
       
       await store.add(queueItem);
-      console.log('Upload queued for retry');
+      console.warn('Upload queued for retry');
     } catch (error) {
       console.error('Failed to queue upload:', error);
     }
@@ -318,7 +318,7 @@ class BookStorageService {
           
           // Remove from queue on success
           await store.delete(item.id);
-          console.log('Queued upload completed:', item.fileName);
+          console.warn('Queued upload completed:', item.fileName);
         } catch (error) {
           console.error('Failed to process queued upload:', error);
         }
@@ -404,7 +404,7 @@ class BookStorageService {
       const transaction = this.indexedDB.transaction(['books'], 'readwrite');
       const store = transaction.objectStore('books');
       await store.clear();
-      console.log('Books cache cleared');
+      console.warn('Books cache cleared');
     } catch (error) {
       console.error('Failed to clear books cache:', error);
     }
@@ -428,7 +428,7 @@ export const bookStorageService = new BookStorageService();
 
 // Listen for online events
 window.addEventListener('online', () => {
-  console.log('Back online, syncing data...');
+  console.warn('Back online, syncing data...');
   bookStorageService.syncWhenOnline();
 });
 

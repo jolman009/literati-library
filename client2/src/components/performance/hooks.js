@@ -93,7 +93,7 @@ export const usePerformanceMonitor = (name) => {
     renderCountRef.current += 1;
 
     if (process.env.NODE_ENV === 'development') {
-      console.log(`${name} rendered ${renderCountRef.current} times`);
+      console.warn(`${name} rendered ${renderCountRef.current} times`);
     }
   });
 
@@ -106,7 +106,7 @@ export const usePerformanceMonitor = (name) => {
   const endMeasure = useCallback((label = 'operation') => {
     if (process.env.NODE_ENV === 'development' && startTimeRef.current) {
       const duration = performance.now() - startTimeRef.current;
-      console.log(`${name} ${label} took ${duration.toFixed(2)}ms`);
+      console.warn(`${name} ${label} took ${duration.toFixed(2)}ms`);
       startTimeRef.current = null;
     }
   }, [name]);

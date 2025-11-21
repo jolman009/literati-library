@@ -39,7 +39,7 @@ class BrowserCompatibilityTester {
    * Run full compatibility test suite
    */
   async runCompatibilityTests() {
-    console.log(`🌐 Running compatibility tests for ${this.browserInfo.browser} ${this.browserInfo.version}`);
+    console.warn(`🌐 Running compatibility tests for ${this.browserInfo.browser} ${this.browserInfo.version}`);
     
     this.testModernJavaScript();
     this.testWebAPIs();
@@ -57,7 +57,7 @@ class BrowserCompatibilityTester {
    * Test modern JavaScript features
    */
   testModernJavaScript() {
-    console.log('📝 Testing JavaScript compatibility...');
+    console.warn('📝 Testing JavaScript compatibility...');
     
     const tests = {
       es6Modules: () => 'import' in window || typeof document !== 'undefined',
@@ -109,14 +109,14 @@ class BrowserCompatibilityTester {
               passedTests >= Object.keys(tests).length * 0.8 ? 'good' : 'partial'
     };
 
-    console.log(`✅ JavaScript: ${passedTests}/${Object.keys(tests).length} features supported`);
+    console.warn(`✅ JavaScript: ${passedTests}/${Object.keys(tests).length} features supported`);
   }
 
   /**
    * Test Web APIs
    */
   testWebAPIs() {
-    console.log('🔗 Testing Web APIs...');
+    console.warn('🔗 Testing Web APIs...');
     
     const apiTests = {
       indexedDB: () => 'indexedDB' in window,
@@ -146,14 +146,14 @@ class BrowserCompatibilityTester {
               passedAPIs >= Object.keys(apiTests).length * 0.7 ? 'good' : 'partial'
     };
 
-    console.log(`✅ Web APIs: ${passedAPIs}/${Object.keys(apiTests).length} APIs supported`);
+    console.warn(`✅ Web APIs: ${passedAPIs}/${Object.keys(apiTests).length} APIs supported`);
   }
 
   /**
    * Test CSS features
    */
   testCSS() {
-    console.log('🎨 Testing CSS compatibility...');
+    console.warn('🎨 Testing CSS compatibility...');
     
     const cssTests = {
       flexbox: () => CSS.supports('display', 'flex'),
@@ -187,14 +187,14 @@ class BrowserCompatibilityTester {
               passedCSS >= Object.keys(cssTests).length * 0.8 ? 'good' : 'partial'
     };
 
-    console.log(`✅ CSS: ${passedCSS}/${Object.keys(cssTests).length} features supported`);
+    console.warn(`✅ CSS: ${passedCSS}/${Object.keys(cssTests).length} features supported`);
   }
 
   /**
    * Test Performance APIs
    */
   async testPerformanceAPIs() {
-    console.log('⚡ Testing Performance APIs...');
+    console.warn('⚡ Testing Performance APIs...');
     
     const perfTests = {
       performanceAPI: () => 'performance' in window,
@@ -235,14 +235,14 @@ class BrowserCompatibilityTester {
               passedPerf >= Object.keys(perfTests).length * 0.7 ? 'good' : 'partial'
     };
 
-    console.log(`✅ Performance: ${passedPerf}/${Object.keys(perfTests).length + 1} APIs supported`);
+    console.warn(`✅ Performance: ${passedPerf}/${Object.keys(perfTests).length + 1} APIs supported`);
   }
 
   /**
    * Test Local Storage
    */
   testLocalStorage() {
-    console.log('💾 Testing storage capabilities...');
+    console.warn('💾 Testing storage capabilities...');
     
     const storageResults = {
       localStorage: false,
@@ -284,14 +284,14 @@ class BrowserCompatibilityTester {
               passedStorage >= Object.keys(storageResults).length * 0.75 ? 'good' : 'partial'
     };
 
-    console.log(`✅ Storage: ${passedStorage}/${Object.keys(storageResults).length} APIs supported`);
+    console.warn(`✅ Storage: ${passedStorage}/${Object.keys(storageResults).length} APIs supported`);
   }
 
   /**
    * Test Service Worker support
    */
   testServiceWorker() {
-    console.log('⚙️ Testing Service Worker support...');
+    console.warn('⚙️ Testing Service Worker support...');
     
     const serviceWorkerTests = {
       serviceWorkerAPI: 'serviceWorker' in navigator,
@@ -308,13 +308,13 @@ class BrowserCompatibilityTester {
       status: passedServiceWorker === Object.keys(serviceWorkerTests).length ? 'excellent' :
               passedServiceWorker >= Object.keys(serviceWorkerTests).length * 0.7 ? 'good' : 'partial'
     };
-    console.log(`✅ Service Worker: ${passedServiceWorker}/${Object.keys(serviceWorkerTests).length} APIs supported`);
+    console.warn(`✅ Service Worker: ${passedServiceWorker}/${Object.keys(serviceWorkerTests).length} APIs supported`);
   }
   /**
    * Test Virtual Scrolling capabilities
    */
   testVirtualScrolling() {
-    console.log('📜 Testing virtual scrolling support...');
+    console.warn('📜 Testing virtual scrolling support...');
     
     const scrollTests = {
       intersectionObserver: 'IntersectionObserver' in window,
@@ -333,19 +333,19 @@ class BrowserCompatibilityTester {
               passedScroll >= Object.keys(scrollTests).length * 0.8 ? 'good' : 'partial'
     };
 
-    console.log(`✅ Virtual Scrolling: ${passedScroll}/${Object.keys(scrollTests).length} APIs supported`);
+    console.warn(`✅ Virtual Scrolling: ${passedScroll}/${Object.keys(scrollTests).length} APIs supported`);
   }
 
   /**
    * Generate compatibility report
    */
   generateCompatibilityReport() {
-    console.log('\n🌐 Browser Compatibility Report\n');
-    console.log('='.repeat(50));
-    console.log(`🔍 Browser: ${this.browserInfo.browser} ${this.browserInfo.version}`);
-    console.log(`📱 Platform: ${navigator.platform}`);
-    console.log(`🌍 User Agent: ${navigator.userAgent.slice(0, 50)}...`);
-    console.log('='.repeat(50));
+    console.warn('\n🌐 Browser Compatibility Report\n');
+    console.warn('='.repeat(50));
+    console.warn(`🔍 Browser: ${this.browserInfo.browser} ${this.browserInfo.version}`);
+    console.warn(`📱 Platform: ${navigator.platform}`);
+    console.warn(`🌍 User Agent: ${navigator.userAgent.slice(0, 50)}...`);
+    console.warn('='.repeat(50));
 
     // Calculate overall compatibility score
     const allTests = Object.values(this.results);
@@ -354,7 +354,7 @@ class BrowserCompatibilityTester {
     const partialTests = allTests.filter(test => test.status === 'partial').length;
 
     const overallGrade = this.calculateCompatibilityGrade(excellentTests, goodTests, partialTests);
-    console.log(`\n📊 Overall Compatibility: ${overallGrade}\n`);
+    console.warn(`\n📊 Overall Compatibility: ${overallGrade}\n`);
 
     // Individual test results
     Object.entries(this.results).forEach(([category, result]) => {
@@ -365,7 +365,7 @@ class BrowserCompatibilityTester {
         failed: '🔴'
       }[result.status] || '⚪';
 
-      console.log(`${statusIcon} ${category.toUpperCase()}: ${result.status} (${result.score})`);
+      console.warn(`${statusIcon} ${category.toUpperCase()}: ${result.status} (${result.score})`);
       
       // Show failed tests
       const failedTests = Object.entries(result.tests || {})
@@ -373,12 +373,12 @@ class BrowserCompatibilityTester {
         .map(([test, _]) => test);
       
       if (failedTests.length > 0) {
-        console.log(`   ❌ Not supported: ${failedTests.join(', ')}`);
+        console.warn(`   ❌ Not supported: ${failedTests.join(', ')}`);
       }
     });
 
-    console.log('\n' + '='.repeat(50));
-    console.log('✅ Browser compatibility validation complete!');
+    console.warn('\n' + '='.repeat(50));
+    console.warn('✅ Browser compatibility validation complete!');
     
     // Store results globally
     window.compatibilityTestResults = {
@@ -408,7 +408,7 @@ if (process.env.NODE_ENV === 'development') {
     
     // Auto-run compatibility test after 5 seconds
     setTimeout(() => {
-      console.log('🌐 Auto-running Browser Compatibility Test...');
+      console.warn('🌐 Auto-running Browser Compatibility Test...');
       tester.runCompatibilityTests();
     }, 5000);
   }, 2000);

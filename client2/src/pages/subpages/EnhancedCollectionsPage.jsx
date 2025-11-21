@@ -92,7 +92,7 @@ const EnhancedCollectionsPage = ({
 
         setCollections(finalCollections);
 
-        console.log('✅ Collections loaded:', {
+        console.warn('✅ Collections loaded:', {
           total: finalCollections.length,
           default: defaultCollections.length,
           userCreated: userCollections.length,
@@ -270,7 +270,7 @@ const EnhancedCollectionsPage = ({
         }}
         onDragOver={handleDragOver}
         onDrop={(e) => {
-          console.log('Drop event triggered on collection:', collection.name);
+          console.warn('Drop event triggered on collection:', collection.name);
           e.preventDefault();
           e.stopPropagation();
           handleDrop(e, collection.id);

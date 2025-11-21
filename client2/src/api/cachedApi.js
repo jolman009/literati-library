@@ -45,7 +45,7 @@ export class CachedApiService {
       const cached = await cacheManager.get(cacheType, cacheKey, userId);
       if (cached) {
         measureCustomMetric(`API_CACHE_HIT_${cacheKey}`, startTime);
-        console.log(`💾 API cache hit: ${cacheKey}`);
+        console.warn(`💾 API cache hit: ${cacheKey}`);
         return { data: cached, fromCache: true };
       }
     }
@@ -56,7 +56,7 @@ export class CachedApiService {
         // Return stale cache if available
         const staleCache = await this.getStaleCache(cacheType, cacheKey, userId);
         if (staleCache) {
-          console.log(`📱 Offline: returning stale cache for ${cacheKey}`);
+          console.warn(`📱 Offline: returning stale cache for ${cacheKey}`);
           return { data: staleCache, fromCache: true, stale: true };
         }
       } else if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(config.method)) {
@@ -82,7 +82,7 @@ export class CachedApiService {
         cacheManager.invalidate(invalidatePattern, userId);
       }
       
-      console.log(`⚡ API request: ${config.url} (${Math.round(duration)}ms)`);
+      console.warn(`⚡ API request: ${config.url} (${Math.round(duration)}ms)`);
       return response;
       
     } catch (error) {
@@ -231,7 +231,7 @@ export class CachedApiService {
    * Prefetch commonly accessed data
    */
   async prefetchData(_userId) {
-    console.log('🔄 Prefetching critical data...');
+    console.warn('🔄 Prefetching critical data...');
     
     const prefetchPromises = [
       // Recent books
@@ -242,7 +242,7 @@ export class CachedApiService {
     ];
     
     await Promise.allSettled(prefetchPromises);
-    console.log('✅ Data prefetching completed');
+    console.warn('✅ Data prefetching completed');
   }
 
   /**
@@ -278,7 +278,7 @@ export class CachedApiService {
     };
     
     this.requestQueue.push(queueItem);
-    console.log(`📥 Request queued: ${config.method} ${config.url}`);
+    console.warn(`📥 Request queued: ${config.method} ${config.url}`);
     
     // Save queue to localStorage for persistence
     try {
@@ -300,12 +300,12 @@ export class CachedApiService {
   async processQueue() {
     if (this.requestQueue.length === 0) return;
     
-    console.log(`🔄 Processing ${this.requestQueue.length} queued requests...`);
+    console.warn(`🔄 Processing ${this.requestQueue.length} queued requests...`);
     
     const processPromises = this.requestQueue.map(async (queueItem) => {
       try {
         const result = await this.request(queueItem.config, queueItem.cacheConfig);
-        console.log(`✅ Processed queued request: ${queueItem.config.method} ${queueItem.config.url}`);
+        console.warn(`✅ Processed queued request: ${queueItem.config.method} ${queueItem.config.url}`);
         return { success: true, queueId: queueItem.id, result };
       } catch (error) {
         queueItem.retries++;
@@ -335,7 +335,7 @@ export class CachedApiService {
       console.warn('Failed to persist updated queue:', error);
     }
     
-    console.log(`✅ Queue processing completed. ${this.requestQueue.length} items remaining.`);
+    console.warn(`✅ Queue processing completed. ${this.requestQueue.length} items remaining.`);
   }
 
   /**
@@ -372,7 +372,7 @@ export class CachedApiService {
    */
   clearCache() {
     cacheManager.invalidate('', this.getCurrentUserId());
-    console.log('🗑️ All API caches cleared');
+    console.warn('🗑️ All API caches cleared');
   }
 }
 
@@ -384,7 +384,7 @@ try {
   const savedQueue = localStorage.getItem('api_request_queue');
   if (savedQueue) {
     cachedApi.requestQueue = JSON.parse(savedQueue);
-    console.log(`📥 Restored ${cachedApi.requestQueue.length} queued requests from storage`);
+    console.warn(`📥 Restored ${cachedApi.requestQueue.length} queued requests from storage`);
   }
 } catch (error) {
   console.warn('Failed to restore request queue from storage:', error);
