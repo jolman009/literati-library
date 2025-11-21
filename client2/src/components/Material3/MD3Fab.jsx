@@ -19,7 +19,7 @@ const MD3Fab = ({
   icon,
   onClick,
   ariaLabel,
-  position = { bottom: '24px', right: '24px' },
+  position = { bottom: '80px', right: '1px' },
   size = 'normal',
   variant = 'primary',
   extended = false,

@@ -110,7 +110,7 @@
   justify-content: center;
   gap: 8px;
   flex: 1;
-  min-height: 56px;
+  min-height: var(--button-min-height, 56px);
   padding: 12px 20px;
   border-radius: 28px;
 
@@ -130,6 +130,19 @@
 
 .peekButton:active {
   transform: scale(0.97);
+}
+
+/* Responsive peek button sizing */
+@media (max-width: 599px) {
+  .peekButton {
+    padding: 10px 16px;
+    font-size: 0.8125rem;
+  }
+
+  .peekContent {
+    gap: 8px;
+    padding: 0 16px 16px;
+  }
 }
 
 /* Voice Button - Primary */
@@ -597,9 +610,11 @@
 
 /* ===== BUTTONS ===== */
 .button {
-  flex: 1;
-  padding: 14px 24px;
-  min-height: 48px;
+  /* Responsive width using custom properties */
+  width: var(--button-width, 100%);
+  min-height: var(--button-min-height, 48px);
+  padding: var(--button-padding-y, 14px) var(--button-padding-x, 24px);
+  border-radius: var(--button-border-radius, 24px);
 
   /* Typography - MD3 Label Large */
   font-family: var(--md-sys-typescale-label-large-font-family, "Google Sans", "Inter", system-ui, sans-serif);
@@ -611,7 +626,6 @@
   /* Reset */
   border: none;
   cursor: pointer;
-  border-radius: 24px;
 
   /* Transition */
   transition:
@@ -622,6 +636,30 @@
 
 .button:active:not(:disabled) {
   transform: translateY(1px);
+}
+
+/* Mobile: Full width stacked buttons */
+@media (max-width: 599px) {
+  .button {
+    width: 100%;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}
+
+/* Tablet and up: Auto-width side-by-side buttons */
+@media (min-width: 600px) {
+  .button {
+    width: auto;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .actions {
+    flex-direction: row;
+  }
 }
 
 /* ===== SAVE BUTTON ===== */

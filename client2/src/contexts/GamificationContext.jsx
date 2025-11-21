@@ -385,7 +385,6 @@ export const GamificationProvider = ({ children }) => {
 
     // Calculate new stats first
     let newTotalPoints = 0;
-    let updatedStats = null;
 
     // Update local stats immediately for responsive UI
     setStats(prevStats => {
@@ -426,10 +425,10 @@ export const GamificationProvider = ({ children }) => {
           newStats.booksCompleted += 1;
           break;
         case 'reading_session_completed':
-          const sessionTime = data.duration || 0;
+          { const sessionTime = data.duration || 0;
           newStats.totalReadingTime += sessionTime;
           newStats.todayReadingTime += sessionTime;
-          break;
+          break; }
       }
 
       // If snapshot provided but didn't include notesCreated, ensure we persist derived total
@@ -442,7 +441,6 @@ export const GamificationProvider = ({ children }) => {
 
       // Store for event dispatch
       newTotalPoints = newStats.totalPoints;
-      updatedStats = newStats;
 
       return newStats;
     });
@@ -456,7 +454,7 @@ export const GamificationProvider = ({ children }) => {
         const entry = { id: `local_${Date.now()}`, action: actionType, points, data: data || {}, created_at: nowIso, pending: true };
         localStorage.setItem(key, JSON.stringify([entry, ...prev].slice(0, 100)));
       }
-    } catch {}
+    } catch { /* empty */ }
 
     // 🔔 Dispatch event AFTER state update (outside setStats callback)
     // This ensures the event fires after React has committed the state
@@ -512,7 +510,7 @@ export const GamificationProvider = ({ children }) => {
             console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
           }
           // Refresh stats from server after a successful sync
-          try { fetchDataDebounced(); } catch {}
+          try { fetchDataDebounced(); } catch { /* empty */ }
         } catch (error) {
           // ✅ Triple-layer error handling: catch ANY error
           console.error(`❌ Failed to sync action with server:`, error);
@@ -530,7 +528,7 @@ export const GamificationProvider = ({ children }) => {
   }, [user, offlineMode, makeSafeApiCall]);
 
   // Check if user has unlocked any achievements
-  const checkAchievements = useCallback((actionType, data = {}) => {
+  const checkAchievements = useCallback((actionType) => {
     if (!user) return;
 
     const currentStats = stats;
@@ -737,7 +735,7 @@ export const GamificationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user, offlineMode, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
+  }, [user, offlineMode, makeSafeApiCall, calculateReadingStreak]);
 
   // Manual refresh function - useful for forcing UI updates after mutations
   const refreshStats = useCallback(async () => {
@@ -772,7 +770,7 @@ export const GamificationProvider = ({ children }) => {
       console.error('❌ GamificationContext: Stats refresh failed', error);
       return { success: false, error: error.message };
     }
-  }, [user, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
+  }, [user, makeSafeApiCall, calculateReadingStreak]);
 
   const value = {
     // State

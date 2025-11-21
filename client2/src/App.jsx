@@ -12,6 +12,9 @@ import { initOfflineReading } from './utils/offlineInit';
 // ⚠️ CRITICAL: Import mobile-fixes FIRST! ⚠️
 import './styles/mobile-fixes.css';
 
+// Modern responsive design tokens (Material Design 3)
+import './styles/responsive-tokens.css';
+
 // Import enhanced UX components
 import { LoadingSpinner, NetworkStatus } from './components/ui/LoadingStates';
 import ErrorBoundary, {
