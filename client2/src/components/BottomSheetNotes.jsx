@@ -97,14 +97,21 @@ const BottomSheetNotes = ({
   useEffect(() => {
     if (isOpen && sheetState === 'closed') {
       // Open to peek state
+      console.log('🟢 Opening to PEEK state');
       setSheetState('peek');
       controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
     } else if (!isOpen && sheetState !== 'closed') {
       // Close completely
+      console.log('🔴 Closing bottom sheet');
       setSheetState('closed');
       controls.start({ y: '100%' });
     }
   }, [isOpen, sheetState, controls]);
+
+  // ===== DEBUG: LOG STATE CHANGES =====
+  useEffect(() => {
+    console.log('📊 Sheet state changed to:', sheetState);
+  }, [sheetState]);
 
   // ===== VOICE RECOGNITION SETUP =====
   useEffect(() => {
@@ -364,11 +371,13 @@ const BottomSheetNotes = ({
 
   // ===== EXPAND TO FULL =====
   const expandToFull = () => {
+    console.log('🔵 expandToFull called - current state:', sheetState);
     setSheetState('full');
     controls.start({
       y: `${100 - SNAP_POINTS.FULL}%`,
       transition: { type: 'spring', damping: 30, stiffness: 300 }
     });
+    console.log('🔵 Animation started to FULL state (88% height)');
   };
 
   // ===== CALCULATE OVERLAY OPACITY =====
@@ -421,6 +430,7 @@ const BottomSheetNotes = ({
         style={{
           touchAction: 'none'
         }}
+        onAnimationComplete={() => console.log('✅ Animation completed to:', sheetState)}
       >
         {/* Drag Handle */}
         <div className={styles.dragHandle}>
