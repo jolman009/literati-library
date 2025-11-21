@@ -95,12 +95,9 @@ const BottomSheetNotes = ({
 
   // ===== OPEN/CLOSE LOGIC =====
   useEffect(() => {
-    console.log('[BottomSheetNotes] Open/Close effect:', { isOpen, sheetState });
-
     if (isOpen) {
       // Open to peek state with animation
       if (sheetState === 'closed') {
-        console.log('[BottomSheetNotes] Opening to peek state');
         setSheetState('peek');
         controls.start({
           y: `calc(100% - ${SNAP_POINTS.PEEK}vh)`,
@@ -110,7 +107,6 @@ const BottomSheetNotes = ({
     } else {
       // Close completely
       if (sheetState !== 'closed') {
-        console.log('[BottomSheetNotes] Closing sheet');
         setSheetState('closed');
         controls.start({
           y: '100%',
@@ -402,14 +398,6 @@ const BottomSheetNotes = ({
   if (!isOpen) {
     return null;
   }
-
-  console.log('[BottomSheetNotes] Rendering:', {
-    sheetState,
-    isOpen,
-    bookId,
-    currentPage,
-    isDark
-  });
 
   return (
     <>
