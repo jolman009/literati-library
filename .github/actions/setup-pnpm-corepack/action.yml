@@ -11,7 +11,11 @@ runs:
     - shell: bash
       run: |
         set -euo pipefail
+
+        # Update Corepack to latest version to avoid signature issues
+        npm install -g corepack@latest
         corepack enable
+
         VER="${{ inputs.version }}"
         if [[ "$VER" == "latest" || "$VER" == *".x"* || -z "$VER" ]]; then
           VER=8.15.6
