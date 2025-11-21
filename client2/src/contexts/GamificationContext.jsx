@@ -96,7 +96,6 @@ export const GamificationProvider = ({ children }) => {
   // Reset offline mode when we have an authenticated user
   useEffect(() => {
     if (user && offlineMode) {
-      console.log('✅ GamificationContext: User detected, resetting offline mode to false');
       setOfflineMode(false);
     }
   }, [user, offlineMode]);
@@ -105,7 +104,6 @@ export const GamificationProvider = ({ children }) => {
   const makeSafeApiCall = async (endpoint, options = {}) => {
     try {
       if (!user) {
-        console.warn('🔒 No authenticated user - working offline');
         setOfflineMode(true);
         return null;
       }
@@ -113,30 +111,24 @@ export const GamificationProvider = ({ children }) => {
       const response = await makeApiCall(endpoint, options);
       return response;
     } catch (error) {
-      console.warn(`🎯 GamificationContext API error for ${endpoint}:`, error.message || error);
-
       // If it's a 401, don't propagate it up - just go offline
       if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-        console.log('🔄 Switching to offline mode due to auth issues');
         setOfflineMode(true);
         return null;
       }
 
       // For 429 (rate limit), don't go offline - just skip this request
       if (error.message?.includes('429') || error.message?.includes('Too Many Requests')) {
-        console.log('⏸️ Rate limited - skipping this request but staying online');
         return null;
       }
 
       // For 500 errors, backend might not be ready yet
       if (error.message?.includes('500') || error.message?.includes('Internal Server Error')) {
-        console.log('⚠️ Backend error - continuing in offline mode');
         setOfflineMode(true);
         return null;
       }
 
-      // For other errors, still go offline but log differently
-      console.log('🔄 Switching to offline mode due to API issues');
+      // For other errors, still go offline
       setOfflineMode(true);
       return null;
     }
@@ -199,8 +191,7 @@ export const GamificationProvider = ({ children }) => {
           break;
         }
       }
-      
-      console.log(`📊 Calculated reading streak: ${currentStreak} days`);
+
       return currentStreak;
     } catch (error) {
       console.error('Error calculating reading streak:', error);
@@ -216,13 +207,9 @@ export const GamificationProvider = ({ children }) => {
       return;
     }
 
-    console.log('🎯 Loading gamification data...');
-    
     try {
       // Try API calls first if not in offline mode
       if (!offlineMode) {
-        console.log('🌐 Attempting API fetch...');
-        
         // Fetch stats - if this fails, we'll go offline
         const statsData = await makeSafeApiCall('/api/gamification/stats');
         if (statsData) {
@@ -232,7 +219,6 @@ export const GamificationProvider = ({ children }) => {
           };
           setStats(enhancedStats);
           localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(enhancedStats));
-          console.log('✅ Stats loaded from API:', enhancedStats);
         }
 
         // Fetch achievements
@@ -241,19 +227,16 @@ export const GamificationProvider = ({ children }) => {
           setAchievements(achievementsData);
           setUnlockedAchievements(new Set(achievementsData.map(a => a.id)));
           localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(achievementsData.map(a => a.id)));
-          console.log('✅ Achievements loaded from API');
         }
 
         // Fetch goals
         const goalsData = await makeSafeApiCall('/api/gamification/goals');
         if (goalsData) {
           setGoals(goalsData);
-          console.log('✅ Goals loaded from API');
         }
       }
 
       // Always try localStorage as backup/fallback
-      console.log('💾 Loading from localStorage...');
       
       const savedStats = localStorage.getItem(`gamification_stats_${user.id}`);
       if (savedStats) {
@@ -276,7 +259,6 @@ export const GamificationProvider = ({ children }) => {
               readingStreak: currentReadingStreak // Always update reading streak
             };
           });
-          console.log('💾 Stats loaded from localStorage with reading streak:', currentReadingStreak);
         } catch (error) {
           console.error('Error parsing saved stats:', error);
         }
@@ -287,7 +269,6 @@ export const GamificationProvider = ({ children }) => {
           ...prevStats,
           readingStreak: currentReadingStreak
         }));
-        console.log('📊 No saved stats, but calculated reading streak:', currentReadingStreak);
       }
 
       const savedAchievements = localStorage.getItem(`gamification_achievements_${user.id}`);
@@ -296,7 +277,6 @@ export const GamificationProvider = ({ children }) => {
           const parsedAchievements = JSON.parse(savedAchievements);
           setUnlockedAchievements(new Set(parsedAchievements));
           setAchievements(parsedAchievements.map(id => ({ id, ...ACHIEVEMENTS[id] })).filter(Boolean));
-          console.log('💾 Achievements loaded from localStorage');
         } catch (error) {
           console.error('Error parsing saved achievements:', error);
         }
@@ -334,7 +314,6 @@ export const GamificationProvider = ({ children }) => {
 
     // Prevent fetching more than once every 5 seconds
     if (timeSinceLastFetch < 5000) {
-      console.log(`⏱️ Skipping fetchData - last fetch was ${timeSinceLastFetch}ms ago`);
       return;
     }
 
@@ -351,15 +330,11 @@ export const GamificationProvider = ({ children }) => {
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
     if (!user) {
-      console.warn('⚠️ GamificationContext: trackAction called but no user found');
       return;
     }
 
     // Ensure we're not stuck in offline mode if user exists
     if (user && offlineMode) setOfflineMode(false);
-
-    console.log(`🎯 GamificationContext: Tracking action: ${actionType}`, data);
-    console.log(`🎯 GamificationContext: User ID: ${user.id}`);
 
     // Point values for different actions
     const pointValues = {
@@ -460,14 +435,6 @@ export const GamificationProvider = ({ children }) => {
 
     // 🔔 Dispatch event AFTER state update (outside setStats callback)
     // This ensures the event fires after React has committed the state
-    console.log(`🔔 GamificationContext: Broadcasting gamificationUpdate event for action: ${actionType}`);
-    console.log(`🔔 GamificationContext: Event detail:`, {
-      action: actionType,
-      points,
-      totalPoints: newTotalPoints,
-      timestamp: new Date().toISOString()
-    });
-
     const event = new CustomEvent('gamificationUpdate', {
       detail: {
         action: actionType,
@@ -477,7 +444,6 @@ export const GamificationProvider = ({ children }) => {
       }
     });
     window.dispatchEvent(event);
-    console.log(`✅ GamificationContext: Event dispatched successfully`);
 
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices
@@ -486,14 +452,10 @@ export const GamificationProvider = ({ children }) => {
     // 🔧 FIX: Use a variable to track if we should sync, don't rely on state
     const shouldSyncToServer = !!user && !offlineMode && !localOnlyActions.includes(actionType);
 
-    console.log(`🔍 GamificationContext: Sync check - offlineMode: ${offlineMode}, isLocalOnly: ${localOnlyActions.includes(actionType)}, willSync: ${shouldSyncToServer}`);
-
     if (shouldSyncToServer) {
-      console.log(`🌐 GamificationContext: Starting server sync for ${actionType}...`);
       // ✅ Wrap in Promise to ensure async errors don't bubble up
       Promise.resolve().then(async () => {
         try {
-          console.log(`📤 GamificationContext: Calling /gamification/actions API...`);
           // ✅ Post using axios instance to ensure credentials + interceptors
           const response = await API.post('/api/gamification/actions', {
             action: actionType,
@@ -504,25 +466,18 @@ export const GamificationProvider = ({ children }) => {
           if (response?.data) {
             if (response.data.warning) {
               console.error(`⚠️ DATABASE INSERT FAILED: ${actionType}`, response.warning);
-              console.error('👉 This action will NOT appear after refresh!');
-            } else {
-              console.log(`✅ Action synced to server: ${actionType} (+${points} points)`, response);
             }
-          } else {
-            console.warn(`⚠️ Action tracking returned no response: ${actionType}`);
           }
           // Refresh stats from server after a successful sync
           try { fetchDataDebounced(); } catch {}
         } catch (error) {
           // ✅ Triple-layer error handling: catch ANY error
-          console.error(`❌ Failed to sync action with server:`, error);
+          console.error(`❌ Failed to sync action ${actionType}:`, error.message);
         }
       }).catch(err => {
         // ✅ Catch promise rejections that escape the try-catch
-        console.error(`❌ Unhandled promise rejection in trackAction:`, err);
+        console.error(`❌ Unhandled promise rejection in trackAction:`, err.message);
       });
-    } else {
-      console.log(`⏭️ GamificationContext: Skipping server sync for ${actionType} (localOnly: ${localOnlyActions.includes(actionType)}, offlineMode: ${offlineMode})`);
     }
 
     // Check for achievement unlocks
@@ -596,7 +551,6 @@ export const GamificationProvider = ({ children }) => {
         level: calculateLevel(prevStats.totalPoints + achievement.points)
       }));
 
-      console.log(`🏆 Achievement unlocked: ${achievement.title}`);
 
       // Save to localStorage
       const savedAchievements = localStorage.getItem(`gamification_achievements_${user.id}`);
@@ -610,8 +564,6 @@ export const GamificationProvider = ({ children }) => {
   useEffect(() => {
     const handleDailyLogin = (event) => {
       if (!user) return;
-
-      console.log('🎯 Daily login event received', event.detail);
 
       // Track the daily login action
       trackAction('daily_login', {
@@ -682,11 +634,9 @@ export const GamificationProvider = ({ children }) => {
   // Manual sync function - fetch latest data from server and reconcile with local
   const syncWithServer = useCallback(async () => {
     if (!user || offlineMode) {
-      console.warn('⚠️ Cannot sync: user not authenticated or in offline mode');
       return { success: false, error: 'Not authenticated or offline' };
     }
 
-    console.log('🔄 Starting manual sync with server...');
     setLoading(true);
 
     try {
@@ -705,22 +655,18 @@ export const GamificationProvider = ({ children }) => {
         // Update state with server data (server is source of truth)
         setStats(enhancedStats);
         localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(enhancedStats));
-        console.log('✅ Stats synced from server:', enhancedStats);
       }
 
       if (achievementsData) {
         setAchievements(achievementsData);
         setUnlockedAchievements(new Set(achievementsData.map(a => a.id)));
         localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(achievementsData.map(a => a.id)));
-        console.log('✅ Achievements synced from server');
       }
 
       if (goalsData) {
         setGoals(goalsData);
-        console.log('✅ Goals synced from server');
       }
 
-      console.log('✅ Sync complete - all data updated from server');
       return {
         success: true,
         message: 'Data synced successfully',
@@ -742,11 +688,8 @@ export const GamificationProvider = ({ children }) => {
   // Manual refresh function - useful for forcing UI updates after mutations
   const refreshStats = useCallback(async () => {
     if (!user) {
-      console.warn('⚠️ Cannot refresh stats: user not authenticated');
       return { success: false, error: 'Not authenticated' };
     }
-
-    console.log('🔄 GamificationContext: Manual stats refresh requested');
 
     try {
       // Fetch fresh stats from server
@@ -761,15 +704,13 @@ export const GamificationProvider = ({ children }) => {
 
         setStats(enhancedStats);
         localStorage.setItem(`gamification_stats_${user.id}`, JSON.stringify(enhancedStats));
-        console.log('✅ GamificationContext: Stats refreshed successfully', enhancedStats);
 
         return { success: true, stats: enhancedStats };
       } else {
-        console.warn('⚠️ GamificationContext: Stats refresh returned no data');
         return { success: false, error: 'No data returned' };
       }
     } catch (error) {
-      console.error('❌ GamificationContext: Stats refresh failed', error);
+      console.error('❌ Stats refresh failed', error);
       return { success: false, error: error.message };
     }
   }, [user, makeSafeApiCall, calculateLevel, calculateReadingStreak]);
@@ -797,14 +738,6 @@ export const GamificationProvider = ({ children }) => {
     ACHIEVEMENTS,
     LEVEL_THRESHOLDS
   };
-
-  // 🔍 DEBUG: Log context value on every render
-  console.log('🎮 GamificationContext: Providing value:', {
-    stats,
-    loading,
-    offlineMode,
-    hasUser: !!user
-  });
 
   return (
     <GamificationContext.Provider value={value}>
