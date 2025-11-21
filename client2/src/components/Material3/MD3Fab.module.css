@@ -142,29 +142,29 @@
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 640px) {
   .fab.normal {
-    min-width: 48px;
-    height: 48px;
-    padding: 0 12px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 8px;
   }
 
   .fab.normal .icon {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .fab.small {
-    min-width: 36px;
-    height: 36px;
-    padding: 0 10px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
   }
 
   .fab.small .icon {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   /* Move FAB higher on mobile - leave space for bottom sheet */
   .fab {
     bottom: 80px !important;  /* Moved up from 16px - leaves 25% of screen at bottom */
-    right: 16px !important;
+    right: 12px !important;   /* Slightly closer to edge, but with margin for safety */
   }
 }
 
