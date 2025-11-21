@@ -47,7 +47,12 @@ const ReadBook = () => {
   // ===== MOBILE DETECTION =====
   useEffect(() => {
     const updateMobileState = () => {
-      setIsMobile(window.innerWidth < 768);
+      const newIsMobile = window.innerWidth < 768;
+      console.log('[ReadBook] Mobile detection:', {
+        width: window.innerWidth,
+        isMobile: newIsMobile
+      });
+      setIsMobile(newIsMobile);
     };
 
     updateMobileState();
@@ -399,30 +404,48 @@ const ReadBook = () => {
           />
 
           {/* Notes: BottomSheet on mobile, Sidebar on desktop */}
-          {isMobile ? (
-            <BottomSheetNotes
-              isOpen={isSidebarOpen}
-              onClose={() => setIsSidebarOpen(false)}
-              title={`Note — ${book.title}`}
-              book={book}
-              currentPage={currentPage}
-              currentLocator={currentLocator}
-            />
-          ) : (
-            <NotesSidebar
-              isOpen={isSidebarOpen}
-              onClose={() => setIsSidebarOpen(false)}
-              title={`Note — ${book.title}`}
-              book={book}
-              currentPage={currentPage}
-              currentLocator={currentLocator}
-            />
-          )}
+          {(() => {
+            console.log('[ReadBook] Notes component selection:', {
+              isMobile,
+              isSidebarOpen,
+              component: isMobile ? 'BottomSheetNotes' : 'NotesSidebar',
+              bookTitle: book?.title
+            });
+            return isMobile ? (
+              <BottomSheetNotes
+                isOpen={isSidebarOpen}
+                onClose={() => {
+                  console.log('[ReadBook] BottomSheetNotes onClose called');
+                  setIsSidebarOpen(false);
+                }}
+                title={`Note — ${book.title}`}
+                book={book}
+                currentPage={currentPage}
+                currentLocator={currentLocator}
+              />
+            ) : (
+              <NotesSidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                title={`Note — ${book.title}`}
+                book={book}
+                currentPage={currentPage}
+                currentLocator={currentLocator}
+              />
+            );
+          })()}
 
           {/* Toggle Notes Button (FAB) */}
           <MD3Fab
             icon={isSidebarOpen ? '✕' : '📝'}
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={() => {
+              console.log('[ReadBook] FAB clicked! Current state:', {
+                isSidebarOpen,
+                willBe: !isSidebarOpen,
+                isMobile
+              });
+              setIsSidebarOpen(!isSidebarOpen);
+            }}
             ariaLabel={isSidebarOpen ? "Close notes" : "Open notes"}
             variant="primary"
           />
