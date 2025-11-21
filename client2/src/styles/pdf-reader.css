@@ -32,11 +32,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;  /* Start from top, not centered */
   width: 100%;
-  height: 100%;
+  /* height: 100% removed - was pushing content to center */
   max-width: 900px;
   margin: 0 auto;
+  padding: 20px 0; /* Add vertical padding for better spacing */
 }
 
 .pdf-click-layer {
@@ -57,9 +58,15 @@
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
+  .pdf-reader-container {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+
   .pdf-content-area {
-    padding-top: calc(52px + env(safe-area-inset-top, 0px));
+    padding-top: calc(60px + env(safe-area-inset-top, 0px));  /* Space for reader-topbar */
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 130px;  /* Space for FAB: 80px position + 40px height + 10px buffer */
   }
 }
