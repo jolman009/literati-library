@@ -24,7 +24,8 @@
       "Bash(cmd:*)",
       "Bash(git log:*)",
       "Bash(npx vercel domains:*)",
-      "Bash(npx vercel inspect:*)"
+      "Bash(npx vercel inspect:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
