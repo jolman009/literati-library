@@ -7,7 +7,7 @@
 .fab {
   /* Positioning */
   position: fixed;
-  z-index: 9997;
+  z-index: 10003;  /* ✅ Above bottom sheet (10002) and all other UI elements */
 
   /* Reset */
   border: none;
