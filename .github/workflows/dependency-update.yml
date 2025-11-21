@@ -78,7 +78,7 @@ jobs:
         if: matrix.component != 'ai-service'
         working-directory: ./${{ matrix.component }}
         run: |
-          pnpm test --passWithNoTests
+          pnpm test
 
       - name: Run Python Tests After Update
         if: matrix.component == 'ai-service'
