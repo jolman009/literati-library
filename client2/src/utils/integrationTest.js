@@ -53,14 +53,14 @@ class IntegrationValidator {
    */
   async testBundlePerformance() {
     console.warn('📦 Testing bundle optimization...');
-    
+
     const bundleStart = performance.now();
-    
+
     // Test dynamic imports work correctly
     try {
-      // const LibraryComponent = await import('../components/wrappers/LibraryPageWrapper.jsx');
+      const LibraryComponent = await import('../components/wrappers/LibraryPageWrapper.jsx');
       const importTime = performance.now() - bundleStart;
-      
+
       this.results.bundlePerformance = {
         dynamicImportTime: Math.round(importTime),
         status: importTime < 100 ? 'excellent' : importTime < 200 ? 'good' : 'needs improvement',

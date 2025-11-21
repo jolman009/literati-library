@@ -181,8 +181,7 @@ const ReadingPage = ({ books = [], onBookAction }) => {
   };
 
   const ActiveSessionCard = () => {
-    if (!activeSession) return null;
-
+    // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
     const [elapsedTime, setElapsedTime] = useState(0);
 
     useEffect(() => {
@@ -204,6 +203,9 @@ const ReadingPage = ({ books = [], onBookAction }) => {
         return () => clearInterval(interval);
       }
     }, [isPaused, activeSession]);
+
+    // Check if we should render (after all hooks)
+    if (!activeSession) return null;
 
     return (
       <MD3Card variant="filled" className={styles.activeSessionCard}>

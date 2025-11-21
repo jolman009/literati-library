@@ -1,6 +1,10 @@
 // src/components/ContextDiagnostic.jsx
 // Temporary diagnostic component to check provider wrapping
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useGamification } from '../contexts/GamificationContext';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 
 // Safe context hook wrapper
 const useSafeContext = (hookFn, contextName) => {

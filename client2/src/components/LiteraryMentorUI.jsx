@@ -543,12 +543,6 @@ Keep your response concise (2-3 sentences) and conversational.`;
           nextQuestion: "How did this book compare to others you've read?"
         };
       }
-      
-      return {
-        message: analysis.suggestions[0] || 'Interesting perspective!',
-        nextQuestion: socraticQuestions[0],
-        feedback: analysis
-      };
   }, [selectedBookId, userBooks, hasApiKeys, discussionHistory]);
 
   // Stable onChange handler that maintains focus
@@ -917,7 +911,7 @@ Keep your response concise (2-3 sentences) and conversational.`;
           <APIKeyConfiguration
             onKeysUpdated={() => {
               checkApiKeys();
-              if (onKeysUpdated) onKeysUpdated();
+              // Note: onKeysUpdated is intentionally optional - only called if parent provides it
             }}
             showTitle={false}
           />

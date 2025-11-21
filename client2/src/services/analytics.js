@@ -1,4 +1,5 @@
 // src/services/analytics.js - Comprehensive Analytics Service
+/* global dataLayer, gtag */
 import environmentConfig from '../config/environment.js';
 import { isChildMode } from './childSafety.js';
 

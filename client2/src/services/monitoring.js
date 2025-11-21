@@ -294,6 +294,7 @@ class MonitoringService {
    * Create React Error Boundary component
    */
   createErrorBoundary() {
+    /* global React */
     const ErrorBoundary = this.crashReporting.createErrorBoundary?.();
 
     if (!ErrorBoundary) {
