@@ -295,20 +295,19 @@ button {
     flex-direction: column !important;
   }
 
-  /* Full width buttons on mobile */
-  /* EXCEPT circular icon buttons, navigation arrows, book menu buttons, and welcome widget nav buttons */
-  button:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not([style*="borderRadius: '50%'"]):not([style*="border-radius: 50%"]):not(.book-menu-button):not(.welcome-nav-scrollable button):not(.navigation-container button),
-  .button,
-  .Button,
-  [class*="button"]:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not(.book-menu-button),
-  [class*="Button"]:not([aria-label*="Scroll"]):not([aria-label*="scroll"]):not(.book-menu-button),
-  .btn,
-  .Btn,
-  [class*="btn"],
-  [class*="Btn"] {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
+  /* ===== DEPRECATED: Button width rules moved to components =====
+   * Components now handle their own responsive button behavior.
+   * See: responsive-tokens.css and individual .module.css files
+   * Examples: BottomSheetNotes.module.css, NotesSidebar.module.css
+   *
+   * Old rule (removed):
+   * button { width: 15% !important; }  ❌ Anti-pattern
+   *
+   * New approach (component-level):
+   * @media (max-width: 599px) {
+   *   .button { width: 100%; }  ✅ Component controls its own responsive behavior
+   * }
+   */
 
   /* Keep circular icon buttons, navigation arrows, book menu buttons, and welcome widget nav buttons at their specified size */
   button[aria-label*="Scroll"],

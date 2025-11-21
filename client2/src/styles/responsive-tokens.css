@@ -1,0 +1,216 @@
+/* ===============================================
+   RESPONSIVE DESIGN TOKENS
+   Material Design 3 Adaptive Layout System
+   =============================================== */
+
+/* ================================================
+   BREAKPOINTS (Material Design 3 Standard)
+   ================================================ */
+
+:root {
+  /* MD3 Breakpoint Values */
+  --breakpoint-compact: 0px;      /* 0-599px: Phone */
+  --breakpoint-medium: 600px;     /* 600-839px: Tablet portrait */
+  --breakpoint-expanded: 840px;   /* 840-1199px: Tablet landscape */
+  --breakpoint-large: 1200px;     /* 1200-1599px: Desktop */
+  --breakpoint-extra-large: 1600px; /* 1600px+: Wide desktop */
+
+  /* ================================================
+     SPACING TOKENS (Adaptive)
+     ================================================ */
+
+  /* Default: Compact (Mobile) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* Container Padding */
+  --container-padding: 16px;
+
+  /* Gap Tokens */
+  --gap-sm: 8px;
+  --gap-md: 12px;
+  --gap-lg: 16px;
+
+  /* ================================================
+     BUTTON TOKENS (Adaptive)
+     ================================================ */
+
+  /* Button Sizing */
+  --button-min-height: 44px;       /* Touch-friendly minimum */
+  --button-padding-x: 24px;
+  --button-padding-y: 12px;
+  --button-border-radius: 24px;
+
+  /* Button Width Behavior */
+  --button-width: 100%;             /* Full width on mobile by default */
+  --button-max-width: none;
+  --button-flex: 1;                 /* Flexible in flex containers */
+
+  /* ================================================
+     TYPOGRAPHY SCALE (Adaptive)
+     ================================================ */
+
+  /* Body Text */
+  --body-font-size: 1rem;          /* 16px */
+  --body-line-height: 1.5;
+
+  /* Labels */
+  --label-font-size: 0.875rem;     /* 14px */
+  --label-line-height: 1.25rem;
+
+  /* ================================================
+     COMPONENT-SPECIFIC TOKENS
+     ================================================ */
+
+  /* FAB (Floating Action Button) */
+  --fab-size-normal: 56px;
+  --fab-size-small: 40px;
+  --fab-bottom: 16px;
+  --fab-right: 16px;
+
+  /* Bottom Sheet */
+  --bottom-sheet-max-height: 90vh;
+  --bottom-sheet-border-radius: 28px;
+
+  /* Sidebar */
+  --sidebar-width: 480px;
+  --sidebar-max-width: 90vw;
+}
+
+/* ================================================
+   MEDIUM SCREENS (Tablets - 600px+)
+   ================================================ */
+
+@media (min-width: 600px) {
+  :root {
+    /* Increase spacing slightly */
+    --spacing-md: 20px;
+    --spacing-lg: 28px;
+    --spacing-xl: 40px;
+    --spacing-xxl: 56px;
+
+    /* Container Padding */
+    --container-padding: 24px;
+
+    /* Buttons become auto-width */
+    --button-width: auto;
+    --button-padding-x: 32px;
+
+    /* FAB gets larger */
+    --fab-size-normal: 56px;
+    --fab-size-small: 40px;
+    --fab-bottom: 24px;
+    --fab-right: 24px;
+  }
+}
+
+/* ================================================
+   EXPANDED SCREENS (Tablet Landscape - 840px+)
+   ================================================ */
+
+@media (min-width: 840px) {
+  :root {
+    /* More generous spacing */
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-xxl: 64px;
+
+    /* Container Padding */
+    --container-padding: 32px;
+
+    /* Gap Tokens */
+    --gap-md: 16px;
+    --gap-lg: 24px;
+
+    /* Sidebar */
+    --sidebar-width: 420px;
+  }
+}
+
+/* ================================================
+   LARGE SCREENS (Desktop - 1200px+)
+   ================================================ */
+
+@media (min-width: 1200px) {
+  :root {
+    /* Maximum spacing */
+    --spacing-lg: 40px;
+    --spacing-xl: 56px;
+    --spacing-xxl: 80px;
+
+    /* Container Padding */
+    --container-padding: 40px;
+
+    /* Sidebar */
+    --sidebar-width: 480px;
+
+    /* FAB positioning */
+    --fab-bottom: 32px;
+    --fab-right: 32px;
+  }
+}
+
+/* ================================================
+   EXTRA LARGE SCREENS (Wide Desktop - 1600px+)
+   ================================================ */
+
+@media (min-width: 1600px) {
+  :root {
+    /* Ultra-wide spacing */
+    --spacing-xxl: 96px;
+    --container-padding: 48px;
+  }
+}
+
+/* ================================================
+   UTILITY CLASSES (Optional - Component-First Approach)
+   ================================================ */
+
+/* Responsive Button Base Class */
+.responsive-button {
+  width: var(--button-width);
+  max-width: var(--button-max-width);
+  min-height: var(--button-min-height);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border-radius: var(--button-border-radius);
+}
+
+/* Responsive Container */
+.responsive-container {
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  max-width: 100%;
+}
+
+/* Responsive Gap */
+.responsive-gap {
+  gap: var(--gap-md);
+}
+
+/* ================================================
+   ACCESSIBILITY
+   ================================================ */
+
+/* Ensure minimum touch targets on all devices */
+@media (pointer: coarse) {
+  :root {
+    --button-min-height: 48px;     /* Larger touch targets */
+    --button-padding-x: 24px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* End of responsive-tokens.css */

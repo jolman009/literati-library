@@ -44,14 +44,14 @@
 /* ===== SIZES ===== */
 .fab.normal {
   min-width: 56px;
-  height: 56px;
+  height: var(--fab-size-normal, 56px);
   border-radius: 16px;
   padding: 0 16px;
 }
 
 .fab.small {
   min-width: 40px;
-  height: 40px;
+  height: var(--fab-size-small, 40px);
   border-radius: 12px;
   padding: 0 12px;
 }
@@ -59,6 +59,7 @@
 /* Extended FAB has more padding for label */
 .fab.extended {
   padding: 0 20px;
+  min-width: auto; /* Allow to grow with label */
 }
 
 /* ===== VARIANTS (COLOR SCHEMES) ===== */
@@ -140,10 +141,10 @@
 }
 
 /* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .fab.normal {
-    min-width: 8px;
-    height: 8px;
+    min-width: 48px;
+    height: 48px;          /* Slightly smaller but still touch-friendly */
     padding: 0 12px;
   }
 
@@ -152,8 +153,8 @@
   }
 
   .fab.small {
-    min-width: 3px;
-    height: 6px;
+    min-width: 36px;
+    height: 36px;          /* Proportional reduction */
     padding: 0 10px;
   }
 
@@ -161,10 +162,18 @@
     font-size: 18px;
   }
 
-  /* Adjust default positioning for mobile */
+  /* Use responsive tokens for positioning */
   .fab {
-    bottom: 6px;
-    right: 8px;
+    bottom: var(--fab-bottom, 16px);
+    right: var(--fab-right, 16px);
+  }
+}
+
+/* Tablet optimization */
+@media (min-width: 600px) and (max-width: 839px) {
+  .fab {
+    bottom: var(--fab-bottom, 20px);
+    right: var(--fab-right, 20px);
   }
 }
 
