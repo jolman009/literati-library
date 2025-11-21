@@ -70,11 +70,11 @@ class LiteraryMentor {
   /**
    * Deep analysis of user's reading patterns
    */
-  async analyzeReadingHabits(userId) {
+  async analyzeReadingHabits(_userId) {
     // Don't call the non-existent endpoint, just use localStorage data
     try {
       // Get reading sessions from localStorage if available
-      const activeSession = localStorage.getItem('active_reading_session');
+      const _activeSession = localStorage.getItem('active_reading_session');
       const readingHistory = localStorage.getItem('reading_history');
       const sessions = readingHistory ? JSON.parse(readingHistory) : [];
       
@@ -87,7 +87,7 @@ class LiteraryMentor {
         completionRate: 0.75,
         engagementCurve: 'consistent'
       };
-    } catch (error) {
+    } catch {
       // Return default reading habits if anything fails
       return {
         preferredTime: 'flexible',
@@ -250,7 +250,7 @@ class LiteraryMentor {
   /**
    * Generate comprehension questions using Bloom's Taxonomy
    */
-  generateComprehensionQuestions(book, chapters) {
+  generateComprehensionQuestions(book, _chapters) {
     const questions = [];
     
     // Remember level
@@ -413,7 +413,7 @@ class LiteraryMentor {
   /**
    * Fallback method for basic Socratic questions without AI
    */
-  getPresetSocraticQuestions(context, depth) {
+  getPresetSocraticQuestions(_context, _depth) {
     const basicQuestions = [
       'What do you think about this passage?',
       'How does this relate to your own experience?',
@@ -568,7 +568,6 @@ class LiteraryMentor {
    * Generate daily personalized insights
    */
   async generateDailyInsights() {
-    const today = new Date();
     const insights = [];
 
     // Reading streak insight
@@ -671,36 +670,36 @@ class LiteraryMentor {
 
   // ===== API INTEGRATION METHODS =====
 
-  async loadUserProfile(userId) {
+  async loadUserProfile(_userId) {
     try {
       // For now, just return default profile since endpoint doesn't exist
       return this.getDefaultProfile();
-    } catch (error) {
+    } catch {
       return this.getDefaultProfile();
     }
   }
 
-  async loadAnnotationHistory(userId) {
+  async loadAnnotationHistory(_userId) {
     try {
       const response = await API.get(`/notes`);
       // Filter notes by user if they have user_id
       return response.data || [];
-    } catch (error) {
+    } catch {
       return [];
     }
   }
 
-  async getGamificationProgress(userId) {
+  async getGamificationProgress(_userId) {
     try {
       // Use localStorage gamification data that already exists
       const storedStats = localStorage.getItem('gamificationStats');
       const storedAchievements = localStorage.getItem('gamificationAchievements');
-      
+
       return {
         stats: storedStats ? JSON.parse(storedStats) : {},
         achievements: storedAchievements ? JSON.parse(storedAchievements) : []
       };
-    } catch (error) {
+    } catch {
       return {};
     }
   }
@@ -746,12 +745,12 @@ class LiteraryMentor {
     return 'improving';
   }
 
-  extractGenrePatterns(sessions) {
+  extractGenrePatterns(_sessions) {
     // Return common genres for now
     return ['fiction', 'non-fiction', 'mystery'];
   }
 
-  calculateCompletionRate(sessions) {
+  calculateCompletionRate(_sessions) {
     // Simple completion rate
     return 0.75;
   }
@@ -783,7 +782,7 @@ class LiteraryMentor {
     return recommendations[style] || 'Keep taking notes to develop your style.';
   }
 
-  async assessCurrentMood(userId) {
+  async assessCurrentMood(_userId) {
     return 'curious'; // Default mood
   }
 
@@ -791,19 +790,19 @@ class LiteraryMentor {
     return profile?.readingLevel || 'intermediate';
   }
 
-  async extractRecentInterests(userId) {
+  async extractRecentInterests(_userId) {
     return ['technology', 'philosophy', 'psychology'];
   }
 
-  identifyKnowledgeGaps(profile) {
+  identifyKnowledgeGaps(_profile) {
     return ['advanced topics', 'specialized vocabulary'];
   }
 
-  async getSocialRecommendations(userId) {
+  async getSocialRecommendations(_userId) {
     return [];
   }
 
-  async synthesizeRecommendations(factors) {
+  async synthesizeRecommendations(_factors) {
     // Return some default book recommendations
     return [
       { title: 'Atomic Habits', author: 'James Clear', genre: 'Self-improvement' },
@@ -816,15 +815,15 @@ class LiteraryMentor {
     return `Based on your ${factors.recentMood} mood and interest in ${book.genre}`;
   }
 
-  estimateReadingTime(book, profile) {
+  estimateReadingTime(_book, _profile) {
     return '5-7 hours';
   }
 
-  assessDifficultyMatch(book, profile) {
+  assessDifficultyMatch(_book, _profile) {
     return 'good match';
   }
 
-  predictLearningOutcomes(book, profile) {
+  predictLearningOutcomes(_book, _profile) {
     return ['new perspectives', 'expanded vocabulary', 'deeper understanding'];
   }
 
@@ -832,7 +831,7 @@ class LiteraryMentor {
     try {
       const response = await API.get(`/books/${bookId}`);
       return response.data;
-    } catch (error) {
+    } catch {
       return { title: 'Unknown Book', author: 'Unknown Author' };
     }
   }
@@ -841,53 +840,53 @@ class LiteraryMentor {
     try {
       const response = await API.get('/notes');
       return response.data.filter(note => note.book_id === bookId);
-    } catch (error) {
+    } catch {
       return [];
     }
   }
 
-  generateAnalysisQuestions(book, notes) {
+  generateAnalysisQuestions(_book, _notes) {
     return [];
   }
 
-  generateApplicationQuestions(book, level) {
+  generateApplicationQuestions(_book, _level) {
     return [];
   }
 
-  generateSynthesisQuestions(book, notes) {
+  generateSynthesisQuestions(_book, _notes) {
     return [];
   }
 
-  generateCriticalThinkingQuestions(book) {
+  generateCriticalThinkingQuestions(_book) {
     return [];
   }
 
-  async determineQuizDifficulty(profile) {
+  async determineQuizDifficulty(_profile) {
     return 'intermediate';
   }
 
-  selectQuizQuestions(quizTypes, difficulty) {
+  selectQuizQuestions(quizTypes, _difficulty) {
     // Return the comprehension questions by default
     return quizTypes.comprehension || [];
   }
 
-  estimateQuizTime(difficulty) {
+  estimateQuizTime(_difficulty) {
     return 10; // 10 minutes
   }
 
-  defineQuizRewards(difficulty) {
+  defineQuizRewards(_difficulty) {
     return { points: 50, achievement: 'Quiz Master' };
   }
 
-  defineLearningObjectives(book, chapters) {
+  defineLearningObjectives(_book, _chapters) {
     return ['Understand main themes', 'Analyze character development', 'Apply concepts'];
   }
 
-  generateThemeOptions(book) {
+  generateThemeOptions(_book) {
     return ['Love and loss', 'Personal growth', 'Overcoming adversity', 'The human condition'];
   }
 
-  generateAnswerRubric(type) {
+  generateAnswerRubric(_type) {
     return {
       excellent: 'Comprehensive and insightful',
       good: 'Clear understanding shown',
@@ -895,7 +894,7 @@ class LiteraryMentor {
     };
   }
 
-  async getReadingStreak(userId) {
+  async getReadingStreak(_userId) {
     const streak = localStorage.getItem('readingStreak');
     return parseInt(streak) || 0;
   }
@@ -907,7 +906,7 @@ class LiteraryMentor {
     return "Keep it up!";
   }
 
-  async getWeeklyProgress(userId) {
+  async getWeeklyProgress(_userId) {
     return { pagesRead: 150, booksFinished: 1, notesCreated: 12 };
   }
 
@@ -928,13 +927,13 @@ class LiteraryMentor {
       // Get user's books and notes to provide personalized suggestions
       const books = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const notes = await API.get('/notes');
-      
+
       const { items: bookItems = [] } = books.data || {};
       const bookCount = bookItems.length;
       const noteCount = notes.data?.length || 0;
-      
+
       const suggestions = [];
-      
+
       if (bookCount === 0) {
         suggestions.push('Upload your first book');
         suggestions.push('Browse book recommendations');
@@ -948,22 +947,22 @@ class LiteraryMentor {
         suggestions.push('Review your reading progress');
         suggestions.push('Set a monthly reading challenge');
       }
-      
+
       // Conditional suggestions based on activity
       if (noteCount === 0 && bookCount > 0) {
         suggestions.unshift('Create your first note on a book');
       } else if (noteCount > 0) {
         suggestions.push('Review and organize your notes');
       }
-      
+
       // Add AI-powered suggestions if available
       if (this.constructor.name === 'AIKeyManager' && window.AIKeyManager?.hasAnyProvider()) {
         suggestions.push('Get AI reading recommendations');
       }
-      
+
       return suggestions.slice(0, 4); // Limit to 4 suggestions
-      
-    } catch (error) {
+
+    } catch {
       // Fallback suggestions
       return [
         'Start a reading session',
@@ -973,47 +972,47 @@ class LiteraryMentor {
     }
   }
 
-  async assessComprehension(userId) {
+  async assessComprehension(_userId) {
     return { level: 'intermediate', score: 0.75 };
   }
 
-  async getReadingProgress(bookId) {
+  async getReadingProgress(_bookId) {
     return { percentage: 45, currentChapter: 5 };
   }
 
-  generateOpeningQuestion(book, progress) {
+  generateOpeningQuestion(book, _progress) {
     return `What are your initial thoughts on "${book.title}" so far?`;
   }
 
-  generateDeepeningQuestions(book, notes) {
+  generateDeepeningQuestions(_book, _notes) {
     return ['How does this connect to your own experiences?'];
   }
 
-  generateConnectionQuestions(book, profile) {
+  generateConnectionQuestions(_book, _profile) {
     return ['What other books does this remind you of?'];
   }
 
-  generateChallengingQuestions(book) {
+  generateChallengingQuestions(_book) {
     return ['What would you have done differently in this situation?'];
   }
 
-  generateReflectionQuestions(book) {
+  generateReflectionQuestions(_book) {
     return ['What will you take away from this reading?'];
   }
 
-  selectDiscussionTopic(book, progress) {
+  selectDiscussionTopic(_book, _progress) {
     return 'Character Development';
   }
 
-  designDiscussionFlow(progress) {
+  designDiscussionFlow(_progress) {
     return ['Opening', 'Exploration', 'Analysis', 'Synthesis', 'Reflection'];
   }
 
-  async findRelatedReadings(book) {
+  async findRelatedReadings(_book) {
     return [];
   }
 
-  selectQuestionsByDepth(questions, depth, context) {
+  selectQuestionsByDepth(questions, _depth, _context) {
     return questions.clarification.slice(0, 2);
   }
 
@@ -1042,8 +1041,8 @@ class LiteraryMentor {
       try {
         const notesResponse = await API.get(`/notes?bookId=${bookId}`);
         highlights = Array.isArray(notesResponse.data) ? notesResponse.data : notesResponse.data.notes || [];
-      } catch (error) {
-        console.log('No highlights found for book');
+      } catch {
+        console.warn('No highlights found for book');
       }
 
       // Construct privacy-preserving AI prompt (no book metadata sent)

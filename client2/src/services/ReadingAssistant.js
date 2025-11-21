@@ -125,7 +125,7 @@ class ReadingAssistant {
   /**
    * Smart book recommendations based on reading patterns and mood analysis
    */
-  async getBookRecommendations(userId, currentBook, readingHistory) {
+  async getBookRecommendations(userId, currentBook, _readingHistory) {
     try {
       const userProfile = await this.buildReadingProfile(userId);
       const moodAnalysis = await this.analyzeMoodFromNotes(userId);
@@ -371,7 +371,7 @@ class ReadingAssistant {
   /**
    * Fallback suggestions when AI is unavailable
    */
-  getFallbackSuggestions(text) {
+  getFallbackSuggestions(_text) {
     return {
       suggestions: [
         {
@@ -413,7 +413,7 @@ class ReadingAssistant {
     try {
       const response = await API.get(`/ai/reading-profile/${userId}`);
       return response.data;
-    } catch (error) {
+    } catch {
       return this.getDefaultProfile();
     }
   }
@@ -425,7 +425,7 @@ class ReadingAssistant {
     try {
       const response = await API.post('/ai/mood-analysis', { userId });
       return response.data;
-    } catch (error) {
+    } catch {
       return { dominantTone: 'neutral', confidence: 0.5 };
     }
   }
@@ -437,7 +437,7 @@ class ReadingAssistant {
     try {
       const response = await API.get(`/ai/user-stats/${userId}`);
       return response.data;
-    } catch (error) {
+    } catch {
       return { averageWordsPerMinute: 200, sessionLength: 30 };
     }
   }
@@ -449,7 +449,7 @@ class ReadingAssistant {
     try {
       const response = await API.post('/ai/behavior-analysis', { userStats });
       return response.data;
-    } catch (error) {
+    } catch {
       return { patterns: [], preferences: [] };
     }
   }
@@ -461,7 +461,7 @@ class ReadingAssistant {
     try {
       const response = await API.get(`/ai/aggregated-data/${userId}`);
       return response.data;
-    } catch (error) {
+    } catch {
       return { sessions: [], notes: [], books: [] };
     }
   }
@@ -473,7 +473,7 @@ class ReadingAssistant {
     try {
       const response = await API.post('/ai/thematic-connections', { note });
       return response.data.connections || [];
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -485,7 +485,7 @@ class ReadingAssistant {
     try {
       const response = await API.post('/ai/improve-phrasing', { note });
       return response.data.suggestions || [];
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -493,7 +493,7 @@ class ReadingAssistant {
   /**
    * Fallback methods for when AI services are unavailable
    */
-  getFallbackRecommendations(userId) {
+  getFallbackRecommendations(_userId) {
     return {
       recommendations: [],
       reasons: ['AI service temporarily unavailable'],
@@ -503,10 +503,10 @@ class ReadingAssistant {
     };
   }
 
-  fallbackTimePrediction(book, userId) {
+  fallbackTimePrediction(book, _userId) {
     const pages = book.page_count || book.pages || 250;
     const estimatedMinutes = Math.ceil(pages * 2); // 2 minutes per page average
-    
+
     return {
       estimatedMinutes,
       estimatedSessions: Math.ceil(estimatedMinutes / 30),
@@ -515,7 +515,7 @@ class ReadingAssistant {
     };
   }
 
-  getFallbackChallenges(userStats) {
+  getFallbackChallenges(_userStats) {
     return {
       weeklyGoals: [{ type: 'pages', target: 50, description: 'Read 50 pages this week' }],
       genreChallenges: [{ genre: 'mystery', description: 'Try a mystery novel' }],
@@ -524,7 +524,7 @@ class ReadingAssistant {
     };
   }
 
-  getFallbackAnalytics(userId) {
+  getFallbackAnalytics(_userId) {
     return {
       readingPatterns: { optimal: 'evening', sessions: [] },
       comprehensionTrends: { trend: 'stable', score: 0.7 },
