@@ -19,7 +19,7 @@ const MD3Fab = ({
   icon,
   onClick,
   ariaLabel,
-  position = { bottom: '24px', right: '24px' },
+  position = null,  // null by default - let CSS handle positioning
   size = 'normal',
   variant = 'primary',
   extended = false,
@@ -42,7 +42,7 @@ const MD3Fab = ({
       className={fabClasses}
       aria-label={ariaLabel}
       disabled={disabled}
-      style={position}
+      style={position || undefined}  // Only apply inline styles if position is explicitly provided
       type="button"
     >
       <span className={styles.icon}>{icon}</span>

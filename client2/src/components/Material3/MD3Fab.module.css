@@ -7,6 +7,8 @@
 .fab {
   /* Positioning */
   position: fixed;
+  bottom: 24px;  /* Default desktop position */
+  right: 24px;
   z-index: 10003;  /* ✅ Above bottom sheet (10002) and all other UI elements */
 
   /* Reset */
