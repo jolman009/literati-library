@@ -13,7 +13,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  z-index: 10001;  /* ✅ Above skip-link (10000) and all other components */
   pointer-events: auto;
 
   /* ✅ Don't cover the FAB button area (bottom-right corner) */
@@ -34,7 +34,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 9999;
+  z-index: 10002;  /* ✅ Above backdrop */
 
   /* Layout */
   display: flex;
