@@ -161,9 +161,9 @@
     font-size: 18px;
   }
 
-  /* Adjust default positioning for mobile */
+  /* Move FAB higher on mobile - leave space for bottom sheet */
   .fab {
-    bottom: 16px !important;
+    bottom: 80px !important;  /* Moved up from 16px - leaves 25% of screen at bottom */
     right: 16px !important;
   }
 }
