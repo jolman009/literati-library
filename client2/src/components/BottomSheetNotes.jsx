@@ -95,14 +95,28 @@ const BottomSheetNotes = ({
 
   // ===== OPEN/CLOSE LOGIC =====
   useEffect(() => {
-    if (isOpen && sheetState === 'closed') {
-      // Open to peek state
-      setSheetState('peek');
-      controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
-    } else if (!isOpen && sheetState !== 'closed') {
+    console.log('[BottomSheetNotes] Open/Close effect:', { isOpen, sheetState });
+
+    if (isOpen) {
+      // Open to peek state with animation
+      if (sheetState === 'closed') {
+        console.log('[BottomSheetNotes] Opening to peek state');
+        setSheetState('peek');
+        controls.start({
+          y: `${100 - SNAP_POINTS.PEEK}%`,
+          transition: { type: 'spring', damping: 25, stiffness: 280 }
+        });
+      }
+    } else {
       // Close completely
-      setSheetState('closed');
-      controls.start({ y: '100%' });
+      if (sheetState !== 'closed') {
+        console.log('[BottomSheetNotes] Closing sheet');
+        setSheetState('closed');
+        controls.start({
+          y: '100%',
+          transition: { duration: 0.3, ease: 'easeInOut' }
+        });
+      }
     }
   }, [isOpen, sheetState, controls]);
 
@@ -375,19 +389,27 @@ const BottomSheetNotes = ({
   const getOverlayOpacity = () => {
     const opacityMap = {
       closed: 0,
-      peek: 0,
-      half: 0.2,
-      full: 0.4
+      peek: 0.1,  // ✅ Slight backdrop so users know it's open
+      half: 0.3,
+      full: 0.5
     };
     return opacityMap[sheetState] || 0;
   };
 
   const isDark = actualTheme === 'dark';
 
-  // Don't render if closed
-  if (!isOpen && sheetState === 'closed') {
+  // Don't render if not open
+  if (!isOpen) {
     return null;
   }
+
+  console.log('[BottomSheetNotes] Rendering:', {
+    sheetState,
+    isOpen,
+    bookId,
+    currentPage,
+    isDark
+  });
 
   return (
     <>

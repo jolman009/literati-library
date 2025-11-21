@@ -15,6 +15,16 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 9998;
   pointer-events: auto;
+
+  /* ✅ Don't cover the FAB button area (bottom-right corner) */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 100px),
+    calc(100% - 100px) calc(100% - 100px),
+    calc(100% - 100px) 100%,
+    0 100%
+  );
 }
 
 /* ===== BOTTOM SHEET ===== */
@@ -96,6 +106,8 @@
   gap: 12px;
   padding: 0 20px 20px;
   user-select: none;
+  /* Add subtle shadow to make it more visible */
+  filter: drop-shadow(0 -4px 12px rgba(0, 0, 0, 0.15));
 }
 
 .peekButton {
