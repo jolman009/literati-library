@@ -14,13 +14,12 @@ import ChatGuide from './ChatGuide/ChatGuide';
 
 const AppLayout = () => {
   const { actualTheme } = useMaterial3Theme();
-  const { isPremium } = useEntitlements();
+  useEntitlements();
   const { pathname } = useLocation();
   const { isOpen, openSearch, closeSearch, navigateToResult } = useGlobalSearch();
   const [navCollapsed, setNavCollapsed] = useState(false); // false = expanded = 280px
 
   const inReader = /^\/read\/[^/]+$/.test(pathname);
-  const isDashboard = pathname === '/dashboard';
 
   const layoutClasses = [
     'premium-app-layout',
