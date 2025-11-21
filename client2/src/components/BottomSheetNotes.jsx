@@ -385,9 +385,9 @@ const BottomSheetNotes = ({
   const getOverlayOpacity = () => {
     const opacityMap = {
       closed: 0,
-      peek: 0.1,  // ✅ Slight backdrop so users know it's open
-      half: 0.3,
-      full: 0.5
+      peek: 0.2,  // Visible backdrop in peek state
+      half: 0.5,  // Moderate dimming in half state
+      full: 0.8   // Strong dimming in full state for better readability
     };
     return opacityMap[sheetState] || 0;
   };
