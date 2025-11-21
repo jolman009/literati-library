@@ -121,6 +121,7 @@ temp/
 *.swp
 *.swo
 *~
+*.backup*
 
 # OS generated files
 .DS_Store
