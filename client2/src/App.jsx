@@ -71,6 +71,7 @@ const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
 // Library Page wrapper (lazy-loaded)
 const LibraryPageWrapper = lazy(() =>
   import('./components/wrappers/LibraryPageWrapper').catch(err => {
@@ -293,6 +294,13 @@ const AppRoutes = () => {
         <ErrorBoundary fallbackComponent="contact" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Opening Contact…" />}>
             <ContactDialog />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+      <Route path="/jolman-press" element={
+        <ErrorBoundary fallbackComponent="jolman-press" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Jolman Press..." />}>
+            <JolmanPressPage />
           </Suspense>
         </ErrorBoundary>
       } />
