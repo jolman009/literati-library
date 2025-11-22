@@ -458,7 +458,7 @@ const FillingArc = ({
     }
   };
 
-  const { viewBox, center, radius } = arcData;
+  const { viewBox } = arcData;
 
   return (
     <div className={`filling-arc filling-arc--${variant} filling-arc--${size} ${className}`}>

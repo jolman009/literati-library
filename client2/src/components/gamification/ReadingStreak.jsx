@@ -1,6 +1,6 @@
 // src/components/gamification/ReadingStreak.jsx
 import React, { useState, useEffect } from 'react';
-import { MD3Card, MD3Chip, MD3Button, useSnackbar } from '../Material3';
+import { MD3Card, MD3Button, useSnackbar } from '../Material3';
 import './ReadingStreak.css';
 import Icon from '../ui/Icon';
 
@@ -50,8 +50,7 @@ const ReadingStreak = () => {
   // Mark today as read
   const markTodayAsRead = () => {
     const today = new Date();
-    const todayString = today.toDateString();
-    
+
     if (streakData.todayRead) {
       showSnackbar({
         message: "You've already logged reading for today!",

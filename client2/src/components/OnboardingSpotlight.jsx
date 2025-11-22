@@ -45,13 +45,17 @@ const OnboardingSpotlight = ({ isOpen, onClose }) => {
 
   const handleClose = () => {
     if (dontShowAgain) {
-      try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {}
+      try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {
+        // Silently ignore localStorage errors
+      }
     }
     onClose?.();
   };
 
   const go = (path) => {
-    try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {}
+    try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {
+      // Silently ignore localStorage errors
+    }
     navigate(path);
     onClose?.();
   };

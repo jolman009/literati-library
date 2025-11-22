@@ -1,5 +1,5 @@
 // src/components/Material3/index.jsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 // ===============================================
 // CORE EXPORTS - Individual Components

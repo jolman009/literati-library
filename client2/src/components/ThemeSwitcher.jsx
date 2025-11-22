@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useGamification } from '../contexts/GamificationContext';
 import {
-  THEMES,
   getUnlockedThemes,
   getLockedThemes,
   isThemeUnlocked,

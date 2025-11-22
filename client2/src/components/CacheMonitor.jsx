@@ -46,7 +46,7 @@ const CacheMonitor = () => {
           quota: Math.round(estimate.quota / 1024 / 1024), // MB
           usage: Math.round(estimate.usage / 1024 / 1024)   // MB
         };
-      } catch (error) {
+      } catch {
         return { quota: 'n/a', usage: 'n/a' };
       }
     }
@@ -76,7 +76,7 @@ const CacheMonitor = () => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.sub || payload.user_id || payload.id;
       }
-    } catch (error) {
+    } catch {
       return null;
     }
     return null;

@@ -150,7 +150,7 @@ export const gamificationAPI = {
   },
 
   // Get gamification stats
-  getStats: async (token) => {
+  getStats: async () => {
     try {
       const response = await API.get('/api/gamification/stats');
       return response.data;
@@ -161,7 +161,7 @@ export const gamificationAPI = {
   },
 
   // Get achievements
-  getAchievements: async (token) => {
+  getAchievements: async () => {
     try {
       const response = await API.get('/api/gamification/achievements');
       return response.data;
@@ -172,7 +172,7 @@ export const gamificationAPI = {
   },
 
   // Get goals
-  getGoals: async (token) => {
+  getGoals: async () => {
     try {
       const response = await API.get('/api/gamification/goals');
       return response.data;
