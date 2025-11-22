@@ -260,7 +260,7 @@ export class CachedApiService {
       }
       
       return null;
-    } catch (_error) {
+    } catch {
       return null;
     }
   }
@@ -349,7 +349,7 @@ export class CachedApiService {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.sub || payload.user_id || payload.id;
       }
-    } catch (_error) {
+    } catch {
       console.warn('Failed to extract user ID from token');
     }
     

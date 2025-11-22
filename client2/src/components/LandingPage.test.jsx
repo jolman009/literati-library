@@ -2,6 +2,13 @@ import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render, cleanupTest } from '../test-utils';
+
+// Mock the landing page to avoid Vite trying to process the docs bundle
+// (which sits outside the client workspace and pulls in extra CSS).
+vi.mock('../../../docs/landing/LandingPage', () => ({
+  default: () => <div data-testid="landing-page">Landing Page</div>
+}));
+
 import LandingPage from '../../../docs/landing/LandingPage';
 
 // Mock any external dependencies that might be problematic

@@ -15,7 +15,7 @@ import "../styles/epub-reader.css";
  * - onLocationChange: ({ cfi: string, percent?: number }) => void
  * - initialLocation: string | null  // epubcfi(...) from query or a saved note
  */
-const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
+const EpubReader = ({ book, onClose, _onLocationChange, initialLocation }) => {
   // Use proxy endpoint for EPUB files to ensure proper authentication and CORS
   // Use environment config for consistent API URL across environments
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;

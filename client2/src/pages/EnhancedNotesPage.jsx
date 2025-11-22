@@ -1,5 +1,3 @@
- 
-/* eslint-disable react-hooks/exhaustive-deps */
 // src/pages/EnhancedNotesPage.jsx - Interactive Notes with Visualizations
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
@@ -432,11 +430,6 @@ const EnhancedNotesPage = () => {
     book_id: '',
     tags: ''
   });
-  
-  // Debug: Watch modal state changes
-  useEffect(() => {
-    
-  }, [isModalOpen]);
 
   // Load data
   useEffect(() => {
@@ -444,7 +437,8 @@ const EnhancedNotesPage = () => {
       fetchNotes();
       fetchBooks();
     }
-  }, [fetchNotes, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
   
   const fetchNotes = useCallback(async () => {
     try {

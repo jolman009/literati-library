@@ -137,6 +137,7 @@ vi.mock('./contexts/Material3ThemeContext', () => ({
 
 // Mock Material3 components
 vi.mock('./components/Material3', () => ({
+  Material3ThemeProvider: ({ children }) => children,
   MD3SnackbarProvider: ({ children }) => children,
   MD3Button: ({ children, onClick, ...props }) => (
     <button onClick={onClick} data-testid="md3-button" {...props}>

@@ -12,7 +12,7 @@ const NavigationFAB = ({ quickStats = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  useLocation();
   const { logout } = useAuth();
   const { actualTheme } = useMaterial3Theme();
 

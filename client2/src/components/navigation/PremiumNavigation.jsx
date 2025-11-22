@@ -7,7 +7,6 @@ import './PremiumNavigation.css';
 const PremiumNavigation = ({
   unreadNotesCount = 0,
   pendingUploads = 0,
-  isAdmin = false,
   defaultCollapsed = false,
   isCollapsed,
   onCollapseChange,

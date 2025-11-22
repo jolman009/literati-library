@@ -1,6 +1,6 @@
 // src/components/OfflineIndicator.jsx
 import React, { useState, useEffect } from 'react';
-import { WifiOff, Wifi, Cloud, CloudOff, RefreshCw } from 'lucide-react';
+import { WifiOff, Cloud, CloudOff, RefreshCw } from 'lucide-react';
 import { useNetworkStatus } from '../hooks/useOfflineDetection';
 import { syncManager } from '../services/syncManager';
 import { getSyncQueueStats } from '../services/syncQueue';

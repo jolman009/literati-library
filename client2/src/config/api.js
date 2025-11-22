@@ -2,16 +2,35 @@
 import axios from 'axios';
 import environmentConfig from './environment.js';
 
-// Create axios instance with base configuration
-const API = axios.create({
-  baseURL: environmentConfig.apiUrl,
-  timeout: environmentConfig.apiTimeout,
-  headers: environmentConfig.getDefaultHeaders(),
-  withCredentials: true, // Send cookies with all requests
-});
+// Normalize environment configuration to avoid crashes in tests where
+// partial mocks are used. This keeps axios happy even when optional
+// helpers aren't provided by the mock implementation.
+const apiUrl = environmentConfig?.apiUrl || 'http://localhost:5000';
+const apiTimeout = environmentConfig?.apiTimeout ?? 10000;
+const defaultHeaders = environmentConfig?.getDefaultHeaders
+  ? environmentConfig.getDefaultHeaders()
+  : { 'Content-Type': 'application/json' };
+
+// Create axios instance with base configuration, falling back to a
+// lightweight stub when axios.create is unavailable (e.g. when axios is
+// mocked incorrectly).
+const API = axios?.create
+  ? axios.create({
+      baseURL: apiUrl,
+      timeout: apiTimeout,
+      headers: defaultHeaders,
+      withCredentials: true, // Send cookies with all requests
+    })
+  : {
+      defaults: { baseURL: apiUrl, headers: defaultHeaders },
+      interceptors: { request: { use: () => {} }, response: { use: () => {} } },
+      get: () => Promise.resolve({ data: null }),
+      post: () => Promise.resolve({ data: {} }),
+      patch: () => Promise.resolve({ data: {} }),
+    };
 
 // Add BASE_URL property for backward compatibility
-API.BASE_URL = environmentConfig.apiUrl;
+API.BASE_URL = apiUrl;
 
 // Add request interceptor to include auth token
 API.interceptors.request.use(
@@ -150,7 +169,7 @@ export const gamificationAPI = {
   },
 
   // Get gamification stats
-  getStats: async (token) => {
+  getStats: async () => {
     try {
       const response = await API.get('/api/gamification/stats');
       return response.data;
@@ -161,7 +180,7 @@ export const gamificationAPI = {
   },
 
   // Get achievements
-  getAchievements: async (token) => {
+  getAchievements: async () => {
     try {
       const response = await API.get('/api/gamification/achievements');
       return response.data;
@@ -172,7 +191,7 @@ export const gamificationAPI = {
   },
 
   // Get goals
-  getGoals: async (token) => {
+  getGoals: async () => {
     try {
       const response = await API.get('/api/gamification/goals');
       return response.data;

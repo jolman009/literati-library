@@ -2,22 +2,19 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  MD3TextField,
+import {
   MD3Card,
   MD3Chip,
-  MD3Button,
   MD3IconButton
 } from './Material3';
-import { 
-  Search, 
-  X, 
-  Book, 
-  FileText, 
+import {
+  Search,
+  X,
+  Book,
+  FileText,
   FolderOpen,
   Clock,
   ArrowRight,
-  Filter,
   BookOpen,
   Hash,
   Calendar
@@ -566,7 +563,7 @@ const ResultSection = ({ title, icon, results, onResultClick, isDark, renderResu
 );
 
 // Individual result components
-const BookResult = ({ book, query }) => {
+const BookResult = ({ book, _query }) => {
   const { actualTheme } = useMaterial3Theme();
   const isDark = actualTheme === 'dark';
   
@@ -623,7 +620,7 @@ const BookResult = ({ book, query }) => {
   );
 };
 
-const NoteResult = ({ note, query, books }) => {
+const NoteResult = ({ note, _query, books }) => {
   const { actualTheme } = useMaterial3Theme();
   const isDark = actualTheme === 'dark';
   const book = books.find(b => b.id === note.book_id);
@@ -709,7 +706,7 @@ const NoteResult = ({ note, query, books }) => {
   );
 };
 
-const CollectionResult = ({ collection, query }) => {
+const CollectionResult = ({ collection, _query }) => {
   const { actualTheme } = useMaterial3Theme();
   const isDark = actualTheme === 'dark';
   

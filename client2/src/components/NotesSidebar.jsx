@@ -113,15 +113,12 @@ const NotesSidebar = ({
       recognitionRef.current.lang = 'en-US';
 
       recognitionRef.current.onresult = (event) => {
-        let interimTranscript = '';
         let finalTranscript = '';
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             finalTranscript += transcript + ' ';
-          } else {
-            interimTranscript += transcript;
           }
         }
 
@@ -298,7 +295,7 @@ const NotesSidebar = ({
             });
 
             setContent("");
-          } catch (localError) {
+          } catch {
             showSnackbar({
               message: "⚠️ Session expired. Please copy your note and log in again",
               variant: "error"
@@ -320,7 +317,7 @@ const NotesSidebar = ({
             });
 
             setContent("");
-          } catch (localError) {
+          } catch {
             showSnackbar({
               message: "⚠️ Network error. Please copy your note before closing",
               variant: "error"
