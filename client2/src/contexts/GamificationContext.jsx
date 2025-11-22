@@ -102,7 +102,7 @@ export const GamificationProvider = ({ children }) => {
   }, [user, offlineMode]);
 
   // 🔧 FIXED: Safe API helper that handles 401s gracefully
-  const makeSafeApiCall = async (endpoint, options = {}) => {
+  const makeSafeApiCall = useCallback(async (endpoint, options = {}) => {
     try {
       if (!user) {
         console.warn('🔒 No authenticated user - working offline');
@@ -140,7 +140,7 @@ export const GamificationProvider = ({ children }) => {
       setOfflineMode(true);
       return null;
     }
-  };
+  }, [user, makeApiCall]);
 
   // Calculate reading streak from session history
   const calculateReadingStreak = useCallback(() => {
@@ -324,7 +324,7 @@ export const GamificationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user, isAuthenticated, authLoading, offlineMode, calculateReadingStreak]);
+  }, [user, isAuthenticated, authLoading, offlineMode, calculateReadingStreak, makeSafeApiCall, achievements.length, goals.length]);
 
   // Add debouncing and caching for fetchData
   const lastFetchTime = useRef(0);
@@ -346,7 +346,7 @@ export const GamificationProvider = ({ children }) => {
   useEffect(() => {
     if (!user || authLoading || !isAuthenticated) return;
     fetchDataDebounced();
-  }, [user?.id, authLoading, isAuthenticated]);
+  }, [user?.id, authLoading, isAuthenticated, fetchDataDebounced, user]);
 
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
@@ -525,7 +525,7 @@ export const GamificationProvider = ({ children }) => {
 
     // Check for achievement unlocks
     checkAchievements(actionType, data);
-  }, [user, offlineMode, makeSafeApiCall]);
+  }, [user, offlineMode, checkAchievements, fetchDataDebounced]);
 
   // Check if user has unlocked any achievements
   const checkAchievements = useCallback((actionType) => {
