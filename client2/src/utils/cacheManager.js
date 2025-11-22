@@ -228,7 +228,7 @@ export class CacheManager {
     for (const priority of priorities) {
       try {
         switch (priority) {
-          case 'books':
+          case 'books': {
             // Pre-cache recent books
             const { fetchBooksWithCovers } = await import('../api/books');
             const books = await fetchBooksWithCovers(userId, { limit: 20 });
@@ -236,6 +236,7 @@ export class CacheManager {
               await this.set('books', 'recent', books, userId);
             }
             break;
+          }
             
           case 'stats':
             // Pre-cache reading statistics

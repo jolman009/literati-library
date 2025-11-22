@@ -9,7 +9,7 @@ import API from '../../config/api';
 
 // Safe gamification hook
 const useOptionalGamification = () => {
-  const [gamificationContext, setGamificationContext] = useState({
+  const [gamificationContext] = useState({
     trackAction: async (action, data) => {
       console.warn(`🎯 Gamification action: ${action}`, data);
       return Promise.resolve();
@@ -24,7 +24,7 @@ const useOptionalGamification = () => {
     const loadGamification = async () => {
       try {
         // Use dynamic import instead of require()
-        const module = await import('../../contexts/GamificationContext');
+        await import('../../contexts/GamificationContext');
         console.warn('✅ Gamification module loaded successfully');
         // Note: We can't call useGamification here since hooks must be called in component scope
         // The gamification will be handled by the parent component that provides the context

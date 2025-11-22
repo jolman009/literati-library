@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
       let res;
       try {
         res = await fetch(url, config);
-      } catch (networkErr) {
+      } catch {
         throw new Error('Network error. Please check your connection.');
       }
 
@@ -237,7 +237,9 @@ export const AuthProvider = ({ children }) => {
                   </button>
                 )
               });
-            } catch {}
+            } catch {
+              // Silently ignore snackbar errors
+            }
             localStorage.removeItem(USER_KEY);
             setUser(null);
             throw new Error('Your session has expired. Please log in again.');
@@ -286,7 +288,9 @@ export const AuthProvider = ({ children }) => {
             </button>
           )
         });
-      } catch {}
+      } catch {
+        // Silently ignore snackbar errors
+      }
     };
     window.addEventListener('auth-refresh-failed', handler);
     return () => window.removeEventListener('auth-refresh-failed', handler);
@@ -349,7 +353,7 @@ export const AuthProvider = ({ children }) => {
             console.warn('✅ [AUTH] Cookie verification successful despite missing header token');
             if (!cancelled) setLoading(false);
             return;
-          } catch (err) {
+          } catch {
             // Both cookie AND header auth failed
             if (!cancelled) {
               console.warn('❌ [AUTH] Both cookie and header auth failed in dev mode');

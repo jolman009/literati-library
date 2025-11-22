@@ -8,10 +8,7 @@ const WelcomeWidget = ({
   books = [],
   currentPage = 'library',
   onNavigate,
-  analytics = {},
-  viewMode = 'grid',
-  onViewModeChange,
-  ...props
+  analytics = {}
 }) => {
   const [activeNavItem, setActiveNavItem] = useState(currentPage);
   const { actualTheme } = useMaterial3Theme();

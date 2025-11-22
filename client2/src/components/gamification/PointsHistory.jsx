@@ -87,7 +87,9 @@ const PointsHistory = ({ limit = 10 }) => {
             localData = JSON.parse(localStorage.getItem(`gamification_actions_${u.id}`)||'[]');
           }
         }
-      } catch {}
+      } catch {
+        // Silently ignore localStorage errors
+      }
       // Helper: build timeAgo if backend didn't provide it
       const toTimeAgo = (iso) => {
         try {

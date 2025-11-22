@@ -28,7 +28,7 @@ const GoogleDriveUploader = ({
   disabled = false,
   className = '',
 }) => {
-  const { user } = useAuth();
+  useAuth();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);

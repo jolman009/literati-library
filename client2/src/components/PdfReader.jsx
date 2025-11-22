@@ -31,8 +31,8 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
   const containerRef = useRef(null);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(initialPage || 1);
-  const [pageWidth, setPageWidth] = useState(undefined);
   const [pageHeight, setPageHeight] = useState(undefined);
+  const [, setPageWidth] = useState(undefined);
   const touchStartX = useRef(null);
 
   // Memoize PDF.js options to prevent unnecessary reloads
