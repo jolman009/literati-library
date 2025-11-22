@@ -68,6 +68,8 @@ import PremiumModal from './components/premium/PremiumModal';
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
 import Login from './pages/Login';
+import ResetPassword from './components/ResetPassword';
+import UpdatePassword from './components/UpdatePassword';
 
 // Lazy load all other pages for better performance
 const SignUpPage = lazy(() => import('./pages/SignUpPage'));
@@ -190,7 +192,8 @@ const AppRoutes = () => {
         </ErrorBoundary>
       } />
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
-
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
       <Route element={<ProtectedAppLayout />}>
         <Route path="/dashboard" element={
           <ErrorBoundary fallbackComponent="dashboard" variant="full">

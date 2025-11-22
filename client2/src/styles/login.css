@@ -684,3 +684,41 @@
   .logo-container { border: 2px solid var(--md-sys-color-primary); }
 }
 
+/* Forgot Password Link */
+.forgot-password-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.forgot-password-link {
+  font-family: var(--md-sys-typescale-label-large-font-family);
+  font-size: var(--md-sys-typescale-label-large-font-size);
+  font-weight: 500;
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--md-sys-shape-corner-small);
+  transition: all 0.2s var(--md-sys-motion-easing-standard);
+  display: inline-block;
+}
+
+.forgot-password-link:hover {
+  background-color: rgba(var(--md-ref-palette-primary40), 0.08);
+  text-decoration: underline;
+}
+
+.forgot-password-link:active {
+  background-color: rgba(var(--md-ref-palette-primary40), 0.12);
+}
+
+.forgot-password-link:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .forgot-password-link:hover {
+  background-color: rgba(var(--md-ref-palette-primary80), 0.12);
+}
