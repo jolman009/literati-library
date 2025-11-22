@@ -88,7 +88,9 @@ const MD3Menu = memo(({
             const firstItem = root.querySelector('[role="menuitem"]:not([aria-disabled="true"])');
             firstItem?.focus();
           }
-        } catch {}
+        } catch {
+          // Silently ignore focus errors
+        }
       }, 0);
     } else {
       setTimeout(() => setIsVisible(false), 200);

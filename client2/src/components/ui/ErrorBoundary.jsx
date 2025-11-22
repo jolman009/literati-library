@@ -15,7 +15,7 @@ class ErrorBoundary extends React.Component {
     };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error) {
     return { hasError: true };
   }
 
@@ -85,7 +85,7 @@ class ErrorBoundary extends React.Component {
     try {
       await this.reportError(this.state.error, this.state.errorInfo);
       alert('Thank you! The error has been reported to our team.');
-    } catch (err) {
+    } catch {
       alert('Unable to report the error. Please try again later.');
     } finally {
       this.setState({ isReporting: false });

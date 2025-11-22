@@ -34,7 +34,7 @@ const ChevronDown = ({ className }) => (
 );
 
 // Book status configuration
-import { BOOK_STATUS, getStatus as getCanonicalStatus, applyStatus as applyCanonicalStatus } from '../utils/bookStatus';
+import { getStatus as getCanonicalStatus, applyStatus as applyCanonicalStatus } from '../utils/bookStatus';
 const BOOK_STATUSES = {
   unread: {
     label: 'Unread',

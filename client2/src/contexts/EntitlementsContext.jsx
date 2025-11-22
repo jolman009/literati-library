@@ -24,7 +24,9 @@ export const EntitlementsProvider = ({ children }) => {
     try {
       const raw = localStorage.getItem(OVERRIDE_KEY);
       if (raw != null) setOverride(/^(1|true|yes)$/i.test(String(raw)));
-    } catch {}
+    } catch {
+      // Silently ignore localStorage errors
+    }
   }, []);
 
   const isPremium = useMemo(() => {
@@ -52,13 +54,17 @@ export const EntitlementsProvider = ({ children }) => {
         localStorage.setItem(OVERRIDE_KEY, v ? '1' : '0');
         setOverride(v);
       }
-    } catch {}
+    } catch {
+      // Silently ignore localStorage errors
+    }
   };
 
   const openPremiumModal = () => {
     try {
       window.dispatchEvent(new CustomEvent('openPremiumModal'));
-    } catch {}
+    } catch {
+      // Silently ignore event dispatch errors
+    }
   };
 
   const value = useMemo(() => ({

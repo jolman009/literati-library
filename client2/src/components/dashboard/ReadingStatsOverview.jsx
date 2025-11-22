@@ -2,12 +2,10 @@
 // src/components/dashboard/ReadingStatsOverview.jsx - Full Premium Version
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MD3Card, MD3Progress, MD3Button, MD3Chip } from '../Material3';
-import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { MD3Progress, MD3Button, MD3Chip } from '../Material3';
 import './ReadingStatsOverview.css';
 
 const ReadingStatsOverview = ({ books = [] }) => {
-  const { actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   
   // Safely access reading sessions from localStorage
@@ -27,7 +25,6 @@ const ReadingStatsOverview = ({ books = [] }) => {
   const premiumStats = useMemo(() => {
     const now = new Date();
     const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     // Weekly sessions
     const weeklySessions = readingSessions.filter(session => 

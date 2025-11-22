@@ -108,7 +108,7 @@ const APIKeyConfiguration = ({ onKeysUpdated, showTitle = true }) => {
           [provider]: { error: result.error }
         });
       }
-    } catch (_error) {
+    } catch {
       setValidationStatus({
         ...validationStatus,
         [provider]: { error: 'Validation failed. Please check your key.' }
