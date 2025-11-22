@@ -1,6 +1,7 @@
 // src/components/Material3/MD3Fab.jsx
 import React from "react";
 import { motion } from "framer-motion";
+import { useMaterial3Theme } from "../../contexts/Material3ThemeContext";
 import styles from "./MD3Fab.module.css";
 
 /**
@@ -28,10 +29,14 @@ const MD3Fab = ({
   disabled = false,
   className = ''
 }) => {
+  const { actualTheme } = useMaterial3Theme();
+  const isDark = actualTheme === 'dark';
+
   const fabClasses = [
     styles.fab,
     styles[size],
     styles[variant],
+    isDark ? styles.dark : styles.light,
     extended ? styles.extended : '',
     disabled ? styles.disabled : '',
     className
