@@ -3,9 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
-import { BookGridSkeleton, StatsSkeleton } from '../components/ui/LoadingStates';
 import API from '../config/api';
-import '../components/EnhancedBookCard.css';
+import '../components/LibraryBookStyles.css';
 import { useSnackbar } from '../components/Material3';
 import { exportBooksToCSV, getFilterName, EXPORT_TEMPLATES } from '../utils/csvExport';
 
@@ -14,13 +13,10 @@ const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
 const StatisticsPage = React.lazy(() => import('./library/StatisticsPage'));
 const EnhancedStatisticsPage = React.lazy(() => import('./library/EnhancedStatisticsPage'));
 const EnhancedCollectionsPage = React.lazy(() => import('./subpages/EnhancedCollectionsPage'));
-const NotesSubpage = React.lazy(() => import('./subpages/NotesSubpage'));
 
 // Import dashboard components
 import WelcomeWidget from '../components/WelcomeWidget';
-// import EnhancedBookCard from '../components/EnhancedBookCard';
 import { BookCoverManager } from '../components/BookCoverManager';
-// ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import VirtualizedBookGrid from '../components/performance/VirtualizedBookGrid';
 
 const LibraryPage = () => {
@@ -205,32 +201,6 @@ const LibraryPage = () => {
     }
   };
 
-  // Delete/Patch helpers with fallback for servers using '/api' prefix
-  const deleteBookServer = async (bookId) => {
-    try {
-      await makeAuthenticatedApiCall(`/books/${bookId}`, { method: 'DELETE' });
-    } catch (err1) {
-      try {
-        await makeAuthenticatedApiCall(`/api/books/${bookId}`, { method: 'DELETE' });
-      } catch (err2) {
-        throw err2 || err1;
-      }
-    }
-  };
-
-  const patchBookServer = async (bookId, updates) => {
-    const options = { method: 'PATCH', body: JSON.stringify(updates) };
-    try {
-      return await makeAuthenticatedApiCall(`/books/${bookId}`, options);
-    } catch (err1) {
-      try {
-        return await makeAuthenticatedApiCall(`/api/books/${bookId}`, options);
-      } catch (err2) {
-        throw err2 || err1;
-      }
-    }
-  };
-
   const filteredBooks = books.filter(book => {
     switch (filter) {
       case 'reading':
@@ -257,26 +227,14 @@ const LibraryPage = () => {
   const handleBookUpdate = async (updatedBook) => {
     try {
       await API.patch(`/books/${updatedBook.id}`, updatedBook);
-      setBooks(prevBooks => 
-        prevBooks.map(book => 
+      setBooks(prevBooks =>
+        prevBooks.map(book =>
           book.id === updatedBook.id ? { ...book, ...updatedBook } : book
         )
       );
     } catch (error) {
       console.error('Failed to update book:', error);
     }
-  };
-
-  const handleRead = (book) => {
-    console.warn('📖 LibraryPage: handleRead called for book:', {
-      id: book.id,
-      title: book.title,
-      format: book.format,
-      file_url: book.file_url,
-      navigatingTo: `/read/${book.id}`
-    });
-    navigate(`/read/${book.id}`);
-    console.warn('✅ LibraryPage: navigate() to reader called successfully');
   };
 
   // Reading session handlers
@@ -310,11 +268,6 @@ const LibraryPage = () => {
       console.warn('⏹️ Reading session ended');
     }
     setOpenMenuBookId(null);
-  };
-
-  const handleEdit = (book) => {
-    console.warn('Edit book:', book);
-    // TODO: Implement edit functionality
   };
 
   const handleDelete = async (book) => {
@@ -506,16 +459,6 @@ const LibraryPage = () => {
           </React.Suspense>
         );
 
-      case 'notes':
-        return (
-          <NotesSubpage 
-            books={books} 
-            onNoteAction={(action, noteData) => {
-              console.warn('Note action:', action, noteData);
-            }}
-          />
-        );
-
       case 'library':
       default:
         return renderLibraryView();
@@ -550,7 +493,7 @@ const LibraryPage = () => {
 
     return (
       <>
-        {/* Welcome Widget - Only show on                                                        */}
+        {/* Welcome Widget - Only show on library page */}
         {currentPage === 'library' && (
           <WelcomeWidget
             user={user}
@@ -722,7 +665,7 @@ const LibraryPage = () => {
                         padding: '6px 32px 6px 12px',
                         borderRadius: '8px',
                         border: '1px solid var(--md-sys-color-outline)',
-                        background: 'green',
+                        background: 'var(--md-sys-color-surface-container-low)',
                         color: 'var(--md-sys-color-on-surface)',
                         fontSize: '13px',
                         fontWeight: '500',
@@ -1122,7 +1065,7 @@ const LibraryPage = () => {
                               className="book-menu-item"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleRead(book);
+                                handleBookClick(book);
                                 setOpenMenuBookId(null);
                               }}
                             >

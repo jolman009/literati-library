@@ -9,7 +9,6 @@ import ThemeToggle from "../components/ThemeToggle";
 import NotesSidebar from "../components/NotesSidebar";
 import BottomSheetNotes from "../components/BottomSheetNotes";
 import MD3Fab from "../components/Material3/MD3Fab";
-// ❌ REMOVED: FloatingTimer - using global ReadingSessionTimer instead
 import API from "../config/api";
 
 const ReadBook = () => {
@@ -192,25 +191,6 @@ const ReadBook = () => {
 
   return (
     <>
-      {/* Reader Top Bar: dashboard link + theme toggle */}
-      {!loading && !error && book?.file_url && (
-        <div className="reader-topbar" role="navigation" aria-label="Reader toolbar">
-          <div className="reader-topbar-left">
-            <button
-              type="button"
-              className="reader-topbar-btn"
-              onClick={() => navigate('/dashboard')}
-              aria-label="Back to Dashboard"
-            >
-              <span className="reader-topbar-back">←</span>
-              <span className="reader-topbar-text">Dashboard</span>
-            </button>
-          </div>
-          <div className="reader-topbar-right">
-            <ThemeToggle ariaLabel="Toggle light/dark mode" />
-          </div>
-        </div>
-      )}
       {/* Loading overlay */}
       {loading && (
         <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
@@ -324,19 +304,7 @@ const ReadBook = () => {
               <button
                 type="button"
                 className="reader-topbar-btn"
-                onClick={async () => {
-                  if (hasActiveSession) {
-                    const ok = window.confirm('You have an active reading session. Stop the session and return to Dashboard?');
-                    if (!ok) return;
-                    try {
-                      const result = await stopReadingSession();
-                      if (result?.success) {
-                        showSnackbar({ message: `Session saved (${result.duration} min)`, variant: 'success' });
-                      }
-                    } catch { /* empty */ }
-                  }
-                  navigate('/dashboard');
-                }}
+                onClick={handleClose}
                 aria-label="Back to Dashboard"
               >
                 <span className="reader-topbar-back">←</span>
