@@ -191,50 +191,74 @@
 }
 
 /* ===== DARK MODE ===== */
+/* Class-based dark mode (for manual theme toggle) */
+.fab.dark.primary {
+  background: rgb(165, 194, 255);  /* Bright blue that stands out */
+  color: rgb(0, 24, 72);  /* Dark blue text */
+  border: 2px solid rgba(255, 255, 255, 0.2);  /* Subtle border for definition */
+  box-shadow:
+    0px 2px 3px rgba(0, 0, 0, 0.5),
+    0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fab.dark.primary:hover:not(:disabled) {
+  background: rgb(145, 174, 235);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.5),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Secondary FAB in dark mode */
+.fab.dark.secondary {
+  background: rgb(179, 255, 196);
+  color: rgb(13, 31, 18);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0px 2px 3px rgba(0, 0, 0, 0.5),
+    0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fab.dark.secondary:hover:not(:disabled) {
+  background: rgb(159, 235, 176);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.5),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Tertiary FAB in dark mode */
+.fab.dark.tertiary {
+  background: rgb(255, 221, 179);
+  color: rgb(45, 22, 0);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0px 2px 3px rgba(0, 0, 0, 0.5),
+    0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+}
+
+.fab.dark.tertiary:hover:not(:disabled) {
+  background: rgb(235, 201, 159);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0px 4px 4px rgba(0, 0, 0, 0.5),
+    0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* System preference-based dark mode (fallback) */
 @media (prefers-color-scheme: dark) {
-  /* Primary FAB in dark mode - brighter for visibility */
-  .fab.primary {
-    background: rgb(165, 194, 255);  /* Bright blue that stands out */
-    color: rgb(0, 24, 72);  /* Dark blue text */
+  .fab.primary:not(.light) {
+    background: rgb(165, 194, 255);
+    color: rgb(0, 24, 72);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow:
       0px 2px 3px rgba(0, 0, 0, 0.5),
       0px 6px 10px 4px rgba(0, 0, 0, 0.3);
   }
 
-  .fab.primary:hover:not(:disabled) {
+  .fab.primary:not(.light):hover:not(:disabled) {
     background: rgb(145, 174, 235);
-    box-shadow:
-      0px 4px 4px rgba(0, 0, 0, 0.5),
-      0px 8px 12px 6px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Secondary FAB in dark mode */
-  .fab.secondary {
-    background: rgb(179, 255, 196);
-    color: rgb(13, 31, 18);
-    box-shadow:
-      0px 2px 3px rgba(0, 0, 0, 0.5),
-      0px 6px 10px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .fab.secondary:hover:not(:disabled) {
-    background: rgb(159, 235, 176);
-    box-shadow:
-      0px 4px 4px rgba(0, 0, 0, 0.5),
-      0px 8px 12px 6px rgba(0, 0, 0, 0.35);
-  }
-
-  /* Tertiary FAB in dark mode */
-  .fab.tertiary {
-    background: rgb(255, 221, 179);
-    color: rgb(45, 22, 0);
-    box-shadow:
-      0px 2px 3px rgba(0, 0, 0, 0.5),
-      0px 6px 10px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .fab.tertiary:hover:not(:disabled) {
-    background: rgb(235, 201, 159);
+    border-color: rgba(255, 255, 255, 0.3);
     box-shadow:
       0px 4px 4px rgba(0, 0, 0, 0.5),
       0px 8px 12px 6px rgba(0, 0, 0, 0.35);
