@@ -420,7 +420,7 @@ const ReadBook = () => {
             />
           )}
 
-          {/* Toggle Notes Button (FAB) */}
+          {/* Toggle Notes Button (FAB) - Now draggable! */}
           <MD3Fab
             icon={isSidebarOpen ? '✕' : '📝'}
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}

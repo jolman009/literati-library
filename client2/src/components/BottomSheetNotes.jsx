@@ -11,7 +11,7 @@ import styles from "./BottomSheetNotes.module.css";
 
 // ===== SNAP POINTS (in vh units) =====
 const SNAP_POINTS = {
-  PEEK: 10,      // Just visible - shows voice & type buttons
+  PEEK: 25,      // Peek state - shows voice & type buttons clearly
   HALF: 48,      // Half screen - quick notes while seeing book
   FULL: 88,      // Almost full screen - full editing mode
   CLOSED: 0      // Completely hidden
@@ -415,12 +415,9 @@ const BottomSheetNotes = ({
         initial={{ y: '100%' }}
         animate={controls}
         drag="y"
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.1}
+        dragConstraints={{ top: -window.innerHeight * 0.1, bottom: window.innerHeight * 0.2 }}
+        dragElastic={0.2}
         onDragEnd={handleDragEnd}
-        style={{
-          touchAction: 'none'
-        }}
       >
         {/* Drag Handle */}
         <div className={styles.dragHandle}>
