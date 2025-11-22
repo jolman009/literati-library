@@ -189,3 +189,54 @@
   outline: 2px solid rgb(var(--md-sys-color-primary, 0, 92, 186));
   outline-offset: 2px;
 }
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  /* Primary FAB in dark mode - brighter for visibility */
+  .fab.primary {
+    background: rgb(165, 194, 255);  /* Bright blue that stands out */
+    color: rgb(0, 24, 72);  /* Dark blue text */
+    box-shadow:
+      0px 2px 3px rgba(0, 0, 0, 0.5),
+      0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .fab.primary:hover:not(:disabled) {
+    background: rgb(145, 174, 235);
+    box-shadow:
+      0px 4px 4px rgba(0, 0, 0, 0.5),
+      0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Secondary FAB in dark mode */
+  .fab.secondary {
+    background: rgb(179, 255, 196);
+    color: rgb(13, 31, 18);
+    box-shadow:
+      0px 2px 3px rgba(0, 0, 0, 0.5),
+      0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .fab.secondary:hover:not(:disabled) {
+    background: rgb(159, 235, 176);
+    box-shadow:
+      0px 4px 4px rgba(0, 0, 0, 0.5),
+      0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Tertiary FAB in dark mode */
+  .fab.tertiary {
+    background: rgb(255, 221, 179);
+    color: rgb(45, 22, 0);
+    box-shadow:
+      0px 2px 3px rgba(0, 0, 0, 0.5),
+      0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .fab.tertiary:hover:not(:disabled) {
+    background: rgb(235, 201, 159);
+    box-shadow:
+      0px 4px 4px rgba(0, 0, 0, 0.5),
+      0px 8px 12px 6px rgba(0, 0, 0, 0.35);
+  }
+}

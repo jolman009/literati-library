@@ -1,5 +1,6 @@
 // src/components/Material3/MD3Fab.jsx
 import React from "react";
+import { motion } from "framer-motion";
 import styles from "./MD3Fab.module.css";
 
 /**
@@ -19,7 +20,7 @@ const MD3Fab = ({
   icon,
   onClick,
   ariaLabel,
-  position = { bottom: '80px', right: '1px' },
+  position = { bottom: '24px', right: '24px' },
   size = 'normal',
   variant = 'primary',
   extended = false,
@@ -37,19 +38,29 @@ const MD3Fab = ({
   ].filter(Boolean).join(' ');
 
   return (
-    <button
+    <motion.button
       onClick={onClick}
       className={fabClasses}
       aria-label={ariaLabel}
       disabled={disabled}
       style={position}
       type="button"
+      drag
+      dragMomentum={false}
+      dragElastic={0}
+      dragConstraints={{
+        top: -window.innerHeight + 100,
+        bottom: window.innerHeight - 100,
+        left: -window.innerWidth + 100,
+        right: window.innerWidth - 100,
+      }}
+      whileDrag={{ scale: 1.1, cursor: 'grabbing' }}
     >
       <span className={styles.icon}>{icon}</span>
       {extended && label && (
         <span className={styles.label}>{label}</span>
       )}
-    </button>
+    </motion.button>
   );
 };
 

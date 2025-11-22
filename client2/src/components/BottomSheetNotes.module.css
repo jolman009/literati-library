@@ -23,7 +23,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 50px;
   z-index: 9999;
 
   /* Layout */
@@ -39,8 +39,8 @@
     0px 1px 2px rgba(0, 0, 0, 0.3),
     0px 2px 6px 2px rgba(0, 0, 0, 0.15);
 
-  /* Touch optimization */
-  touch-action: none;
+  /* Touch optimization - allow pan-y for dragging */
+  touch-action: pan-y;
   user-select: none;
 
   /* Prevent overscroll */
@@ -49,7 +49,7 @@
 
 /* ===== LIGHT THEME ===== */
 .sheet.light {
-  background: rgb(var(--md-sys-color-surface, 253, 252, 255));
+  background: rgb(255, 255, 255);  /* Pure white background */
   color: rgb(var(--md-sys-color-on-surface, 26, 26, 28));
 }
 
@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0 20px 20px;
+  padding: 0 20px 24px;  /* Normal bottom padding - FAB is now draggable */
   user-select: none;
 }
 
@@ -141,7 +141,7 @@
 
   .peekContent {
     gap: 8px;
-    padding: 0 16px 16px;
+    padding: 0 16px 20px;  /* Normal bottom padding - FAB is now draggable */
   }
 }
 
@@ -155,6 +155,24 @@
 .voiceButton:hover {
   background: rgba(var(--md-sys-color-primary, 0, 92, 186), 0.92);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Voice Button - Dark Mode */
+.sheet.dark .voiceButton {
+  background: rgb(165, 194, 255);  /* Bright blue */
+  color: rgb(0, 24, 72);  /* Dark text */
+  border: 2px solid rgba(255, 255, 255, 0.3);  /* White border for definition */
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);  /* Subtle white glow */
+}
+
+.sheet.dark .voiceButton:hover {
+  background: rgb(145, 174, 235);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Recording state */
@@ -182,13 +200,25 @@
 }
 
 .sheet.dark .typeButton {
-  background: rgb(var(--md-sys-color-secondary-container, 66, 69, 116));
-  color: rgb(var(--md-sys-color-on-secondary-container, 224, 224, 255));
+  background: rgb(200, 220, 255);  /* Lighter blue-lavender for visibility */
+  color: rgb(16, 20, 96);  /* Dark blue text */
+  border: 2px solid rgba(255, 255, 255, 0.3);  /* White border for definition */
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);  /* Subtle white glow */
 }
 
 .typeButton:hover {
   background: rgba(var(--md-sys-color-secondary-container, 224, 224, 255), 0.92);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sheet.dark .typeButton:hover {
+  background: rgb(180, 200, 235);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 /* Close Button - Icon only */
@@ -201,6 +231,18 @@
 
 .peekButton.closeButton:hover {
   background: rgba(var(--md-sys-color-on-surface, 26, 26, 28), 0.12);
+}
+
+/* Close Button - Dark Mode */
+.sheet.dark .peekButton.closeButton {
+  background: rgba(255, 255, 255, 0.15);  /* Lighter background */
+  border: 2px solid rgba(255, 255, 255, 0.3);  /* White border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.sheet.dark .peekButton.closeButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .peekIcon {
@@ -224,7 +266,7 @@
 }
 
 .sheet.light .header {
-  background: rgb(var(--md-sys-color-surface-container-low, 245, 244, 248));
+  background: rgb(255, 255, 255);  /* Pure white */
 }
 
 .sheet.dark .header {
@@ -308,7 +350,7 @@
 }
 
 .sheet.light .toolbar {
-  background: rgb(var(--md-sys-color-surface-container, 239, 238, 242));
+  background: rgb(255, 255, 255);  /* Pure white */
 }
 
 .sheet.dark .toolbar {
@@ -525,7 +567,7 @@
 }
 
 .sheet.light .textarea {
-  background: rgb(var(--md-sys-color-surface-container-highest, 227, 226, 230));
+  background: rgb(255, 255, 255);  /* Pure white */
   color: rgb(var(--md-sys-color-on-surface, 26, 26, 28));
   border: 1px solid rgba(var(--md-sys-color-outline, 114, 114, 121), 0.3);
 }
@@ -563,7 +605,7 @@
 }
 
 .sheet.light .footer {
-  background: rgb(var(--md-sys-color-surface-container-low, 245, 244, 248));
+  background: rgb(255, 255, 255);  /* Pure white */
 }
 
 .sheet.dark .footer {
@@ -584,7 +626,7 @@
 }
 
 .sheet.light .tagInput {
-  background: rgb(var(--md-sys-color-surface-container-highest, 227, 226, 230));
+  background: rgb(255, 255, 255);  /* Pure white */
   color: rgb(var(--md-sys-color-on-surface, 26, 26, 28));
 }
 
