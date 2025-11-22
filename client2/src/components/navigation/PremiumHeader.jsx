@@ -68,7 +68,9 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
       try {
         const first = userMenuRef.current?.querySelector('.dropdown-item:not([disabled])');
         first?.focus();
-      } catch {}
+      } catch {
+        // Silently ignore focus errors
+      }
     };
 
     const onKeyDown = (e) => {
@@ -324,7 +326,9 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
                     onClick={() => {
                       try {
                         localStorage.setItem('sq_tour_seen_v1', '0');
-                      } catch {}
+                      } catch {
+                        // Silently ignore localStorage errors
+                      }
                       // Ask dashboard to restart guided tour
                       window.dispatchEvent(new CustomEvent('restartGuidedTour'));
                       setUserMenuOpen(false);

@@ -1,5 +1,5 @@
 // src/components/gamification/GamificationDashboard.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useGamification } from '../../contexts/GamificationContext';
 import { MD3Card, MD3Button, CircularProgress } from '../Material3';
 import PointsLegend from './PointsLegend';

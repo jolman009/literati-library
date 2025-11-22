@@ -68,7 +68,8 @@ export default [
 
       // General rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }]
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-empty': ['error', { allowEmptyCatch: true }]
     }
   },
 

@@ -2,7 +2,7 @@
 import React from 'react';
 
 // Material 3 Checkbox Component
-const Checkbox = ({ checked, onChange, label, id = 'm3-checkbox', disabled = false, className = '', indeterminate = false, handleChange }) => {
+const Checkbox = ({ checked, onChange, label, _id = 'm3-checkbox', disabled = false, className = '', indeterminate = false, handleChange }) => {
   // Use handleChange if provided, otherwise use onChange
   const onChangeHandler = handleChange || onChange;
 
