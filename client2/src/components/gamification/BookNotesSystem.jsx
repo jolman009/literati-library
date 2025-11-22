@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { gamificationAPI } from '../../config/api';
 import { useGamification } from '../../contexts/GamificationContext';
-import ContextDiagnostic from './components/ContextDiagnostic';
 
 
 // Constants for better maintainability

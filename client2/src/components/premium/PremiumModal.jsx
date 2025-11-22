@@ -25,7 +25,9 @@ const PremiumModal = () => {
             </button>
           )
         });
-      } catch {}
+      } catch {
+        // Silently ignore navigation errors
+      }
     };
     window.addEventListener('openPremiumModal', onOpen);
     return () => window.removeEventListener('openPremiumModal', onOpen);

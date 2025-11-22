@@ -9,7 +9,7 @@ import { useGamification } from "../contexts/GamificationContext";
 
 const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
-const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage = null, currentLocator = null }) => {
+const FloatingNotepad = ({ title, book = null, initialContent = "", currentPage = null, _currentLocator = null }) => {
   const { activeSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();

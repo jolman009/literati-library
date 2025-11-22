@@ -16,8 +16,7 @@ const ReadingSessionTimer = () => {
     stopReadingSession,
     pauseReadingSession,
     resumeReadingSession,
-    isPaused,
-    sessionStats
+    isPaused
   } = useReadingSession();
   const { actualTheme } = useMaterial3Theme();
   const [elapsedTime, setElapsedTime] = useState(0);

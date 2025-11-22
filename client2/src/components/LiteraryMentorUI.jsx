@@ -1,5 +1,5 @@
 // LiteraryMentorUI.jsx - Interactive Literary Mentor Interface
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   BookOpen, 
   MessageCircle, 
@@ -17,14 +17,13 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import LiteraryMentor from '../services/LiteraryMentor';
-import AIKeyManager from '../services/AIKeyManager';
 import APIKeyConfiguration from './APIKeyConfiguration';
 import API from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import './LiteraryMentorUI.css';
 
-const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
+const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => {
   const { user } = useAuth();
   const { actualTheme } = useMaterial3Theme();
   
@@ -32,13 +31,12 @@ const LiteraryMentorUI = ({ currentBook, onQuizStart, onDiscussionStart }) => {
   const [mentorData, setMentorData] = useState(null);
   const [activeTab, setActiveTab] = useState('insights');
   const [isLoading, setIsLoading] = useState(true);
-  const [discussionMode, setDiscussionMode] = useState(false);
+  const [discussionMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [userResponse, setUserResponse] = useState('');
   const [discussionHistory, setDiscussionHistory] = useState([]);
   const [quiz, setQuiz] = useState(null);
   const [quizAnswers, setQuizAnswers] = useState({});
-  const [showFeedback, setShowFeedback] = useState(false);
   const [showApiConfig, setShowApiConfig] = useState(false);
   const [hasApiKeys, setHasApiKeys] = useState(false);
   const [userBooks, setUserBooks] = useState([]);
@@ -497,13 +495,6 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
       try {
         // Use the real AI to generate a response
         const LLMProvider = (await import('../services/LLMProvider')).default;
-        
-        const bookContext = {
-          title: selectedBook.title,
-          author: selectedBook.author,
-          userResponse: response,
-          discussionHistory: discussionHistory.slice(-5) // Last 5 exchanges for context
-        };
 
         const prompt = `You are a literary mentor discussing "${selectedBook.title}" with a reader.
 

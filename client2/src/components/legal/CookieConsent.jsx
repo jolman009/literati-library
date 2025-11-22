@@ -105,8 +105,8 @@ const CookieConsent = () => {
     if (window.gtag && localStorage.getItem('shelfquest_child_mode') !== 'true') {
       try {
         window.gtag('consent', 'update', { analytics_storage: 'granted' });
-      } catch (_) {
-        // ignore
+      } catch {
+        // Silently ignore gtag errors
       }
     }
   };
