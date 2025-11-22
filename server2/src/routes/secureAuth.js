@@ -622,7 +622,7 @@ router.post('/reset-password/confirm',
       // Find user with valid token
       const { data: user, error: userError } = await supabase
         .from('users')
-        .select('id, email, password_reset_token, password_reset_expires')
+        .select('id, email, password_reset_token, password_reset_expires, token_version')
         .eq('password_reset_token', token)
         .single();
 
@@ -648,6 +648,9 @@ router.post('/reset-password/confirm',
       const saltRounds = 12;
       const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
+      // Get current token version to increment it
+      const currentTokenVersion = user.token_version || 0;
+
       // Update password and clear reset token
       const { error: updateError } = await supabase
         .from('users')
@@ -656,7 +659,7 @@ router.post('/reset-password/confirm',
           password_reset_token: null,
           password_reset_expires: null,
           password_changed_at: new Date().toISOString(),
-          token_version: supabase.rpc('increment', { row_id: user.id, column_name: 'token_version' })
+          token_version: currentTokenVersion + 1
         })
         .eq('id', user.id);
 

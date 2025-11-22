@@ -348,6 +348,83 @@ export const GamificationProvider = ({ children }) => {
     fetchDataDebounced();
   }, [user?.id, authLoading, isAuthenticated, fetchDataDebounced, user]);
 
+  // Check if user has unlocked any achievements
+  const checkAchievements = useCallback((actionType) => {
+    if (!user) return;
+
+    const currentStats = stats;
+    const newUnlocks = [];
+
+    // Check each achievement
+    Object.values(ACHIEVEMENTS).forEach(achievement => {
+      if (unlockedAchievements.has(achievement.id)) return;
+
+      let shouldUnlock = false;
+
+      switch (achievement.id) {
+        case 'first_book':
+          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 1;
+          break;
+        case 'bookworm':
+          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 10;
+          break;
+        case 'collector':
+          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 25;
+          break;
+        case 'librarian':
+          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 50;
+          break;
+        case 'finisher':
+          shouldUnlock = actionType === 'book_completed' && currentStats.booksCompleted >= 1;
+          break;
+        case 'completionist':
+          shouldUnlock = actionType === 'book_completed' && currentStats.booksCompleted >= 10;
+          break;
+        case 'note_taker':
+          shouldUnlock = actionType === 'note_created' && currentStats.notesCreated >= 10;
+          break;
+        case 'highlighter':
+          shouldUnlock = actionType === 'highlight_created' && currentStats.highlightsCreated >= 25;
+          break;
+        case 'streak_3':
+          shouldUnlock = currentStats.readingStreak >= 3;
+          break;
+        case 'streak_7':
+          shouldUnlock = currentStats.readingStreak >= 7;
+          break;
+        case 'streak_30':
+          shouldUnlock = currentStats.readingStreak >= 30;
+          break;
+      }
+
+      if (shouldUnlock) {
+        newUnlocks.push(achievement);
+      }
+    });
+
+    // Process new unlocks
+    newUnlocks.forEach(achievement => {
+      setUnlockedAchievements(prev => new Set([...prev, achievement.id]));
+      setAchievements(prev => [...prev, { ...achievement, unlockedAt: new Date().toISOString() }]);
+      setRecentAchievement(achievement);
+
+      // Award achievement points
+      setStats(prevStats => ({
+        ...prevStats,
+        totalPoints: prevStats.totalPoints + achievement.points,
+        level: calculateLevel(prevStats.totalPoints + achievement.points)
+      }));
+
+      console.warn(`🏆 Achievement unlocked: ${achievement.title}`);
+
+      // Save to localStorage
+      const savedAchievements = localStorage.getItem(`gamification_achievements_${user.id}`);
+      const currentAchievements = savedAchievements ? JSON.parse(savedAchievements) : [];
+      const updatedAchievements = [...currentAchievements, achievement.id];
+      localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(updatedAchievements));
+    });
+  }, [stats, unlockedAchievements, user]);
+
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
     if (!user) {
@@ -526,83 +603,6 @@ export const GamificationProvider = ({ children }) => {
     // Check for achievement unlocks
     checkAchievements(actionType, data);
   }, [user, offlineMode, checkAchievements, fetchDataDebounced]);
-
-  // Check if user has unlocked any achievements
-  const checkAchievements = useCallback((actionType) => {
-    if (!user) return;
-
-    const currentStats = stats;
-    const newUnlocks = [];
-
-    // Check each achievement
-    Object.values(ACHIEVEMENTS).forEach(achievement => {
-      if (unlockedAchievements.has(achievement.id)) return;
-
-      let shouldUnlock = false;
-
-      switch (achievement.id) {
-        case 'first_book':
-          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 1;
-          break;
-        case 'bookworm':
-          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 10;
-          break;
-        case 'collector':
-          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 25;
-          break;
-        case 'librarian':
-          shouldUnlock = actionType === 'book_uploaded' && currentStats.booksRead >= 50;
-          break;
-        case 'finisher':
-          shouldUnlock = actionType === 'book_completed' && currentStats.booksCompleted >= 1;
-          break;
-        case 'completionist':
-          shouldUnlock = actionType === 'book_completed' && currentStats.booksCompleted >= 10;
-          break;
-        case 'note_taker':
-          shouldUnlock = actionType === 'note_created' && currentStats.notesCreated >= 10;
-          break;
-        case 'highlighter':
-          shouldUnlock = actionType === 'highlight_created' && currentStats.highlightsCreated >= 25;
-          break;
-        case 'streak_3':
-          shouldUnlock = currentStats.readingStreak >= 3;
-          break;
-        case 'streak_7':
-          shouldUnlock = currentStats.readingStreak >= 7;
-          break;
-        case 'streak_30':
-          shouldUnlock = currentStats.readingStreak >= 30;
-          break;
-      }
-
-      if (shouldUnlock) {
-        newUnlocks.push(achievement);
-      }
-    });
-
-    // Process new unlocks
-    newUnlocks.forEach(achievement => {
-      setUnlockedAchievements(prev => new Set([...prev, achievement.id]));
-      setAchievements(prev => [...prev, { ...achievement, unlockedAt: new Date().toISOString() }]);
-      setRecentAchievement(achievement);
-
-      // Award achievement points
-      setStats(prevStats => ({
-        ...prevStats,
-        totalPoints: prevStats.totalPoints + achievement.points,
-        level: calculateLevel(prevStats.totalPoints + achievement.points)
-      }));
-
-      console.warn(`🏆 Achievement unlocked: ${achievement.title}`);
-
-      // Save to localStorage
-      const savedAchievements = localStorage.getItem(`gamification_achievements_${user.id}`);
-      const currentAchievements = savedAchievements ? JSON.parse(savedAchievements) : [];
-      const updatedAchievements = [...currentAchievements, achievement.id];
-      localStorage.setItem(`gamification_achievements_${user.id}`, JSON.stringify(updatedAchievements));
-    });
-  }, [stats, unlockedAchievements, user]);
 
   // Listen for daily login events from AuthContext
   useEffect(() => {
