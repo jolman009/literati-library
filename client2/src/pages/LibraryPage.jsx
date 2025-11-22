@@ -13,7 +13,6 @@ const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
 const StatisticsPage = React.lazy(() => import('./library/StatisticsPage'));
 const EnhancedStatisticsPage = React.lazy(() => import('./library/EnhancedStatisticsPage'));
 const EnhancedCollectionsPage = React.lazy(() => import('./subpages/EnhancedCollectionsPage'));
-const NotesSubpage = React.lazy(() => import('./subpages/NotesSubpage'));
 
 // Import dashboard components
 import WelcomeWidget from '../components/WelcomeWidget';
@@ -458,16 +457,6 @@ const LibraryPage = () => {
           <React.Suspense fallback={<div className="md3-loading-text">📁 Loading Collections...</div>}>
             <EnhancedCollectionsPage books={books} />
           </React.Suspense>
-        );
-
-      case 'notes':
-        return (
-          <NotesSubpage 
-            books={books} 
-            onNoteAction={(action, noteData) => {
-              console.warn('Note action:', action, noteData);
-            }}
-          />
         );
 
       case 'library':
