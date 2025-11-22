@@ -1,8 +1,9 @@
 import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render, cleanupTest } from '../test-utils';
+import { render, cleanupTest, createMockUser } from '../test-utils';
 import LibraryPage from '../pages/LibraryPage';
+import { useAuth } from '../contexts/AuthContext';
 
 // Mock external dependencies
 vi.mock('../contexts/AuthContext', () => ({
@@ -12,6 +13,15 @@ vi.mock('../contexts/AuthContext', () => ({
 describe('LibraryPage Component', () => {
   beforeEach(() => {
     cleanupTest();
+
+    // Configure useAuth mock to return expected values
+    useAuth.mockReturnValue({
+      user: createMockUser(),
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      signup: vi.fn()
+    });
   });
 
   test('renders without crashing when authenticated', () => {
