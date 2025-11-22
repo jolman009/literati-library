@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import API from '../config/api';
-import '../components/EnhancedBookCard.css';
+import '../components/LibraryBookStyles.css';
 import { useSnackbar } from '../components/Material3';
 import { exportBooksToCSV, getFilterName, EXPORT_TEMPLATES } from '../utils/csvExport';
 
