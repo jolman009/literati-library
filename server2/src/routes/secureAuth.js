@@ -489,4 +489,226 @@ router.post('/check-password-strength', async (req, res) => {
   }
 });
 
+/**
+ * Request password reset
+ * Generates a secure token and stores it in the database
+ */
+router.post('/reset-password',
+  advancedSecuritySuite.rateLimit.sensitive,
+  validationSuite.auth.passwordReset,
+  async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      // Check if user exists
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id, email, name')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      // Always return success to prevent email enumeration
+      // This is a security best practice
+      if (userError || !user) {
+        console.log(`Password reset requested for non-existent email: ${email}`);
+        return res.json({
+          message: 'If an account with that email exists, a password reset link has been sent.',
+          success: true
+        });
+      }
+
+      // Generate secure random token
+      const crypto = await import('crypto');
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetExpires = new Date(Date.now() + 3600000); // 1 hour from now
+
+      // Store token in database
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          password_reset_token: resetToken,
+          password_reset_expires: resetExpires.toISOString()
+        })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error storing reset token:', updateError);
+        return res.status(500).json({
+          error: 'Failed to process password reset request',
+          code: 'INTERNAL_ERROR',
+          requestId: req.requestId
+        });
+      }
+
+      // In production, send email with reset link
+      // For now, we'll log it and return it in development mode
+      const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/update-password?token=${resetToken}`;
+
+      console.log(`
+╔════════════════════════════════════════════════════════════════╗
+║                    PASSWORD RESET REQUEST                       ║
+╠════════════════════════════════════════════════════════════════╣
+║ User: ${user.email.padEnd(56)}║
+║ Token: ${resetToken.slice(0, 54)}║
+║ Reset URL:                                                     ║
+║ ${resetUrl.padEnd(62)}║
+║                                                                ║
+║ ⚠️  This link expires in 1 hour                                ║
+╚════════════════════════════════════════════════════════════════╝
+      `);
+
+      // TODO: Implement email sending
+      // Example (requires nodemailer or similar):
+      // await sendEmail({
+      //   to: user.email,
+      //   subject: 'Password Reset Request',
+      //   html: `Click here to reset your password: ${resetUrl}`
+      // });
+
+      // Log security event
+      try {
+        await supabase.from('security_audit_log').insert({
+          user_id: user.id,
+          event_type: 'PASSWORD_RESET_REQUESTED',
+          event_data: { email: user.email },
+          ip_address: req.ip,
+          user_agent: req.get('user-agent'),
+          success: true
+        });
+      } catch (logError) {
+        console.warn('Failed to log security event:', logError);
+      }
+
+      res.json({
+        message: 'If an account with that email exists, a password reset link has been sent.',
+        success: true,
+        // Only include token in development for testing
+        ...(process.env.NODE_ENV === 'development' && {
+          dev_token: resetToken,
+          dev_reset_url: resetUrl
+        })
+      });
+
+    } catch (error) {
+      console.error('Password reset request error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR',
+        requestId: req.requestId
+      });
+    }
+  }
+);
+
+/**
+ * Confirm password reset with token
+ * Validates token and updates password
+ */
+router.post('/reset-password/confirm',
+  advancedSecuritySuite.rateLimit.sensitive,
+  advancedSecuritySuite.password.validate,
+  async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token || !newPassword) {
+        return res.status(400).json({
+          error: 'Token and new password are required',
+          code: 'MISSING_FIELDS',
+          requestId: req.requestId
+        });
+      }
+
+      // Find user with valid token
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id, email, password_reset_token, password_reset_expires')
+        .eq('password_reset_token', token)
+        .single();
+
+      if (userError || !user) {
+        return res.status(400).json({
+          error: 'Invalid or expired reset token',
+          code: 'INVALID_TOKEN',
+          requestId: req.requestId
+        });
+      }
+
+      // Check if token is expired
+      const expiresAt = new Date(user.password_reset_expires);
+      if (expiresAt < new Date()) {
+        return res.status(400).json({
+          error: 'Reset token has expired. Please request a new password reset.',
+          code: 'TOKEN_EXPIRED',
+          requestId: req.requestId
+        });
+      }
+
+      // Hash new password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      // Update password and clear reset token
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          password: hashedPassword,
+          password_reset_token: null,
+          password_reset_expires: null,
+          password_changed_at: new Date().toISOString(),
+          token_version: supabase.rpc('increment', { row_id: user.id, column_name: 'token_version' })
+        })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error updating password:', updateError);
+        return res.status(500).json({
+          error: 'Failed to update password',
+          code: 'INTERNAL_ERROR',
+          requestId: req.requestId
+        });
+      }
+
+      // Invalidate all existing sessions for security
+      try {
+        await supabase
+          .from('user_sessions')
+          .update({ is_active: false })
+          .eq('user_id', user.id);
+      } catch (sessionError) {
+        console.warn('Failed to invalidate sessions:', sessionError);
+      }
+
+      // Log security event
+      try {
+        await supabase.from('security_audit_log').insert({
+          user_id: user.id,
+          event_type: 'PASSWORD_RESET_COMPLETED',
+          event_data: { email: user.email },
+          ip_address: req.ip,
+          user_agent: req.get('user-agent'),
+          success: true
+        });
+      } catch (logError) {
+        console.warn('Failed to log security event:', logError);
+      }
+
+      console.log(`Password successfully reset for user: ${user.email}`);
+
+      res.json({
+        message: 'Password has been reset successfully',
+        success: true
+      });
+
+    } catch (error) {
+      console.error('Password reset confirm error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR',
+        requestId: req.requestId
+      });
+    }
+  }
+);
+
 export default router;

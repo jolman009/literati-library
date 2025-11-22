@@ -125,10 +125,9 @@ const UpdatePassword = () => {
 
     try {
       // Call backend to update password
-      // Adjust the endpoint based on your backend structure
       const API_URL = environmentConfig.apiUrl;
-      
-      const response = await fetch(`${API_URL}/auth/reset-password/confirm`, {
+
+      const response = await fetch(`${API_URL}/auth/secure/reset-password/confirm`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

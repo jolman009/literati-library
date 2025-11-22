@@ -248,7 +248,7 @@ export const AuthProvider = ({ children }) => {
         throw err;
       }
     },
-    [makeApiCall, attemptTokenRefresh]
+    [makeApiCall, attemptTokenRefresh, navigate, showSnackbar]
   );
 
   /**
@@ -579,7 +579,7 @@ export const AuthProvider = ({ children }) => {
     async (email) => {
       setError(null);
       try {
-        await makeApiCall('/auth/reset-password', {
+        await makeApiCall('/auth/secure/reset-password', {
           method: 'POST',
           body: JSON.stringify({ email }),
         });
