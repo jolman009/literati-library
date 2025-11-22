@@ -641,7 +641,7 @@ export const AuthProvider = ({ children }) => {
     } catch {
       return null;
     }
-  }, [user]);
+  }, []);
 
   const value = useMemo(
     () => ({

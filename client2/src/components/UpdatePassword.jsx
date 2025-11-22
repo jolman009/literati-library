@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-
-import environmentConfig from '../config/environment';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabaseClient';
 import './ResetPassword.css';
 
 /**
  * UpdatePassword Component
  * 
  * Allows users to set a new password after clicking the reset link.
- * Works with ShelfQuest's custom backend API.
+ * This component is displayed after the user clicks the reset link from their email.
  * 
  * Features:
  * - Password strength validation
@@ -20,9 +19,6 @@ import './ResetPassword.css';
  */
 const UpdatePassword = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,20 +26,18 @@ const UpdatePassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [, setValidationErrors] = useState({});
 
-  const [resetToken, setResetToken] = useState('');
-
-  // Extract reset token from URL
+  // Check if user has valid recovery session
   useEffect(() => {
-    const token = searchParams.get('token') || searchParams.get('reset_token');
-    
-    if (!token) {
-      setError('Invalid or missing reset token. Please request a new password reset.');
-    } else {
-      setResetToken(token);
-      console.warn('Reset token found:', token);
-    }
-  }, [searchParams]);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setError('Invalid or expired reset link. Please request a new password reset.');
+      }
+    };
+    checkSession();
+  }, []);
 
   // Password strength validation
   const validatePassword = (pwd) => {
@@ -87,18 +81,16 @@ const UpdatePassword = () => {
     setPassword(newPassword);
     setError('');
     
-
+    if (newPassword) {
+      setValidationErrors(validatePassword(newPassword));
+    } else {
+      setValidationErrors({});
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    // Check for reset token
-    if (!resetToken) {
-      setError('Invalid reset token. Please request a new password reset.');
-      return;
-    }
 
     // Validate passwords
     if (!password) {
@@ -120,34 +112,18 @@ const UpdatePassword = () => {
     setLoading(true);
 
     try {
-      // Call backend to update password
-      const API_URL = environmentConfig.apiUrl;
-
-      const response = await fetch(`${API_URL}/auth/secure/reset-password/confirm`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: resetToken,
-          newPassword: password,
-        }),
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Failed to update password');
-      }
+      if (updateError) throw updateError;
 
       setSuccess(true);
       
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login', { 
-          state: { 
-            message: 'Password updated successfully! Please login with your new password.' 
-          }
+          state: { message: 'Password updated successfully! Please login with your new password.' }
         });
       }, 3000);
     } catch (error) {
@@ -220,7 +196,7 @@ const UpdatePassword = () => {
                 placeholder="Enter new password"
                 value={password}
                 onChange={handlePasswordChange}
-                disabled={loading || !resetToken}
+                disabled={loading}
                 autoComplete="new-password"
                 autoFocus
                 aria-invalid={!!error}
@@ -314,7 +290,7 @@ const UpdatePassword = () => {
                   setConfirmPassword(e.target.value);
                   setError('');
                 }}
-                disabled={loading || !resetToken}
+                disabled={loading}
                 autoComplete="new-password"
                 aria-invalid={confirmPassword && password !== confirmPassword}
                 required
@@ -356,7 +332,7 @@ const UpdatePassword = () => {
           <button
             type="submit"
             className="reset-password-button button-filled"
-            disabled={loading || !password || !confirmPassword || password !== confirmPassword || !resetToken}
+            disabled={loading || !password || !confirmPassword || password !== confirmPassword}
             aria-busy={loading}
           >
             {loading ? (
