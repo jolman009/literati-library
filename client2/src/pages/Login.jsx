@@ -202,6 +202,19 @@ const Login = () => {
                   </div>
                 )}
 
+                {/* 👇 ADD THIS NEW CODE - Forgot Password Link 👇 */}
+                {!isSignUp && (
+                  <div className="forgot-password-container">
+                  <Link 
+                    to="/reset-password" 
+                    className="forgot-password-link"
+                    tabIndex={isLoading ? -1 : 0}
+                  >
+                    Forgot password?
+                  </Link>
+                  </div>
+                )}
+                
                 {/* Submit Button */}
                 <Button
                   type="submit"
