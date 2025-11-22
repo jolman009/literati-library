@@ -1,69 +1,4 @@
-/* Enhanced Book Card Styles */
-
-.enhanced-book-card {
-  --card-transition: all var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
-  
-  /* Ensure the card content is properly contained */
-  overflow: visible !important;
-  position: relative;
-  
-  /* Hover effects */
-  transition: var(--card-transition);
-}
-
-/* Ensure menu button is always visible above everything */
-.book-menu-button {
-  position: absolute !important;
-  z-index: 100 !important;
-  pointer-events: auto !important;
-}
-
-/* Always show menu button on hover or focus */
-.enhanced-book-card:hover .book-menu-button,
-.enhanced-book-card:focus-within .book-menu-button {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: scale(1.05);
-}
-
-/* Menu button should always be visible on touch devices */
-@media (hover: none) {
-  .book-menu-button {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-}
-
-.enhanced-book-card:hover:not(.selected) {
-  --_container-elevation: var(--md-sys-elevation-level3);
-  transform: translateY(-4px);
-}
-
-.enhanced-book-card.selected {
-  --_container-elevation: var(--md-sys-elevation-level4);
-  transform: translateY(-2px);
-}
-
-/* Book cover container enhancements */
-.book-cover-container {
-  /* Ensure menu button is visible */
-  overflow: visible !important;
-  
-  /* Progress tooltip hover effect */
-}
-
-/* Specifically target the library book cover to prevent clipping */
-.md3-book-cover .library-book-cover-manager {
-  overflow: visible !important;
-}
-
-.md3-book-cover .library-book-cover-manager .book-cover-container {
-  overflow: visible !important;
-}
-
-.book-cover-container:hover .progress-tooltip {
-  opacity: 1 !important;
-}
+/* Library Book Menu Styles */
 
 /* Menu button styling */
 .book-menu-button {
@@ -292,71 +227,14 @@
   }
 }
 
-/* Book metadata styling */
-.book-metadata {
-  /* Ensure proper spacing */
-  min-height: 28px; /* Prevent layout shift */
-}
-
-/* List view adaptations */
-.enhanced-book-card.list-view {
-  max-width: none;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-}
-
-/* Ensure menu button is always visible in list view */
-.enhanced-book-card.list-view .book-menu-button {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-  z-index: 200 !important;
-}
-
-.enhanced-book-card.list-view .book-cover-container {
-  aspect-ratio: 3/4;
-  width: 120px;
-  flex-shrink: 0;
-}
-
-.enhanced-book-card.list-view .book-info-container {
-  flex: 1;
-  border-radius: 0 var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) 0;
-}
-
-/* Grid view (default) */
-.enhanced-book-card.grid-view {
-  flex-direction: column;
-}
-
-/* Status badge styling improvements */
-.book-metadata .md3-chip {
-  /* Ensure proper spacing */
-  margin-right: var(--md-sys-spacing-1);
-  margin-bottom: var(--md-sys-spacing-1);
-}
-
 /* Menu button hover states */
 .book-menu-button:hover {
   /* Smooth hover transition */
   transition: var(--card-transition);
 }
 
-/* Focus and accessibility improvements */
-.enhanced-book-card:focus-within {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
-  outline-offset: 2px;
-}
-
 /* Mobile responsiveness */
 @media (max-width: 600px) {
-  .enhanced-book-card {
-    max-width: none;
-    width: 100%;
-  }
-
   .book-menu-button {
     /* Smaller button on mobile with strict constraints */
     width: 36px !important;
@@ -396,24 +274,15 @@
     border-width: 3px;
     font-weight: bold;
   }
-  
-  .enhanced-book-card.selected {
-    border-width: 3px;
-  }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .enhanced-book-card,
   .book-menu-button,
   .book-progress-bar,
   .book-actions-menu {
     transition: none;
     animation: none;
-  }
-  
-  .enhanced-book-card:hover {
-    transform: none;
   }
 }
 
