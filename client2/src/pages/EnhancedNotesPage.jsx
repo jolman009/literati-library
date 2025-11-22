@@ -454,7 +454,7 @@ const EnhancedNotesPage = () => {
     } finally {
       setLoading(false);
     }
-  });
+  }, [showSnackbar]);
   
   const fetchBooks = async () => {
     try {
@@ -719,7 +719,7 @@ const EnhancedNotesPage = () => {
     } finally {
       setSummarizing(false);
     }
-  }, [selectedNoteIds, notes, showSnackbar, autoSaveSummary]);
+  }, [selectedNoteIds, notes, showSnackbar, autoSaveSummary, handleSaveSummaryAsNote]);
 
   const handleSummarizeByTag = useCallback(async () => {
     const tag = tagToSummarize.trim();
@@ -762,7 +762,7 @@ const EnhancedNotesPage = () => {
     } finally {
       setSummarizing(false);
     }
-  }, [tagToSummarize, notes, showSnackbar, autoSaveSummary]);
+  }, [tagToSummarize, notes, showSnackbar, autoSaveSummary, handleSaveSummaryAsNote]);
 
   const handleSummarizeFiltered = useCallback(async () => {
     try {
@@ -809,7 +809,7 @@ const EnhancedNotesPage = () => {
     } finally {
       setSummarizing(false);
     }
-  }, [filteredNotes, searchTerm, selectedFilter, showSnackbar, autoSaveSummary]);
+  }, [filteredNotes, searchTerm, selectedFilter, showSnackbar, autoSaveSummary, handleSaveSummaryAsNote]);
 
   const handleSaveSummaryAsNote = useCallback(async (resultOverride = null, contextOverride = null) => {
     const effectiveResult = resultOverride || summaryResult;
@@ -875,7 +875,7 @@ const EnhancedNotesPage = () => {
       console.error('Save summary as note failed:', e);
       showSnackbar({ message: 'Failed to save summary note', variant: 'error' });
     }
-  }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection]);
+  }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection, fetchNotes]);
   
   // Render note card
   const renderNoteCard = (note) => (
