@@ -267,14 +267,19 @@ app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
 app.post('/auth/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
-    if (!email || !password || !name) return res.status(400).json({ error: 'Email, password, and name are required' });
+    const normalizedEmail = req.body?.email?.trim().toLowerCase();
+    const name = req.body?.name?.trim();
+    const { password } = req.body || {};
+
+    if (!normalizedEmail || !password || !name) {
+      return res.status(400).json({ error: 'Email, password, and name are required' });
+    }
 
     // exists?
     const { data: existingUser } = await supabaseAdmin
       .from('users')
       .select('id')
-      .eq('email', email)
+      .eq('email', normalizedEmail)
       .single();
     if (existingUser) return res.status(400).json({ error: 'User already exists' });
 
@@ -284,7 +289,7 @@ app.post('/auth/register', async (req, res) => {
 
     const { data: user, error } = await supabaseAdmin
       .from('users')
-      .insert({ email, password: hashedPassword, name, created_at: new Date().toISOString() })
+      .insert({ email: normalizedEmail, password: hashedPassword, name, created_at: new Date().toISOString() })
       .select()
       .single();
     if (error) return res.status(500).json({ error: 'Failed to create user' });
@@ -319,7 +324,8 @@ app.post('/auth/login', async (req, res) => {
   try {
     const { default: bcrypt } = await import('bcryptjs');
 
-    const { email, password } = req.body;
+    const email = req.body?.email?.trim().toLowerCase();
+    const { password } = req.body || {};
     if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
     const { data: user, error } = await supabaseAdmin
