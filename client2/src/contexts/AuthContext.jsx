@@ -55,8 +55,8 @@ export const AuthProvider = ({ children }) => {
 
   // Debug (dev only)
   if (import.meta.env.DEV) {
-     
-    console.warn('🔗 AuthContext API_URL:', API_URL);
+
+    console.log('🔗 AuthContext API_URL:', API_URL);
   }
 
   /**
@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
     // Create new refresh promise with mutex protection
     refreshPromise = (async () => {
       try {
-        console.warn('🔄 [AUTH] Initiating token refresh via HttpOnly cookies...');
+        console.log('🔄 [AUTH] Initiating token refresh via HttpOnly cookies...');
         const refreshStartTime = Date.now();
 
         const response = await fetch(`${API_URL}/auth/secure/refresh`, {
@@ -153,20 +153,20 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
           const data = await response.json();
-          console.warn(`✅ [AUTH] Token refresh successful (${refreshDuration}ms) - new cookies set by server`);
+          console.log(`✅ [AUTH] Token refresh successful (${refreshDuration}ms) - new cookies set by server`);
 
           // Update user data if provided
           if (data.user) {
             setUser(data.user);
             localStorage.setItem(USER_KEY, JSON.stringify(data.user));
-            console.warn('    ↳ User data updated in state and localStorage');
+            console.log('    ↳ User data updated in state and localStorage');
           }
 
           // If server returns token in body for backward compatibility, update localStorage
           if (data?.accessToken) {
             try {
               localStorage.setItem(environmentConfig.getTokenKey(), data.accessToken);
-              console.warn('    ↳ Token updated in localStorage (fallback for header auth)');
+              console.log('    ↳ Token updated in localStorage (fallback for header auth)');
             } catch (e) {
               console.warn('    ⚠️ Could not update localStorage token:', e.message);
             }
@@ -176,7 +176,7 @@ export const AuthProvider = ({ children }) => {
           return true;
         }
 
-        console.warn(`❌ [AUTH] Token refresh failed (${refreshDuration}ms): ${response.status} ${response.statusText}`);
+        console.error(`❌ [AUTH] Token refresh failed (${refreshDuration}ms): ${response.status} ${response.statusText}`);
         return false;
       } catch (err) {
         console.error('❌ [AUTH] Token refresh error:', err.message);
@@ -303,9 +303,9 @@ export const AuthProvider = ({ children }) => {
    */
   const verifyToken = useCallback(
     async () => {
-      console.warn('🔍 [AUTH] Verifying token validity...');
+      console.log('🔍 [AUTH] Verifying token validity...');
       const data = await makeApiCall('/auth/secure/profile');
-      console.warn('✅ [AUTH] Token verification successful');
+      console.log('✅ [AUTH] Token verification successful');
       return data;
     },
     [makeApiCall]
@@ -317,12 +317,12 @@ export const AuthProvider = ({ children }) => {
 
     const verifyIfNeeded = async () => {
       if (!user) {
-        console.warn('ℹ️ [AUTH] No user in state, skipping verification');
+        console.log('ℹ️ [AUTH] No user in state, skipping verification');
         setLoading(false);
         return;
       }
 
-      console.warn('🔍 [AUTH] User found in localStorage, verifying session...');
+      console.log('🔍 [AUTH] User found in localStorage, verifying session...');
 
       // Get dev header auth setting
       const devHeaderAuth = typeof environmentConfig.shouldUseDevHeaderAuth === 'function'
@@ -430,7 +430,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
-        console.warn('✅ Registration successful - using secure authentication with HttpOnly cookies');
+        console.log('✅ Registration successful - using secure authentication with HttpOnly cookies');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -480,12 +480,12 @@ export const AuthProvider = ({ children }) => {
               }
             }));
 
-            console.warn('✅ Daily login tracked - 10 points will be awarded');
+            console.log('✅ Daily login tracked - 10 points will be awarded');
           } else {
-            console.warn('ℹ️ Already logged in today - no additional points');
+            console.log('ℹ️ Already logged in today - no additional points');
           }
         } catch (loginTrackError) {
-          console.warn('Failed to track daily login:', loginTrackError);
+          console.warn('⚠️ Failed to track daily login:', loginTrackError);
           // Don't fail login if tracking fails
         }
 
@@ -494,7 +494,7 @@ export const AuthProvider = ({ children }) => {
           const syncResults = await syncPendingNotes();
 
           if (syncResults.synced > 0) {
-            console.warn(`✅ Synced ${syncResults.synced} pending notes after login`);
+            console.log(`✅ Synced ${syncResults.synced} pending notes after login`);
 
             // Dispatch event so UI can show notification
             window.dispatchEvent(new CustomEvent('pendingNotesSynced', {
@@ -514,7 +514,7 @@ export const AuthProvider = ({ children }) => {
           // Don't fail login if sync fails
         }
 
-        console.warn('✅ Login successful - token stored in localStorage');
+        console.log('✅ Login successful - token stored in localStorage');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -532,7 +532,7 @@ export const AuthProvider = ({ children }) => {
       await makeApiCall('/auth/secure/logout', {
         method: 'POST',
       });
-      console.warn('✅ Logout successful - cookies cleared on server');
+      console.log('✅ Logout successful - cookies cleared on server');
     } catch (err) {
       console.warn('⚠️ Logout API call failed, clearing local state anyway:', err);
     } finally {
