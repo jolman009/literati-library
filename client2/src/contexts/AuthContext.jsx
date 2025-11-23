@@ -419,7 +419,12 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password, name }),
         });
 
-        // Tokens are set as HttpOnly cookies by the server
+        // Capture access token for header-based auth (server also sets HttpOnly cookies)
+        const accessToken = data.token || data.accessToken || data.access_token;
+        if (accessToken) {
+          localStorage.setItem(environmentConfig.getTokenKey(), accessToken);
+        }
+
         // We only need to store user data in localStorage
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
@@ -448,8 +453,9 @@ export const AuthProvider = ({ children }) => {
 
         // Store token in localStorage for Authorization header (cross-domain support)
         // Server also sets HttpOnly cookies as fallback
-        if (data.token) {
-          localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+        const accessToken = data.token || data.accessToken || data.access_token;
+        if (accessToken) {
+          localStorage.setItem(environmentConfig.getTokenKey(), accessToken);
         }
 
         // Store user data
