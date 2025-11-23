@@ -414,7 +414,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const data = await makeApiCall('/auth/register', {
+        const data = await makeApiCall('/auth/secure/register', {
           method: 'POST',
           body: JSON.stringify({ email, password, name }),
         });
@@ -441,7 +441,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const data = await makeApiCall('/auth/login', {
+        const data = await makeApiCall('/auth/secure/login', {
           method: 'POST',
           body: JSON.stringify({ email, password }),
         });
@@ -562,7 +562,7 @@ export const AuthProvider = ({ children }) => {
     async (currentPassword, newPassword) => {
       setError(null);
       try {
-        await makeAuthenticatedApiCall('/auth/change-password', {
+        await makeAuthenticatedApiCall('/auth/secure/change-password', {
           method: 'POST',
           body: JSON.stringify({ currentPassword, newPassword }),
         });
