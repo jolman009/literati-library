@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
         console.warn('🔄 [AUTH] Initiating token refresh via HttpOnly cookies...');
         const refreshStartTime = Date.now();
 
-        const response = await fetch(`${API_URL}/auth/refresh`, {
+        const response = await fetch(`${API_URL}/auth/secure/refresh`, {
           method: 'POST',
           credentials: 'include', // Include HttpOnly cookies (refresh token)
           headers: {
@@ -163,9 +163,9 @@ export const AuthProvider = ({ children }) => {
           }
 
           // If server returns token in body for backward compatibility, update localStorage
-          if (data?.token) {
+          if (data?.accessToken) {
             try {
-              localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+              localStorage.setItem(environmentConfig.getTokenKey(), data.accessToken);
               console.warn('    ↳ Token updated in localStorage (fallback for header auth)');
             } catch (e) {
               console.warn('    ⚠️ Could not update localStorage token:', e.message);
@@ -304,7 +304,7 @@ export const AuthProvider = ({ children }) => {
   const verifyToken = useCallback(
     async () => {
       console.warn('🔍 [AUTH] Verifying token validity...');
-      const data = await makeApiCall('/auth/profile');
+      const data = await makeApiCall('/auth/secure/profile');
       console.warn('✅ [AUTH] Token verification successful');
       return data;
     },
@@ -414,17 +414,23 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const data = await makeApiCall('/auth/register', {
+        const data = await makeApiCall('/auth/secure/register', {
           method: 'POST',
           body: JSON.stringify({ email, password, name }),
         });
+
+        // Store token in localStorage for Authorization header (cross-domain support)
+        // Server also sets HttpOnly cookies as fallback
+        if (data.accessToken) {
+          localStorage.setItem(environmentConfig.getTokenKey(), data.accessToken);
+        }
 
         // Tokens are set as HttpOnly cookies by the server
         // We only need to store user data in localStorage
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
-        console.warn('✅ Registration successful - using HttpOnly cookie authentication');
+        console.warn('✅ Registration successful - using secure authentication with HttpOnly cookies');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -441,15 +447,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       try {
-        const data = await makeApiCall('/auth/login', {
+        const data = await makeApiCall('/auth/secure/login', {
           method: 'POST',
           body: JSON.stringify({ email, password }),
         });
 
         // Store token in localStorage for Authorization header (cross-domain support)
         // Server also sets HttpOnly cookies as fallback
-        if (data.token) {
-          localStorage.setItem(environmentConfig.getTokenKey(), data.token);
+        if (data.accessToken) {
+          localStorage.setItem(environmentConfig.getTokenKey(), data.accessToken);
         }
 
         // Store user data
@@ -523,7 +529,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(async () => {
     try {
       // Call backend to clear HttpOnly cookies
-      await makeApiCall('/auth/logout', {
+      await makeApiCall('/auth/secure/logout', {
         method: 'POST',
       });
       console.warn('✅ Logout successful - cookies cleared on server');
