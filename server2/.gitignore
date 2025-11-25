@@ -9,7 +9,8 @@ pnpm-debug.log*
 .env
 .env.local
 .env.development
-.env.test
+# .env.test is allowed (contains only test values)
+!.env.test
 .env.production
 .env.*.local
 
