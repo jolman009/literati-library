@@ -9,12 +9,22 @@ ai-service/.venv/
 # Environment files - NEVER COMMIT THESE
 .env
 .env.*
+!.env.test
+!.env.example
 client2/.env
 client2/.env.*
+!client2/.env.test
+!client2/.env.example
+!client2/.env.development
+!client2/.env.production
 server2/.env
 server2/.env.*
+!server2/.env.test
+!server2/.env.example
 ai-service/.env
 ai-service/.env.*
+!ai-service/.env.test
+!ai-service/.env.example
 
 # API Keys and Secrets - NEVER COMMIT THESE
 **/secrets/
