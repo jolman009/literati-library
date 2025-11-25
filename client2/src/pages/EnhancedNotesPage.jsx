@@ -682,6 +682,73 @@ const EnhancedNotesPage = () => {
   }, []);
   const clearSelection = useCallback(() => setSelectedNoteIds([]), []);
 
+  // handleSaveSummaryAsNote must be defined BEFORE the summarization handlers that depend on it
+  const handleSaveSummaryAsNote = useCallback(async (resultOverride = null, contextOverride = null) => {
+    const effectiveResult = resultOverride || summaryResult;
+    const effectiveContext = contextOverride || summaryContext;
+    if (!effectiveResult) return;
+    try {
+      const mode = effectiveContext?.mode;
+      let candidateNotes = [];
+      if (mode === 'selection' && Array.isArray(effectiveContext?.ids)) {
+        candidateNotes = notes.filter(n => effectiveContext.ids.includes(n.id));
+      } else if (mode === 'tags' && effectiveContext?.tag) {
+        const tag = effectiveContext.tag;
+        candidateNotes = notes.filter(n => Array.isArray(n.tags) && n.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
+      } else if (mode === 'filtered') {
+        candidateNotes = filteredNotes;
+      }
+
+      const uniqueBooks = Array.from(new Set(candidateNotes.map(n => n.book_id).filter(Boolean)));
+      const book_id = uniqueBooks.length === 1 ? uniqueBooks[0] : null;
+
+      const title = effectiveResult.title || 'Notes Summary';
+      const parts = [];
+      if (effectiveResult.summary) parts.push(effectiveResult.summary);
+      if (Array.isArray(effectiveResult.bullets) && effectiveResult.bullets.length) {
+        parts.push('\nKey Points:\n' + effectiveResult.bullets.slice(0, 10).map(b => `- ${b}`).join('\n'));
+      }
+      if (Array.isArray(effectiveResult.themes) && effectiveResult.themes.length) {
+        parts.push('\nThemes:\n' + effectiveResult.themes.slice(0, 8).map(t => `- ${t.name}: ${t.explanation}`).join('\n'));
+      }
+      if (Array.isArray(effectiveResult.questions) && effectiveResult.questions.length) {
+        parts.push('\nQuestions:\n' + effectiveResult.questions.slice(0, 6).map(q => `- ${q}`).join('\n'));
+      }
+      if (Array.isArray(effectiveResult.nextSteps) && effectiveResult.nextSteps.length) {
+        parts.push('\nNext Steps:\n' + effectiveResult.nextSteps.slice(0, 6).map(s => `- ${s}`).join('\n'));
+      }
+      const content = parts.join('\n\n').trim();
+
+      const tags = ['ai-summary'];
+      if (mode === 'tags' && effectiveContext?.tag) tags.push(`tag:${effectiveContext.tag}`);
+      if (mode === 'selection') tags.push('selection-summary');
+      if (mode === 'filtered') tags.push('filtered-summary');
+      if (effectiveContext?.searchTerm) tags.push(`search:${effectiveContext.searchTerm}`);
+      if (effectiveContext?.selectedFilter && effectiveContext.selectedFilter !== 'all') tags.push(`filter:${effectiveContext.selectedFilter}`);
+
+      const tagCounts = new Map();
+      for (const n of candidateNotes) {
+        const t = Array.isArray(n.tags) ? n.tags : [];
+        for (const tag of t) tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      }
+      const topTags = Array.from(tagCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k]) => k);
+      const mergedTags = Array.from(new Set([...tags, ...topTags]));
+
+      const payload = { title, content, book_id, tags: mergedTags };
+      await API.post('/notes', payload, { timeout: 30000 });
+      showSnackbar({ message: 'Summary saved as note!', variant: 'success' });
+      setSummaryOpen(false);
+      setSummaryResult(null);
+      setSummaryContext(null);
+      setTagToSummarize('');
+      clearSelection();
+      fetchNotes();
+    } catch (e) {
+      console.error('Save summary as note failed:', e);
+      showSnackbar({ message: 'Failed to save summary note', variant: 'error' });
+    }
+  }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection, fetchNotes]);
+
   // Summarization handlers
   const handleSummarizeSelection = useCallback(async () => {
     if (selectedNoteIds.length === 0) return;
@@ -811,72 +878,6 @@ const EnhancedNotesPage = () => {
     }
   }, [filteredNotes, searchTerm, selectedFilter, showSnackbar, autoSaveSummary, handleSaveSummaryAsNote]);
 
-  const handleSaveSummaryAsNote = useCallback(async (resultOverride = null, contextOverride = null) => {
-    const effectiveResult = resultOverride || summaryResult;
-    const effectiveContext = contextOverride || summaryContext;
-    if (!effectiveResult) return;
-    try {
-      const mode = effectiveContext?.mode;
-      let candidateNotes = [];
-      if (mode === 'selection' && Array.isArray(effectiveContext?.ids)) {
-        candidateNotes = notes.filter(n => effectiveContext.ids.includes(n.id));
-      } else if (mode === 'tags' && effectiveContext?.tag) {
-        const tag = effectiveContext.tag;
-        candidateNotes = notes.filter(n => Array.isArray(n.tags) && n.tags.some(t => t.toLowerCase().includes(tag.toLowerCase())));
-      } else if (mode === 'filtered') {
-        candidateNotes = filteredNotes;
-      }
-
-      const uniqueBooks = Array.from(new Set(candidateNotes.map(n => n.book_id).filter(Boolean)));
-      const book_id = uniqueBooks.length === 1 ? uniqueBooks[0] : null;
-
-      const title = effectiveResult.title || 'Notes Summary';
-      const parts = [];
-      if (effectiveResult.summary) parts.push(effectiveResult.summary);
-      if (Array.isArray(effectiveResult.bullets) && effectiveResult.bullets.length) {
-        parts.push('\nKey Points:\n' + effectiveResult.bullets.slice(0, 10).map(b => `- ${b}`).join('\n'));
-      }
-      if (Array.isArray(effectiveResult.themes) && effectiveResult.themes.length) {
-        parts.push('\nThemes:\n' + effectiveResult.themes.slice(0, 8).map(t => `- ${t.name}: ${t.explanation}`).join('\n'));
-      }
-      if (Array.isArray(effectiveResult.questions) && effectiveResult.questions.length) {
-        parts.push('\nQuestions:\n' + effectiveResult.questions.slice(0, 6).map(q => `- ${q}`).join('\n'));
-      }
-      if (Array.isArray(effectiveResult.nextSteps) && effectiveResult.nextSteps.length) {
-        parts.push('\nNext Steps:\n' + effectiveResult.nextSteps.slice(0, 6).map(s => `- ${s}`).join('\n'));
-      }
-      const content = parts.join('\n\n').trim();
-
-      const tags = ['ai-summary'];
-      if (mode === 'tags' && effectiveContext?.tag) tags.push(`tag:${effectiveContext.tag}`);
-      if (mode === 'selection') tags.push('selection-summary');
-      if (mode === 'filtered') tags.push('filtered-summary');
-      if (effectiveContext?.searchTerm) tags.push(`search:${effectiveContext.searchTerm}`);
-      if (effectiveContext?.selectedFilter && effectiveContext.selectedFilter !== 'all') tags.push(`filter:${effectiveContext.selectedFilter}`);
-
-      const tagCounts = new Map();
-      for (const n of candidateNotes) {
-        const t = Array.isArray(n.tags) ? n.tags : [];
-        for (const tag of t) tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-      }
-      const topTags = Array.from(tagCounts.entries()).sort((a,b) => b[1]-a[1]).slice(0,5).map(([k]) => k);
-      const mergedTags = Array.from(new Set([...tags, ...topTags]));
-
-      const payload = { title, content, book_id, tags: mergedTags };
-      await API.post('/notes', payload, { timeout: 30000 });
-      showSnackbar({ message: 'Summary saved as note!', variant: 'success' });
-      setSummaryOpen(false);
-      setSummaryResult(null);
-      setSummaryContext(null);
-      setTagToSummarize('');
-      clearSelection();
-      fetchNotes();
-    } catch (e) {
-      console.error('Save summary as note failed:', e);
-      showSnackbar({ message: 'Failed to save summary note', variant: 'error' });
-    }
-  }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection, fetchNotes]);
-  
   // Render note card
   const renderNoteCard = (note) => (
     <MD3Card 
