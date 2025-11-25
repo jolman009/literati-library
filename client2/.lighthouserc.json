@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./dist",
+      "staticDistDir": "./client2/dist",
       "numberOfRuns": 1,
       "settings": {
         "chromeFlags": "--no-sandbox --headless --disable-gpu --disable-dev-shm-usage",
