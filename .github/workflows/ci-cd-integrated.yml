@@ -252,10 +252,10 @@ jobs:
         id: vercel-deploy
         uses: amondnet/vercel-action@v25
         with:
-          vercel-token: ${{ secrets.oVUVipNEcKf3ScyOBLph9rwI }} # pragma: allowlist secret
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # pragma: allowlist secret
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # pragma: allowlist secret
-          vercel-project-id: ${{ secrets.prj_KzOokdd5QZTV9a5U4fheZ6nDzXuA }} # pragma: allowlist secret
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # pragma: allowlist secret
           working-directory: ./client2
           vercel-args: '--prod'
 
