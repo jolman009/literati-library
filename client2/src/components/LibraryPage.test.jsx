@@ -1,27 +1,42 @@
 import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render, cleanupTest, createMockUser } from '../test-utils';
+import { render, cleanupTest } from '../test-utils';
 import LibraryPage from '../pages/LibraryPage';
-import { useAuth } from '../contexts/AuthContext';
 
-// Mock external dependencies
+// Mock external dependencies with all required methods
+const mockAuthContext = {
+  user: {
+    id: 'test-user-id',
+    email: 'test@example.com',
+    name: 'Test User'
+  },
+  token: 'test-token',
+  loading: false,
+  error: null,
+  isAuthenticated: true,
+  register: vi.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
+  updateProfile: vi.fn(),
+  changePassword: vi.fn(),
+  requestPasswordReset: vi.fn(),
+  deleteAccount: vi.fn(),
+  refreshUser: vi.fn(),
+  clearError: vi.fn(),
+  hasRole: vi.fn(() => false),
+  makeApiCall: vi.fn().mockResolvedValue({ data: [] }),
+  makeAuthenticatedApiCall: vi.fn().mockResolvedValue({ data: [] })
+};
+
 vi.mock('../contexts/AuthContext', () => ({
-  useAuth: vi.fn()
+  useAuth: () => mockAuthContext
 }));
 
 describe('LibraryPage Component', () => {
   beforeEach(() => {
     cleanupTest();
-
-    // Configure useAuth mock to return expected values
-    useAuth.mockReturnValue({
-      user: createMockUser(),
-      loading: false,
-      login: vi.fn(),
-      logout: vi.fn(),
-      signup: vi.fn()
-    });
+    vi.clearAllMocks();
   });
 
   test('renders without crashing when authenticated', () => {

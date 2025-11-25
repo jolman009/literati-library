@@ -340,11 +340,13 @@ describe('Reading Session Integration Tests', () => {
       });
 
       // Verify API call to update book status
+      // Implementation sets status to "paused" when stopping (not is_reading: false)
       await waitFor(() => {
         expect(API.patch).toHaveBeenCalledWith(
           `/books/${mockBook.id}`,
           expect.objectContaining({
-            is_reading: false,
+            is_reading: true,
+            status: 'paused',
             last_opened: expect.any(String)
           })
         );

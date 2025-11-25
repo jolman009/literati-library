@@ -139,6 +139,10 @@ vi.mock('./contexts/Material3ThemeContext', () => ({
 vi.mock('./components/Material3', () => ({
   Material3ThemeProvider: ({ children }) => children,
   MD3SnackbarProvider: ({ children }) => children,
+  useSnackbar: () => ({
+    showSnackbar: vi.fn(),
+    hideSnackbar: vi.fn()
+  }),
   MD3Button: ({ children, onClick, ...props }) => (
     <button onClick={onClick} data-testid="md3-button" {...props}>
       {children}
@@ -215,10 +219,10 @@ describe('App Component', () => {
 
   test('renders performance monitoring components', () => {
     renderAppWithRouter();
-    
-    // Check that performance monitoring components are rendered
-    expect(screen.getByTestId('performance-monitor')).toBeInTheDocument();
-    expect(screen.getByTestId('cache-monitor')).toBeInTheDocument();
+
+    // Check that the app renders properly
+    // Note: PerformanceMonitor and CacheMonitor are currently commented out in App.jsx
+    // Only ReadingSessionTimer is active
     expect(screen.getByTestId('reading-session-timer')).toBeInTheDocument();
   });
 
@@ -245,14 +249,13 @@ describe('App Component', () => {
   test('renders with all required context providers', () => {
     // This test ensures all the context providers are properly wrapped
     renderAppWithRouter();
-    
+
     // Check that the app renders without context-related errors
     const appElement = document.querySelector('.app');
     expect(appElement).toBeInTheDocument();
-    
-    // Verify monitoring components are present (confirms providers are working)
-    expect(screen.getByTestId('performance-monitor')).toBeInTheDocument();
-    expect(screen.getByTestId('cache-monitor')).toBeInTheDocument();
+
+    // Verify ReadingSessionTimer is present (confirms providers are working)
+    // Note: PerformanceMonitor and CacheMonitor are currently commented out in App.jsx
     expect(screen.getByTestId('reading-session-timer')).toBeInTheDocument();
   });
 });
