@@ -25,7 +25,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 0rem 1rem;
   position: relative;
   overflow: hidden;
   max-width: 100%; /* Prevent overflow */
@@ -40,7 +40,7 @@
   text-align: center;
   z-index: 2;
   width: 100%;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
 }
 
 /* Logo Display with Animation */
@@ -241,27 +241,27 @@
 
 .floating-book {
   position: absolute;
-  font-size: 4rem;
+  font-size: 8rem;
   color: rgb(var(--md-sys-color-primary));
   animation: float 6s ease-in-out infinite;
 }
 
 .book-1 {
-  top: 10%;
+  top: 30%;
   left: 10%;
   animation-delay: 0s;
 }
 
 .book-2 {
-  top: 60%;
+  top: 45%;
   right: 15%;
   animation-delay: 2s;
 }
 
 .book-3 {
-  bottom: 15%;
-  left: 20%;
-  animation-delay: 4s;
+  top: 60%;
+  left: 25%;
+  animation-delay: 1s;
 }
 
 /* ================================================
@@ -298,7 +298,8 @@
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: fadeInUp 0.6s ease-out both;
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border: 1px solid #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   max-width: 100%;
   position: relative;
   overflow: hidden;
