@@ -257,7 +257,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} # pragma: allowlist secret
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} # pragma: allowlist secret
           working-directory: ./client2
-          vercel-args: '--prod'
+          vercel-args: '--prod --local-config vercel.json'
 
       - name: 🌐 Update Custom Domain Aliases
         env:
