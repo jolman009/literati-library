@@ -1,10 +1,14 @@
-name: Deploy to Vercel
+name: Deploy to Vercel (Disabled)
+
+# DISABLED: This workflow is redundant - ci-cd-integrated.yml handles Vercel deployment
+# To re-enable, change 'workflow_dispatch_disabled' back to 'workflow_dispatch'
+# and uncomment the push trigger
 
 on:
-  push:
-    branches: [ main ]
-    paths: [ 'client2/**' ]
-  workflow_dispatch:
+  # push:
+  #   branches: [ main ]
+  #   paths: [ 'client2/**' ]
+  workflow_dispatch_disabled:  # Renamed to disable manual trigger
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
