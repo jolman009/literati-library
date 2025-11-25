@@ -43,6 +43,30 @@ const NewLandingPage = () => {
     }
   ];
 
+  const testimonials = [
+    {
+      icon: 'school',
+      name: 'Mrs. Sarah Chen',
+      role: '5th Grade Teacher',
+      quote: "ShelfQuest transformed my classroom reading program. I use the gamification levels to reward students individually—when they level up, they earn classroom privileges. My reluctant readers are now racing to finish books!",
+      highlight: 'Classroom Integration'
+    },
+    {
+      icon: 'face',
+      name: 'Marcus T.',
+      role: 'Student, Age 14',
+      quote: "I never thought I'd say this, but tracking my reading is actually fun. Watching my stats grow and collecting points feels like a game. I've read more books this semester than all of last year!",
+      highlight: 'Student Motivation'
+    },
+    {
+      icon: 'family_restroom',
+      name: 'Jennifer M.',
+      role: 'Parent & Reader',
+      quote: "I started using ShelfQuest for myself and loved it so much I set up my daughter's account. Now we compare reading streaks at dinner! It's become a bonding activity that gets us both excited about books.",
+      highlight: 'Family Reading'
+    }
+  ];
+
   return (
     <div className="new-landing-container">
       {/* Hero Section - Compact & Creative */}
@@ -125,23 +149,6 @@ const NewLandingPage = () => {
             </div>
           </div>
 
-          {/* Key Features Highlights */}
-          <div className="stats-strip">
-            <div className="stat-item">
-              <span className="stat-icon">📚</span>
-              <span className="stat-label">Upload Books</span>
-            </div>
-            <div className="stat-divider"></div>
-            <div className="stat-item">
-              <span className="stat-icon">⏱️</span>
-              <span className="stat-label">Track Sessions</span>
-            </div>
-            <div className="stat-divider"></div>
-            <div className="stat-item">
-              <span className="stat-icon">🏆</span>
-              <span className="stat-label">Earn Rewards</span>
-            </div>
-          </div>
         </div>
 
         {/* Decorative Book Illustration */}
@@ -173,6 +180,35 @@ const NewLandingPage = () => {
               </div>
               <h4 className="feature-title">{feature.title}</h4>
               <p className="feature-description">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="testimonials-section">
+        <h3 className="section-title">What Readers Are Saying</h3>
+        <div className="testimonials-grid">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="testimonial-card"
+              style={{ animationDelay: `${index * 0.15}s` }}
+            >
+              <div className="testimonial-highlight">{testimonial.highlight}</div>
+              <div className="testimonial-quote">
+                <span className="quote-mark">"</span>
+                {testimonial.quote}
+              </div>
+              <div className="testimonial-author">
+                <div className="author-avatar">
+                  <span className="material-symbols-outlined">{testimonial.icon}</span>
+                </div>
+                <div className="author-info">
+                  <span className="author-name">{testimonial.name}</span>
+                  <span className="author-role">{testimonial.role}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
