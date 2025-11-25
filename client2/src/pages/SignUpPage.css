@@ -116,15 +116,45 @@
 
 .md3-signup-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.md3-signup-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.md3-signup-logo-circle {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg,
+    var(--md-sys-color-primary),
+    var(--md-sys-color-secondary)
+  );
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
 }
 
 .md3-signup-logo {
-  height: 48px;
-  width: auto;
-  margin-bottom: 1.5rem;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
-  animation: fadeIn 0.8s ease-out 0.2s both;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.md3-signup-brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  font-family: 'Google Sans', 'Inter', system-ui, sans-serif;
 }
 
 @keyframes fadeIn {
@@ -137,8 +167,8 @@
 }
 
 .md3-signup-title {
-  font-size: clamp(1.75rem, 4vw, 2rem);
-  font-weight: 500;
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-weight: 600;
   color: var(--md-sys-color-on-surface);
   margin: 0 0 0.5rem 0;
   line-height: 1.2;
@@ -146,7 +176,7 @@
 }
 
 .md3-signup-subtitle {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: var(--md-sys-color-on-surface-variant);
   margin: 0;
   line-height: 1.5;
@@ -216,14 +246,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  background: var(--md-sys-color-on-surface-container-high);
+  background: var(--md-sys-color-surface-container-high);
   padding: 1.5rem;
   border-radius: var(--md-sys-shape-corner-medium, 12px);
   box-shadow: var(--md-sys-elevation-level2,
     0 2px 3px rgba(0, 0, 0, 0.06),
     0 2px 2px rgba(0, 0, 0, 0.09)
   );
-  border: 4px solid var(--md-sys-color-outline-variant);
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .md3-form-row {

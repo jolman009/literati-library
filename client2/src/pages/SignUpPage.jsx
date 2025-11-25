@@ -102,11 +102,16 @@ const SignUpPage = () => {
       <div className="md3-signup-content">
         {/* Header Section */}
         <div className="md3-signup-header">
-          <img
-            src="/ShelfQuest_logo_.png"
-            alt="ShelfQuest"
-            className="md3-signup-logo"
-          />
+          <div className="md3-signup-logo-container">
+            <div className="md3-signup-logo-circle">
+              <img
+                src="/ShelfQuest_logo_favicon.png"
+                alt="ShelfQuest"
+                className="md3-signup-logo"
+              />
+            </div>
+            <span className="md3-signup-brand">ShelfQuest</span>
+          </div>
           <h1 className="md3-signup-title">Create Your Account</h1>
           <p className="md3-signup-subtitle">
             Join ShelfQuest and start your reading journey today
