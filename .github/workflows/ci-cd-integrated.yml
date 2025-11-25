@@ -155,11 +155,13 @@ jobs:
           echo "🎯 Deployment Decision: $SHOULD_DEPLOY to $TARGET_ENV"
 
   # Staging Deployment
+  # DISABLED: Using Vercel's native GitHub integration instead
+  # The workflow's working-directory conflicts with Vercel's rootDirectory setting
   deploy-staging:
     name: 🚧 Deploy to Staging
     runs-on: ubuntu-latest
     needs: quality-gates
-    if: needs.quality-gates.outputs.should-deploy == 'true' && needs.quality-gates.outputs.target-env == 'staging'
+    if: false # Disabled - Vercel GitHub integration handles deployment
     # environment: staging  # Commented out - configure in GitHub repo settings first
 
     steps:
@@ -210,11 +212,12 @@ jobs:
           curl -f https://staging-literati.vercel.app/health || echo "⚠️ Staging health check failed"
 
   # Production Deployment
+  # DISABLED: Using Vercel's native GitHub integration instead
   deploy-production:
     name: 🌟 Deploy to Production
     runs-on: ubuntu-latest
     needs: quality-gates
-    if: needs.quality-gates.outputs.should-deploy == 'true' && needs.quality-gates.outputs.target-env == 'production'
+    if: false # Disabled - Vercel GitHub integration handles deployment
     # environment: production  # Commented out - configure in GitHub repo settings first
 
     steps:
@@ -302,11 +305,12 @@ jobs:
           "
 
   # Notification
+  # DISABLED: Deployment jobs are disabled, using Vercel's native GitHub integration
   notify:
     name: 📢 Deployment Notification
     runs-on: ubuntu-latest
-    needs: [quality-gates, deploy-staging, deploy-production]
-    if: always() && needs.quality-gates.outputs.should-deploy == 'true'
+    needs: [quality-gates]
+    if: false # Disabled - Vercel handles deployment notifications
 
     steps:
       - name: 📢 Success Notification
