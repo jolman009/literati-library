@@ -1,8 +1,11 @@
-name: Auto-Alias Production Domain
+name: Auto-Alias Production Domain (Disabled)
+
+# DISABLED: This workflow is redundant - ci-cd-integrated.yml handles domain aliasing
+# The main workflow already sets aliases for literati.pro and www.literati.pro
 
 on:
-  # Trigger after successful deployment
-  deployment_status:
+  # deployment_status:  # Disabled - handled by ci-cd-integrated.yml
+  workflow_dispatch_disabled:  # Prevents manual triggering
 
 jobs:
   update-domain-aliases:
