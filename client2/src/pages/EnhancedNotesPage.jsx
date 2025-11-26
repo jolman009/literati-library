@@ -1330,23 +1330,9 @@ const EnhancedNotesPage = () => {
         
         {/* Tag Cloud Quick Filter */}
         {allTags.length > 0 && viewMode === 'grid' && (
-          <MD3Card variant="outlined" style={{ 
-            padding: '16px', 
-            marginBottom: '24px',
-            backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-            border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
-          }}>
-            <h3 style={{ 
-              margin: '0 0 12px 0', 
-              fontSize: '16px', 
-              fontWeight: '600',
-              color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-            }}>
-              <Tag size={18} style={{ 
-                verticalAlign: 'middle', 
-                marginRight: '8px',
-                color: actualTheme === 'dark' ? '#24A8E0' : '#24A8E0'
-              }} />
+          <MD3Card variant="outlined" className="md3-tag-filter-card">
+            <h3 className="md3-tag-filter-title">
+              <Tag size={18} className="md3-tag-filter-icon" />
               Quick Tag Filter
             </h3>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -1365,14 +1351,6 @@ const EnhancedNotesPage = () => {
                     }
                     setSelectedTags(newTags);
                   }}
-                  style={{
-                    backgroundColor: selectedTags.has(tag) 
-                      ? (actualTheme === 'dark' ? '#24A8E0' : '#24A8E0')
-                      : (actualTheme === 'dark' ? '#475569' : '#f3f4f6'),
-                    color: selectedTags.has(tag)
-                      ? 'white'
-                      : (actualTheme === 'dark' ? '#f1f5f9' : '#1f2937')
-                  }}
                 />
               ))}
               {allTags.length > 15 && (
@@ -1380,11 +1358,6 @@ const EnhancedNotesPage = () => {
                   label={`+${allTags.length - 15} more`}
                   size="small"
                   variant="outlined"
-                  style={{
-                    backgroundColor: actualTheme === 'dark' ? '#475569' : '#f9fafb',
-                    color: actualTheme === 'dark' ? '#f1f5f9' : '#6b7280',
-                    borderColor: actualTheme === 'dark' ? '#64748b' : '#d1d5db'
-                  }}
                 />
               )}
             </div>
@@ -1477,21 +1450,12 @@ const EnhancedNotesPage = () => {
                   </div>
                 </>
               ) : (
-                <MD3Card variant="outlined" className="md3-notes-empty-state" style={{
-                  backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-                  border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
-                }}>
-                  <FileText className="md3-notes-empty-icon" style={{
-                    color: actualTheme === 'dark' ? '#24A8E0' : '#24A8E0'
-                  }} />
-                  <h3 className="md3-notes-empty-title" style={{
-                    color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                  }}>
+                <MD3Card variant="outlined" className="md3-notes-empty-state">
+                  <FileText className="md3-notes-empty-icon" />
+                  <h3 className="md3-notes-empty-title">
                     {searchTerm || selectedTags.size > 0 ? 'No notes found' : 'No notes yet'}
                   </h3>
-                  <p className="md3-notes-empty-text" style={{
-                    color: actualTheme === 'dark' ? '#94a3b8' : '#6b7280'
-                  }}>
+                  <p className="md3-notes-empty-text">
                     {searchTerm || selectedTags.size > 0
                       ? "Try adjusting your filters." 
                       : "Create your first note to get started!"
@@ -1512,12 +1476,9 @@ const EnhancedNotesPage = () => {
             
             {/* Timeline View */}
             {viewMode === 'timeline' && (
-              <MD3Card variant="outlined" style={{
-                backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-                border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
-              }}>
-                <TimelineView 
-                  notes={filteredNotes} 
+              <MD3Card variant="outlined" className="md3-view-container">
+                <TimelineView
+                  notes={filteredNotes}
                   onNoteClick={handleOpenModal}
                   actualTheme={actualTheme}
                 />
@@ -1526,25 +1487,11 @@ const EnhancedNotesPage = () => {
             
             {/* Word Cloud View */}
             {viewMode === 'cloud' && (
-              <MD3Card variant="outlined" style={{
-                backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-                border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
-              }}>
-                <h3 style={{ 
-                  padding: '24px 24px 0', 
-                  margin: 0, 
-                  fontSize: '20px', 
-                  fontWeight: '600',
-                  color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                }}>
+              <MD3Card variant="outlined" className="md3-view-container">
+                <h3 className="md3-view-title">
                   Word Frequency Cloud
                 </h3>
-                <p style={{ 
-                  padding: '0 24px', 
-                  margin: '8px 0 0 0', 
-                  fontSize: '14px', 
-                  color: actualTheme === 'dark' ? '#94a3b8' : '#666'
-                }}>
+                <p className="md3-view-subtitle">
                   Most frequently used words across all your notes
                 </p>
                 <WordCloud notes={filteredNotes} actualTheme={actualTheme} />
@@ -1557,43 +1504,17 @@ const EnhancedNotesPage = () => {
                 <StatsDashboard notes={filteredNotes} books={books} actualTheme={actualTheme} />
                 
                 {/* Top Tags */}
-                <MD3Card style={{ 
-                  padding: '24px', 
-                  marginTop: '16px',
-                  backgroundColor: actualTheme === 'dark' ? '#334155' : '#ffffff',
-                  border: `1px solid ${actualTheme === 'dark' ? '#475569' : '#e5e7eb'}`
-                }}>
-                  <h3 style={{ 
-                    margin: '0 0 16px 0', 
-                    fontSize: '18px', 
-                    fontWeight: '600',
-                    color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                  }}>
+                <MD3Card className="md3-top-tags-card">
+                  <h3 className="md3-section-title">
                     Top Tags
                   </h3>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {allTags.map(tag => {
                       const count = notes.filter(n => n.tags?.includes(tag)).length;
                       return (
-                        <div key={tag} style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '8px 12px',
-                          backgroundColor: actualTheme === 'dark' ? '#475569' : '#F5F5F5',
-                          borderRadius: '16px'
-                        }}>
-                          <span style={{ 
-                            fontSize: '14px',
-                            color: actualTheme === 'dark' ? '#f1f5f9' : '#1f2937'
-                          }}>#{tag}</span>
-                          <span style={{
-                            fontSize: '12px',
-                            padding: '2px 6px',
-                            backgroundColor: '#24A8E0',
-                            color: 'white',
-                            borderRadius: '10px'
-                          }}>
+                        <div key={tag} className="md3-tag-chip">
+                          <span style={{ fontSize: '14px' }}>#{tag}</span>
+                          <span className="md3-tag-count">
                             {count}
                           </span>
                         </div>
