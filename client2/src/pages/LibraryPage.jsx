@@ -10,7 +10,6 @@ import { exportBooksToCSV, getFilterName, EXPORT_TEMPLATES } from '../utils/csvE
 
 // Import the complex components you need
 const ReadingPage = React.lazy(() => import('./library/ReadingPage'));
-const StatisticsPage = React.lazy(() => import('./library/StatisticsPage'));
 const EnhancedStatisticsPage = React.lazy(() => import('./library/EnhancedStatisticsPage'));
 const EnhancedCollectionsPage = React.lazy(() => import('./subpages/EnhancedCollectionsPage'));
 
