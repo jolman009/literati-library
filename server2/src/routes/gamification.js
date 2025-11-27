@@ -83,7 +83,118 @@ const getUserPoints = async (userId) => {
   }
 };
 
+// Record daily activity to reading_streaks table (enables activity-based streak tracking)
+// This function is called when users: open a book, upload a book, create a note, or interact with mentor
+const recordDailyActivity = async (userId, activityType = 'general') => {
+  try {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+    // Check if there's already a record for today
+    const { data: existingRecord, error: selectError } = await supabase
+      .from('reading_streaks')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('streak_date', today)
+      .single();
+
+    if (selectError && selectError.code !== 'PGRST116') {
+      // PGRST116 = no rows found (expected for first activity of the day)
+      console.warn('⚠️ Error checking existing streak record:', selectError.message);
+    }
+
+    if (existingRecord) {
+      // Update existing record for today - increment relevant counter
+      const updates = { updated_at: new Date().toISOString() };
+
+      if (activityType === 'reading') {
+        updates.reading_time = (existingRecord.reading_time || 0) + 1;
+      } else if (activityType === 'note') {
+        updates.notes_created = (existingRecord.notes_created || 0) + 1;
+      } else if (activityType === 'highlight') {
+        updates.highlights_created = (existingRecord.highlights_created || 0) + 1;
+      }
+
+      const { error: updateError } = await supabase
+        .from('reading_streaks')
+        .update(updates)
+        .eq('id', existingRecord.id);
+
+      if (updateError) {
+        console.warn('⚠️ Failed to update streak record:', updateError.message);
+      } else {
+        console.log(`✅ Daily activity recorded (updated): ${activityType} for user ${userId}`);
+      }
+      return { success: true, isNewDay: false };
+    }
+
+    // Insert new record for today (first activity of the day)
+    const { error: insertError } = await supabase
+      .from('reading_streaks')
+      .insert([{
+        user_id: userId,
+        streak_date: today,
+        reading_time: activityType === 'reading' ? 1 : 0,
+        pages_read: 0,
+        books_completed: 0,
+        notes_created: activityType === 'note' ? 1 : 0,
+        highlights_created: activityType === 'highlight' ? 1 : 0
+      }]);
+
+    if (insertError) {
+      console.warn('⚠️ Failed to insert streak record:', insertError.message);
+      return { success: false, error: insertError.message };
+    }
+
+    console.log(`✅ Daily activity recorded (new day): ${activityType} for user ${userId}`);
+    return { success: true, isNewDay: true };
+  } catch (e) {
+    console.error('Error recording daily activity:', e);
+    return { success: false, error: e.message };
+  }
+};
+
+// Calculate reading streak from reading_streaks table (activity-based, not button-based)
 const calculateReadingStreak = async (userId) => {
+  try {
+    // Query the reading_streaks table for consecutive days with activity
+    const { data, error } = await supabase
+      .from('reading_streaks')
+      .select('streak_date')
+      .eq('user_id', userId)
+      .order('streak_date', { ascending: false });
+
+    if (error) {
+      console.warn('⚠️ Error querying reading_streaks, falling back to reading_sessions:', error.message);
+      // Fallback to reading_sessions if reading_streaks table doesn't exist
+      return await calculateReadingStreakFromSessions(userId);
+    }
+
+    if (!data?.length) return 0;
+
+    let streak = 0;
+    let current = new Date();
+    current.setHours(0, 0, 0, 0);
+
+    for (const row of data) {
+      const d = new Date(row.streak_date);
+      d.setHours(0, 0, 0, 0);
+      const diff = Math.floor((current - d) / (1000 * 60 * 60 * 24));
+      if (diff === streak) {
+        streak++;
+        current.setDate(current.getDate() - 1);
+      } else if (diff > streak) break;
+    }
+
+    console.log(`📊 Calculated activity streak for user ${userId}: ${streak} days`);
+    return streak;
+  } catch (e) {
+    console.error('Error calculating reading streak:', e);
+    return 0;
+  }
+};
+
+// Fallback streak calculation from reading_sessions (legacy support)
+const calculateReadingStreakFromSessions = async (userId) => {
   try {
     const { data, error } = await supabase
       .from('reading_sessions')
@@ -108,7 +219,7 @@ const calculateReadingStreak = async (userId) => {
     }
     return streak;
   } catch (e) {
-    console.error('Error calculating reading streak:', e);
+    console.error('Error calculating reading streak from sessions:', e);
     return 0;
   }
 };
@@ -653,6 +764,7 @@ export const gamificationRouter = (authenticateToken) => {
         case 'book_completed': points = 100; break;
         case 'daily_login': points = 10; break;
         case 'daily_checkin': points = 10; break;
+        case 'mentor_interaction': points = 5; break;
         default: points = 1;
       }
 
@@ -730,17 +842,46 @@ export const gamificationRouter = (authenticateToken) => {
         }
       }
 
-      // Note: user_actions table was deleted. Points are now calculated from actual activity tables.
-      // This endpoint exists for backward compatibility but doesn't persist to database.
-      // Actual activities (notes, reading sessions, books) are tracked via their respective endpoints.
+      // ✅ Record activity for streak tracking (activity-based streak system)
+      // Qualifying activities: reading sessions, book uploads, notes, highlights, mentor interactions
+      const streakQualifyingActions = [
+        'reading_session_started',
+        'reading_session_completed',
+        'book_uploaded',
+        'note_created',
+        'highlight_created',
+        'book_completed',
+        'mentor_interaction',
+        'daily_login'
+      ];
 
-      console.log(`ℹ️ Action logged (not persisted): ${action}, ${points} points`);
+      let streakResult = null;
+      if (streakQualifyingActions.includes(action)) {
+        // Map action to activity type for streak recording
+        let activityType = 'general';
+        if (action.includes('reading') || action === 'book_completed') {
+          activityType = 'reading';
+        } else if (action === 'note_created') {
+          activityType = 'note';
+        } else if (action === 'highlight_created') {
+          activityType = 'highlight';
+        }
+
+        streakResult = await recordDailyActivity(userId, activityType);
+        console.log(`📊 Streak activity recorded for ${action}: ${JSON.stringify(streakResult)}`);
+      }
+
+      // Calculate current streak after recording activity
+      const currentStreak = await calculateReadingStreak(userId);
+
+      console.log(`✅ Action tracked: ${action}, ${points} points, streak: ${currentStreak} days`);
       res.json({
         success: true,
         action,
         points,
-        message: `${action} tracked successfully!`,
-        note: 'Points calculated from activity tables, not user_actions'
+        streak: currentStreak,
+        streakRecorded: streakResult?.success || false,
+        message: `${action} tracked successfully!${currentStreak > 1 ? ` 🔥 ${currentStreak}-day streak!` : ''}`
       });
     } catch (e) {
       console.error('Error tracking action:', e);
