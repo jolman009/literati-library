@@ -452,6 +452,7 @@ export const GamificationProvider = ({ children }) => {
       daily_login: 10,
       daily_checkin: 10, // Handle daily check-in locally
       library_visited: 5,
+      mentor_interaction: 5, // AI mentor interaction for activity streak
       achievement_unlocked: 0 // Points come from the achievement itself
     };
 
@@ -582,6 +583,15 @@ export const GamificationProvider = ({ children }) => {
               console.error('👉 This action will NOT appear after refresh!');
             } else {
               console.warn(`✅ Action synced to server: ${actionType} (+${points} points)`, response);
+
+              // ✅ Update readingStreak immediately from server response
+              if (typeof response.data.streak === 'number') {
+                setStats(prevStats => ({
+                  ...prevStats,
+                  readingStreak: response.data.streak
+                }));
+                console.warn(`🔥 Streak updated from server: ${response.data.streak} days`);
+              }
             }
           } else {
             console.warn(`⚠️ Action tracking returned no response: ${actionType}`);

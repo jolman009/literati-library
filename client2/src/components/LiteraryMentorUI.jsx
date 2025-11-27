@@ -21,11 +21,13 @@ import APIKeyConfiguration from './APIKeyConfiguration';
 import API from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useGamification } from '../contexts/GamificationContext';
 import './LiteraryMentorUI.css';
 
 const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => {
   const { user } = useAuth();
   const { actualTheme } = useMaterial3Theme();
+  const { trackAction } = useGamification();
   
   // State management
   const [mentorData, setMentorData] = useState(null);
@@ -442,7 +444,7 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
 
   const handleSubmitResponse = useCallback(async () => {
       if (!userResponse.trim()) return;
-      
+
       // Add to discussion history
       const newEntry = {
         type: 'user',
@@ -450,7 +452,7 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
         timestamp: new Date()
       };
       setDiscussionHistory([...discussionHistory, newEntry]);
-      
+
       // Get mentor's response
       const mentorResponse = await generateMentorResponse(userResponse);
       setDiscussionHistory(prev => [...prev, {
@@ -458,14 +460,27 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
         content: mentorResponse.message,
         timestamp: new Date()
       }]);
-      
+
       // Set next question
       if (mentorResponse.nextQuestion) {
         setCurrentQuestion(mentorResponse.nextQuestion);
       }
-      
+
+      // ✅ Track mentor interaction for activity-based streak
+      if (trackAction) {
+        try {
+          await trackAction('mentor_interaction', {
+            bookId: selectedBookId,
+            timestamp: new Date().toISOString()
+          });
+          console.log('🎓 Mentor interaction tracked for streak');
+        } catch (error) {
+          console.warn('Failed to track mentor interaction:', error);
+        }
+      }
+
       setUserResponse('');
-  }, [userResponse, discussionHistory]);
+  }, [userResponse, discussionHistory, trackAction, selectedBookId]);
     
   const generateMentorResponse = useCallback(async (response) => {
       // Get the selected book

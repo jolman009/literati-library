@@ -11,7 +11,6 @@ import { getBookStatus } from '../components/BookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
 import MentorPreviewCard from '../components/MentorPreviewCard';
-import { RefreshCw } from 'lucide-react';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
 import ThemeToggle from '../components/ThemeToggle';
@@ -20,49 +19,9 @@ import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
-  const { stats, achievements, syncWithServer, trackAction } = useGamification();
-  const { actualTheme } = useMaterial3Theme();
+const WelcomeSection = ({ user, onStartTour }) => {
+  const { stats, achievements } = useGamification();
   const navigate = useNavigate();
-  const { showSnackbar } = useSnackbar();
-  const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState(null);
-  // Onboarding overlay disabled
-
-  // Check if already checked in today and calculate streak on component mount
-  const [checkInStreak, setCheckInStreak] = useState(0);
-
-  useEffect(() => {
-    console.warn(' WelcomeSection: useEffect for daily check-in');
-
-    // Load check-in status from backend
-    const loadCheckInStatus = async () => {
-      try {
-        const response = await API.get('/api/gamification/checkin/status');
-        const { hasCheckedInToday, currentStreak } = response.data;
-
-        setHasCheckedInToday(hasCheckedInToday);
-        setCheckInStreak(currentStreak);
-
-        console.warn(`✅ Check-in status loaded: hasCheckedInToday=${hasCheckedInToday}, streak=${currentStreak}`);
-      } catch (error) {
-        console.warn('⚠️ Failed to load check-in status from backend, using localStorage fallback');
-
-        // Fallback to localStorage
-        const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
-        const today = new Date().toDateString();
-        setHasCheckedInToday(lastCheckIn === today);
-
-        const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
-        setCheckInStreak(streak);
-      }
-    };
-
-    loadCheckInStatus();
-
-    // Onboarding spotlight disabled
-  }, []);
 
   // Calculate level progress percentage
   const levelProgress = useMemo(() => {
@@ -73,182 +32,18 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
     return Math.min(Math.max(progress, 0), 100); // Clamp between 0-100
   }, [stats]);
 
+  // Activity streak from server (automatically tracked)
+  const activityStreak = stats?.readingStreak || 0;
+
   const getMotivationalMessage = () => {
     const hour = new Date().getHours();
     const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-    
-    if (checkInStreak >= 7) return `${timeGreeting}! 🎯 Amazing ${checkInStreak}-day check-in streak!`;
-    if (stats?.readingStreak >= 7) return `${timeGreeting}! 🔥 You're on fire with a ${stats.readingStreak}-day reading streak!`;
+
+    if (activityStreak >= 7) return `${timeGreeting}! 🔥 You're on fire with a ${activityStreak}-day activity streak!`;
     if (stats?.booksRead >= 10) return `${timeGreeting}! 📚 Amazing - you've read ${stats.booksRead} books!`;
     if (achievements?.length >= 5) return `${timeGreeting}! 🏆 You're crushing it with ${achievements.length} achievements!`;
     return `${timeGreeting}! Ready to dive into your next great read?`;
   };
-
-  const handleDailyCheckIn = useCallback(async () => {
-    try {
-      // Safety check: ensure showSnackbar exists
-      if (!showSnackbar || typeof showSnackbar !== 'function') {
-        console.error('Snackbar not available');
-        alert('Check-in feature is temporarily unavailable');
-        return;
-      }
-
-      // Call backend API to handle check-in
-      try {
-        const response = await API.post('/api/gamification/actions', {
-          action: 'daily_checkin',
-          data: {},
-          timestamp: new Date().toISOString()
-        });
-
-        const { success, streak, points, message, error } = response.data;
-
-        if (!success && error) {
-          // Already checked in today
-          showSnackbar({
-            message: '✨ You\'ve already checked in today! Come back tomorrow.',
-            variant: 'info'
-          });
-          return;
-        }
-
-        // Update state with backend response
-        setHasCheckedInToday(true);
-        setCheckInStreak(streak);
-
-        // Save to localStorage as backup
-        const today = new Date().toDateString();
-        localStorage.setItem('lastDailyCheckIn', today);
-        localStorage.setItem('checkInStreak', streak.toString());
-
-        // Update parent component
-        if (onCheckInUpdate) {
-          onCheckInUpdate(streak);
-        }
-
-        // Track the action if trackAction exists
-        if (typeof trackAction === 'function') {
-          try {
-            await trackAction('daily_checkin', {
-              points: points,
-              streak: streak,
-              timestamp: new Date().toISOString()
-            });
-          } catch (trackError) {
-            console.warn('Tracking not available, but check-in recorded');
-          }
-        }
-
-        // Show success message with streak info
-        const streakMessage = streak > 1 ? `🔥 ${streak}-day streak!` : '';
-        showSnackbar({
-          message: `✅ Daily check-in complete! +${points} points earned! ${streakMessage}`,
-          variant: 'success'
-        });
-
-        console.warn(`✅ Daily check-in successful: streak=${streak}, points=${points}`);
-
-      } catch (apiError) {
-        console.error('❌ Check-in API error:', apiError);
-
-        // Fallback to localStorage-based check-in if backend fails
-        const lastCheckIn = localStorage.getItem('lastDailyCheckIn');
-        const today = new Date().toDateString();
-
-        if (lastCheckIn === today) {
-          showSnackbar({
-            message: '✨ You\'ve already checked in today! Come back tomorrow.',
-            variant: 'info'
-          });
-          return;
-        }
-
-        // Calculate streak locally
-        let newStreak = 1;
-        const storedStreak = parseInt(localStorage.getItem('checkInStreak') || '0');
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayString = yesterday.toDateString();
-
-        if (lastCheckIn === yesterdayString) {
-          newStreak = storedStreak + 1;
-        }
-
-        // Save locally
-        localStorage.setItem('lastDailyCheckIn', today);
-        localStorage.setItem('checkInStreak', newStreak.toString());
-        setHasCheckedInToday(true);
-        setCheckInStreak(newStreak);
-
-        const streakMessage = newStreak > 1 ? `🔥 ${newStreak}-day streak!` : '';
-        showSnackbar({
-          message: `✅ Check-in saved locally! +10 points! ${streakMessage}`,
-          variant: 'success'
-        });
-
-        console.warn('ℹ️ Check-in saved locally (offline mode)');
-      }
-
-    } catch (error) {
-      console.error('Daily check-in error:', error);
-      showSnackbar({
-        message: '❌ Check-in failed. Please try again.',
-        variant: 'error'
-      });
-    }
-  }, [trackAction, showSnackbar, onCheckInUpdate]);
-
-  const handleSync = useCallback(async () => {
-    // Safety check: ensure showSnackbar exists
-    if (!showSnackbar || typeof showSnackbar !== 'function') {
-      console.error('Snackbar not available');
-      alert('Sync feature is temporarily unavailable');
-      return;
-    }
-
-    if (!syncWithServer || typeof syncWithServer !== 'function') {
-      console.warn('Sync function not available');
-      showSnackbar({
-        message: '⚠️ Sync feature is not available',
-        variant: 'warning'
-      });
-      return;
-    }
-
-    setIsSyncing(true);
-
-    try {
-      const result = await syncWithServer();
-
-      if (result?.success) {
-        setLastSyncTime(new Date());
-        showSnackbar({
-          message: `✅ Synced! ${result.stats?.totalPoints || 0} points`,
-          variant: 'success'
-        });
-      } else if (result?.error?.includes('offline') || result?.error?.includes('Not authenticated')) {
-        setLastSyncTime(new Date());
-        showSnackbar({
-          message: '📡 Working offline - data saved locally',
-          variant: 'info'
-        });
-      } else {
-        setLastSyncTime(new Date());
-        showSnackbar({
-          message: '📡 Data saved locally',
-          variant: 'info'
-        });
-      }
-    } catch (error) {
-      console.error('Sync error:', error);
-      showSnackbar({
-        message: '📡 Saved locally - will sync when server is ready',
-        variant: 'info'
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [syncWithServer, showSnackbar]);
 
   return (
     <div className="welcome-section-compact">
@@ -259,42 +54,12 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
             {getMotivationalMessage()}
           </h1>
 
-          {/* Subtitle with Inline Action Buttons */}
+          {/* Subtitle - Activity streak auto-tracked from user activities */}
           <div className="welcome-subtitle-row">
             <p className="welcome-subtitle-compact">
               {user?.name || 'Reader'} • Level {stats?.level || 1}
-              {checkInStreak > 0 && ` • ${checkInStreak}-day streak 🔥`}
+              {activityStreak > 0 && ` • ${activityStreak}-day streak 🔥`}
             </p>
-
-            {/* Onboarding links moved to navigation/menu for a cleaner dashboard */}
-
-            {/* Compact Inline Buttons */}
-            <div className="welcome-inline-buttons">
-              {/* Daily Check-in Button - Compact */}
-              <button
-                onClick={handleDailyCheckIn}
-                disabled={hasCheckedInToday}
-                className="checkin-button-inline"
-                title={hasCheckedInToday ? 'Already checked in today' : 'Daily check-in for points'}
-              >
-                {hasCheckedInToday ? '✓' : '✅'}
-              </button>
-
-              {/* Manual Sync Button - Compact */}
-              <button
-                onClick={handleSync}
-                disabled={isSyncing}
-                className={`sync-button-inline ${isSyncing ? 'syncing' : ''} ${lastSyncTime ? 'synced' : ''}`}
-                aria-label={isSyncing ? 'Syncing data with server' : 'Sync data with server'}
-                aria-busy={isSyncing}
-                title={isSyncing ? 'Syncing...' : lastSyncTime ? `Last synced: ${new Date(lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Sync data with server'}
-              >
-                <RefreshCw
-                  className={`sync-icon ${isSyncing ? 'spinning' : ''}`}
-                  size={14}
-                />
-              </button>
-            </div>
           </div>
 
           {/* Level Progress Bar with Total Points */}
@@ -326,7 +91,7 @@ const WelcomeSection = ({ user, onCheckInUpdate, onStartTour }) => {
 
 
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
-const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
+const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
   const { stats } = useGamification();
   const { actualTheme } = useMaterial3Theme();
   const { isAuthenticated } = useAuth();
@@ -349,8 +114,9 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
   console.warn('🔍 QuickStatsOverview: loading =', loading);
   console.warn('🔍 QuickStatsOverview: notesPoints =', notesPoints);
 
-  // Use prop or fallback to localStorage
-  const displayStreak = checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
+  // ✅ FIX: Use activity-based streak from server stats (readingStreak), not button-based checkInStreak
+  // Priority: server stats > prop > localStorage fallback
+  const displayStreak = stats?.readingStreak || checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
 
   // Fetch notes-specific points, reading sessions count, total points and time read from APIs
   const fetchGamificationData = useCallback(async () => {
@@ -721,8 +487,9 @@ const QuickStatsOverview = ({ checkInStreak = 0, totalBooks = null, completedBoo
     {
       icon: '🔥',
       value: displayStreak,
-      label: 'Daily Streak',
-      growth: displayStreak > 0 ? `+${displayStreak}d` : '+0d',
+      label: 'Activity Streak',
+      subtitle: 'consecutive days',
+      growth: displayStreak > 0 ? `${displayStreak} days` : '0 days',
       trend: displayStreak > 0 ? 'up' : 'neutral'
     }
   ];
@@ -1298,12 +1065,13 @@ const MobileHeroReadingCard = ({ activeSession, navigate }) => {
 };
 
 // Mobile Compact Stats Badge Component
-const MobileCompactStatsBadge = ({ stats, checkInStreak }) => {
+const MobileCompactStatsBadge = ({ stats }) => {
+  const activityStreak = stats?.readingStreak || 0;
   return (
     <div className="dashboard-compact-stats-badge dashboard-mobile-only">
       <div className="compact-stats-item">
         <span className="compact-stats-icon">🔥</span>
-        <span>{checkInStreak || 0} day streak</span>
+        <span>{activityStreak} day streak</span>
       </div>
       <div className="compact-stats-divider" />
       <div className="compact-stats-item">
@@ -1372,7 +1140,6 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   // Needed for the global Resume banner and any resume/stop controls at this level
   const { activeSession } = useReadingSession();
-  const [checkInStreak, setCheckInStreak] = useState(0);
   const [books, setBooks] = useState([]);
 
   // Driver.js tour for onboarding key actions
@@ -1462,13 +1229,6 @@ const DashboardPage = () => {
     window.addEventListener('restartGuidedTour', handler);
     return () => window.removeEventListener('restartGuidedTour', handler);
   }, [startDashboardTour]);
-  
-  // Load check-in streak on mount
-  useEffect(() => {
-    console.warn(' DashboardPage: useEffect for check-in streak');
-    const streak = parseInt(localStorage.getItem('checkInStreak') || '0');
-    setCheckInStreak(streak);
-  }, []);
 
   // Pull-to-refresh handler
   const handleRefresh = useCallback(async () => {
@@ -1479,12 +1239,6 @@ const DashboardPage = () => {
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
       const { items = [] } = response.data || {};
       setBooks(items);
-
-      // Reload check-in streak
-      const checkInResponse = await API.get('/api/gamification/checkin/status');
-      if (checkInResponse.data?.currentStreak !== undefined) {
-        setCheckInStreak(checkInResponse.data.currentStreak);
-      }
 
       showSnackbar('Dashboard refreshed successfully', 'success');
       console.warn('✅ Dashboard: Refresh completed');
@@ -1526,7 +1280,7 @@ const DashboardPage = () => {
         <MobileHeroReadingCard activeSession={activeSession} navigate={navigate} />
 
         {/* Mobile-Only: Compact Stats Badge */}
-        <MobileCompactStatsBadge stats={stats} checkInStreak={checkInStreak} />
+        <MobileCompactStatsBadge stats={stats} />
 
         {/* Mobile-Only: Quick Actions */}
         <MobileQuickActions navigate={navigate} />
@@ -1563,7 +1317,6 @@ const DashboardPage = () => {
         {/* Mobile: Expandable Stats - wraps the stat cards */}
         <MobileExpandableStats>
           <QuickStatsOverview
-            checkInStreak={checkInStreak}
             totalBooks={Array.isArray(books) ? books.length : 0}
             completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
             inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
@@ -1573,7 +1326,6 @@ const DashboardPage = () => {
         {/* Desktop: Metric Cards - Horizontal Scroll (hidden on mobile) */}
         <QuickStatsOverview
           className="mobile-hide"
-          checkInStreak={checkInStreak}
           totalBooks={Array.isArray(books) ? books.length : 0}
           completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
           inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
@@ -1583,7 +1335,7 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
-            <WelcomeSection user={user} onCheckInUpdate={setCheckInStreak} onStartTour={startDashboardTour} />
+            <WelcomeSection user={user} onStartTour={startDashboardTour} />
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
               <button
