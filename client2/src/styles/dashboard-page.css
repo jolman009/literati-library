@@ -2207,18 +2207,52 @@
   font-weight: 500;
 }
 
-/* Grid for the three point category cards */
+/* Grid for the four point category cards */
 .point-categories-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
 /* Responsive adjustments for point categories */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
+  .point-categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
   .point-categories-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Activity Streak category special styling */
+.point-category-card.streak-category {
+  border-color: #f9731630;
+  background: linear-gradient(135deg, var(--md-sys-color-surface-container) 0%, rgba(249, 115, 22, 0.05) 100%);
+}
+
+.point-category-card.streak-category .point-category-icon {
+  animation: pulse-flame 2s ease-in-out infinite;
+}
+
+@keyframes pulse-flame {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.streak-actions .point-action-item {
+  padding: 6px 0;
+}
+
+.streak-action-item .point-action-name {
+  font-size: 13px;
+}
+
+[data-theme="dark"] .point-category-card.streak-category {
+  background: linear-gradient(135deg, var(--md-sys-color-surface-container-low) 0%, rgba(249, 115, 22, 0.08) 100%);
+  border-color: #f9731640;
 }
 
 .point-category-card {
