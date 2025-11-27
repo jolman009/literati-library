@@ -114,9 +114,8 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   console.warn('🔍 QuickStatsOverview: loading =', loading);
   console.warn('🔍 QuickStatsOverview: notesPoints =', notesPoints);
 
-  // ✅ FIX: Use activity-based streak from server stats (readingStreak), not button-based checkInStreak
-  // Priority: server stats > prop > localStorage fallback
-  const displayStreak = stats?.readingStreak || checkInStreak || parseInt(localStorage.getItem('checkInStreak') || '0');
+  // ✅ Activity-based streak from server stats (automatically tracked from user activities)
+  const displayStreak = stats?.readingStreak || 0;
 
   // Fetch notes-specific points, reading sessions count, total points and time read from APIs
   const fetchGamificationData = useCallback(async () => {
@@ -580,7 +579,7 @@ const PointCategoriesSection = () => {
       actions: [
         { action: 'Upload Book', points: 25, icon: '📤' },
         { action: 'Daily Login', points: 10, icon: '🌅' },
-        { action: 'Daily Check-in', points: 10, icon: '✔️' },
+        { action: 'Chat with AI Mentor', points: 5, icon: '🎓' },
       ]
     },
     {
@@ -590,6 +589,20 @@ const PointCategoriesSection = () => {
       actions: [
         { action: 'Create Note', points: 15, icon: '📋' },
         { action: 'Create Highlight', points: 10, icon: '✏️' },
+      ]
+    },
+    {
+      title: 'Activity Streak',
+      icon: '🔥',
+      color: '#f97316',
+      isStreakCategory: true,
+      description: 'Keep your streak alive! Any of these activities count toward your daily streak:',
+      streakActions: [
+        { action: 'Open/start reading a book', icon: '📖' },
+        { action: 'Upload a new book', icon: '📤' },
+        { action: 'Create a note', icon: '📝' },
+        { action: 'Create a highlight', icon: '✏️' },
+        { action: 'Chat with the AI mentor', icon: '🎓' },
       ]
     }
   ];
@@ -608,32 +621,79 @@ const PointCategoriesSection = () => {
 
       <div className="point-categories-grid">
         {pointCategories.map((category, index) => (
-          <div key={index} className="point-category-card">
+          <div key={index} className={`point-category-card ${category.isStreakCategory ? 'streak-category' : ''}`}>
             <div className="point-category-header">
               <h3 className="point-category-title">
                 <span className="point-category-icon">{category.icon}</span>
                 {category.title}
               </h3>
             </div>
-            <div className="point-category-actions">
-              {category.actions.map((action, actionIndex) => (
-                <div key={actionIndex} className="point-action-item">
-                  <div className="point-action-info">
-                    <span className="point-action-icon">{action.icon}</span>
-                    <span className="point-action-name">{action.action}</span>
-                  </div>
-                  <div className="point-action-badge" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
-                    +{action.points}
-                  </div>
+
+            {/* Regular point-earning categories */}
+            {!category.isStreakCategory && (
+              <>
+                <div className="point-category-actions">
+                  {category.actions.map((action, actionIndex) => (
+                    <div key={actionIndex} className="point-action-item">
+                      <div className="point-action-info">
+                        <span className="point-action-icon">{action.icon}</span>
+                        <span className="point-action-name">{action.action}</span>
+                      </div>
+                      <div className="point-action-badge" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
+                        +{action.points}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <button
-              onClick={() => navigate('/gamification-rules')}
-              className="point-category-footer-link"
-            >
-              View all rewards →
-            </button>
+                <button
+                  onClick={() => navigate('/gamification-rules')}
+                  className="point-category-footer-link"
+                >
+                  View all rewards →
+                </button>
+              </>
+            )}
+
+            {/* Special Activity Streak category */}
+            {category.isStreakCategory && (
+              <>
+                <p className="streak-category-description" style={{
+                  fontSize: '13px',
+                  color: 'var(--md-sys-color-on-surface-variant)',
+                  marginBottom: '12px',
+                  lineHeight: '1.4'
+                }}>
+                  {category.description}
+                </p>
+                <div className="point-category-actions streak-actions">
+                  {category.streakActions.map((action, actionIndex) => (
+                    <div key={actionIndex} className="point-action-item streak-action-item">
+                      <div className="point-action-info">
+                        <span className="point-action-icon">{action.icon}</span>
+                        <span className="point-action-name">{action.action}</span>
+                      </div>
+                      <div className="streak-check" style={{
+                        color: category.color,
+                        fontSize: '16px'
+                      }}>
+                        ✓
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="streak-tip" style={{
+                  marginTop: '12px',
+                  padding: '8px 12px',
+                  backgroundColor: `${category.color}10`,
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  color: category.color,
+                  fontWeight: 500
+                }}>
+                  💡 Do any one activity per day to maintain your streak!
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
