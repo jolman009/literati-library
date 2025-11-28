@@ -23,33 +23,10 @@ vi.mock('epubjs', () => ({
   Book: vi.fn()
 }))
 
-// Global context mocks that all tests can use
-vi.mock('./contexts/AuthContext', () => ({
-  AuthProvider: ({ children }) => children,
-  useAuth: () => ({
-    user: {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      name: 'Test User'
-    },
-    token: 'test-token',
-    loading: false,
-    error: null,
-    isAuthenticated: true,
-    register: vi.fn(),
-    login: vi.fn(),
-    logout: vi.fn(),
-    updateProfile: vi.fn(),
-    changePassword: vi.fn(),
-    requestPasswordReset: vi.fn(),
-    deleteAccount: vi.fn(),
-    refreshUser: vi.fn(),
-    clearError: vi.fn(),
-    hasRole: vi.fn(() => false),
-    makeApiCall: vi.fn(),
-    makeAuthenticatedApiCall: vi.fn()
-  })
-}))
+// NOTE: AuthContext is NOT globally mocked to allow integration tests to test real behavior.
+// Tests that need a mocked AuthContext should mock it explicitly in their test file:
+//   vi.mock('./contexts/AuthContext', () => ({ ... }))
+// or use the createMockAuthContext helper exported from this file.
 
 vi.mock('./contexts/GamificationContext', () => ({
   GamificationProvider: ({ children }) => children,
@@ -155,22 +132,26 @@ global.ResizeObserver = vi.fn(() => ({
   unobserve: vi.fn(),
 }))
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+// Mock localStorage with proper null returns for missing keys
+const createStorageMock = () => {
+  let store = new Map()
+  return {
+    getItem: vi.fn((key) => store.has(key) ? store.get(key) : null),
+    setItem: vi.fn((key, value) => { store.set(String(key), String(value)) }),
+    removeItem: vi.fn((key) => { store.delete(String(key)) }),
+    clear: vi.fn(() => { store.clear() }),
+    key: vi.fn((index) => Array.from(store.keys())[Number(index)] ?? null),
+    get length() { return store.size },
+    // Internal method for tests to reset the store
+    _reset: () => { store = new Map() }
+  }
 }
+
+const localStorageMock = createStorageMock()
 global.localStorage = localStorageMock
 
 // Mock sessionStorage
-const sessionStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-}
+const sessionStorageMock = createStorageMock()
 global.sessionStorage = sessionStorageMock
 
 // Mock axios
@@ -241,28 +222,13 @@ Object.defineProperty(window, 'matchMedia', {
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
+  // Reset storage mocks between tests
+  localStorageMock._reset()
+  sessionStorageMock._reset()
 })
 
 // Extend expect with jest-dom matchers
 expect.extend({})
-
-// Provide a resilient localStorage mock for environments where jsdom doesn't expose it
-if (typeof globalThis.localStorage === 'undefined') {
-  const store = new Map()
-  const ls = {
-    getItem: (key) => (store.has(key) ? store.get(key) : null),
-    setItem: (key, value) => { store.set(String(key), String(value)) },
-    removeItem: (key) => { store.delete(String(key)) },
-    clear: () => { store.clear() },
-    key: (index) => Array.from(store.keys())[Number(index)] ?? null,
-    get length() { return store.size }
-  }
-  // Ensure availability on all common globals and as an identifier in tests
-  globalThis.localStorage = ls
-  if (typeof window !== 'undefined') window.localStorage = ls
-  // Vitest helper to create a global identifier
-  if (typeof vi !== 'undefined' && vi.stubGlobal) vi.stubGlobal('localStorage', ls)
-}
 
 // Global context mocks for use across all tests
 export const createMockAuthContext = (overrides = {}) => ({
