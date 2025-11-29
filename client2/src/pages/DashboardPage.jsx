@@ -10,6 +10,7 @@ import { useSnackbar } from '../components/Material3';
 import { getBookStatus } from '../components/BookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
+import { Challenges, StreakShields } from '../components/gamification';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
@@ -1428,6 +1429,28 @@ const DashboardPage = () => {
           {/* Right Column - Currently Reading Sessions */}
           <div className="dashboard-content-right">
             <CurrentlyReading />
+
+            {/* Daily Challenges Widget - Compact view for dashboard */}
+            <div className="section-card" style={{ margin: "12px 0", padding: "12px" }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 className="section-title" style={{ margin: 0 }}>
+                  🎯 Daily Challenges
+                </h3>
+                <button
+                  onClick={() => navigate('/gamification')}
+                  className="view-all-link"
+                  style={{ fontSize: '13px' }}
+                >
+                  View all →
+                </button>
+              </div>
+              <Challenges compact={true} showOnlyDaily={true} maxChallenges={3} />
+            </div>
+
+            {/* Streak Shields - Compact display */}
+            <div className="section-card mobile-hide" style={{ margin: "12px 0", padding: "12px" }}>
+              <StreakShields compact={true} />
+            </div>
 
             {/* Points History - Show recent point-earning actions (hidden on mobile) */}
             <div className="mobile-hide" style={{ marginTop: '20px' }}>

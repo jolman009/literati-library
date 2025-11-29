@@ -874,6 +874,63 @@ export const gamificationRouter = (authenticateToken) => {
       // Calculate current streak after recording activity
       const currentStreak = await calculateReadingStreak(userId);
 
+      // Check if user earned a streak shield at 7-day milestone
+      let shieldEarned = false;
+      if (currentStreak > 0 && currentStreak % 7 === 0) {
+        // Check if we already awarded a shield for this milestone
+        const milestoneKey = `streak_shield_${currentStreak}`;
+        const { data: existingAward } = await supabase
+          .from('streak_shield_log')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('reason', milestoneKey)
+          .single();
+
+        if (!existingAward) {
+          // Award a streak shield
+          const { data: settings } = await supabase
+            .from('user_settings')
+            .select('streak_shields, max_streak_shields')
+            .eq('user_id', userId)
+            .single();
+
+          const currentShields = settings?.streak_shields || 0;
+          const maxShields = settings?.max_streak_shields || 3;
+
+          if (currentShields < maxShields) {
+            // Update shield count
+            if (settings) {
+              await supabase
+                .from('user_settings')
+                .update({ streak_shields: currentShields + 1 })
+                .eq('user_id', userId);
+            } else {
+              await supabase
+                .from('user_settings')
+                .insert({
+                  user_id: userId,
+                  streak_shields: 1,
+                  max_streak_shields: 3
+                });
+            }
+
+            // Log the shield award
+            await supabase
+              .from('streak_shield_log')
+              .insert({
+                user_id: userId,
+                action: 'earned',
+                shield_count: 1,
+                streak_at_action: currentStreak,
+                reason: milestoneKey
+              });
+
+            shieldEarned = true;
+            console.log(`🛡️ Streak shield earned for ${currentStreak}-day streak!`);
+          }
+        }
+      }
+
       console.log(`✅ Action tracked: ${action}, ${points} points, streak: ${currentStreak} days`);
       res.json({
         success: true,
@@ -881,11 +938,116 @@ export const gamificationRouter = (authenticateToken) => {
         points,
         streak: currentStreak,
         streakRecorded: streakResult?.success || false,
-        message: `${action} tracked successfully!${currentStreak > 1 ? ` 🔥 ${currentStreak}-day streak!` : ''}`
+        shieldEarned,
+        message: `${action} tracked successfully!${currentStreak > 1 ? ` 🔥 ${currentStreak}-day streak!` : ''}${shieldEarned ? ' 🛡️ You earned a Streak Shield!' : ''}`
       });
     } catch (e) {
       console.error('Error tracking action:', e);
       res.status(500).json({ error: 'Failed to track action' });
+    }
+  });
+
+  // GET /api/gamification/streak-shields - Get user's streak shields
+  router.get('/streak-shields', async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      const { data: settings } = await supabase
+        .from('user_settings')
+        .select('streak_shields, max_streak_shields')
+        .eq('user_id', userId)
+        .single();
+
+      const { data: history } = await supabase
+        .from('streak_shield_log')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      res.json({
+        shields: settings?.streak_shields || 0,
+        max_shields: settings?.max_streak_shields || 3,
+        history: history || []
+      });
+    } catch (e) {
+      console.error('Error fetching streak shields:', e);
+      res.json({ shields: 0, max_shields: 3, history: [] });
+    }
+  });
+
+  // POST /api/gamification/streak-shields/use - Use a streak shield to protect streak
+  router.post('/streak-shields/use', async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      // Get current shield count
+      const { data: settings } = await supabase
+        .from('user_settings')
+        .select('streak_shields')
+        .eq('user_id', userId)
+        .single();
+
+      const currentShields = settings?.streak_shields || 0;
+
+      if (currentShields <= 0) {
+        return res.status(400).json({
+          error: 'No streak shields available',
+          shields: 0
+        });
+      }
+
+      // Get current streak to record
+      const currentStreak = await calculateReadingStreak(userId);
+
+      // Use the shield
+      await supabase
+        .from('user_settings')
+        .update({ streak_shields: currentShields - 1 })
+        .eq('user_id', userId);
+
+      // Log the usage
+      await supabase
+        .from('streak_shield_log')
+        .insert({
+          user_id: userId,
+          action: 'used',
+          shield_count: 1,
+          streak_at_action: currentStreak,
+          reason: 'Streak protection activated'
+        });
+
+      // Record a "protected" day in reading_streaks to maintain the streak
+      const today = new Date().toISOString().split('T')[0];
+      const { error: insertError } = await supabase
+        .from('reading_streaks')
+        .upsert({
+          user_id: userId,
+          streak_date: today,
+          reading_time: 0,
+          pages_read: 0,
+          books_completed: 0,
+          notes_created: 0,
+          highlights_created: 0
+        }, {
+          onConflict: 'user_id,streak_date'
+        });
+
+      if (insertError) {
+        console.warn('⚠️ Failed to record protected day:', insertError.message);
+      }
+
+      console.log(`🛡️ Streak shield used by user ${userId}. Shields remaining: ${currentShields - 1}`);
+
+      res.json({
+        success: true,
+        shields_remaining: currentShields - 1,
+        streak_protected: true,
+        message: '🛡️ Streak Shield activated! Your streak is protected for today.'
+      });
+    } catch (e) {
+      console.error('Error using streak shield:', e);
+      res.status(500).json({ error: 'Failed to use streak shield' });
     }
   });
 

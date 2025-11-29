@@ -11,9 +11,10 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark }) => {
   const menuItems = [
     { icon: 'upload', label: 'Upload Book', path: '/upload' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
+    { icon: 'leaderboard', label: 'Leaderboard', path: '/leaderboard' },
+    { icon: 'emoji_events', label: 'Achievements', path: '/achievements' },
     { icon: 'account_circle', label: 'Profile', path: '/profile' },
     { icon: 'bar_chart', label: 'Analytics', path: '/analytics' },
-    { icon: 'emoji_events', label: 'Achievements', path: '/achievements' },
     { icon: 'settings', label: 'Settings', path: '/settings' },
     { icon: 'help', label: 'Help & Support', path: '/help' },
   ];

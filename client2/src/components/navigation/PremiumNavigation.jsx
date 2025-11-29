@@ -43,6 +43,7 @@ const PremiumNavigation = ({
     { to: '/mentor', label: 'Mentor AI', icon: 'psychology' },
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
+    { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
     { to: '/onboarding', label: 'Onboarding', icon: 'flag' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
     { to: null, label: 'Logout', icon: 'logout', isLogout: true },
