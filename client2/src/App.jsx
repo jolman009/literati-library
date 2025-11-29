@@ -84,6 +84,7 @@ const LibraryPageWrapper = lazy(() =>
   })
 );
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
@@ -282,6 +283,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="mentor" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading Literary Mentor..." />}>
               <MentorPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/leaderboard" element={
+          <ErrorBoundary fallbackComponent="leaderboard" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading leaderboard..." />}>
+              <LeaderboardPage />
             </Suspense>
           </ErrorBoundary>
         } />

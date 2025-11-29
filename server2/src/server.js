@@ -52,6 +52,8 @@ const supabaseAdmin = supabase; // Using service role key, so it has admin privi
 import { notesRouter } from './routes/notes.js';
 import { readingRouter, registerLegacyReadingEndpoints } from './routes/reading.js';
 import { gamificationRouter } from './routes/gamification.js';
+import { challengesRouter } from './routes/challenges.js';
+import { leaderboardRouter } from './routes/leaderboard.js';
 import { aiRouter } from './routes/ai.js';
 import guideRouter from './routes/guide.js';
 import { performanceRouter } from './routes/performance.js';
@@ -196,6 +198,10 @@ app.use('/notes', notesRouter(authenticateTokenEnhanced));
 app.use('/api/reading', readingRouter(authenticateTokenEnhanced));
 // Gamification endpoints with specialized rate limiting
 app.use('/api/gamification', rateLimitSuite.gamification, gamificationRouter(authenticateTokenEnhanced));
+// Challenges system (daily/weekly challenges)
+app.use('/api/challenges', rateLimitSuite.gamification, challengesRouter(authenticateTokenEnhanced));
+// Leaderboard system (rankings, social features)
+app.use('/api/leaderboard', rateLimitSuite.gamification, leaderboardRouter(authenticateTokenEnhanced));
 
 // In-app Guide Assistant (rate limited like general API)
 app.use('/api/guide', rateLimitSuite.api, slowDownSuite.general, guideRouter(authenticateTokenEnhanced));
