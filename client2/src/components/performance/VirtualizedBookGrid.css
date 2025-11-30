@@ -92,8 +92,8 @@
 .book-menu-button {
   position: absolute;
   top: 8px;
-  left: 8px; /* moved from right to left */
-  right: auto;
+  right: 8px;
+  left: auto;
 
   /* Strict size constraints to prevent stretching */
   width: 32px;
@@ -209,14 +209,14 @@
   margin: 4px 0;
 }
 
-/* Book info */
-.book-info {
+/* Book info - scoped to virtualized grid to avoid conflicts */
+.virtualized-book-card .book-info {
   padding: 12px 16px;
   background: var(--md3-surface-container);
   border-top: 1px solid var(--md3-outline-variant);
 }
 
-.book-title {
+.virtualized-book-card .book-title {
   font-size: 14px;
   font-weight: 600;
   color: var(--md3-on-surface);
@@ -228,7 +228,7 @@
   overflow: hidden;
 }
 
-.book-author {
+.virtualized-book-card .book-author {
   font-size: 12px;
   color: var(--md3-on-surface-variant);
   margin: 0 0 8px 0;
@@ -239,15 +239,15 @@
   overflow: hidden;
 }
 
-/* Progress bar */
-.book-progress {
+/* Progress bar - scoped to virtualized grid */
+.virtualized-book-card .book-progress {
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 8px 0 4px 0;
 }
 
-.progress-bar {
+.virtualized-book-card .progress-bar {
   flex: 1;
   height: 4px;
   background: var(--md3-outline-variant);
@@ -255,22 +255,22 @@
   overflow: hidden;
 }
 
-.progress-fill {
+.virtualized-book-card .progress-fill {
   height: 100%;
   background: var(--md3-primary);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
 
-.progress-text {
+.virtualized-book-card .progress-text {
   font-size: 11px;
   color: var(--md3-on-surface-variant);
   font-weight: 500;
   min-width: 32px;
 }
 
-/* Genre tag */
-.book-genre {
+/* Genre tag - scoped to virtualized grid */
+.virtualized-book-card .book-genre {
   display: inline-block;
   font-size: 11px;
   color: var(--md3-primary);

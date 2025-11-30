@@ -193,16 +193,44 @@
 }
 
 .stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
   gap: 12px;
   margin: 12px 0;
+  padding-bottom: 8px; /* Space for scrollbar if visible */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+}
+
+/* Hide scrollbar but keep functionality */
+.stat-grid::-webkit-scrollbar {
+  height: 4px;
+}
+
+.stat-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stat-grid::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: 4px;
+}
+
+.stat-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-outline);
 }
 
 .stat-metric-card {
   background: var(--md-sys-color-surface-container-high);
   border: 1px solid var(--md-sys-color-outline-variant);
   box-shadow: var(--md-sys-elevation-level1);
+  min-width: 160px;
+  max-width: 200px;
+  flex: 0 0 auto; /* Don't grow or shrink, use auto basis */
+  padding: 12px 16px;
+  border-radius: 12px;
 }
 
 .action-shortcut-row {
@@ -231,6 +259,7 @@
 .goal-selector-label {
   margin: 0;
   font-weight: 700;
+  color: var(--md-sys-color-on-surface);
 }
 
 .goal-selector-subtext {
@@ -263,6 +292,7 @@
 
 .continue-card-title {
   margin: 4px 0;
+  color: var(--md-sys-color-on-surface);
 }
 
 .continue-card-meta {
@@ -286,6 +316,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
+  color: var(--md-sys-color-on-surface);
 }
 
 .advanced-content {
@@ -306,6 +337,7 @@
 .advanced-value {
   margin: 0;
   font-weight: 700;
+  color: var(--md-sys-color-on-surface);
 }
 
 .reward-confetti {
@@ -404,7 +436,14 @@
   border-radius: 14px;
   border: 1px solid var(--md-sys-color-outline-variant);
   background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.md3-chip:hover:not(.selected) {
+  background: var(--md-sys-color-surface-container);
+  border-color: var(--md-sys-color-outline);
 }
 
 .md3-chip.selected {
@@ -1442,6 +1481,11 @@
 
   .mobile-hide {
     display: block;
+  }
+
+  /* Preserve flex layout for stat-grid even with mobile-hide class */
+  .stat-grid.mobile-hide {
+    display: flex;
   }
 
   .desktop-only {
