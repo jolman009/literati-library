@@ -7,19 +7,18 @@ import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useSnackbar } from '../components/Material3';
-import { getBookStatus } from '../components/BookStatus';
+import { getStatus as getBookStatus } from '../utils/bookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
-import ThemeToggle from '../components/ThemeToggle';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-const WelcomeSection = ({ user, onStartTour, activeSession }) => {
+const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
   const { stats, achievements } = useGamification();
   const navigate = useNavigate();
 
@@ -136,10 +135,8 @@ const WelcomeSection = ({ user, onStartTour, activeSession }) => {
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
 const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
   const { stats, goalPreference } = useGamification();
-  const { actualTheme } = useMaterial3Theme();
-  const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(!stats);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
@@ -179,7 +176,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   const displayStreak = stats?.readingStreak || 0;
 
   // Fetch notes-specific points, reading sessions count, total points and time read from APIs
-  const fetchGamificationData = useCallback(async () => {
+  const _fetchGamificationData = useCallback(async () => {
     try {
       console.warn('📊 QuickStatsOverview: Fetching gamification breakdown data...');
       const [breakdownResp, statsResp] = await Promise.all([
@@ -293,7 +290,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
         totalPoints: stats?.totalPoints || 0
       });
     }
-  }, [stats, getReadingStats, countRecentSessions]);
+  }, [stats, getReadingStats, countRecentSessions, showSnackbar]);
 
   // 🔄 Consolidated effect for auto-refresh and event handling
   useEffect(() => {
@@ -390,6 +387,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       window.removeEventListener('readingSessionCompleted', handleReadingSessionCompleted);
       window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array - only run once on mount
 
   // ✅ REMOVED DUPLICATE: The event listener is now handled in the consolidated useEffect above
@@ -776,6 +774,7 @@ const PointCategoriesSection = () => {
 };
 
 // Recent Achievements Component (kept but can be removed if needed)
+// eslint-disable-next-line no-unused-vars
 const RecentAchievements = () => {
   const { achievements, unlockedAchievements } = useGamification();
 
@@ -848,23 +847,9 @@ const RecentAchievements = () => {
   );
 };
 
-// Currently Reading Section Componentss
+// Currently Reading Section Components
 const CurrentlyReading = () => {
-  const { activeSession, startReadingSession, stopReadingSession, isPaused } = useReadingSession(); // Listen to session changes + controls
-  const [elapsedSec, setElapsedSec] = useState(0);
-  useEffect(() => {
-    if (!activeSession) { setElapsedSec(0); return; }
-    const compute = () => {
-      const start = new Date(activeSession.startTime);
-      const now = new Date();
-      const current = Math.floor((now - start) / 1000);
-      const total = (activeSession.accumulatedTime || 0) + (activeSession.isPaused ? 0 : current);
-      setElapsedSec(Math.max(0, total));
-    };
-    compute();
-    const id = setInterval(compute, 1000);
-    return () => clearInterval(id);
-  }, [activeSession]);
+  const { activeSession, startReadingSession } = useReadingSession(); // Listen to session changes + controls
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1039,6 +1024,7 @@ const CurrentlyReading = () => {
 };
 
 // Recently Added Books Component for Dashboard
+// eslint-disable-next-line no-unused-vars
 const RecentlyAdded = () => {
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);

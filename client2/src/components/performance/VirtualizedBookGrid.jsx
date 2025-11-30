@@ -2,9 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Grid } from 'react-window';
 import { LazyBookCover } from './LazyImage';
 import './VirtualizedBookGrid.css';
-import '../LibraryBookStyles.css';
-import { getBookStatus } from '../BookStatus';
-import { applyStatus, BOOK_STATUS } from '../../utils/bookStatus';
+import '../BookMenuButton.css';
+import { getStatus as getBookStatus, applyStatus, BOOK_STATUS } from '../../utils/bookStatus';
 
 const VirtualizedBookGrid = ({
   books = [],
