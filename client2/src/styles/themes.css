@@ -14,11 +14,11 @@
   --md-sys-color-primary-container: #d4e9f7;
   --md-sys-color-on-primary-container: #001f2a;
 
-  /* Secondary - Purple */
-  --md-sys-color-secondary: #7c5dc7;
+  /* Secondary - Cyan/Teal (complementary to primary blue) */
+  --md-sys-color-secondary: #0891b2;
   --md-sys-color-on-secondary: #ffffff;
-  --md-sys-color-secondary-container: #ecdcff;
-  --md-sys-color-on-secondary-container: #270059;
+  --md-sys-color-secondary-container: #cffafe;
+  --md-sys-color-on-secondary-container: #083344;
 
   /* Tertiary - Teal */
   --md-sys-color-tertiary: #006a6a;
@@ -59,11 +59,11 @@
   --md-sys-color-primary-container: #004d66;
   --md-sys-color-on-primary-container: #d4e9f7;
 
-  /* Secondary - Purple */
-  --md-sys-color-secondary: #d7bbff;
-  --md-sys-color-on-secondary: #3f008a;
-  --md-sys-color-secondary-container: #5c29a5;
-  --md-sys-color-on-secondary-container: #ecdcff;
+  /* Secondary - Cyan/Teal (complementary to primary blue) */
+  --md-sys-color-secondary: #67e8f9;
+  --md-sys-color-on-secondary: #083344;
+  --md-sys-color-secondary-container: #155e75;
+  --md-sys-color-on-secondary-container: #cffafe;
 
   /* Tertiary - Teal */
   --md-sys-color-tertiary: #4ddada;

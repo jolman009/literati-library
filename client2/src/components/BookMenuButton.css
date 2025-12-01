@@ -1,4 +1,4 @@
-/* Library Book Menu Styles */
+/* Book Menu Button & Actions Menu Styles */
 
 /* Menu button styling */
 .book-menu-button {
@@ -46,6 +46,12 @@
   outline-offset: 2px;
 }
 
+/* Menu button hover states */
+.book-menu-button:hover {
+  /* Smooth hover transition */
+  transition: var(--card-transition);
+}
+
 /* ===== Menu Dropdown Styling ===== */
 
 /* Menu backdrop */
@@ -56,14 +62,14 @@
   z-index: 105;
 }
 
-/* Menu container - LIGHT MODE */
+/* Menu container - uses MD3 CSS variables for theme compatibility */
 .book-actions-menu {
   position: fixed;
   min-width: 200px;
-  background-color: #f5f5f5;
+  background-color: var(--md-sys-color-surface-container-high, #f5f5f5);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--md-sys-color-outline-variant, rgba(0, 0, 0, 0.12));
   overflow: hidden;
   z-index: 110;
   isolation: isolate;
@@ -73,22 +79,13 @@
   transform-origin: top right;
 }
 
-/* Menu container - DARK MODE */
-@media (prefers-color-scheme: dark) {
-  .book-actions-menu {
-    background-color: #2c2c2e;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-}
-
-/* Menu item buttons - LIGHT MODE */
+/* Menu item buttons - uses MD3 CSS variables for theme compatibility */
 .book-menu-item {
   width: 100%;
   padding: 12px 16px;
   border: none;
-  background-color: #f5f5f5;
-  color: #000000;
+  background-color: var(--md-sys-color-surface-container-high, #f5f5f5);
+  color: var(--md-sys-color-on-surface, #000000);
   text-align: left;
   cursor: pointer;
   font-size: 14px;
@@ -100,70 +97,34 @@
 }
 
 .book-menu-item:hover {
-  background-color: #e8e8e8;
+  background-color: var(--md-sys-color-surface-container-highest, #e8e8e8);
 }
 
-/* Menu item buttons - DARK MODE */
-@media (prefers-color-scheme: dark) {
-  .book-menu-item {
-    background-color: #2c2c2e;
-    color: #ffffff;
-  }
-
-  .book-menu-item:hover {
-    background-color: #3c3c3e;
-  }
-}
-
-/* Primary action items (Start Reading Session) */
+/* Primary action items (Start Reading Session) - uses MD3 color tokens */
 .book-menu-item--primary {
-  color: #6200ee;
+  color: var(--md-sys-color-primary, #6200ee);
 }
 
 .book-menu-item--primary:hover {
-  color: #24A8E0;
+  color: var(--md-sys-color-primary, #24A8E0);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
 }
 
-@media (prefers-color-scheme: dark) {
-  .book-menu-item--primary {
-    color: #bb86fc;
-  }
-
-  .book-menu-item--primary:hover {
-    color: #d0a9ff;
-  }
-}
-
-/* Error/destructive action items (Delete, End Session) */
+/* Error/destructive action items (Delete, End Session) - uses MD3 color tokens */
 .book-menu-item--error {
-  color: #b00020;
+  color: var(--md-sys-color-error, #b00020);
 }
 
 .book-menu-item--error:hover {
-  color: #cf6679;
+  color: var(--md-sys-color-error, #cf6679);
+  background-color: color-mix(in srgb, var(--md-sys-color-error) 10%, transparent);
 }
 
-@media (prefers-color-scheme: dark) {
-  .book-menu-item--error {
-    color: #cf6679;
-  }
-
-  .book-menu-item--error:hover {
-    color: #ff8a80;
-  }
-}
-
-/* Menu dividers */
+/* Menu dividers - uses MD3 outline-variant for theme compatibility */
 .book-menu-divider {
   height: 1px;
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: var(--md-sys-color-outline-variant, rgba(0, 0, 0, 0.08));
   margin: 4px 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .book-menu-divider {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 /* Menu item icon */
@@ -200,39 +161,6 @@
   }
 }
 
-/* Ensure the simple MD3 book card doesn't clip inline actions */
-.md3-book-card {
-  position: relative !important;
-  overflow: visible !important;
-}
-
-/* Progress bar enhancements */
-.book-progress-container {
-  /* Ensure proper layering */
-  z-index: 5;
-}
-
-.book-progress-bar {
-  /* Smooth progress animations */
-  transition: width var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
-}
-
-/* Progress bar shimmer animation for active reading */
-@keyframes progress-shimmer {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-/* Menu button hover states */
-.book-menu-button:hover {
-  /* Smooth hover transition */
-  transition: var(--card-transition);
-}
-
 /* Mobile responsiveness */
 @media (max-width: 600px) {
   .book-menu-button {
@@ -261,7 +189,7 @@
     color: rgb(var(--md-sys-color-on-surface));
     border-color: rgba(0, 0, 0, 0.2);
   }
-  
+
   .book-menu-button:hover {
     background-color: rgb(var(--md-sys-color-primary-container));
     color: rgb(var(--md-sys-color-on-primary-container));
@@ -279,7 +207,6 @@
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .book-menu-button,
-  .book-progress-bar,
   .book-actions-menu {
     transition: none;
     animation: none;
