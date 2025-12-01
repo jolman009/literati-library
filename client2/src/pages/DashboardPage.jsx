@@ -134,7 +134,7 @@ const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
 
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
 const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
-  const { stats, goalPreference } = useGamification();
+  const { stats } = useGamification();
   const [loading, setLoading] = useState(!stats);
   const [refreshing] = useState(false);
   const [notesPoints, setNotesPoints] = useState(0);
@@ -510,26 +510,33 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   const booksCompleted = (typeof completedBooks === 'number') ? completedBooks : (stats?.booksCompleted || 0);
   const booksInProgress = (typeof inProgressBooks === 'number') ? inProgressBooks : 0;
 
-  const goalIsTime = goalPreference?.type !== 'books';
-  const goalTarget = goalIsTime
-    ? (goalPreference?.targetMinutesPerWeek || 120)
-    : (goalPreference?.targetBooksPerMonth || 2);
-  const goalCurrent = goalIsTime
-    ? Math.max(stats?.weeklyReadingTime || 0, totalMinutesRead)
-    : (stats?.booksCompleted || booksCompleted || 0);
-  const goalPercent = goalTarget > 0 ? Math.min(100, Math.round((goalCurrent / goalTarget) * 100)) : 0;
+  // Minutes per week calculation
+  const weeklyMinutes = Math.max(stats?.weeklyReadingTime || 0, totalMinutesRead);
+  const weeklyTarget = 120; // Default weekly goal
+  const weeklyPercent = weeklyTarget > 0 ? Math.min(100, Math.round((weeklyMinutes / weeklyTarget) * 100)) : 0;
 
-  // 🎯 Total Points now displayed prominently in Welcome section (next to progress bar)
+  // Books per month calculation
+  const monthlyBooks = stats?.booksCompletedThisMonth || booksCompleted || 0;
+  const monthlyTarget = 2; // Default monthly goal
+  const monthlyPercent = monthlyTarget > 0 ? Math.min(100, Math.round((monthlyBooks / monthlyTarget) * 100)) : 0;
+
+  // Stat cards - now with separate Minutes/Week and Books/Month cards
   const statCards = [
     {
-      icon: '🎯',
-      value: `${goalPercent}%`,
-      label: goalIsTime ? 'Minutes per week' : 'Books per month',
-      subtitle: goalIsTime
-        ? `${goalCurrent}/${goalTarget} mins`
-        : `${goalCurrent}/${goalTarget} books`,
-      growth: goalPercent >= 100 ? 'Goal met' : `${goalPercent}%`,
-      trend: goalPercent > 0 ? 'up' : 'neutral'
+      icon: '⏱️',
+      value: `${weeklyMinutes}`,
+      label: 'Minutes / Week',
+      subtitle: `${weeklyPercent}% of ${weeklyTarget}m goal`,
+      growth: weeklyPercent >= 100 ? 'Goal met!' : `${weeklyPercent}%`,
+      trend: weeklyMinutes > 0 ? 'up' : 'neutral'
+    },
+    {
+      icon: '📖',
+      value: `${monthlyBooks}`,
+      label: 'Books / Month',
+      subtitle: `${monthlyPercent}% of ${monthlyTarget} book goal`,
+      growth: monthlyPercent >= 100 ? 'Goal met!' : `${monthlyPercent}%`,
+      trend: monthlyBooks > 0 ? 'up' : 'neutral'
     },
     {
       icon: '🔥',
@@ -559,8 +566,8 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       icon: '⏱️',
       value: formatTimeRead(totalMinutesRead),
       label: 'Time Read',
-      subtitle: totalMinutesRead > 0 ? `${totalMinutesRead} minutes` : '',
-      growth: totalMinutesRead > 0 ? `${totalMinutesRead}m` : '+0',
+      subtitle: `${stats?.weeklyReadingTime || 0}m this week • ${stats?.todayReadingTime || 0}m today`,
+      growth: totalMinutesRead > 0 ? 'Total' : '+0',
       trend: totalMinutesRead > 0 ? 'up' : 'neutral'
     }
   ];
@@ -1250,64 +1257,6 @@ const MobileExpandableStats = ({ children }) => {
   );
 };
 
-const GoalSelector = ({ goalPreference, onChange }) => {
-  const [selection, setSelection] = useState(goalPreference?.type || 'time');
-
-  useEffect(() => {
-    setSelection(goalPreference?.type || 'time');
-  }, [goalPreference?.type]);
-
-  const handleSelect = (type) => {
-    setSelection(type);
-    if (type === 'time') {
-      onChange({
-        type: 'time',
-        targetMinutesPerWeek: goalPreference?.targetMinutesPerWeek || 120,
-        targetBooksPerMonth: goalPreference?.targetBooksPerMonth || 2
-      });
-    } else {
-      onChange({
-        type: 'books',
-        targetMinutesPerWeek: goalPreference?.targetMinutesPerWeek || 120,
-        targetBooksPerMonth: goalPreference?.targetBooksPerMonth || 2
-      });
-    }
-  };
-
-  return (
-    <div className="goal-selector">
-      <div className="goal-selector-header">
-        <div>
-          <p className="goal-selector-label">Goal focus</p>
-          <p className="goal-selector-subtext">Choose how you want to measure progress</p>
-        </div>
-        <div className="goal-selector-toggle">
-          <button
-            className={`md3-chip ${selection === 'time' ? 'selected' : ''}`}
-            onClick={() => handleSelect('time')}
-          >
-            Minutes / week
-          </button>
-          <button
-            className={`md3-chip ${selection === 'books' ? 'selected' : ''}`}
-            onClick={() => handleSelect('books')}
-          >
-            Books / month
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ActionShortcutRow = ({ navigate }) => (
-  <div className="action-shortcut-row">
-    <button className="md3-button md3-button--tonal" onClick={() => navigate('/read')}>Start timer</button>
-    <button className="md3-button md3-button--tonal" onClick={() => navigate('/notes')}>Add note</button>
-    <button className="md3-button md3-button--tonal" onClick={() => navigate('/upload')}>Upload book</button>
-  </div>
-);
-
 const ContinueReadingCard = ({ activeSession, getSessionHistory, navigate }) => {
   const history = getSessionHistory ? getSessionHistory() : [];
   const lastSession = activeSession || history[history.length - 1];
@@ -1330,56 +1279,13 @@ const ContinueReadingCard = ({ activeSession, getSessionHistory, navigate }) => 
   );
 };
 
-const AdvancedStatsPanel = ({ stats }) => {
-  const [expanded, setExpanded] = useState(() => {
-    try {
-      return localStorage.getItem('dashboard_advanced_stats') === 'open';
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('dashboard_advanced_stats', expanded ? 'open' : 'closed');
-    } catch {}
-  }, [expanded]);
-
-  return (
-    <div className="advanced-stats-panel">
-      <button className="advanced-toggle" onClick={() => setExpanded(!expanded)} aria-expanded={expanded}>
-        <span>Time-read breakdown & advanced stats</span>
-        <span className="material-symbols-outlined" aria-hidden>{expanded ? 'expand_less' : 'expand_more'}</span>
-      </button>
-      {expanded && (
-        <div className="advanced-content">
-          <div className="advanced-row">
-            <div>
-              <p className="advanced-label">Today</p>
-              <p className="advanced-value">{stats?.todayReadingTime || 0} mins</p>
-            </div>
-            <div>
-              <p className="advanced-label">This week</p>
-              <p className="advanced-value">{stats?.weeklyReadingTime || 0} mins</p>
-            </div>
-            <div>
-              <p className="advanced-label">This month</p>
-              <p className="advanced-value">{stats?.monthlyReadingTime || 0} mins</p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 // Main Dashboard Component
 const DashboardPage = () => {
   console.warn('🔄 DashboardPage: Rendering');
   const { user } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
-  const { stats, rewardFeedback, clearRewardFeedback, goalPreference, setGoalPreference } = useGamification();
+  const { stats, rewardFeedback, clearRewardFeedback } = useGamification();
   const navigate = useNavigate();
   // Needed for the global Resume banner and any resume/stop controls at this level
   const { activeSession, getSessionHistory } = useReadingSession();
@@ -1594,9 +1500,6 @@ const DashboardPage = () => {
           completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
           inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
         />
-        <GoalSelector goalPreference={goalPreference} onChange={setGoalPreference} />
-        <ActionShortcutRow navigate={navigate} />
-        <AdvancedStatsPanel stats={stats} />
         {/* Main Content Grid - 2 Column Layout (Welcome + Reading Sessions) */}
         <div className="dashboard-main-content-grid">
 
