@@ -89,6 +89,25 @@ export const GamificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [recentAchievement, setRecentAchievement] = useState(null);
   const [offlineMode, setOfflineMode] = useState(false);
+  const [rewardFeedback, setRewardFeedback] = useState(null);
+  const [goalPreference, setGoalPreference] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('gamification_goal_preference')) || {
+        type: 'time',
+        targetMinutesPerWeek: 120,
+        targetBooksPerMonth: 2
+      };
+    } catch {
+      return { type: 'time', targetMinutesPerWeek: 120, targetBooksPerMonth: 2 };
+    }
+  });
+  const [weeklyQuestChoice, setWeeklyQuestChoice] = useState(() => {
+    try {
+      return localStorage.getItem('gamification_weekly_quest') || 'balanced';
+    } catch {
+      return 'balanced';
+    }
+  });
 
   // Get auth context (AuthContext uses HttpOnly cookies; no token needed here)
   const { user, makeApiCall, loading: authLoading, isAuthenticated } = useAuth();
@@ -141,6 +160,19 @@ export const GamificationProvider = ({ children }) => {
       return null;
     }
   }, [user, makeApiCall]);
+
+  // Persist goal preferences
+  useEffect(() => {
+    try {
+      localStorage.setItem('gamification_goal_preference', JSON.stringify(goalPreference));
+    } catch {}
+  }, [goalPreference]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('gamification_weekly_quest', weeklyQuestChoice);
+    } catch {}
+  }, [weeklyQuestChoice]);
 
   // Calculate reading streak from session history
   const calculateReadingStreak = useCallback(() => {
@@ -555,6 +587,15 @@ export const GamificationProvider = ({ children }) => {
     window.dispatchEvent(event);
     console.warn(`✅ GamificationContext: Event dispatched successfully`);
 
+    if (['reading_session_completed', 'note_created'].includes(actionType) && points > 0) {
+      setRewardFeedback({
+        id: `${actionType}-${Date.now()}`,
+        action: actionType,
+        points,
+        meta: data
+      });
+    }
+
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
@@ -791,6 +832,9 @@ export const GamificationProvider = ({ children }) => {
     recentAchievement,
     loading,
     offlineMode,
+    rewardFeedback,
+    goalPreference,
+    weeklyQuestChoice,
 
     // Actions
     trackAction,
@@ -799,6 +843,9 @@ export const GamificationProvider = ({ children }) => {
     syncWithServer,
     refreshStats,
     clearRecentAchievement: () => setRecentAchievement(null),
+    clearRewardFeedback: () => setRewardFeedback(null),
+    setGoalPreference: (preference) => setGoalPreference(preference),
+    setWeeklyQuestChoice,
 
     // Utilities
     calculateLevel,

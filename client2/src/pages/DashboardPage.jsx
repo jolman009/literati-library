@@ -7,20 +7,19 @@ import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useSnackbar } from '../components/Material3';
-import { getBookStatus } from '../components/BookStatus';
+import { getStatus as getBookStatus } from '../utils/bookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
 import { Challenges, StreakShields } from '../components/gamification';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
-import ThemeToggle from '../components/ThemeToggle';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-const WelcomeSection = ({ user, onStartTour }) => {
+const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
   const { stats, achievements } = useGamification();
   const navigate = useNavigate();
 
@@ -46,6 +45,15 @@ const WelcomeSection = ({ user, onStartTour }) => {
     return `${timeGreeting}! Ready to dive into your next great read?`;
   };
 
+  const primaryCtaLabel = activeSession?.book ? 'Resume reading' : 'Start a session';
+  const handlePrimaryCta = () => {
+    if (activeSession?.book?.id) {
+      navigate(`/read/${activeSession.book.id}`);
+    } else {
+      navigate('/library');
+    }
+  };
+
   return (
     <div className="welcome-section-compact">
       <div className="welcome-content">
@@ -54,6 +62,19 @@ const WelcomeSection = ({ user, onStartTour }) => {
           <h1 className="welcome-title-compact">
             {getMotivationalMessage()}
           </h1>
+          <p className="welcome-purpose">Track reading, earn rewards, and grow your library.</p>
+
+          {/* Primary CTA directly under greeting */}
+          <div className="welcome-cta-row">
+            <button className="md3-button md3-button--filled" onClick={handlePrimaryCta}>
+              <span className="material-symbols-outlined" aria-hidden>auto_stories</span>
+              {primaryCtaLabel}
+            </button>
+            <button className="md3-button md3-button--tonal" onClick={() => navigate('/upload')}>
+              <span className="material-symbols-outlined" aria-hidden>add</span>
+              Add a book
+            </button>
+          </div>
 
           {/* Subtitle - Activity streak auto-tracked from user activities */}
           <div className="welcome-subtitle-row">
@@ -64,7 +85,7 @@ const WelcomeSection = ({ user, onStartTour }) => {
           </div>
 
           {/* Level Progress Bar with Total Points */}
-          <div className="level-progress-container">
+          <div className="level-progress-container elevated">
             <div className="level-progress-header">
               <span className="level-progress-text">
                 {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
@@ -80,6 +101,27 @@ const WelcomeSection = ({ user, onStartTour }) => {
                 aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
               />
             </div>
+            <div className="level-inline-meta">
+              <div className="inline-meta-item">
+                <span className="material-symbols-outlined" aria-hidden>local_fire_department</span>
+                <span>{activityStreak} day streak</span>
+              </div>
+              <div className="inline-meta-item">
+                <span className="material-symbols-outlined" aria-hidden>auto_awesome</span>
+                <span>Level {stats?.level || 1}</span>
+              </div>
+            </div>
+            <div className="badge-carousel" aria-label="Recent achievements">
+              {(achievements || []).slice(0, 6).map((badge) => (
+                <div key={badge.id} className="badge-chip" title={badge.description}>
+                  <span className="badge-icon" aria-hidden>{badge.icon || '🏅'}</span>
+                  <span className="badge-text">{badge.title}</span>
+                </div>
+              ))}
+              {(!achievements || achievements.length === 0) && (
+                <div className="badge-empty">Unlock badges to see them here</div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -94,10 +136,8 @@ const WelcomeSection = ({ user, onStartTour }) => {
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
 const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
   const { stats } = useGamification();
-  const { actualTheme } = useMaterial3Theme();
-  const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(!stats);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
   const [notesPoints, setNotesPoints] = useState(0);
   const [notesCount, setNotesCount] = useState(0);
   const [readingSessionsCount, setReadingSessionsCount] = useState(0);
@@ -107,6 +147,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   const { getReadingStats, activeSession, sessionStats } = useReadingSession();
   const { showSnackbar } = useSnackbar();
   const [serverWins, setServerWins] = useState(false);
+  const [sessionsThisWeek, setSessionsThisWeek] = useState(0);
   const NOTES_POINTS_PER = 15;
 
   // 🔍 DEBUG: Log stats on every render
@@ -115,11 +156,28 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   console.warn('🔍 QuickStatsOverview: loading =', loading);
   console.warn('🔍 QuickStatsOverview: notesPoints =', notesPoints);
 
+  const countRecentSessions = useCallback(() => {
+    try {
+      const history = JSON.parse(localStorage.getItem('readingSessionHistory') || '[]');
+      const now = new Date();
+      const weekAgo = new Date(now);
+      weekAgo.setDate(now.getDate() - 7);
+      return history.filter((session) => {
+        const start = session.startTime ? new Date(session.startTime) : null;
+        const end = session.endTime ? new Date(session.endTime) : null;
+        const compareDate = start || end;
+        return compareDate && compareDate >= weekAgo;
+      }).length;
+    } catch {
+      return 0;
+    }
+  }, []);
+
   // ✅ Activity-based streak from server stats (automatically tracked from user activities)
   const displayStreak = stats?.readingStreak || 0;
 
   // Fetch notes-specific points, reading sessions count, total points and time read from APIs
-  const fetchGamificationData = useCallback(async () => {
+  const _fetchGamificationData = useCallback(async () => {
     try {
       console.warn('📊 QuickStatsOverview: Fetching gamification breakdown data...');
       const [breakdownResp, statsResp] = await Promise.all([
@@ -153,6 +211,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       setNotesPoints(prev => Math.max(prev, serverNotesPoints, localNotesPoints));
       setNotesCount(prev => Math.max(prev, serverNotesCount, localNotesCount));
       setReadingSessionsCount(prev => Math.max(prev, serverSessionCount, localSessionCount));
+      setSessionsThisWeek(prev => Math.max(prev, countRecentSessions()));
 
       // Prefer server totals from /stats when available, fallback to breakdown categories total
       const serverTotals = statsData?.totalPoints ?? categories?.total ?? 0;
@@ -222,6 +281,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       setNotesPoints(prev => Math.max(prev, localNotesPoints));
       setNotesCount(prev => Math.max(prev, localNotesCount));
       setReadingSessionsCount(prev => Math.max(prev, localSessionCount));
+      setSessionsThisWeek(prev => Math.max(prev, countRecentSessions()));
       setTotalPointsFromServer(prev => Math.max(prev, stats?.totalPoints || 0));
 
       console.warn('📊 QuickStatsOverview: Using local fallback data', {
@@ -231,7 +291,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
         totalPoints: stats?.totalPoints || 0
       });
     }
-  }, [stats, getReadingStats]);
+  }, [stats, getReadingStats, countRecentSessions, showSnackbar]);
 
   // 🔄 Consolidated effect for auto-refresh and event handling
   useEffect(() => {
@@ -328,6 +388,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       window.removeEventListener('readingSessionCompleted', handleReadingSessionCompleted);
       window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array - only run once on mount
 
   // ✅ REMOVED DUPLICATE: The event listener is now handled in the consolidated useEffect above
@@ -450,39 +511,33 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   const booksCompleted = (typeof completedBooks === 'number') ? completedBooks : (stats?.booksCompleted || 0);
   const booksInProgress = (typeof inProgressBooks === 'number') ? inProgressBooks : 0;
 
-  // 🎯 Total Points now displayed prominently in Welcome section (next to progress bar)
+  // Minutes per week calculation
+  const weeklyMinutes = Math.max(stats?.weeklyReadingTime || 0, totalMinutesRead);
+  const weeklyTarget = 120; // Default weekly goal
+  const weeklyPercent = weeklyTarget > 0 ? Math.min(100, Math.round((weeklyMinutes / weeklyTarget) * 100)) : 0;
+
+  // Books per month calculation
+  const monthlyBooks = stats?.booksCompletedThisMonth || booksCompleted || 0;
+  const monthlyTarget = 2; // Default monthly goal
+  const monthlyPercent = monthlyTarget > 0 ? Math.min(100, Math.round((monthlyBooks / monthlyTarget) * 100)) : 0;
+
+  // Stat cards - now with separate Minutes/Week and Books/Month cards
   const statCards = [
     {
-      icon: '📚',
-      value: booksCount,
-      label: 'Books in Library',
-      subtitle: `${booksCompleted} completed • ${booksInProgress} in progress`,
-      growth: calculateGrowth(booksCount),
-      trend: 'up'
-    },
-    {
-      icon: '📋',
-      value: notesPoints,
-      label: 'Notes Points',
-      subtitle: `${notesCount} notes`,
-      growth: notesCount > 0 ? `${notesCount} notes` : '+0',
-      trend: notesCount > 0 ? 'up' : 'neutral'
-    },
-    {
-      icon: '📚',
-      value: readingSessionsCount,
-      label: 'Reading Sessions',
-      subtitle: 'completed',
-      growth: readingSessionsCount > 0 ? `${readingSessionsCount} sessions` : '+0',
-      trend: readingSessionsCount > 0 ? 'up' : 'neutral'
-    },
-    {
       icon: '⏱️',
-      value: formatTimeRead(totalMinutesRead),
-      label: 'Time Read',
-      subtitle: totalMinutesRead > 0 ? `${totalMinutesRead} minutes` : '',
-      growth: totalMinutesRead > 0 ? `${totalMinutesRead}m` : '+0',
-      trend: totalMinutesRead > 0 ? 'up' : 'neutral'
+      value: `${weeklyMinutes}`,
+      label: 'Minutes / Week',
+      subtitle: `${weeklyPercent}% of ${weeklyTarget}m goal`,
+      growth: weeklyPercent >= 100 ? 'Goal met!' : `${weeklyPercent}%`,
+      trend: weeklyMinutes > 0 ? 'up' : 'neutral'
+    },
+    {
+      icon: '📖',
+      value: `${monthlyBooks}`,
+      label: 'Books / Month',
+      subtitle: `${monthlyPercent}% of ${monthlyTarget} book goal`,
+      growth: monthlyPercent >= 100 ? 'Goal met!' : `${monthlyPercent}%`,
+      trend: monthlyBooks > 0 ? 'up' : 'neutral'
     },
     {
       icon: '🔥',
@@ -491,6 +546,30 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       subtitle: 'consecutive days',
       growth: displayStreak > 0 ? `${displayStreak} days` : '0 days',
       trend: displayStreak > 0 ? 'up' : 'neutral'
+    },
+    {
+      icon: '🗓️',
+      value: sessionsThisWeek,
+      label: 'Sessions this week',
+      subtitle: `${readingSessionsCount} all time`,
+      growth: sessionsThisWeek > 0 ? `${sessionsThisWeek} this week` : '+0',
+      trend: sessionsThisWeek > 0 ? 'up' : 'neutral'
+    },
+    {
+      icon: '📚',
+      value: booksCount,
+      label: 'Library',
+      subtitle: `${booksCompleted} completed • ${booksInProgress} in progress`,
+      growth: calculateGrowth(booksCount),
+      trend: 'up'
+    },
+    {
+      icon: '⏱️',
+      value: formatTimeRead(totalMinutesRead),
+      label: 'Time Read',
+      subtitle: `${stats?.weeklyReadingTime || 0}m this week • ${stats?.todayReadingTime || 0}m today`,
+      growth: totalMinutesRead > 0 ? 'Total' : '+0',
+      trend: totalMinutesRead > 0 ? 'up' : 'neutral'
     }
   ];
 
@@ -515,7 +594,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
   }
 
   return (
-    <div className={`simple-scroll-container ${className}`} style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
+    <div className={`stat-grid ${className}`} style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
       {statCards.map((stat, index) => (
         <div key={index} className="stat-metric-card" style={{ position: 'relative' }}>
           {refreshing && index === 0 && (
@@ -703,6 +782,7 @@ const PointCategoriesSection = () => {
 };
 
 // Recent Achievements Component (kept but can be removed if needed)
+// eslint-disable-next-line no-unused-vars
 const RecentAchievements = () => {
   const { achievements, unlockedAchievements } = useGamification();
 
@@ -775,23 +855,9 @@ const RecentAchievements = () => {
   );
 };
 
-// Currently Reading Section Componentss
+// Currently Reading Section Components
 const CurrentlyReading = () => {
-  const { activeSession, startReadingSession, stopReadingSession, isPaused } = useReadingSession(); // Listen to session changes + controls
-  const [elapsedSec, setElapsedSec] = useState(0);
-  useEffect(() => {
-    if (!activeSession) { setElapsedSec(0); return; }
-    const compute = () => {
-      const start = new Date(activeSession.startTime);
-      const now = new Date();
-      const current = Math.floor((now - start) / 1000);
-      const total = (activeSession.accumulatedTime || 0) + (activeSession.isPaused ? 0 : current);
-      setElapsedSec(Math.max(0, total));
-    };
-    compute();
-    const id = setInterval(compute, 1000);
-    return () => clearInterval(id);
-  }, [activeSession]);
+  const { activeSession, startReadingSession } = useReadingSession(); // Listen to session changes + controls
   const navigate = useNavigate();
   const [currentlyReading, setCurrentlyReading] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -966,6 +1032,7 @@ const CurrentlyReading = () => {
 };
 
 // Recently Added Books Component for Dashboard
+// eslint-disable-next-line no-unused-vars
 const RecentlyAdded = () => {
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);
@@ -1191,17 +1258,40 @@ const MobileExpandableStats = ({ children }) => {
   );
 };
 
+const ContinueReadingCard = ({ activeSession, getSessionHistory, navigate }) => {
+  const history = getSessionHistory ? getSessionHistory() : [];
+  const lastSession = activeSession || history[history.length - 1];
+  if (!lastSession?.book) return null;
+
+  const minutes = Math.max(1, Math.floor((lastSession?.duration || 0)));
+
+  return (
+    <div className="continue-card">
+      <div>
+        <p className="continue-card-label">Continue reading</p>
+        <h3 className="continue-card-title">{lastSession.book.title}</h3>
+        {lastSession.book.author && <p className="continue-card-meta">by {lastSession.book.author}</p>}
+        <p className="continue-card-meta">Estimated {minutes} min to finish</p>
+      </div>
+      <button className="md3-button md3-button--filled" onClick={() => navigate(`/read/${lastSession.book.id}`)}>
+        Resume
+      </button>
+    </div>
+  );
+};
+
 // Main Dashboard Component
 const DashboardPage = () => {
   console.warn('🔄 DashboardPage: Rendering');
   const { user } = useAuth();
   const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
-  const { stats } = useGamification();
+  const { stats, rewardFeedback, clearRewardFeedback } = useGamification();
   const navigate = useNavigate();
   // Needed for the global Resume banner and any resume/stop controls at this level
-  const { activeSession } = useReadingSession();
+  const { activeSession, getSessionHistory } = useReadingSession();
   const [books, setBooks] = useState([]);
+  const [showRewardBurst, setShowRewardBurst] = useState(false);
 
   // Driver.js tour for onboarding key actions
   const startDashboardTour = useCallback(() => {
@@ -1291,6 +1381,23 @@ const DashboardPage = () => {
     return () => window.removeEventListener('restartGuidedTour', handler);
   }, [startDashboardTour]);
 
+  useEffect(() => {
+    if (!rewardFeedback) return;
+
+    const actionLabel = rewardFeedback.action === 'note_created'
+      ? 'note created'
+      : 'session completed';
+
+    showSnackbar({
+      message: `+${rewardFeedback.points} pts • ${actionLabel}`,
+      variant: 'success'
+    });
+    setShowRewardBurst(true);
+    const timer = setTimeout(() => setShowRewardBurst(false), 1200);
+    clearRewardFeedback();
+    return () => clearTimeout(timer);
+  }, [rewardFeedback, showSnackbar, clearRewardFeedback]);
+
   // Pull-to-refresh handler
   const handleRefresh = useCallback(async () => {
     console.warn('🔄 Dashboard: Pull-to-refresh triggered');
@@ -1333,6 +1440,7 @@ const DashboardPage = () => {
 
   return (
     <div className={`dashboard-container ${actualTheme === 'dark' ? 'dark' : ''}`}>
+      {showRewardBurst && <div className="reward-confetti" aria-hidden />}
       {/* Pull-to-Refresh Indicator (Mobile Only) */}
       <PullToRefreshIndicator {...pullToRefresh} />
 
@@ -1345,6 +1453,8 @@ const DashboardPage = () => {
 
         {/* Mobile-Only: Quick Actions */}
         <MobileQuickActions navigate={navigate} />
+
+        <ContinueReadingCard activeSession={activeSession} getSessionHistory={getSessionHistory} navigate={navigate} />
 
         {/* Global Resume banner (desktop only - mobile uses hero card) */}
         {activeSession?.book?.id && (activeSession?.isPaused) && (
@@ -1396,7 +1506,7 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
-            <WelcomeSection user={user} onStartTour={startDashboardTour} />
+            <WelcomeSection user={user} onStartTour={startDashboardTour} activeSession={activeSession} />
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
               <button
