@@ -427,7 +427,7 @@ const EnhancedCollectionsPage = ({
               <p>
                 Organize your library with custom collections that reflect your reading journey
               </p>
-            </div
+            </div>
             {/* Navigation Links */}
             <div className="collections-header-nav">
               <MD3Button
