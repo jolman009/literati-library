@@ -444,7 +444,7 @@
 }
 
 .md3-library-page.dark .md3-view-controls {
-  background: rgba(245, 40, 145, 0.8);
+  background: rgba(30, 41, 59, 0.95);
 }
 
 .md3-library-page.dark .md3-view-controls .md3-icon-button {
@@ -510,6 +510,7 @@
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  overflow: visible; /* Allow menu dropdowns to extend outside card */
   display: flex;
   gap: 16px;
 }
@@ -551,7 +552,7 @@
 }
 
 .md3-library-page.dark .md3-book-card {
-  background: rgba(245, 40, 145, 0.8);
+  background: rgba(51, 65, 85, 0.9);
 }
 
 .md3-library-page.dark .md3-book-card:hover {
@@ -593,7 +594,6 @@
 .md3-book-cover .library-book-cover-manager {
   width: 100%;
   height: 100%;
-  max-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -602,7 +602,6 @@
 .md3-book-cover .library-book-cover-manager .book-cover-container {
   width: 100%;
   height: 100%;
-  max-height: 200px;
   display: flex;
   align-items: center;
 }
@@ -625,29 +624,6 @@
 .md3-library-page.dark .md3-book-placeholder {
   background: rgba(30, 58, 138, 0.8);
   color: #94a3b8;
-}
-
-/* Book Badges */
-.md3-book-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 16px;
-}
-
-.md3-book-badge.reading {
-  background: var(--md-sys-color-primary);
-}
-
-.md3-book-badge.completed {
-  background: var(--md-sys-color-secondary);
 }
 
 /* Book Info */

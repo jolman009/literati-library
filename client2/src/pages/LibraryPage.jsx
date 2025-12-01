@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import API from '../config/api';
-import '../components/LibraryBookStyles.css';
+import '../components/BookMenuButton.css';
 import { useSnackbar } from '../components/Material3';
 import { exportBooksToCSV, getFilterName, EXPORT_TEMPLATES } from '../utils/csvExport';
 
@@ -849,96 +849,62 @@ const LibraryPage = () => {
                         onClick={() => handleBookClick(book)}
                         className="library-book-cover-manager"
                       />
-                      {book.is_reading && (
-                        <div className="md3-book-badge reading">
-                          <span className="material-symbols-outlined">play_arrow</span>
-                        </div>
-                      )}
-                      {book.completed && (
-                        <div className="md3-book-badge completed">
-                          <span className="material-symbols-outlined">check_circle</span>
-                        </div>
-                      )}
-                      
-                      {/* Red Stop button when this is the active session */}
+
+                      {/* Quick action buttons at bottom-left for active reading sessions */}
                       {activeSession?.book?.id === book.id && (
-                        <button
-                          className="book-menu-button"
-                          title="End reading session"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEndSession();
-                          }}
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            backgroundColor: '#ef4444',
-                            border: '2px solid rgba(255, 255, 255, 0.9)',
-                            color: '#fff',
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            zIndex: 100,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                          }}
-                        >
-                          <span className="material-symbols-outlined">stop</span>
-                        </button>
+                        <div style={{ position: 'absolute', left: 8, bottom: 8, display: 'flex', gap: 8, zIndex: 100 }}>
+                          {/* Stop session button */}
+                          <button
+                            title="End reading session"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEndSession();
+                            }}
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '50%',
+                              backgroundColor: '#ef4444',
+                              border: '2px solid rgba(255, 255, 255, 0.9)',
+                              color: '#fff',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>stop</span>
+                          </button>
+                          {/* Pause/Resume button */}
+                          <button
+                            title={isPaused ? "Resume reading" : "Pause reading"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              isPaused ? handleResumeSession() : handlePauseSession();
+                            }}
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '50%',
+                              backgroundColor: isPaused ? '#22c55e' : '#f59e0b',
+                              border: '2px solid rgba(255, 255, 255, 0.9)',
+                              color: '#fff',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                            }}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                              {isPaused ? 'play_arrow' : 'pause'}
+                            </span>
+                          </button>
+                        </div>
                       )}
-                      {/* Red Stop when status=reading (no active session) */}
-                      {activeSession?.book?.id !== book.id && (book.is_reading || book.status === 'reading') && (
-                        <button
-                          className="book-menu-button"
-                          title="Stop reading (return to normal)"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            (async () => {
-                              try {
-                                await API.patch(`/books/${book.id}`, {
-                                  status: 'unread',
-                                  is_reading: false,
-                                });
-                                setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'unread', is_reading: false, completed: false } : b));
-                                window.dispatchEvent(new CustomEvent('bookUpdated', { detail: { bookId: book.id, action: 'stop_reading', status: 'unread' } }));
-                                localStorage.setItem('books_updated', Date.now().toString());
-                              } catch (err) {
-                                console.error('Failed to pause reading status:', err);
-                              }
-                            })();
-                          }}
-                          style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            backgroundColor: '#ef4444',
-                            border: '2px solid rgba(255, 255, 255, 0.9)',
-                            color: '#fff',
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            zIndex: 100,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                          }}
-                        >
-                          <span className="material-symbols-outlined">stop</span>
-                        </button>
-                      )}
-                      {/* Menu Button: always available to access actions incl. Delete */}
+
+                      {/* Menu Button: always visible at top-right */}
                       <button
                         className="book-menu-button"
                         onClick={(e) => {
