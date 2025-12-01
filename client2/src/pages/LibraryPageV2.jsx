@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
+import { useGamification } from '../contexts/GamificationContext';
 import API from '../config/api';
 import './library-v2.css';
 
@@ -12,6 +14,19 @@ const LibraryPageV2 = () => {
   const { user, makeAuthenticatedApiCall } = useAuth();
   const navigate = useNavigate();
 
+  // Reading session context
+  const {
+    activeSession,
+    isPaused,
+    startReadingSession,
+    pauseReadingSession,
+    resumeReadingSession,
+    stopReadingSession
+  } = useReadingSession();
+
+  // Gamification for completion tracking
+  const { trackAction } = useGamification();
+
   const [books, setBooks] = useState([]);
   const [notesCount, setNotesCount] = useState({}); // { bookId: count }
   const [loading, setLoading] = useState(true);
@@ -19,6 +34,7 @@ const LibraryPageV2 = () => {
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date_added');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [openMenuId, setOpenMenuId] = useState(null); // Which book's menu is open
 
   // Fetch books
   useEffect(() => {
@@ -27,6 +43,15 @@ const LibraryPageV2 = () => {
       fetchNotesCount();
     }
   }, [user]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openMenuId]);
 
   const fetchBooks = async () => {
     try {
@@ -47,8 +72,6 @@ const LibraryPageV2 = () => {
     try {
       const response = await makeAuthenticatedApiCall('/notes');
       const notes = response?.notes || response || [];
-
-      // Count notes per book
       const counts = {};
       notes.forEach(note => {
         const bookId = note.book_id;
@@ -60,14 +83,120 @@ const LibraryPageV2 = () => {
     }
   };
 
-  // Get book status
+  // ========================================
+  // SESSION & STATUS HANDLERS
+  // ========================================
+
+  // Start a reading session (with timer + gamification)
+  const handleStartSession = async (book) => {
+    try {
+      await startReadingSession(book);
+      // Update local state
+      setBooks(prev => prev.map(b =>
+        b.id === book.id ? { ...b, is_reading: true } : b
+      ));
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error('Failed to start session:', err);
+    }
+  };
+
+  // Pause the active session
+  const handlePauseSession = () => {
+    pauseReadingSession();
+    setOpenMenuId(null);
+  };
+
+  // Resume a paused session
+  const handleResumeSession = () => {
+    resumeReadingSession();
+    setOpenMenuId(null);
+  };
+
+  // End the session (book back on shelf, still "reading/paused" status)
+  const handleEndSession = async () => {
+    await stopReadingSession();
+    setOpenMenuId(null);
+  };
+
+  // Mark book as completed (finished reading)
+  const handleMarkCompleted = async (book) => {
+    try {
+      // If this book has an active session, end it first
+      if (activeSession?.book?.id === book.id) {
+        await stopReadingSession();
+      }
+
+      // Update book status
+      await API.patch(`/books/${book.id}`, {
+        status: 'completed',
+        is_reading: false,
+        completed: true,
+        progress: 100,
+        completed_at: new Date().toISOString()
+      });
+
+      // Track gamification
+      if (trackAction) {
+        await trackAction('book_completed', {
+          bookId: book.id,
+          bookTitle: book.title,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Update local state
+      setBooks(prev => prev.map(b =>
+        b.id === book.id
+          ? { ...b, status: 'completed', is_reading: false, completed: true, progress: 100, completed_at: new Date().toISOString() }
+          : b
+      ));
+
+      setOpenMenuId(null);
+      console.log('✅ Book marked as completed:', book.title);
+    } catch (err) {
+      console.error('Failed to mark as completed:', err);
+    }
+  };
+
+  // Mark book as "To Read" (reset status)
+  const handleMarkToRead = async (book) => {
+    try {
+      // If this book has an active session, end it first
+      if (activeSession?.book?.id === book.id) {
+        await stopReadingSession();
+      }
+
+      await API.patch(`/books/${book.id}`, {
+        status: 'unread',
+        is_reading: false,
+        completed: false,
+        progress: 0
+      });
+
+      // Update local state
+      setBooks(prev => prev.map(b =>
+        b.id === book.id
+          ? { ...b, status: 'unread', is_reading: false, completed: false, progress: 0 }
+          : b
+      ));
+
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error('Failed to mark as to-read:', err);
+    }
+  };
+
+  // ========================================
+  // HELPERS
+  // ========================================
+
   const getStatus = (book) => {
     if (book.completed) return 'read';
     if (book.is_reading) return 'currently-reading';
     return 'to-read';
   };
 
-  // Format date
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
     const date = new Date(dateStr);
@@ -77,6 +206,9 @@ const LibraryPageV2 = () => {
       year: 'numeric'
     });
   };
+
+  // Check if book has active session
+  const isActiveSessionBook = (bookId) => activeSession?.book?.id === bookId;
 
   // Filter books
   const filteredBooks = books.filter(book => {
@@ -90,7 +222,6 @@ const LibraryPageV2 = () => {
   // Sort books
   const sortedBooks = [...filteredBooks].sort((a, b) => {
     let aVal, bVal;
-
     switch (sortBy) {
       case 'title':
         aVal = (a.title || '').toLowerCase();
@@ -115,13 +246,11 @@ const LibraryPageV2 = () => {
       default:
         return 0;
     }
-
     if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
     if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
 
-  // Handle sort click
   const handleSort = (column) => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -131,11 +260,14 @@ const LibraryPageV2 = () => {
     }
   };
 
-  // Sort indicator
   const SortIndicator = ({ column }) => {
     if (sortBy !== column) return null;
     return <span className="sort-indicator">{sortOrder === 'asc' ? '▲' : '▼'}</span>;
   };
+
+  // ========================================
+  // RENDER
+  // ========================================
 
   if (loading) {
     return (
@@ -167,6 +299,31 @@ const LibraryPageV2 = () => {
           </button>
         </div>
       </header>
+
+      {/* Active Session Banner */}
+      {activeSession && (
+        <div className="active-session-banner">
+          <span className="session-icon">📖</span>
+          <span className="session-text">
+            Reading: <strong>{activeSession.book.title}</strong>
+            {isPaused && <span className="paused-badge">PAUSED</span>}
+          </span>
+          <div className="session-actions">
+            {isPaused ? (
+              <button className="session-btn resume" onClick={handleResumeSession}>
+                ▶ Resume
+              </button>
+            ) : (
+              <button className="session-btn pause" onClick={handlePauseSession}>
+                ⏸ Pause
+              </button>
+            )}
+            <button className="session-btn end" onClick={handleEndSession}>
+              ⏹ End Session
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="filter-bar">
@@ -218,23 +375,25 @@ const LibraryPageV2 = () => {
           </thead>
           <tbody>
             {sortedBooks.map(book => (
-              <tr key={book.id} onClick={() => navigate(`/read/${book.id}`)}>
-                <td className="col-cover">
+              <tr
+                key={book.id}
+                className={isActiveSessionBook(book.id) ? 'active-session-row' : ''}
+              >
+                <td className="col-cover" onClick={() => navigate(`/read/${book.id}`)}>
                   <div className="book-cover-thumb">
                     {book.cover_url ? (
-                      <img
-                        src={book.cover_url}
-                        alt={book.title}
-                        loading="lazy"
-                      />
+                      <img src={book.cover_url} alt={book.title} loading="lazy" />
                     ) : (
                       <div className="cover-placeholder">
                         <span className="material-symbols-outlined">menu_book</span>
                       </div>
                     )}
+                    {isActiveSessionBook(book.id) && (
+                      <div className="active-indicator">{isPaused ? '⏸' : '▶'}</div>
+                    )}
                   </div>
                 </td>
-                <td className="col-title">
+                <td className="col-title" onClick={() => navigate(`/read/${book.id}`)}>
                   <span className="book-title">{book.title}</span>
                 </td>
                 <td className="col-author">{book.author || '—'}</td>
@@ -253,15 +412,101 @@ const LibraryPageV2 = () => {
                   ) : '—'}
                 </td>
                 <td className="col-actions">
-                  <button
-                    className="action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/read/${book.id}`);
-                    }}
-                  >
-                    Read
-                  </button>
+                  <div className="actions-dropdown">
+                    <button
+                      className="actions-trigger"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === book.id ? null : book.id);
+                      }}
+                    >
+                      ⋮
+                    </button>
+
+                    {openMenuId === book.id && (
+                      <div className="actions-menu" onClick={(e) => e.stopPropagation()}>
+                        {/* Open Book (no session) */}
+                        <button
+                          className="menu-item"
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            navigate(`/read/${book.id}`);
+                          }}
+                        >
+                          📖 Open Book
+                        </button>
+
+                        <div className="menu-divider" />
+
+                        {/* Timer Session Controls (only if this book has active timer) */}
+                        {isActiveSessionBook(book.id) && (
+                          <>
+                            {isPaused ? (
+                              <button className="menu-item" onClick={handleResumeSession}>
+                                ▶️ Resume Timer
+                              </button>
+                            ) : (
+                              <button className="menu-item" onClick={handlePauseSession}>
+                                ⏸️ Pause Timer
+                              </button>
+                            )}
+                            <button className="menu-item" onClick={handleEndSession}>
+                              ⏹️ Stop Timer
+                            </button>
+                            <div className="menu-divider" />
+                          </>
+                        )}
+
+                        {/* Start Session (if no active timer for any book) */}
+                        {!activeSession && (
+                          <button
+                            className="menu-item primary"
+                            onClick={() => handleStartSession(book)}
+                          >
+                            ▶️ Start Reading Session
+                          </button>
+                        )}
+
+                        {/* For "Currently Reading" books: show End Session & Mark Completed */}
+                        {book.is_reading && !book.completed && (
+                          <>
+                            <button
+                              className="menu-item"
+                              onClick={() => handleMarkToRead(book)}
+                            >
+                              ⏹️ End Session (Stop Reading)
+                            </button>
+                            <button
+                              className="menu-item success"
+                              onClick={() => handleMarkCompleted(book)}
+                            >
+                              ✅ Mark as Completed
+                            </button>
+                          </>
+                        )}
+
+                        {/* For completed books: option to move back to To Read */}
+                        {book.completed && (
+                          <button
+                            className="menu-item"
+                            onClick={() => handleMarkToRead(book)}
+                          >
+                            📚 Mark as To Read
+                          </button>
+                        )}
+
+                        {/* For unread books: can mark as completed directly */}
+                        {!book.is_reading && !book.completed && (
+                          <button
+                            className="menu-item success"
+                            onClick={() => handleMarkCompleted(book)}
+                          >
+                            ✅ Mark as Completed
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
