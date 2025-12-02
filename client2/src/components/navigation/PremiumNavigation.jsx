@@ -38,14 +38,16 @@ const PremiumNavigation = ({
 
   const navigationItems = [
     { to: '/dashboard', label: 'Dashboard', icon: 'space_dashboard' },
+    { to: '/progress', label: 'Progress & Journey', icon: 'trending_up' },
     { to: '/library', label: 'Library', icon: 'menu_book' },
+    { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
+    { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
     { to: '/collections', label: 'Collections', icon: 'collections_bookmark' },
     { to: '/mentor', label: 'Mentor AI', icon: 'psychology' },
-    { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
+    { to: '/achievements', label: 'Achievements', icon: 'military_tech' },
     { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
     { to: '/onboarding', label: 'Onboarding', icon: 'flag' },
-    { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
     { to: null, label: 'Logout', icon: 'logout', isLogout: true },
   ];
 
