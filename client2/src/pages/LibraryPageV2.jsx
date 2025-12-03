@@ -42,6 +42,7 @@ const LibraryPageV2 = () => {
       fetchBooks();
       fetchNotesCount();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Close menu when clicking outside
@@ -153,7 +154,7 @@ const LibraryPageV2 = () => {
       ));
 
       setOpenMenuId(null);
-      console.log('✅ Book marked as completed:', book.title);
+      console.warn('✅ Book marked as completed:', book.title);
     } catch (err) {
       console.error('Failed to mark as completed:', err);
     }
