@@ -10,7 +10,7 @@ import { useSnackbar } from '../components/Material3';
 import { getStatus as getBookStatus } from '../utils/bookStatus';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import PointsHistory from '../components/gamification/PointsHistory';
-import { Challenges, StreakShields } from '../components/gamification';
+import { Challenges } from '../components/gamification';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
@@ -665,7 +665,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Note-Taking & Study',
       icon: '📝',
-      color: '#ec4899',
+      color: '#24A8E0',
       actions: [
         { action: 'Create Note', points: 15, icon: '📋' },
         { action: 'Create Highlight', points: 10, icon: '✏️' },
@@ -1507,33 +1507,6 @@ const DashboardPage = () => {
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
             <WelcomeSection user={user} onStartTour={startDashboardTour} activeSession={activeSession} />
-            {/* Inline CTAs for the tour (stable anchors) */}
-            <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-              <button
-                id="tour-upload"
-                className="view-all-link"
-                onClick={() => navigate('/upload')}
-                title="Upload a new book"
-              >
-                Upload Book
-              </button>
-              <button
-                id="tour-start-reading"
-                className="view-all-link"
-                onClick={() => navigate('/library')}
-                title="Go to your Library to start a session"
-              >
-                Start Reading
-              </button>
-              <button
-                id="tour-notes"
-                className="view-all-link"
-                onClick={() => navigate('/notes')}
-                title="Open your Notes page"
-              >
-                Notes
-              </button>
-            </div>
           </div>
 
           {/* Right Column - Currently Reading Sessions */}
@@ -1555,11 +1528,6 @@ const DashboardPage = () => {
                 </button>
               </div>
               <Challenges compact={true} showOnlyDaily={true} maxChallenges={3} />
-            </div>
-
-            {/* Streak Shields - Compact display */}
-            <div className="section-card mobile-hide" style={{ margin: "12px 0", padding: "12px" }}>
-              <StreakShields compact={true} />
             </div>
 
             {/* Points History - Show recent point-earning actions (hidden on mobile) */}
