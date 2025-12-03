@@ -1489,13 +1489,13 @@
   color: #1f2937;
 }
 
-/* Text within dark book cards and achievement tags should be white */
-:root:not([data-theme="dark"]) .book-title,
-:root:not([data-theme="dark"]) .book-title-compact,
-:root:not([data-theme="dark"]) .book-author,
-:root:not([data-theme="dark"]) .book-author-compact,
-:root:not([data-theme="dark"]) .book-date,
-:root:not([data-theme="dark"]) .progress-text {
+/* Text within dark book cards and achievement tags should be white - SCOPED to dashboard only */
+:root:not([data-theme="dark"]) .dashboard-container .book-title,
+:root:not([data-theme="dark"]) .dashboard-container .book-title-compact,
+:root:not([data-theme="dark"]) .dashboard-container .book-author,
+:root:not([data-theme="dark"]) .dashboard-container .book-author-compact,
+:root:not([data-theme="dark"]) .dashboard-container .book-date,
+:root:not([data-theme="dark"]) .dashboard-container .progress-text {
   color: white;
 }
 

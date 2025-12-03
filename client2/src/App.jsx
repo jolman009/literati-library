@@ -76,13 +76,6 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
-// Library Page wrapper (lazy-loaded)
-const LibraryPageWrapper = lazy(() =>
-  import('./components/wrappers/LibraryPageWrapper').catch(err => {
-    console.error('Failed to load LibraryPageWrapper:', err);
-    return { default: () => <div>Error loading Library. Please refresh.</div> };
-  })
-);
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const LibraryPageV2 = lazy(() => import('./pages/LibraryPageV2'));
@@ -97,14 +90,6 @@ const PremiumPage = lazy(() =>
     return { default: () => <div>Error loading Premium. Please refresh.</div> };
   })
 );
-
-// Lazy load secondary pages with error handling
-// const LibraryPageWrapper = lazy(() =>
- // import('./components/wrappers/LibraryPageWrapper').catch(err => {
- //   console.error('Failed to load LibraryPageWrapper:', err);
-//  return { default: () => <div>Error loading Library. Please refresh.</div> };
-//  })
-// ); 
 
 const UploadPageWrapper = lazy(() =>
   import('./components/wrappers/UploadPageWrapper').catch(err => {
@@ -220,14 +205,9 @@ const AppRoutes = () => {
         <Route path="/library" element={
           <LibraryErrorBoundary>
             <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
-              <LibraryPageWrapper />
+              <LibraryPageV2 />
             </Suspense>
           </LibraryErrorBoundary>
-        } />
-        <Route path="/library-v2" element={
-          <Suspense fallback={<AppLoadingSpinner message="Loading library v2..." />}>
-            <LibraryPageV2 />
-          </Suspense>
         } />
         <Route path="/settings" element={
           <ErrorBoundary fallbackComponent="settings" variant="full">
