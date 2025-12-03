@@ -203,7 +203,7 @@
 }
 
 /* Column Widths */
-.col-cover { width: 60px; }
+.col-cover { width: 80px; }
 .col-title { min-width: 200px; }
 .col-author { min-width: 150px; }
 .col-status { width: 120px; }
@@ -215,8 +215,8 @@
    BOOK COVER THUMBNAIL
    ======================================== */
 .book-cover-thumb {
-  width: 50px;
-  height: 75px;
+  width: 80px;
+  height: 110px;
   border-radius: 4px;
   overflow: hidden;
   background: var(--md-sys-color-surface-container, #e2e8f0);
@@ -225,13 +225,13 @@
 
 .book-cover-thumb img {
   width: 100%;
-  height: 100%;
+  height: 110px;
   object-fit: cover;
 }
 
 .cover-placeholder {
   width: 100%;
-  height: 100%;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
