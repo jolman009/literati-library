@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Extension popup dimensions */
+:root {
+  --popup-width: 360px;
+  --popup-max-height: 500px;
+}
+
+body {
+  width: var(--popup-width);
+  min-height: 200px;
+  max-height: var(--popup-max-height);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  color: #f1f5f9;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-3 py-2 rounded-lg
+         bg-white/10 border border-white/20
+         text-white placeholder-white/50
+         focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
+         transition-all duration-200;
+}
+
+.input-label {
+  @apply block text-sm font-medium text-white/80 mb-1;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply w-full py-2.5 px-4 rounded-lg font-medium
+         bg-indigo-500 hover:bg-indigo-400
+         text-white
+         transition-all duration-200
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply py-2 px-3 rounded-lg text-sm font-medium
+         bg-white/10 hover:bg-white/20
+         text-white/80 hover:text-white
+         transition-all duration-200;
+}
+
+/* Tag chips */
+.tag-chip {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs
+         bg-amber-500/20 text-amber-300 border border-amber-500/30;
+}
+
+.tag-chip button {
+  @apply hover:text-amber-100 transition-colors;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white/5 rounded-xl p-4 border border-white/10;
+}
+
+/* Metadata preview */
+.meta-preview {
+  @apply flex gap-3 items-start;
+}
+
+.meta-preview-image {
+  @apply w-16 h-16 rounded-lg object-cover bg-white/10 flex-shrink-0;
+}
+
+.meta-preview-content {
+  @apply flex-1 min-w-0;
+}
+
+.meta-preview-title {
+  @apply font-medium text-white truncate;
+}
+
+.meta-preview-url {
+  @apply text-xs text-white/50 truncate;
+}
+
+.meta-preview-stats {
+  @apply flex gap-3 mt-1 text-xs text-white/60;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+/* Auth notice */
+.auth-notice {
+  @apply text-center py-8 px-4;
+}
+
+.auth-notice h2 {
+  @apply text-lg font-semibold mb-2;
+}
+
+.auth-notice p {
+  @apply text-white/60 text-sm mb-4;
+}
