@@ -10,8 +10,8 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 
-# Enable pnpm
-RUN corepack enable pnpm
+# Enable corepack and install pnpm 8.15.6 to match lockfile version 6.0
+RUN corepack enable && corepack prepare pnpm@8.15.6 --activate
 
 # Copy package files
 COPY --chown=server:nodejs package.json pnpm-lock.yaml ./

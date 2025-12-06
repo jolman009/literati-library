@@ -1,8 +1,8 @@
 # Multi-stage build for React client
 FROM node:20-alpine AS builder
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Enable corepack and install pnpm 8.15.6 to match lockfile version 6.0
+RUN corepack enable && corepack prepare pnpm@8.15.6 --activate
 
 # Set working directory
 WORKDIR /app
