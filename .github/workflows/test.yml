@@ -337,7 +337,6 @@ jobs:
         uses: treosh/lighthouse-ci-action@v10
         with:
           configPath: './client2/.lighthouserc.json'
-          staticDir: './client2/dist'
           uploadArtifacts: true
           temporaryPublicStorage: true
 
