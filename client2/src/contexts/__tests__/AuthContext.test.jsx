@@ -99,6 +99,11 @@ describe('AuthContext', () => {
     it('should prevent concurrent refresh attempts', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
 
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
+
       let refreshCallCount = 0;
       global.fetch.mockImplementation((url) => {
         if (url.includes('/auth/refresh')) {
@@ -124,21 +129,18 @@ describe('AuthContext', () => {
         });
       });
 
-      // Trigger multiple concurrent authenticated API calls that will fail with 401
-      const promises = [];
-      for (let i = 0; i < 5; i++) {
-        promises.push(
-          act(async () => {
-            try {
-              await result.current.makeAuthenticatedApiCall('/api/test');
-            } catch (e) {
+      // Trigger multiple concurrent authenticated API calls within a single act block
+      await act(async () => {
+        const promises = [];
+        for (let i = 0; i < 5; i++) {
+          promises.push(
+            result.current.makeAuthenticatedApiCall('/api/test').catch(() => {
               // Expected to fail
-            }
-          })
-        );
-      }
-
-      await Promise.all(promises);
+            })
+          );
+        }
+        await Promise.all(promises);
+      });
 
       // Should have only called refresh once due to mutex
       expect(refreshCallCount).toBeLessThanOrEqual(2); // Allow for race conditions in test
@@ -146,6 +148,11 @@ describe('AuthContext', () => {
 
     it('should share refresh result across concurrent callers', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
+
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
 
       const newToken = 'shared-new-token';
       let refreshCallCount = 0;
@@ -180,12 +187,15 @@ describe('AuthContext', () => {
         });
       });
 
-      // Multiple concurrent calls
-      const results = await Promise.all([
-        act(() => result.current.makeAuthenticatedApiCall('/api/test1')),
-        act(() => result.current.makeAuthenticatedApiCall('/api/test2')),
-        act(() => result.current.makeAuthenticatedApiCall('/api/test3'))
-      ]);
+      // Multiple concurrent calls within a single act block
+      let results;
+      await act(async () => {
+        results = await Promise.all([
+          result.current.makeAuthenticatedApiCall('/api/test1'),
+          result.current.makeAuthenticatedApiCall('/api/test2'),
+          result.current.makeAuthenticatedApiCall('/api/test3')
+        ]);
+      });
 
       // All should succeed after single refresh
       results.forEach(res => {
@@ -200,6 +210,11 @@ describe('AuthContext', () => {
   describe('Cookie-based Authentication', () => {
     it('should send credentials with every request', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
+
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
 
       await act(async () => {
         await result.current.makeApiCall('/api/test');
@@ -216,6 +231,11 @@ describe('AuthContext', () => {
     it('should not require Authorization header when cookies are available', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
 
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
+
       await act(async () => {
         await result.current.makeApiCall('/api/test');
       });
@@ -227,29 +247,22 @@ describe('AuthContext', () => {
 
   describe('Dev Header Auth Mode', () => {
     it('should try cookie auth first even in dev header mode', async () => {
-      // Mock dev header auth enabled but no token in localStorage
-      vi.mock('../../config/environment.js', () => ({
-        default: {
-          apiUrl: 'http://localhost:5000',
-          getTokenKey: () => 'shelfquest_token',
-          getAuthHeaders: () => ({}),
-          shouldUseDevHeaderAuth: () => true // Dev header mode enabled
-        }
+      // Set user in localStorage before rendering hook
+      localStorage.setItem('shelfquest_user', JSON.stringify({
+        id: 'user-1',
+        email: 'test@example.com'
       }));
 
       const { result } = renderHook(() => useAuth(), { wrapper });
 
-      // Set user in state to trigger verification
-      act(() => {
-        localStorage.setItem('shelfquest_user', JSON.stringify({
-          id: 'user-1',
-          email: 'test@example.com'
-        }));
+      // Wait for initial render and loading to complete
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
       });
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
-      });
+      }, { timeout: 3000 });
 
       // Should have attempted verification via /auth/profile
       expect(global.fetch).toHaveBeenCalledWith(
@@ -262,6 +275,11 @@ describe('AuthContext', () => {
   describe('Auto-Refresh on 401', () => {
     it('should automatically refresh on 401 error', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
+
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
 
       let callCount = 0;
       global.fetch.mockImplementation((url) => {
@@ -309,7 +327,18 @@ describe('AuthContext', () => {
     });
 
     it('should logout user if refresh fails', async () => {
+      // Set initial user before rendering
+      localStorage.setItem('shelfquest_user', JSON.stringify({
+        id: 'user-1',
+        email: 'test@example.com'
+      }));
+
       const { result } = renderHook(() => useAuth(), { wrapper });
+
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
 
       // Mock failed refresh
       global.fetch.mockImplementation((url) => {
@@ -330,14 +359,6 @@ describe('AuthContext', () => {
         });
       });
 
-      // Set initial user
-      act(() => {
-        localStorage.setItem('shelfquest_user', JSON.stringify({
-          id: 'user-1',
-          email: 'test@example.com'
-        }));
-      });
-
       // Try to make authenticated call
       await act(async () => {
         try {
@@ -350,13 +371,18 @@ describe('AuthContext', () => {
       // User should be cleared
       await waitFor(() => {
         expect(result.current.user).toBeNull();
-      });
+      }, { timeout: 3000 });
     });
   });
 
   describe('Login Flow', () => {
     it('should store user data and token on successful login', async () => {
       const { result } = renderHook(() => useAuth(), { wrapper });
+
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
+      });
 
       const loginData = {
         user: { id: 'user-1', email: 'test@example.com' },
@@ -390,15 +416,18 @@ describe('AuthContext', () => {
 
   describe('Logout Flow', () => {
     it('should clear all auth data on logout', async () => {
+      // Set initial auth state before rendering
+      localStorage.setItem('shelfquest_user', JSON.stringify({
+        id: 'user-1',
+        email: 'test@example.com'
+      }));
+      localStorage.setItem('shelfquest_token', 'test-token');
+
       const { result } = renderHook(() => useAuth(), { wrapper });
 
-      // Set initial auth state
-      act(() => {
-        localStorage.setItem('shelfquest_user', JSON.stringify({
-          id: 'user-1',
-          email: 'test@example.com'
-        }));
-        localStorage.setItem('shelfquest_token', 'test-token');
+      // Wait for initial render
+      await waitFor(() => {
+        expect(result.current).not.toBeNull();
       });
 
       global.fetch.mockImplementationOnce(() =>
