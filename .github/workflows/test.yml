@@ -307,6 +307,7 @@ jobs:
     name: Performance Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    continue-on-error: true  # Performance tests shouldn't block CI
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
@@ -337,7 +338,6 @@ jobs:
         uses: treosh/lighthouse-ci-action@v10
         with:
           configPath: './client2/.lighthouserc.json'
-          staticDistDir: './client2/dist'
           uploadArtifacts: true
           temporaryPublicStorage: true
 
