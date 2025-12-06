@@ -7,8 +7,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize Sentry (must be first)
-from config.sentry_config import (SentryTransaction, add_breadcrumb,
-                                  initialize_sentry, report_error)
+from config.sentry_config import (
+    SentryTransaction,
+    add_breadcrumb,
+    initialize_sentry,
+    report_error,
+)
 
 initialize_sentry()
 

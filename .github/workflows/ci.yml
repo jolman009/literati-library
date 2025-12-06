@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: read
+  security-events: write
+
 env:
   NODE_VERSION: '20.x'
   PYTHON_VERSION: '3.11'
