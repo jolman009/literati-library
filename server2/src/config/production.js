@@ -196,7 +196,7 @@ export const initializeCluster = () => {
 };
 
 // Production middleware factory
-export const createProductionMiddleware = () => {
+export const createProductionMiddleware = async () => {
   const middlewares = [];
 
   // Compression middleware
