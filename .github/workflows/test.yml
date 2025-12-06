@@ -10,6 +10,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  security-events: write
+
 env:
   NODE_VERSION: '20.16.0'
   PYTHON_VERSION: '3.11'
