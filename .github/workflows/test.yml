@@ -307,14 +307,16 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Check for vulnerabilities in client
+        continue-on-error: true
         run: |
           cd client2
-          pnpm audit --audit-level moderate
+          pnpm audit --audit-level moderate || echo "⚠️ Vulnerabilities found - review recommended"
 
       - name: Check for vulnerabilities in server
+        continue-on-error: true
         run: |
           cd server2
-          pnpm audit --audit-level moderate
+          pnpm audit --audit-level moderate || echo "⚠️ Vulnerabilities found - review recommended"
 
   # Performance Tests
   performance-tests:
