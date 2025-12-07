@@ -86,11 +86,11 @@ jobs:
       - name: 🏗️ Build client (production mode)
         working-directory: ./client2
         env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'https://library-server-m6gr.onrender.com' }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_AI_SERVICE_URL: ${{ secrets.VITE_AI_SERVICE_URL || 'https://literati-ai-production.onrender.com' }}
-          VITE_ENABLE_SERVICE_WORKER: true
+          VITE_AI_SERVICE_URL: ${{ secrets.VITE_AI_SERVICE_URL }}
+          VITE_ENABLE_SERVICE_WORKER: 'true'
           VITE_APP_ENV: production
         run: pnpm run build:production
 
@@ -124,6 +124,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+        continue-on-error: true
 
       - name: 🏗️ Build and push client image
         uses: docker/build-push-action@v5
