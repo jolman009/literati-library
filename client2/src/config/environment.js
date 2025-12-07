@@ -190,7 +190,7 @@ class EnvironmentConfig {
   // Debug method for troubleshooting
   dumpConfig() {
     if (this.isDevelopment) {
-      console.table(this.config);
+      console.warn('🔧 Configuration Dump:', this.config);
     }
     return this.config;
   }
