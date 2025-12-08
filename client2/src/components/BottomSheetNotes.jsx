@@ -1,12 +1,9 @@
 // src/components/BottomSheetNotes.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useAnimation } from "framer-motion";
 import MDEditor from '@uiw/react-md-editor';
-import API from "../config/api";
-import { useSnackbar } from "./Material3";
-import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
-import { useGamification } from "../contexts/GamificationContext";
+import { useNotesEditor } from "../hooks/useNotesEditor";
 import styles from "./BottomSheetNotes.module.css";
 
 // ===== SNAP POINTS (in vh units) =====
@@ -16,40 +13,6 @@ const SNAP_POINTS = {
   FULL: 88,      // Almost full screen - full editing mode
   CLOSED: 0      // Completely hidden
 };
-
-// ===== NOTE TEMPLATES =====
-const NOTE_TEMPLATES = [
-  {
-    id: 'quote',
-    label: 'Quote',
-    icon: '💬',
-    template: '> "[Your quote here]"\n\n— Author/Character',
-  },
-  {
-    id: 'question',
-    label: 'Question',
-    icon: '❓',
-    template: '**Question:** \n\n**Answer:** ',
-  },
-  {
-    id: 'summary',
-    label: 'Summary',
-    icon: '📌',
-    template: '### Summary\n\n**Key Points:**\n- Point 1\n- Point 2\n- Point 3',
-  },
-  {
-    id: 'insight',
-    label: 'Insight',
-    icon: '💡',
-    template: '**Insight:** \n\n**Why it matters:** ',
-  },
-  {
-    id: 'analysis',
-    label: 'Analysis',
-    icon: '🔍',
-    template: '**Analysis:**\n\n**Theme:** \n\n**Evidence:** \n\n**Interpretation:** ',
-  },
-];
 
 /**
  * BottomSheetNotes - Mobile-optimized bottom sheet for note-taking
@@ -67,29 +30,46 @@ const BottomSheetNotes = ({
   title,
   book = null,
   initialContent = "",
-  currentPage = null}) => {
+  currentPage = null
+}) => {
   // ===== CONTEXTS =====
-  const { activeSession } = useReadingSession();
-  const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
-  const { trackAction } = useGamification();
 
-  // ===== STATE =====
+  // ===== SHEET STATE =====
   const [sheetState, setSheetState] = useState('closed'); // 'closed', 'peek', 'half', 'full'
-  const [content, setContent] = useState(initialContent);
-  const [tagInput, setTagInput] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [isRichTextMode, setIsRichTextMode] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-
   const controls = useAnimation();
-  const textareaRef = useRef(null);
-  const recognitionRef = useRef(null);
   const sheetRef = useRef(null);
 
-  // Get book_id from either the passed book prop or activeSession
-  const bookId = book?.id || activeSession?.book?.id || null;
+  // ===== SHARED HOOK =====
+  // Use callback to minimize sheet after successful save
+  const handleSaveSuccess = useCallback(() => {
+    setSheetState('peek');
+    controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
+  }, [controls]);
+
+  const {
+    content,
+    setContent,
+    tagInput,
+    setTagInput,
+    isSaving,
+    isRecording,
+    isRichTextMode,
+    handleSave,
+    toggleVoiceRecording,
+    insertTemplate,
+    toggleRichTextMode,
+    isVoiceSupported,
+    templates,
+  } = useNotesEditor({
+    book,
+    title,
+    initialContent,
+    currentPage,
+    onSaveSuccess: handleSaveSuccess,
+  });
+
+  const textareaRef = useRef(null);
 
   // ===== OPEN/CLOSE LOGIC =====
   useEffect(() => {
@@ -104,83 +84,19 @@ const BottomSheetNotes = ({
     }
   }, [isOpen, sheetState, controls]);
 
-  // ===== VOICE RECOGNITION SETUP =====
-  useEffect(() => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-US';
-
-      recognitionRef.current.onresult = (event) => {
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript + ' ';
-          }
-        }
-
-        if (finalTranscript) {
-          setContent((prev) => prev + finalTranscript);
-        }
-      };
-
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsRecording(false);
-        showSnackbar({
-          message: `Voice input error: ${event.error}`,
-          variant: 'error'
-        });
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsRecording(false);
-      };
+  // ===== VOICE RECORDING WITH AUTO-EXPAND =====
+  const handleVoiceToggle = useCallback(() => {
+    // Auto-expand to half state when starting voice recording
+    if (!isRecording && sheetState === 'peek') {
+      setSheetState('half');
+      controls.start({ y: `${100 - SNAP_POINTS.HALF}%` });
     }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, [showSnackbar]);
-
-  // ===== VOICE RECORDING TOGGLE =====
-  const toggleVoiceRecording = () => {
-    if (!recognitionRef.current) {
-      showSnackbar({
-        message: 'Voice input not supported in this browser',
-        variant: 'error'
-      });
-      return;
-    }
-
-    if (isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    } else {
-      // Auto-expand to half state when starting voice recording
-      if (sheetState === 'peek') {
-        setSheetState('half');
-        controls.start({ y: `${100 - SNAP_POINTS.HALF}%` });
-      }
-      recognitionRef.current.start();
-      setIsRecording(true);
-      showSnackbar({
-        message: '🎤 Listening... Speak now',
-        variant: 'info'
-      });
-    }
-  };
+    toggleVoiceRecording();
+  }, [isRecording, sheetState, controls, toggleVoiceRecording]);
 
   // ===== DRAG HANDLING =====
-  const handleDragEnd = (event, info) => {
-    // eslint-disable-next-line no-unused-vars
-    const { offset, velocity } = info;
+  const handleDragEnd = useCallback((event, info) => {
+    const { velocity } = info;
     const currentY = parseFloat(getComputedStyle(sheetRef.current).transform.split(',')[5] || 0);
     const viewportHeight = window.innerHeight;
     const currentHeight = ((viewportHeight - currentY) / viewportHeight) * 100;
@@ -226,153 +142,25 @@ const BottomSheetNotes = ({
         transition: { type: 'spring', damping: 30, stiffness: 300 }
       });
     }
-  };
-
-  // ===== TEMPLATE INSERTION =====
-  const insertTemplate = (template) => {
-    setContent((prev) => {
-      if (!prev.trim()) {
-        return template.template;
-      }
-      return prev + '\n\n---\n\n' + template.template;
-    });
-    setShowTemplates(false);
-    showSnackbar({
-      message: `📝 ${template.label} template inserted`,
-      variant: 'success'
-    });
-  };
-
-  // ===== SAVE LOGIC =====
-  const handleSave = async () => {
-    try {
-      if (!content.trim()) {
-        showSnackbar({ message: 'Cannot save empty note', variant: 'warning' });
-        return;
-      }
-
-      if (isSaving) return;
-
-      setIsSaving(true);
-
-      let locationPrefix = "";
-      let locationMetadata = {};
-      let tags = [];
-
-      if (currentPage) {
-        locationPrefix = `[p.${currentPage}] `;
-        locationMetadata.page_number = currentPage;
-        tags.push(`page:${currentPage}`);
-      }
-
-      const userTags = tagInput
-        .split(',')
-        .map(t => t.trim())
-        .filter(Boolean);
-      const allTags = Array.from(new Set([...(tags || []), ...userTags]));
-
-      const noteData = {
-        title: title || content.substring(0, 30),
-        content: `${locationPrefix}${content.trim()}`,
-        book_id: bookId,
-        ...locationMetadata,
-        tags: allTags
-      };
-
-      try {
-        const response = await API.post("/notes", noteData, {
-          timeout: 10000
-        });
-
-        const serverGamification = response.data?.gamification;
-
-        if (trackAction) {
-          try {
-            await trackAction('note_created', {
-              book_id: bookId,
-              note_id: response.data.id,
-              page: currentPage,
-              timestamp: new Date().toISOString()
-            }, { serverSnapshot: serverGamification });
-          } catch (trackError) {
-            console.warn('⚠️ Failed to track gamification:', trackError);
-          }
-        }
-
-        const snackbarMessage = serverGamification?.totalPoints != null
-          ? `Note saved! ⭐ Total points: ${serverGamification.totalPoints}`
-          : "Note saved successfully! ✓";
-
-        showSnackbar({ message: snackbarMessage, variant: "success" });
-
-        // Clear and minimize to peek state
-        setContent("");
-        setTagInput("");
-        setIsSaving(false);
-        setSheetState('peek');
-        controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
-
-      } catch (error) {
-        console.error('❌ Failed to save note:', error);
-
-        const isAuthError = error.response?.status === 401 || error.response?.status === 403;
-        const isNetworkError = !error.response || error.code === 'ECONNABORTED';
-
-        if (isAuthError || isNetworkError) {
-          try {
-            const localNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
-            localNotes.push({
-              ...noteData,
-              timestamp: new Date().toISOString(),
-              status: isAuthError ? 'pending_auth' : 'pending_network'
-            });
-            localStorage.setItem('pendingNotes', JSON.stringify(localNotes));
-
-            showSnackbar({
-              message: isAuthError
-                ? "⚠️ Session expired. Note saved locally - will sync after login ✓"
-                : "⚠️ Network error. Note saved locally - will sync when online ✓",
-              variant: "warning"
-            });
-
-            setContent("");
-          // eslint-disable-next-line no-unused-vars
-          } catch (localError) {
-            showSnackbar({
-              message: "⚠️ Failed to save. Please copy your note before closing",
-              variant: "error"
-            });
-          }
-        } else {
-          showSnackbar({
-            message: `Failed to save note: ${error.response?.data?.error || error.message}`,
-            variant: "error"
-          });
-        }
-
-        setIsSaving(false);
-      }
-    } catch (outerError) {
-      console.error('❌ Critical error in handleSave:', outerError);
-      showSnackbar({
-        message: '❌ An unexpected error occurred. Please try again.',
-        variant: 'error'
-      });
-      setIsSaving(false);
-    }
-  };
+  }, [sheetState, controls, onClose]);
 
   // ===== EXPAND TO FULL =====
-  const expandToFull = () => {
+  const expandToFull = useCallback(() => {
     setSheetState('full');
     controls.start({
       y: `${100 - SNAP_POINTS.FULL}%`,
       transition: { type: 'spring', damping: 30, stiffness: 300 }
     });
-  };
+  }, [controls]);
+
+  // ===== MINIMIZE TO PEEK =====
+  const minimizeToPeek = useCallback(() => {
+    setSheetState('peek');
+    controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
+  }, [controls]);
 
   // ===== CALCULATE OVERLAY OPACITY =====
-  const getOverlayOpacity = () => {
+  const getOverlayOpacity = useCallback(() => {
     const opacityMap = {
       closed: 0,
       peek: 0,
@@ -380,7 +168,7 @@ const BottomSheetNotes = ({
       full: 0.4
     };
     return opacityMap[sheetState] || 0;
-  };
+  }, [sheetState]);
 
   const isDark = actualTheme === 'dark';
 
@@ -399,8 +187,7 @@ const BottomSheetNotes = ({
         transition={{ duration: 0.3 }}
         onClick={() => {
           if (sheetState !== 'peek') {
-            setSheetState('peek');
-            controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
+            minimizeToPeek();
           } else {
             onClose();
           }
@@ -429,8 +216,9 @@ const BottomSheetNotes = ({
           <div className={styles.peekContent}>
             <button
               className={`${styles.peekButton} ${styles.voiceButton} ${isRecording ? styles.recording : ''}`}
-              onClick={toggleVoiceRecording}
+              onClick={handleVoiceToggle}
               type="button"
+              disabled={!isVoiceSupported}
             >
               <span className={styles.peekIcon}>{isRecording ? '🔴' : '🎤'}</span>
               <span className={styles.peekLabel}>
@@ -471,10 +259,7 @@ const BottomSheetNotes = ({
               </div>
               <button
                 className={styles.minimizeButton}
-                onClick={() => {
-                  setSheetState('peek');
-                  controls.start({ y: `${100 - SNAP_POINTS.PEEK}%` });
-                }}
+                onClick={minimizeToPeek}
                 aria-label="Minimize"
                 type="button"
               >
@@ -486,7 +271,7 @@ const BottomSheetNotes = ({
             <div className={styles.toolbar}>
               <button
                 className={`${styles.toolbarButton} ${isRichTextMode ? styles.active : ''}`}
-                onClick={() => setIsRichTextMode(!isRichTextMode)}
+                onClick={toggleRichTextMode}
                 aria-label={isRichTextMode ? "Switch to plain text" : "Switch to rich text"}
                 type="button"
                 title={isRichTextMode ? "Plain Text Mode" : "Rich Text Mode (Markdown)"}
@@ -494,40 +279,27 @@ const BottomSheetNotes = ({
                 {isRichTextMode ? '📝' : '✍️'}
               </button>
 
-              <div className={styles.templateWrapper}>
+              {/* Template buttons - inline for simplicity */}
+              {templates.map((template) => (
                 <button
-                  className={`${styles.toolbarButton} ${showTemplates ? styles.active : ''}`}
-                  onClick={() => setShowTemplates(!showTemplates)}
-                  aria-label="Insert template"
+                  key={template.id}
+                  className={styles.toolbarButton}
+                  onClick={() => insertTemplate(template)}
                   type="button"
-                  title="Insert Template"
+                  title={template.description}
+                  aria-label={`Insert ${template.label} template`}
                 >
-                  📋
+                  {template.icon}
                 </button>
-                {showTemplates && (
-                  <div className={styles.templateDropdown}>
-                    {NOTE_TEMPLATES.map((template) => (
-                      <button
-                        key={template.id}
-                        className={styles.templateItem}
-                        onClick={() => insertTemplate(template)}
-                        type="button"
-                      >
-                        <span className={styles.templateIcon}>{template.icon}</span>
-                        <span className={styles.templateLabel}>{template.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              ))}
 
               <button
                 className={`${styles.toolbarButton} ${isRecording ? styles.recording : ''}`}
-                onClick={toggleVoiceRecording}
+                onClick={handleVoiceToggle}
                 aria-label={isRecording ? "Stop voice input" : "Start voice input"}
                 type="button"
                 title={isRecording ? "Stop Recording" : "Voice Input"}
-                disabled={isRichTextMode}
+                disabled={isRichTextMode || !isVoiceSupported}
               >
                 {isRecording ? '🔴' : '🎤'}
               </button>

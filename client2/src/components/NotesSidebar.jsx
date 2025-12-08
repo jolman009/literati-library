@@ -1,51 +1,17 @@
 // src/components/NotesSidebar.jsx
 import React, { useState, useEffect, useRef } from "react";
 import MDEditor from '@uiw/react-md-editor';
-import API from "../config/api";
-import { useSnackbar } from "./Material3";
-import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
-import { useGamification } from "../contexts/GamificationContext";
+import { useNotesEditor } from "../hooks/useNotesEditor";
 import styles from "./NotesSidebar.module.css";
-
-// ===== NOTE TEMPLATES =====
-const NOTE_TEMPLATES = [
-  {
-    id: 'quote',
-    label: 'Quote',
-    icon: '💬',
-    template: '> "[Your quote here]"\n\n— Author/Character',
-  },
-  {
-    id: 'question',
-    label: 'Question',
-    icon: '❓',
-    template: '**Question:** \n\n**Answer:** ',
-  },
-  {
-    id: 'summary',
-    label: 'Summary',
-    icon: '📌',
-    template: '### Summary\n\n**Key Points:**\n- Point 1\n- Point 2\n- Point 3',
-  },
-  {
-    id: 'insight',
-    label: 'Insight',
-    icon: '💡',
-    template: '**Insight:** \n\n**Why it matters:** ',
-  },
-  {
-    id: 'analysis',
-    label: 'Analysis',
-    icon: '🔍',
-    template: '**Analysis:**\n\n**Theme:** \n\n**Evidence:** \n\n**Interpretation:** ',
-  },
-];
 
 /**
  * NotesSidebar - Material Design 3 Slide-Out Notes Panel
  *
- * Replaces FloatingNotepad with improved UX:
+ * A slide-out panel for note-taking during reading sessions.
+ * Used on tablet/desktop viewports.
+ *
+ * Features:
  * - Slides in from right side
  * - Rich text editing (Markdown)
  * - Note templates
@@ -62,25 +28,36 @@ const NotesSidebar = ({
   currentLocator = null
 }) => {
   // ===== CONTEXTS =====
-  const { activeSession } = useReadingSession();
-  const { showSnackbar } = useSnackbar();
   const { actualTheme } = useMaterial3Theme();
-  const { trackAction } = useGamification();
 
-  // ===== STATE =====
-  const [content, setContent] = useState(initialContent);
-  const [tagInput, setTagInput] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  // ===== SHARED HOOK =====
+  const {
+    content,
+    setContent,
+    tagInput,
+    setTagInput,
+    isSaving,
+    isRecording,
+    isRichTextMode,
+    handleSave,
+    handleClear,
+    toggleVoiceRecording,
+    insertTemplate,
+    toggleRichTextMode,
+    isVoiceSupported,
+    templates,
+  } = useNotesEditor({
+    book,
+    title,
+    initialContent,
+    currentPage,
+    currentLocator,
+    onSaveSuccess: null, // Keep sidebar open after save
+  });
+
+  // ===== LOCAL STATE =====
   const [isMobile, setIsMobile] = useState(false);
-  const [isRichTextMode, setIsRichTextMode] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-
-  // Get book_id from either the passed book prop or activeSession
-  const bookId = book?.id || activeSession?.book?.id || null;
-
   const textareaRef = useRef(null);
-  const recognitionRef = useRef(null);
 
   // ===== RESPONSIVE DETECTION =====
   useEffect(() => {
@@ -102,254 +79,6 @@ const NotesSidebar = ({
     }
   }, [isOpen, isRichTextMode]);
 
-  // ===== VOICE RECOGNITION SETUP =====
-  useEffect(() => {
-    // Check if browser supports Web Speech API
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-US';
-
-      recognitionRef.current.onresult = (event) => {
-        let finalTranscript = '';
-
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript + ' ';
-          }
-        }
-
-        if (finalTranscript) {
-          setContent((prev) => prev + finalTranscript);
-        }
-      };
-
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsRecording(false);
-        showSnackbar({
-          message: `Voice input error: ${event.error}`,
-          variant: 'error'
-        });
-      };
-
-      recognitionRef.current.onend = () => {
-        setIsRecording(false);
-      };
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, [showSnackbar]);
-
-  // ===== VOICE RECORDING TOGGLE =====
-  const toggleVoiceRecording = () => {
-    if (!recognitionRef.current) {
-      showSnackbar({
-        message: 'Voice input not supported in this browser',
-        variant: 'error'
-      });
-      return;
-    }
-
-    if (isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    } else {
-      recognitionRef.current.start();
-      setIsRecording(true);
-      showSnackbar({
-        message: '🎤 Listening... Speak now',
-        variant: 'info'
-      });
-    }
-  };
-
-  // ===== TEMPLATE INSERTION =====
-  const insertTemplate = (template) => {
-    setContent((prev) => {
-      // If content is empty, insert template directly
-      if (!prev.trim()) {
-        return template.template;
-      }
-      // Otherwise, append with spacing
-      return prev + '\n\n---\n\n' + template.template;
-    });
-    setShowTemplates(false);
-    showSnackbar({
-      message: `📝 ${template.label} template inserted`,
-      variant: 'success'
-    });
-  };
-
-  // ===== SAVE LOGIC (Ported from FloatingNotepad) =====
-  const handleSave = async () => {
-    try {
-      console.warn('💾 NotesSidebar: Save button clicked');
-
-      if (!content.trim()) {
-        console.warn('⚠️ NotesSidebar: Cannot save empty note');
-        showSnackbar({ message: 'Cannot save empty note', variant: 'warning' });
-        return;
-      }
-
-      if (isSaving) {
-        console.warn('⏳ NotesSidebar: Already saving, ignoring duplicate click');
-        return;
-      }
-
-      setIsSaving(true);
-
-      // Determine location prefix and metadata based on file type
-      let locationPrefix = "";
-      let locationMetadata = {};
-      let tags = [];
-
-      if (currentPage) {
-        console.warn('📄 Saving PDF note with page:', currentPage);
-        locationPrefix = `[p.${currentPage}] `;
-        locationMetadata.page_number = currentPage;
-        tags.push(`page:${currentPage}`);
-      } else if (currentLocator) {
-        console.warn('📖 Saving EPUB note with locator:', currentLocator);
-        // Future: Add EPUB location tracking here
-      }
-
-      const userTags = tagInput
-        .split(',')
-        .map(t => t.trim())
-        .filter(Boolean);
-      const allTags = Array.from(new Set([...(tags || []), ...userTags]));
-
-      const noteData = {
-        title: title || content.substring(0, 30),
-        content: `${locationPrefix}${content.trim()}`,
-        book_id: bookId,
-        ...locationMetadata,
-        tags: allTags
-      };
-
-      console.warn('📝 Attempting to save note:', noteData);
-
-      try {
-        const response = await API.post("/notes", noteData, {
-          timeout: 10000
-        });
-        console.warn('✅ Note saved successfully:', response.data.id);
-
-        const serverGamification = response.data?.gamification;
-
-        // Track gamification action (+15 points)
-        if (trackAction) {
-          try {
-            await trackAction('note_created', {
-              book_id: bookId,
-              note_id: response.data.id,
-              page: currentPage,
-              timestamp: new Date().toISOString()
-            }, { serverSnapshot: serverGamification });
-            console.warn('✅ Gamification action tracked (+15 points)');
-          } catch (trackError) {
-            console.warn('⚠️ Failed to track gamification:', trackError);
-          }
-        }
-
-        const snackbarMessage = serverGamification?.totalPoints != null
-          ? `Note saved successfully! ⭐ Total points: ${serverGamification.totalPoints}`
-          : "Note saved successfully! ✓";
-
-        showSnackbar({ message: snackbarMessage, variant: "success" });
-
-        // Clear fields on success
-        setContent("");
-        setTagInput("");
-        setIsSaving(false);
-
-        console.warn('✅ Save workflow completed');
-      } catch (error) {
-        console.error('❌ Failed to save note:', error);
-
-        // Graceful degradation: Save locally if backend fails
-        const isAuthError = error.response?.status === 401 || error.response?.status === 403;
-        const isNetworkError = !error.response || error.code === 'ECONNABORTED';
-
-        if (isAuthError) {
-          try {
-            const localNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
-            localNotes.push({
-              ...noteData,
-              timestamp: new Date().toISOString(),
-              status: 'pending_auth'
-            });
-            localStorage.setItem('pendingNotes', JSON.stringify(localNotes));
-
-            showSnackbar({
-              message: "⚠️ Session expired. Note saved locally - will sync after login ✓",
-              variant: "warning"
-            });
-
-            setContent("");
-          } catch {
-            showSnackbar({
-              message: "⚠️ Session expired. Please copy your note and log in again",
-              variant: "error"
-            });
-          }
-        } else if (isNetworkError) {
-          try {
-            const localNotes = JSON.parse(localStorage.getItem('pendingNotes') || '[]');
-            localNotes.push({
-              ...noteData,
-              timestamp: new Date().toISOString(),
-              status: 'pending_network'
-            });
-            localStorage.setItem('pendingNotes', JSON.stringify(localNotes));
-
-            showSnackbar({
-              message: "⚠️ Network error. Note saved locally - will sync when online ✓",
-              variant: "warning"
-            });
-
-            setContent("");
-          } catch {
-            showSnackbar({
-              message: "⚠️ Network error. Please copy your note before closing",
-              variant: "error"
-            });
-          }
-        } else {
-          showSnackbar({
-            message: `Failed to save note: ${error.response?.data?.error || error.message}`,
-            variant: "error"
-          });
-        }
-
-        setIsSaving(false);
-      }
-    } catch (outerError) {
-      console.error('❌ Critical error in handleSave:', outerError);
-      showSnackbar({
-        message: '❌ An unexpected error occurred. Please try again.',
-        variant: 'error'
-      });
-      setIsSaving(false);
-    }
-  };
-
-  // ===== CLEAR LOGIC =====
-  const handleClear = () => {
-    if (window.confirm('Are you sure you want to clear this note?')) {
-      setContent("");
-      setTagInput("");
-    }
-  };
-
   // ===== KEYBOARD SHORTCUTS =====
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -369,7 +98,7 @@ const NotesSidebar = ({
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [isOpen, content, handleSave, onClose]);
+  }, [isOpen, handleSave, onClose]);
 
   const isDark = actualTheme === 'dark';
 
@@ -413,7 +142,7 @@ const NotesSidebar = ({
           {/* Text Mode Toggle */}
           <button
             className={`${styles.toolbarButton} ${isRichTextMode ? styles.active : ''}`}
-            onClick={() => setIsRichTextMode(!isRichTextMode)}
+            onClick={toggleRichTextMode}
             aria-label={isRichTextMode ? "Switch to plain text" : "Switch to rich text"}
             type="button"
             title={isRichTextMode ? "Plain Text Mode" : "Rich Text Mode (Markdown)"}
@@ -421,33 +150,19 @@ const NotesSidebar = ({
             {isRichTextMode ? '📝' : '✍️'}
           </button>
 
-          {/* Templates Dropdown */}
-          <div className={styles.templateWrapper}>
+          {/* Template buttons - inline for consistency */}
+          {templates.map((template) => (
             <button
-              className={`${styles.toolbarButton} ${showTemplates ? styles.active : ''}`}
-              onClick={() => setShowTemplates(!showTemplates)}
-              aria-label="Insert template"
+              key={template.id}
+              className={styles.toolbarButton}
+              onClick={() => insertTemplate(template)}
               type="button"
-              title="Insert Template"
+              title={template.description}
+              aria-label={`Insert ${template.label} template`}
             >
-              📋
+              {template.icon}
             </button>
-            {showTemplates && (
-              <div className={styles.templateDropdown}>
-                {NOTE_TEMPLATES.map((template) => (
-                  <button
-                    key={template.id}
-                    className={styles.templateItem}
-                    onClick={() => insertTemplate(template)}
-                    type="button"
-                  >
-                    <span className={styles.templateIcon}>{template.icon}</span>
-                    <span className={styles.templateLabel}>{template.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          ))}
 
           {/* Voice Input */}
           <button
@@ -456,7 +171,7 @@ const NotesSidebar = ({
             aria-label={isRecording ? "Stop voice input" : "Start voice input"}
             type="button"
             title={isRecording ? "Stop Recording" : "Voice Input"}
-            disabled={isRichTextMode}
+            disabled={isRichTextMode || !isVoiceSupported}
           >
             {isRecording ? '🔴' : '🎤'}
           </button>
