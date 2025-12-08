@@ -78,7 +78,6 @@ const AchievementCard = ({ achievement, isUnlocked, onCardClick }) => {
  */
 const AchievementsPage = () => {
   const { state: gamificationState } = useGamification();
-  const { actualTheme } = useMaterial3Theme();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
   const [selectedAchievement, setSelectedAchievement] = useState(null);
