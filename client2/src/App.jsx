@@ -84,6 +84,7 @@ const LibraryPageWrapper = lazy(() =>
   })
 );
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
+const LibraryPageV2 = lazy(() => import('./pages/LibraryPageV2'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
@@ -221,6 +222,11 @@ const AppRoutes = () => {
               <LibraryPageWrapper />
             </Suspense>
           </LibraryErrorBoundary>
+        } />
+        <Route path="/library-v2" element={
+          <Suspense fallback={<AppLoadingSpinner message="Loading library v2..." />}>
+            <LibraryPageV2 />
+          </Suspense>
         } />
         <Route path="/settings" element={
           <ErrorBoundary fallbackComponent="settings" variant="full">
