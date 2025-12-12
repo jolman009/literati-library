@@ -425,7 +425,7 @@ const EnhancedCollectionsPage = ({
                 📚 Collections
               </h1>
               <p>
-                Organize your library with custom collections that reflect your reading journey
+                Organize your ibrary with custom collections that reflect your reading journey
               </p>
             </div>
             {/* Navigation Links */}
