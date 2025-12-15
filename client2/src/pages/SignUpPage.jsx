@@ -50,9 +50,33 @@ const SignUpPage = () => {
       ok = false;
     }
 
-    if (!password || password.length < 8) {
-      setPasswordError('Password must be at least 8 characters long.');
+    // Enhanced password validation to match backend requirements
+    if (!password) {
+      setPasswordError('Password is required.');
       ok = false;
+    } else {
+      const passwordIssues = [];
+
+      if (password.length < 8) {
+        passwordIssues.push('at least 8 characters');
+      }
+      if (!/[a-z]/.test(password)) {
+        passwordIssues.push('a lowercase letter');
+      }
+      if (!/[A-Z]/.test(password)) {
+        passwordIssues.push('an uppercase letter');
+      }
+      if (!/\d/.test(password)) {
+        passwordIssues.push('a number');
+      }
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        passwordIssues.push('a special character');
+      }
+
+      if (passwordIssues.length > 0) {
+        setPasswordError(`Password must contain ${passwordIssues.join(', ')}.`);
+        ok = false;
+      }
     }
 
     if (confirmPassword !== password) {
@@ -200,7 +224,9 @@ const SignUpPage = () => {
           {/* Password Requirements */}
           <div className="md3-password-requirements">
             <span className="material-symbols-outlined requirements-icon">info</span>
-            <span className="requirements-text">Password must be at least 8 characters long</span>
+            <span className="requirements-text">
+              Password must contain: 8+ characters, uppercase, lowercase, number, and special character
+            </span>
           </div>
 
           {/* Terms Checkbox */}

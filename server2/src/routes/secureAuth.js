@@ -114,9 +114,11 @@ router.post('/register',
 
       if (error) {
         console.error('User creation error:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
         return res.status(500).json({
           error: 'Failed to create user',
           code: 'USER_CREATION_FAILED',
+          details: error.message || error.details || error.hint,
           requestId: req.requestId
         });
       }
