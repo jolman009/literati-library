@@ -66,16 +66,11 @@ export const validateNumber = (field, min = 0, max = Number.MAX_SAFE_INTEGER) =>
 export const validateSignup = [
   validateEmail(),
   validatePassword(),
-  body('firstName')
+  body('name')
     .trim()
     .escape()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('First name is required and must be 1-50 characters'),
-  body('lastName')
-    .trim()
-    .escape()
-    .isLength({ min: 1, max: 50 })
-    .withMessage('Last name is required and must be 1-50 characters'),
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name is required and must be 1-100 characters'),
   handleValidationErrors
 ];
 
