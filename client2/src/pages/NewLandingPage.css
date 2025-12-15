@@ -11,6 +11,19 @@
   --carolina-blue-darker: #2B6A94;
   --carolina-blue-subtle: rgba(86, 160, 211, 0.08);
   --carolina-blue-glow: rgba(86, 160, 211, 0.15);
+
+  /* Blue-shifted tertiary for landing page */
+  --landing-tertiary: #3fabfc;
+  --landing-tertiary-light: #6fbdf7;
+  --landing-tertiary-container: #d4edfc;
+  --landing-on-tertiary-container: #0a3d5c;
+}
+
+/* Override MD3 tertiary colors for landing page scope */
+.landing-page {
+  --md-sys-color-tertiary: var(--landing-tertiary);
+  --md-sys-color-tertiary-container: var(--landing-tertiary-container);
+  --md-sys-color-on-tertiary-container: var(--landing-on-tertiary-container);
 }
 
 /* ================================================
@@ -362,6 +375,28 @@
 
 .avatar:first-child {
   margin-left: 0;
+}
+
+/* Launch Badge (for early-stage honest messaging) */
+.launch-badge {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--carolina-blue), var(--carolina-blue-dark));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+.launch-badge .material-symbols-outlined {
+  font-size: 1.25rem;
+  color: white;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(86, 160, 211, 0.4); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(86, 160, 211, 0); }
 }
 
 /* Hero Visual */
@@ -1727,6 +1762,10 @@
     --md-sys-color-surface-variant: #41484d;
     --md-sys-color-on-surface-variant: #c1c7ce;
     --md-sys-color-outline-variant: #41484d;
+    /* Blue tertiary in dark mode */
+    --md-sys-color-tertiary: #6fbdf7;
+    --md-sys-color-tertiary-container: #0a4a70;
+    --md-sys-color-on-tertiary-container: #d4edfc;
   }
 
   .landing-nav {
@@ -1812,6 +1851,10 @@
   --md-sys-color-surface-variant: #41484d;
   --md-sys-color-on-surface-variant: #c1c7ce;
   --md-sys-color-outline-variant: #41484d;
+  /* Blue tertiary in dark mode */
+  --md-sys-color-tertiary: #6fbdf7;
+  --md-sys-color-tertiary-container: #0a4a70;
+  --md-sys-color-on-tertiary-container: #d4edfc;
 }
 
 /* ================================================

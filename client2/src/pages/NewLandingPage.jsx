@@ -88,11 +88,12 @@ const NewLandingPage = () => {
     }
   ];
 
+  // Focus on features, not inflated numbers - we're just getting started!
   const stats = [
-    { value: '10K+', label: 'Active Readers' },
-    { value: '250K+', label: 'Books Cataloged' },
-    { value: '1.2M+', label: 'Pages Read' },
-    { value: '6', label: 'Unlockable Themes' }
+    { value: 'PDF', label: '& EPUB Support' },
+    { value: '6', label: 'Unlockable Themes' },
+    { value: '∞', label: 'Reading Goals' },
+    { value: 'Free', label: 'To Get Started' }
   ];
 
   return (
@@ -170,12 +171,10 @@ const NewLandingPage = () => {
             </div>
 
             <div className="hero-social-proof">
-              <div className="avatar-stack">
-                <div className="avatar" style={{ backgroundColor: 'var(--carolina-blue)' }}>SQ</div>
-                <div className="avatar" style={{ backgroundColor: 'var(--carolina-blue-light)' }}>JM</div>
-                <div className="avatar" style={{ backgroundColor: 'var(--carolina-blue-dark)' }}>AR</div>
+              <div className="launch-badge">
+                <span className="material-symbols-outlined">rocket_launch</span>
               </div>
-              <p>Trusted by 10,000+ readers worldwide</p>
+              <p>New app, big dreams — join us from the start!</p>
             </div>
           </div>
 
@@ -233,7 +232,7 @@ const NewLandingPage = () => {
       {/* Social Proof Stats */}
       <section className="stats-section">
         <div className="stats-container">
-          <p className="stats-label">Powering reading journeys everywhere</p>
+          <p className="stats-label">What you get with ShelfQuest</p>
           <div className="stats-grid">
             {stats.map((stat, index) => (
               <div key={index} className="stat-item">
