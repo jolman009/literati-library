@@ -25,18 +25,8 @@ export default function MD3MenuItem({
       tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKey}
       onClick={disabled ? undefined : onClick}
-      className={`md3-menu-item ${className}`}
-      style={{
-        padding: '10px 12px',
-        borderRadius: 10,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        color: disabled ? '#8c8894' : '#1c1b1f',
-        outline: 'none',
-        transition: 'background-color .12s ease',
-        ...style
-      }}
-      onMouseEnter={e => { if (!disabled) e.currentTarget.style.backgroundColor = '#f6f2fb'; }}
-      onMouseLeave={e => { if (!disabled) e.currentTarget.style.backgroundColor = 'transparent'; }}
+      className={`md3-menu-item ${disabled ? 'md3-menu-item--disabled' : ''} ${className}`}
+      style={style}
       {...props}
     >
       {children}

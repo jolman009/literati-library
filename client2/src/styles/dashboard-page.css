@@ -40,7 +40,8 @@
 }
 
 /* Light mode gradient background for welcome section */
-:root:not([data-theme="dark"]) .welcome-section {
+[data-actual-theme="light"] .welcome-section,
+:root:not([data-actual-theme="dark"]) .welcome-section {
   background: linear-gradient(135deg,
     var(--md-sys-color-surface-variant) 0%,
     var(--md-sys-color-surface-container-high) 50%,
@@ -51,7 +52,7 @@
 }
 
 /* Dark mode elevated background for welcome section */
-[data-theme="dark"] .welcome-section {
+[data-actual-theme="dark"] .welcome-section {
   background: linear-gradient(135deg,
     var(--md-sys-color-surface-container) 0%,
     var(--md-sys-color-surface-container-high) 50%,
@@ -62,19 +63,23 @@
 }
 
 /* Light mode darker background for welcome header */
-:root:not([data-theme="dark"]) .welcome-header {
+[data-actual-theme="light"] .welcome-header,
+:root:not([data-actual-theme="dark"]) .welcome-header {
   background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
   color: var(--md-sys-color-on-primary-container);
 }
 
 /* Ensure all text in welcome header is white in light mode */
-:root:not([data-theme="dark"]) .welcome-title,
-:root:not([data-theme="dark"]) .welcome-subtitle {
+[data-actual-theme="light"] .welcome-title,
+[data-actual-theme="light"] .welcome-subtitle,
+:root:not([data-actual-theme="dark"]) .welcome-title,
+:root:not([data-actual-theme="dark"]) .welcome-subtitle {
   color: var(--md-sys-color-on-primary-container);
 }
 
 /* Light mode gradient background for progress section */
-:root:not([data-theme="dark"]) .progress-section {
+[data-actual-theme="light"] .progress-section,
+:root:not([data-actual-theme="dark"]) .progress-section {
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary) 8%, var(--md-sys-color-surface-variant)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary) 12%, var(--md-sys-color-surface-container)) 50%,
@@ -85,7 +90,7 @@
 }
 
 /* Dark mode elevated background for progress section */
-[data-theme="dark"] .progress-section {
+[data-actual-theme="dark"] .progress-section {
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary) 6%, var(--md-sys-color-surface-container-low)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary) 10%, var(--md-sys-color-surface-container)) 50%,
@@ -96,8 +101,10 @@
 }
 
 /* Light mode stat cards tuned to MD3 tokens */
-:root:not([data-theme="dark"]) .stat-card,
-:root:not([data-theme="dark"]) .progress-section .stats-grid .stat-card {
+[data-actual-theme="light"] .stat-card,
+[data-actual-theme="light"] .progress-section .stats-grid .stat-card,
+:root:not([data-actual-theme="dark"]) .stat-card,
+:root:not([data-actual-theme="dark"]) .progress-section .stats-grid .stat-card {
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary-container) 90%, var(--md-sys-color-surface-container)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 90%, var(--md-sys-color-surface-container-high)) 100%
@@ -107,16 +114,19 @@
 }
 
 /* Ensure stat card text uses readable on-primary-container in light mode */
-:root:not([data-theme="dark"]) .stat-card .stat-value,
-:root:not([data-theme="dark"]) .stat-card .stat-label,
-:root:not([data-theme="dark"]) .stat-card .stat-icon {
+[data-actual-theme="light"] .stat-card .stat-value,
+[data-actual-theme="light"] .stat-card .stat-label,
+[data-actual-theme="light"] .stat-card .stat-icon,
+:root:not([data-actual-theme="dark"]) .stat-card .stat-value,
+:root:not([data-actual-theme="dark"]) .stat-card .stat-label,
+:root:not([data-actual-theme="dark"]) .stat-card .stat-icon {
   color: var(--md-sys-color-on-primary-container);
 }
 
 /* Dark mode stat card text visibility fix */
-[data-theme="dark"] .stat-card .stat-value,
-[data-theme="dark"] .stat-card .stat-label,
-[data-theme="dark"] .stat-card .stat-icon {
+[data-actual-theme="dark"] .stat-card .stat-value,
+[data-actual-theme="dark"] .stat-card .stat-label,
+[data-actual-theme="dark"] .stat-card .stat-icon {
   color: var(--md-sys-color-on-surface) !important;
 }
 

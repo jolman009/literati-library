@@ -3,7 +3,7 @@
    ============================================================================ */
 
 /* CRITICAL FIX: Currently Reading Section - Dark Mode Text Visibility */
-[data-theme="dark"] .currently-reading-section,
+[data-actual-theme="dark"] .currently-reading-section,
 .dark .currently-reading-section,
 .premium-app-layout.dark .currently-reading-section {
   background: linear-gradient(135deg,
@@ -14,15 +14,15 @@
 }
 
 /* Section heading text - ensure high contrast in dark mode */
-[data-theme="dark"] .currently-reading-section h3,
+[data-actual-theme="dark"] .currently-reading-section h3,
 .dark .currently-reading-section h3,
 .premium-app-layout.dark .currently-reading-section h3 {
   color: var(--md-sys-color-on-surface) !important;
 }
 
 /* Book card in Currently Reading - Dark Mode */
-[data-theme="dark"] .currently-reading-section .book-card,
-[data-theme="dark"] .currently-reading-section .book-card-compact,
+[data-actual-theme="dark"] .currently-reading-section .book-card,
+[data-actual-theme="dark"] .currently-reading-section .book-card-compact,
 .dark .currently-reading-section .book-card,
 .dark .currently-reading-section .book-card-compact,
 .premium-app-layout.dark .currently-reading-section .book-card,
@@ -32,8 +32,8 @@
 }
 
 /* Book title - Dark Mode HIGH CONTRAST FIX */
-[data-theme="dark"] .currently-reading-section .book-title,
-[data-theme="dark"] .currently-reading-section .book-title-compact,
+[data-actual-theme="dark"] .currently-reading-section .book-title,
+[data-actual-theme="dark"] .currently-reading-section .book-title-compact,
 .dark .currently-reading-section .book-title,
 .dark .currently-reading-section .book-title-compact,
 .premium-app-layout.dark .currently-reading-section .book-title,
@@ -43,8 +43,8 @@
 }
 
 /* Book author - Dark Mode HIGH CONTRAST FIX */
-[data-theme="dark"] .currently-reading-section .book-author,
-[data-theme="dark"] .currently-reading-section .book-author-compact,
+[data-actual-theme="dark"] .currently-reading-section .book-author,
+[data-actual-theme="dark"] .currently-reading-section .book-author-compact,
 .dark .currently-reading-section .book-author,
 .dark .currently-reading-section .book-author-compact,
 .premium-app-layout.dark .currently-reading-section .book-author,
@@ -53,8 +53,8 @@
 }
 
 /* Progress text - Dark Mode FIX */
-[data-theme="dark"] .currently-reading-section .progress-text,
-[data-theme="dark"] .currently-reading-section .book-progress,
+[data-actual-theme="dark"] .currently-reading-section .progress-text,
+[data-actual-theme="dark"] .currently-reading-section .book-progress,
 .dark .currently-reading-section .progress-text,
 .dark .currently-reading-section .book-progress,
 .premium-app-layout.dark .currently-reading-section .progress-text,
@@ -67,8 +67,8 @@
    ============================================================================ */
 
 /* Fix for inline styled elements in DashboardPage */
-[data-theme="dark"] div[style*="fontSize: '14px'"],
-[data-theme="dark"] div[style*="fontSize: '12px'"],
+[data-actual-theme="dark"] div[style*="fontSize: '14px'"],
+[data-actual-theme="dark"] div[style*="fontSize: '12px'"],
 .dark div[style*="fontSize: '14px'"],
 .dark div[style*="fontSize: '12px'"],
 .premium-app-layout.dark div[style*="fontSize: '14px'"],
@@ -77,9 +77,9 @@
 }
 
 /* Specific fix for book metadata in Currently Reading */
-[data-theme="dark"] [style*="color: '#cbd5e1'"],
-[data-theme="dark"] [style*="color: '#334155'"],
-[data-theme="dark"] [style*="color: '#94a3b8'"],
+[data-actual-theme="dark"] [style*="color: '#cbd5e1'"],
+[data-actual-theme="dark"] [style*="color: '#334155'"],
+[data-actual-theme="dark"] [style*="color: '#94a3b8'"],
 .dark [style*="color: '#cbd5e1'"],
 .dark [style*="color: '#334155'"],
 .dark [style*="color: '#94a3b8'"],
@@ -90,8 +90,8 @@
 }
 
 /* Fix for book title text specifically */
-[data-theme="dark"] [style*="color: '#e2e8f0'"],
-[data-theme="dark"] [style*="color: '#0f172a'"],
+[data-actual-theme="dark"] [style*="color: '#e2e8f0'"],
+[data-actual-theme="dark"] [style*="color: '#0f172a'"],
 .dark [style*="color: '#e2e8f0'"],
 .dark [style*="color: '#0f172a'"],
 .premium-app-layout.dark [style*="color: '#e2e8f0'"],
@@ -104,9 +104,9 @@
    ============================================================================ */
 
 /* Stat cards in dark mode */
-[data-theme="dark"] .stat-card .stat-value,
-[data-theme="dark"] .stat-card .stat-label,
-[data-theme="dark"] .stat-card .stat-icon,
+[data-actual-theme="dark"] .stat-card .stat-value,
+[data-actual-theme="dark"] .stat-card .stat-label,
+[data-actual-theme="dark"] .stat-card .stat-icon,
 .dark .stat-card .stat-value,
 .dark .stat-card .stat-label,
 .dark .stat-card .stat-icon,
@@ -117,8 +117,8 @@
 }
 
 /* Section cards in dark mode */
-[data-theme="dark"] .section-card,
-[data-theme="dark"] .section-card-compact,
+[data-actual-theme="dark"] .section-card,
+[data-actual-theme="dark"] .section-card-compact,
 .dark .section-card,
 .dark .section-card-compact,
 .premium-app-layout.dark .section-card,
@@ -131,8 +131,8 @@
 }
 
 /* Section titles in dark mode */
-[data-theme="dark"] .section-title,
-[data-theme="dark"] .section-title-compact,
+[data-actual-theme="dark"] .section-title,
+[data-actual-theme="dark"] .section-title-compact,
 .dark .section-title,
 .dark .section-title-compact,
 .premium-app-layout.dark .section-title,
@@ -141,7 +141,7 @@
 }
 
 /* Recently Added section fixes */
-[data-theme="dark"] .recently-added-section,
+[data-actual-theme="dark"] .recently-added-section,
 .dark .recently-added-section,
 .premium-app-layout.dark .recently-added-section {
   background: linear-gradient(135deg,
@@ -151,7 +151,7 @@
 }
 
 /* Progress section in dark mode */
-[data-theme="dark"] .progress-section,
+[data-actual-theme="dark"] .progress-section,
 .dark .progress-section,
 .premium-app-layout.dark .progress-section {
   background: rgba(245, 40, 145, 0.8);
@@ -160,20 +160,20 @@
 }
 
 /* CTA section in dark mode */
-[data-theme="dark"] .cta-section,
+[data-actual-theme="dark"] .cta-section,
 .dark .cta-section,
 .premium-app-layout.dark .cta-section {
   background: rgba(245, 40, 145, 0.8);
   border: 1px solid var(--md-sys-color-primary);
 }
 
-[data-theme="dark"] .cta-title,
+[data-actual-theme="dark"] .cta-title,
 .dark .cta-title,
 .premium-app-layout.dark .cta-title {
   color: var(--md-sys-color-on-surface) !important;
 }
 
-[data-theme="dark"] .cta-subtitle,
+[data-actual-theme="dark"] .cta-subtitle,
 .dark .cta-subtitle,
 .premium-app-layout.dark .cta-subtitle {
   color: var(--md-sys-color-on-surface-variant) !important;
@@ -184,14 +184,14 @@
    ============================================================================ */
 
 @media (max-width: 768px) {
-  [data-theme="dark"] .currently-reading-section,
+  [data-actual-theme="dark"] .currently-reading-section,
   .dark .currently-reading-section,
   .premium-app-layout.dark .currently-reading-section {
     padding: 16px;
   }
 
-  [data-theme="dark"] .book-card,
-  [data-theme="dark"] .book-card-compact,
+  [data-actual-theme="dark"] .book-card,
+  [data-actual-theme="dark"] .book-card-compact,
   .dark .book-card,
   .dark .book-card-compact,
   .premium-app-layout.dark .book-card,

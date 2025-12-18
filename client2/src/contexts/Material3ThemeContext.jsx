@@ -63,17 +63,24 @@ export const Material3ThemeProvider = ({ children, defaultTheme = 'auto' }) => {
     try {
       const root = document.documentElement;
 
-      // Set data-theme attribute for MD3 unified colors
-      root.setAttribute('data-theme', theme);
+      // Set data-actual-theme attribute for light/dark mode
+      // This works with themes.css which uses [data-theme="classic"][data-actual-theme="light"]
+      root.setAttribute('data-actual-theme', theme);
+
+      // If no data-theme is set (no gamification theme selected), default to 'classic'
+      const currentTheme = root.getAttribute('data-theme');
+      if (!currentTheme || currentTheme === 'light' || currentTheme === 'dark') {
+        root.setAttribute('data-theme', 'classic');
+      }
 
       // Also set class for compatibility with existing components
       root.classList.remove('light', 'dark');
       root.classList.add(theme);
 
-      // Store user preference
+      // Store user preference for light/dark mode
       localStorage.setItem('shelfquest-theme', theme);
 
-      console.warn(`🎨 Theme applied: ${theme}`);
+      console.warn(`🎨 Theme mode applied: ${theme}, theme: ${root.getAttribute('data-theme')}`);
     } catch (error) {
       console.warn('Failed to apply theme to DOM:', error);
     }
