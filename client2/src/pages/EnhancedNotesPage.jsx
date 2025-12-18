@@ -1,7 +1,6 @@
 // src/pages/EnhancedNotesPage.jsx - Interactive Notes with Visualizations
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import API from '../config/api';
 import { useGamification } from '../contexts/GamificationContext';
 import { 
@@ -44,7 +43,7 @@ import {
 import './EnhancedNotesPage.css';
 
 // Word Cloud Component
-const WordCloud = ({ notes, actualTheme }) => {
+const WordCloud = ({ notes }) => {
   const wordFrequency = useMemo(() => {
     const words = {};
     const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'was', 'are', 'were', 'been', 'be', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'them', 'their', 'my', 'your', 'our', 'its']);
@@ -76,7 +75,7 @@ const WordCloud = ({ notes, actualTheme }) => {
       justifyContent: 'center',
       padding: '24px',
       minHeight: '200px',
-      backgroundColor: actualTheme === 'dark' ? '#1e293b' : '#ffffff'
+      backgroundColor: 'var(--md-sys-color-surface-container)'
     }}>
       {wordFrequency.map(({ word, count }) => {
         const fontSize = 14 + (count / maxCount) * 28;
@@ -116,7 +115,7 @@ const WordCloud = ({ notes, actualTheme }) => {
         );
       })}
       {wordFrequency.length === 0 && (
-        <p style={{ color: actualTheme === 'dark' ? '#94a3b8' : '#666', fontSize: '14px' }}>
+        <p style={{ color: 'var(--md-sys-color-on-surface-variant)', fontSize: '14px' }}>
           Create more notes to see word frequency visualization
         </p>
       )}
@@ -125,27 +124,25 @@ const WordCloud = ({ notes, actualTheme }) => {
 };
 
 // Timeline View Component
-const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
+const TimelineView = ({ notes, onNoteClick }) => {
   const groupedNotes = useMemo(() => {
     const groups = {};
     notes.forEach(note => {
-      const date = new Date(note.created_at).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
+      const date = new Date(note.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
       if (!groups[date]) groups[date] = [];
       groups[date].push(note);
     });
     return Object.entries(groups).sort((a, b) => new Date(b[0]) - new Date(a[0]));
   }, [notes]);
-  
-  const isDark = actualTheme === 'dark';
-  
+
   return (
-    <div style={{ 
+    <div style={{
       padding: '24px',
-      backgroundColor: isDark ? '#1e293b' : '#ffffff'
+      backgroundColor: 'var(--md-sys-color-surface-container)'
     }}>
       {groupedNotes.map(([date, dateNotes]) => (
         <div key={date} style={{ marginBottom: '32px' }}>
@@ -168,57 +165,50 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
               margin: 0,
               fontSize: '16px',
               fontWeight: '600',
-              color: isDark ? '#24A8E0' : '#24A8E0'
+              color: 'var(--md-sys-color-primary)'
             }}>
               {date}
             </h3>
             <div style={{
               flex: 1,
               height: '1px',
-              backgroundColor: isDark ? '#475569' : '#E7E0EC',
+              backgroundColor: 'var(--md-sys-color-outline-variant)',
               marginLeft: '16px'
             }} />
           </div>
-          
+
           <div style={{
             marginLeft: '28px',
-            borderLeft: `2px solid ${isDark ? '#475569' : '#E7E0EC'}`,
+            borderLeft: '2px solid var(--md-sys-color-outline-variant)',
             paddingLeft: '24px'
           }}>
             {dateNotes.map(note => (
               <div
                 key={note.id}
                 onClick={() => onNoteClick(note)}
+                className="timeline-note-item"
                 style={{
                   marginBottom: '16px',
                   padding: '12px 16px',
-                  backgroundColor: isDark ? '#334155' : '#F5F5F5',
+                  backgroundColor: 'var(--md-sys-color-surface-container-low)',
                   borderRadius: '8px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  border: '1px solid transparent'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? '#475569' : '#EEEEEE';
-                  e.currentTarget.style.borderColor = '#24A8E0';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? '#334155' : '#F5F5F5';
-                  e.currentTarget.style.borderColor = 'transparent';
+                  border: '1px solid var(--md-sys-color-outline-variant)'
                 }}
               >
-                <h4 style={{ 
-                  margin: '0 0 8px 0', 
-                  fontSize: '14px', 
+                <h4 style={{
+                  margin: '0 0 8px 0',
+                  fontSize: '14px',
                   fontWeight: '600',
-                  color: isDark ? '#f1f5f9' : '#1f2937'
+                  color: 'var(--md-sys-color-on-surface)'
                 }}>
                   {note.title}
                 </h4>
-                <p style={{ 
-                  margin: '0 0 8px 0', 
-                  fontSize: '13px', 
-                  color: isDark ? '#94a3b8' : '#666', 
+                <p style={{
+                  margin: '0 0 8px 0',
+                  fontSize: '13px',
+                  color: 'var(--md-sys-color-on-surface-variant)',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   display: '-webkit-box',
@@ -232,8 +222,8 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
                     <span key={i} style={{
                       fontSize: '11px',
                       padding: '2px 8px',
-                      backgroundColor: isDark ? '#475569' : '#E7E0EC',
-                      color: isDark ? '#24A8E0' : '#24A8E0',
+                      backgroundColor: 'var(--md-sys-color-surface-container-high)',
+                      color: 'var(--md-sys-color-primary)',
                       borderRadius: '12px'
                     }}>
                       #{tag}
@@ -250,23 +240,23 @@ const TimelineView = ({ notes, onNoteClick, actualTheme }) => {
 };
 
 // Statistics Dashboard
-const StatsDashboard = ({ notes, books, actualTheme }) => {
+const StatsDashboard = ({ notes, books }) => {
   const stats = useMemo(() => {
     const totalNotes = notes.length;
     const notesWithBooks = notes.filter(n => n.book_id).length;
     const totalTags = new Set(notes.flatMap(n => n.tags || [])).size;
     const avgLength = notes.reduce((acc, n) => acc + n.content.length, 0) / (totalNotes || 1);
-    
+
     // Notes per month
     const monthlyNotes = {};
     notes.forEach(note => {
-      const month = new Date(note.created_at).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short' 
+      const month = new Date(note.created_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short'
       });
       monthlyNotes[month] = (monthlyNotes[month] || 0) + 1;
     });
-    
+
     // Top books with notes
     const bookNotes = {};
     notes.forEach(note => {
@@ -274,7 +264,7 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
         bookNotes[note.book_id] = (bookNotes[note.book_id] || 0) + 1;
       }
     });
-    
+
     const topBooks = Object.entries(bookNotes)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
@@ -282,7 +272,7 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
         book: books.find(b => b.id === bookId),
         count
       }));
-    
+
     return {
       totalNotes,
       notesWithBooks,
@@ -292,102 +282,100 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
       topBooks
     };
   }, [notes, books]);
-  
-  const isDark = actualTheme === 'dark';
-  
+
   return (
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
       gap: '16px',
       padding: '24px',
-      backgroundColor: isDark ? '#1e293b' : '#ffffff'
+      backgroundColor: 'var(--md-sys-color-surface-container)'
     }}>
-      <MD3Card style={{ 
-        padding: '20px', 
+      <MD3Card style={{
+        padding: '20px',
         textAlign: 'center',
-        backgroundColor: isDark ? '#334155' : '#ffffff',
-        border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
+        backgroundColor: 'var(--md-sys-color-surface-container-high)',
+        border: '1px solid var(--md-sys-color-outline-variant)'
       }}>
-        <FileText size={32} style={{ color: '#24A8E0', marginBottom: '8px' }} />
-        <h3 style={{ 
-          margin: '0 0 4px 0', 
-          fontSize: '24px', 
+        <FileText size={32} style={{ color: 'var(--md-sys-color-primary)', marginBottom: '8px' }} />
+        <h3 style={{
+          margin: '0 0 4px 0',
+          fontSize: '24px',
           fontWeight: '600',
-          color: isDark ? '#f1f5f9' : '#1f2937'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           {stats.totalNotes}
         </h3>
-        <p style={{ 
-          margin: 0, 
-          fontSize: '14px', 
-          color: isDark ? '#94a3b8' : '#666'
+        <p style={{
+          margin: 0,
+          fontSize: '14px',
+          color: 'var(--md-sys-color-on-surface-variant)'
         }}>Total Notes</p>
       </MD3Card>
-      
-      <MD3Card style={{ 
-        padding: '20px', 
+
+      <MD3Card style={{
+        padding: '20px',
         textAlign: 'center',
-        backgroundColor: isDark ? '#334155' : '#ffffff',
-        border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
+        backgroundColor: 'var(--md-sys-color-surface-container-high)',
+        border: '1px solid var(--md-sys-color-outline-variant)'
       }}>
         <Book size={32} style={{ color: '#2196F3', marginBottom: '8px' }} />
-        <h3 style={{ 
-          margin: '0 0 4px 0', 
-          fontSize: '24px', 
+        <h3 style={{
+          margin: '0 0 4px 0',
+          fontSize: '24px',
           fontWeight: '600',
-          color: isDark ? '#f1f5f9' : '#1f2937'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           {stats.notesWithBooks}
         </h3>
-        <p style={{ 
-          margin: 0, 
-          fontSize: '14px', 
-          color: isDark ? '#94a3b8' : '#666'
+        <p style={{
+          margin: 0,
+          fontSize: '14px',
+          color: 'var(--md-sys-color-on-surface-variant)'
         }}>Linked to Books</p>
       </MD3Card>
-      
-      <MD3Card style={{ 
-        padding: '20px', 
+
+      <MD3Card style={{
+        padding: '20px',
         textAlign: 'center',
-        backgroundColor: isDark ? '#334155' : '#ffffff',
-        border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
+        backgroundColor: 'var(--md-sys-color-surface-container-high)',
+        border: '1px solid var(--md-sys-color-outline-variant)'
       }}>
         <Hash size={32} style={{ color: '#4CAF50', marginBottom: '8px' }} />
-        <h3 style={{ 
-          margin: '0 0 4px 0', 
-          fontSize: '24px', 
+        <h3 style={{
+          margin: '0 0 4px 0',
+          fontSize: '24px',
           fontWeight: '600',
-          color: isDark ? '#f1f5f9' : '#1f2937'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           {stats.totalTags}
         </h3>
-        <p style={{ 
-          margin: 0, 
-          fontSize: '14px', 
-          color: isDark ? '#94a3b8' : '#666'
+        <p style={{
+          margin: 0,
+          fontSize: '14px',
+          color: 'var(--md-sys-color-on-surface-variant)'
         }}>Unique Tags</p>
       </MD3Card>
-      
-      <MD3Card style={{ 
-        padding: '20px', 
+
+      <MD3Card style={{
+        padding: '20px',
         textAlign: 'center',
-        backgroundColor: isDark ? '#334155' : '#ffffff',
-        border: `1px solid ${isDark ? '#475569' : '#e5e7eb'}`
+        backgroundColor: 'var(--md-sys-color-surface-container-high)',
+        border: '1px solid var(--md-sys-color-outline-variant)'
       }}>
         <TrendingUp size={32} style={{ color: '#FF9800', marginBottom: '8px' }} />
-        <h3 style={{ 
-          margin: '0 0 4px 0', 
-          fontSize: '24px', 
+        <h3 style={{
+          margin: '0 0 4px 0',
+          fontSize: '24px',
           fontWeight: '600',
-          color: isDark ? '#f1f5f9' : '#1f2937'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           {stats.avgLength}
         </h3>
-        <p style={{ 
-          margin: 0, 
-          fontSize: '14px', 
-          color: isDark ? '#94a3b8' : '#666'
+        <p style={{
+          margin: 0,
+          fontSize: '14px',
+          color: 'var(--md-sys-color-on-surface-variant)'
         }}>Avg. Characters</p>
       </MD3Card>
     </div>
@@ -396,7 +384,6 @@ const StatsDashboard = ({ notes, books, actualTheme }) => {
 
 const EnhancedNotesPage = () => {
   const { user, makeAuthenticatedApiCall } = useAuth();
-  const { actualTheme } = useMaterial3Theme();
   const { showSnackbar } = useSnackbar();
   
   // Core state
@@ -1480,7 +1467,6 @@ const EnhancedNotesPage = () => {
                 <TimelineView
                   notes={filteredNotes}
                   onNoteClick={handleOpenModal}
-                  actualTheme={actualTheme}
                 />
               </MD3Card>
             )}
@@ -1494,14 +1480,14 @@ const EnhancedNotesPage = () => {
                 <p className="md3-view-subtitle">
                   Most frequently used words across all your notes
                 </p>
-                <WordCloud notes={filteredNotes} actualTheme={actualTheme} />
+                <WordCloud notes={filteredNotes} />
               </MD3Card>
             )}
             
             {/* Statistics View */}
             {viewMode === 'stats' && (
               <>
-                <StatsDashboard notes={filteredNotes} books={books} actualTheme={actualTheme} />
+                <StatsDashboard notes={filteredNotes} books={books} />
                 
                 {/* Top Tags */}
                 <MD3Card className="md3-top-tags-card">

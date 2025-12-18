@@ -3,9 +3,21 @@
 .md3-notes-page {
   min-height: 100vh;
   padding: 0;
-
+  background-color: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode background */
+[data-actual-theme="light"] .md3-notes-page,
+.light .md3-notes-page {
+  background-color: var(--md-sys-color-background, #fcfcff);
+}
+
+/* Dark mode background */
+[data-actual-theme="dark"] .md3-notes-page,
+.dark .md3-notes-page {
+  background-color: var(--md-sys-color-background, #1a1c1e);
 }
 
 .md3-notes-container {
