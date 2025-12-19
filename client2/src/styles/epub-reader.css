@@ -20,14 +20,23 @@
   left: 0;
   right: 0;
   background: linear-gradient(135deg, var(--md-sys-color-surface-container), var(--md-sys-color-surface-container-high));
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   color: var(--md-sys-color-on-surface);
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   z-index: 10;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.epub-reader-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .epub-reader-header-info {
@@ -88,6 +97,16 @@
   background-color: var(--md-sys-color-surface-container-high);
 }
 
+.epub-reader-btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.epub-btn-active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
 .epub-reader-btn-text {
   display: none;
 }
@@ -96,6 +115,102 @@
   .epub-reader-btn-text {
     display: inline;
   }
+}
+
+/* Font Size Controls */
+.epub-font-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--md-sys-color-surface-container);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+
+.epub-font-size-label {
+  font-size: 0.75rem;
+  min-width: 3rem;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 500;
+}
+
+/* Table of Contents Sidebar */
+.epub-toc-sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  background: var(--md-sys-color-surface-container);
+  z-index: 20;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.epub-toc-sidebar.epub-toc-open {
+  transform: translateX(0);
+}
+
+.epub-toc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.epub-toc-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+.epub-toc-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.epub-toc-item {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--md-sys-color-on-surface);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.epub-toc-item:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.epub-toc-item:active {
+  background-color: var(--md-sys-color-primary-container);
+}
+
+.epub-toc-empty {
+  padding: 1rem;
+  color: var(--md-sys-color-on-surface-variant);
+  font-style: italic;
+  text-align: center;
+}
+
+/* TOC Overlay */
+.epub-toc-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 15;
 }
 
 /* Content area */
@@ -112,7 +227,7 @@
   box-sizing: border-box;
 }
 
-/* EPUB Viewer - this is where epub.js renders */
+/* EPUB Viewer - this is where epub.js renders in PAGINATED mode */
 .epub-viewer {
   width: 100%;
   height: 100%; /* Fill parent container completely */
@@ -122,16 +237,37 @@
   max-width: 900px;
   margin: 0 auto;
   position: relative;
-  overflow-y: auto; /* Allow vertical scrolling in scrolled-doc mode */
-  overflow-x: hidden;
+  /* Paginated mode handles its own layout - no scrolling needed */
+  overflow: hidden;
+  /* Ensure touch events are captured for swipe navigation */
+  touch-action: pan-y pinch-zoom;
 }
 
-/* Ensure epub.js iframe/div fills container */
+/* Ensure epub.js iframe/div fills container properly for paginated mode */
 .epub-viewer iframe,
 .epub-viewer > div {
   border: none !important;
   width: 100% !important;
-  min-height: 100% !important;
+  height: 100% !important;
+}
+
+/* Page indicator at bottom center */
+.epub-page-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: color-mix(in srgb, var(--md-sys-color-surface-container) 90%, transparent);
+  color: var(--md-sys-color-on-surface-variant);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: 5;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
 }
 
 /* Loading state */
