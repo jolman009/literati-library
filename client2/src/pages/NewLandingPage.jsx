@@ -18,51 +18,7 @@ const NewLandingPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Core features with bento grid sizing hints
-  const features = [
-    {
-      icon: 'upload_file',
-      title: 'Upload Your Books',
-      description: 'Import your PDF and EPUB files instantly. Your entire digital library organized in one beautiful place.',
-      size: 'large',
-      visual: 'upload'
-    },
-    {
-      icon: 'bar_chart',
-      title: 'Reading Analytics',
-      description: 'Visualize your habits with beautiful charts and insights.',
-      size: 'tall',
-      visual: 'stats'
-    },
-    {
-      icon: 'sell',
-      title: 'Smart Collections',
-      description: 'Auto-organize by genre, author, mood, and custom tags you create.',
-      size: 'medium',
-      visual: 'tags'
-    },
-    {
-      icon: 'emoji_events',
-      title: 'Gamification',
-      description: 'Earn points, unlock achievements, maintain streaks, and level up. Unlock 6 beautiful themes as you read more.',
-      size: 'wide',
-      visual: 'gamification'
-    },
-    {
-      icon: 'auto_stories',
-      title: 'Reading Sessions',
-      description: 'Track time spent reading and pick up exactly where you left off.',
-      size: 'medium',
-      visual: null
-    },
-    {
-      icon: 'edit_note',
-      title: 'Voice & Text Notes',
-      description: 'Capture thoughts with voice recordings or typed notes. Highlight passages as you read.',
-      size: 'medium',
-      visual: null
-    }
-  ];
+
 
   const testimonials = [
     {
@@ -95,6 +51,175 @@ const NewLandingPage = () => {
     { value: '∞', label: 'Reading Goals' },
     { value: 'Free', label: 'To Get Started' }
   ];
+
+  // Feature cards for the bento grid
+  const features = [
+    {
+      id: 'upload',
+      icon: 'upload_file',
+      title: 'Upload Your Books',
+      description: 'Import PDF and EPUB files instantly. Your digital library, beautifully organized.',
+      size: 'large',
+      visual: 'upload'
+    },
+    {
+      id: 'analytics',
+      icon: 'bar_chart',
+      title: 'Reading Analytics',
+      description: 'Visualize your habits.',
+      size: 'tall',
+      dark: true,
+      visual: 'analytics'
+    },
+    {
+      id: 'collections',
+      icon: 'sell',
+      title: 'Smart Collections',
+      description: 'Auto-organize by genre, author, and mood.',
+      size: 'medium',
+      visual: 'tags'
+    },
+    {
+      id: 'gamification',
+      icon: 'emoji_events',
+      title: 'Gamification & Themes',
+      description: 'Earn points, unlock achievements, maintain streaks. Unlock 6 beautiful themes as rewards for reading!',
+      size: 'wide',
+      visual: 'gamification'
+    },
+    {
+      id: 'sessions',
+      icon: 'auto_stories',
+      title: 'Reading Sessions',
+      description: 'Track time spent reading and resume exactly where you left off.',
+      size: 'standard'
+    },
+    {
+      id: 'notes',
+      icon: 'mic',
+      title: 'Voice & Text Notes',
+      description: 'Record voice notes or type your thoughts. Highlight passages as you read.',
+      size: 'standard'
+    }
+  ];
+
+  // Render special visuals for certain feature cards
+  const renderFeatureVisual = (visual) => {
+    switch (visual) {
+      case 'upload':
+        return (
+          <div className="bento-visual upload-visual">
+            <div className="upload-mockup">
+              <div className="upload-files">
+                <div className="file-icon pdf">PDF</div>
+                <div className="file-icon epub">EPUB</div>
+              </div>
+              <div className="upload-details">
+                <div className="detail-line"></div>
+                <div className="detail-line short"></div>
+              </div>
+            </div>
+            <div className="upload-overlay">
+              <span className="material-symbols-outlined">cloud_upload</span>
+              <span>Drop files here</span>
+            </div>
+          </div>
+        );
+      case 'analytics':
+        return (
+          <div className="analytics-bars">
+            <div className="analytics-row">
+              <span className="analytics-label">Fiction</span>
+              <div className="analytics-bar-track">
+                <div className="analytics-bar-fill" style={{ width: '70%' }}></div>
+              </div>
+            </div>
+            <div className="analytics-row">
+              <span className="analytics-label">Sci-Fi</span>
+              <div className="analytics-bar-track">
+                <div className="analytics-bar-fill medium" style={{ width: '45%' }}></div>
+              </div>
+            </div>
+            <div className="analytics-row">
+              <span className="analytics-label">History</span>
+              <div className="analytics-bar-track">
+                <div className="analytics-bar-fill low" style={{ width: '30%' }}></div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'tags':
+        return (
+          <div className="tags-preview">
+            <span className="tag">Must Read</span>
+            <span className="tag">Sci-Fi</span>
+            <span className="tag filled">Favorite</span>
+          </div>
+        );
+      case 'gamification':
+        return (
+          <div className="gamification-preview">
+            <div className="theme-unlock-card">
+              <div className="user-avatar-preview">
+                <span className="material-symbols-outlined">person</span>
+              </div>
+              <div className="unlock-info">
+                <span className="unlock-name">Ocean Blue Theme</span>
+                <span className="unlock-status carolina">Unlocked at 1,501 pts</span>
+              </div>
+              <span className="material-symbols-outlined unlock-icon">lock_open</span>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Render a bento card based on feature data
+  const renderBentoCard = (feature) => {
+    const sizeClass = `bento-${feature.size}`;
+    const darkClass = feature.dark ? 'bento-dark' : '';
+    const isWide = feature.size === 'wide';
+
+    return (
+      <div key={feature.id} className={`bento-card ${sizeClass} ${darkClass}`}>
+        {isWide ? (
+          <div className="bento-content-row">
+            <div className="bento-text-block">
+              <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
+                <span className="material-symbols-outlined">{feature.icon}</span>
+              </div>
+              <h3 className="bento-title">{feature.title}</h3>
+              <p className="bento-description">{feature.description}</p>
+            </div>
+            {renderFeatureVisual(feature.visual)}
+          </div>
+        ) : (
+          <>
+            {feature.size === 'large' ? (
+              <div className="bento-content">
+                <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
+                  <span className="material-symbols-outlined">{feature.icon}</span>
+                </div>
+                <h3 className="bento-title">{feature.title}</h3>
+                <p className="bento-description">{feature.description}</p>
+              </div>
+            ) : (
+              <>
+                <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
+                  <span className="material-symbols-outlined">{feature.icon}</span>
+                </div>
+                <h3 className="bento-title">{feature.title}</h3>
+                <p className="bento-description">{feature.description}</p>
+              </>
+            )}
+            {renderFeatureVisual(feature.visual)}
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="landing-page">
