@@ -78,7 +78,6 @@ const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
-const LibraryPageV2 = lazy(() => import('./pages/LibraryPageV2'));
 const MockLibraryPage = lazy(() => import('./pages/MockLibraryPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
@@ -206,7 +205,7 @@ const AppRoutes = () => {
         <Route path="/library" element={
           <LibraryErrorBoundary>
             <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
-              <LibraryPageV2 />
+              <MockLibraryPage />
             </Suspense>
           </LibraryErrorBoundary>
         } />
