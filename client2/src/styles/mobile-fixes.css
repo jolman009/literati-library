@@ -46,8 +46,8 @@ body {
    PREVENT ALL OVERFLOW
    ================================================ */
 
-/* Constrain all elements to viewport width (except login page elements) */
-div:not(.login-background):not(.login-container):not(.login-content-wrapper):not([class*="login-"]):not(.md3-dialog):not(.md3-dialog__scrim):not(.md3-dialog__container),
+/* Constrain all elements to viewport width (except login page elements and video hero) */
+div:not(.login-background):not(.login-container):not(.login-content-wrapper):not([class*="login-"]):not(.md3-dialog):not(.md3-dialog__scrim):not(.md3-dialog__container):not(.video-hero-container):not(.video-hero-wrapper),
 section:not([class*="login-"]),
 article:not([class*="login-"]),
 main:not([class*="login-"]),
@@ -61,9 +61,9 @@ aside:not([class*="login-"]) {
 }
 
 /* Prevent specific elements from causing overflow */
-/* Exclude logos and branded images from height:auto rule */
+/* Exclude logos, branded images, and video hero from height:auto rule */
 img:not([class*="logo"]):not([class*="Logo"]),
-video,
+video:not(.video-hero),
 iframe,
 embed,
 object,
