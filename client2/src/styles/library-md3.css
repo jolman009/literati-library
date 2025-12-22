@@ -2,13 +2,16 @@
 
 .md3-library-page {
   padding: 0px 24px 24px 24px; /* Top padding handled by AppLayout.page-content */
-  max-width: 1200px;
-  margin: 30px auto 10 auto; /* Add top margin to clear navigation header */
-
+  width: 100%; /* Fill available width */
+  max-width: 100%; /* Remove max-width constraint - let parent control width */
+  margin: 30px 0 10px 0; /* Remove auto margins - let flexbox/grid handle centering */
   min-height: calc(100vh - 128px);
+  min-width: 0; /* Critical: allows flex/grid children to shrink */
   color: var(--md-sys-color-on-background);
   position: relative;
   z-index: 1; /* Ensure proper stacking below header */
+  box-sizing: border-box;
+  /* overflow handled by parent .page-content */
 }
 
 /* Dark mode colors now handled by unified MD3 system */
@@ -488,14 +491,45 @@
   line-height: 1.5;
 }
 
+/* Virtualized Container - Dynamic Height */
+.md3-virtualized-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Critical: allows container to shrink in flex/grid layouts */
+  min-height: 400px;
+  height: calc(100vh - 320px); /* Account for header, controls, and padding */
+  max-height: 1200px;
+  overflow: auto; /* Changed from hidden to auto for scrolling */
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  box-sizing: border-box;
+}
+
 /* Books Container */
 .md3-books-container {
   display: grid;
   gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Critical: allows grid to shrink in flex/grid layouts */
+  padding-bottom: 80px; /* Space for FAB */
+  box-sizing: border-box;
 }
 
 .md3-books-container.grid {
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  /* Use flexbox for shrink-to-fit behavior instead of CSS Grid wrapping */
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  /* Override mobile-fixes.css global grid rule */
+  grid-template-columns: none !important;
+}
+
+/* Book cards shrink to fit the row */
+.md3-books-container.grid > .md3-book-card {
+  flex: 1 1 160px; /* grow, shrink, basis */
+  min-width: 120px; /* absolute minimum before wrapping */
+  max-width: 220px; /* prevent cards from getting too wide */
 }
 
 .md3-books-container.list {
@@ -772,39 +806,104 @@
 }
 
 /* Responsive Design */
+
+/* Large screens - comfortable padding */
+@media (max-width: 1600px) {
+  .md3-library-page {
+    padding: 0 20px 24px 20px;
+  }
+}
+
+/* Medium-large screens */
+@media (max-width: 1200px) {
+  .md3-library-page {
+    padding: 0 16px 24px 16px;
+  }
+
+  .md3-virtualized-container {
+    height: calc(100vh - 300px);
+  }
+}
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+  .md3-virtualized-container {
+    height: calc(100vh - 280px);
+  }
+
+  .md3-books-container.grid > .md3-book-card {
+    flex: 1 1 145px;
+    min-width: 110px;
+    max-width: 200px;
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
   .md3-library-page {
-    padding: 16px;
+    padding: 12px;
+    margin-top: 20px;
   }
-  
+
+  .md3-virtualized-container {
+    height: calc(100vh - 240px);
+    min-height: 350px;
+  }
+
   .md3-library-controls {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
-  
+
   .md3-filter-chips {
     justify-content: center;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
   }
-  
+
+  .md3-filter-chip {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
   .md3-view-controls {
     align-self: center;
   }
-  
+
   .md3-books-container.grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
-  
+
+  .md3-books-container.grid > .md3-book-card {
+    flex: 1 1 130px;
+    min-width: 100px;
+    max-width: 180px;
+  }
+
   .md3-books-container.list .md3-book-card {
     padding: 12px;
   }
-  
+
   .md3-books-container.list .md3-book-cover {
     width: 60px;
     height: 90px;
   }
-  
+
+  .md3-recent-books-section {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .md3-recent-book-item {
+    min-width: 130px;
+    max-width: 150px;
+  }
+
   .md3-fab {
     bottom: 16px;
     right: 16px;
@@ -812,8 +911,102 @@
     height: 48px;
     border-radius: 12px;
   }
-  
+
   .md3-fab .material-symbols-outlined {
     font-size: 20px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .md3-library-page {
+    padding: 8px;
+    margin-top: 10px;
+  }
+
+  .md3-virtualized-container {
+    height: calc(100vh - 200px);
+    min-height: 300px;
+  }
+
+  .md3-library-controls {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .md3-filter-chips {
+    gap: 6px;
+  }
+
+  .md3-filter-chip {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .md3-books-container.grid {
+    gap: 8px;
+  }
+
+  .md3-books-container.grid > .md3-book-card {
+    flex: 1 1 110px;
+    min-width: 90px;
+    max-width: 160px;
+  }
+
+  .md3-book-card {
+    padding: 6px;
+  }
+
+  .md3-books-container.grid .md3-book-cover {
+    height: 160px;
+  }
+
+  .md3-book-title {
+    font-size: 13px;
+  }
+
+  .md3-book-author {
+    font-size: 12px;
+  }
+
+  .md3-recent-books-section {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .md3-recent-books-title {
+    font-size: 15px;
+  }
+
+  .md3-recent-book-item {
+    min-width: 110px;
+    max-width: 130px;
+  }
+
+  .md3-recent-book-card {
+    height: 140px;
+    padding: 8px;
+  }
+
+  .md3-recent-book-cover {
+    height: 80px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .md3-books-container.grid {
+    gap: 6px;
+  }
+
+  .md3-books-container.grid > .md3-book-card {
+    flex: 1 1 100px;
+    min-width: 80px;
+    max-width: 150px;
+  }
+
+  .md3-virtualized-container {
+    height: calc(100vh - 180px);
+    min-height: 280px;
   }
 }

@@ -110,11 +110,12 @@ pre {
    GRID & FLEXBOX FIXES
    ================================================ */
 
-/* Make all grids responsive */
-[class*="grid"],
-[class*="Grid"],
-.grid,
-.Grid {
+/* Make all grids responsive - EXCEPT library book grids and virtualized grids */
+/* Library grids have their own responsive rules in library-md3.css */
+[class*="grid"]:not(.md3-books-container):not(.virtualized-book-grid):not(.virtual-grid):not([class*="virtualized"]):not([class*="library"]),
+[class*="Grid"]:not(.md3-books-container):not(.virtualized-book-grid):not(.virtual-grid):not([class*="virtualized"]):not([class*="library"]),
+.grid:not(.md3-books-container),
+.Grid:not(.md3-books-container) {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)) !important;
 }
 

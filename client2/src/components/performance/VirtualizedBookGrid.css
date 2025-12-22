@@ -1,9 +1,40 @@
 /* Virtualized Book Grid Styles */
 .virtualized-book-grid {
   width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Critical: allows grid to shrink in flex/grid layouts */
   height: 100%;
-  min-height: 400px;
+  min-height: 300px;
   position: relative;
+  overflow: auto;
+  box-sizing: border-box;
+  /* Override mobile-fixes.css global grid rule - this is NOT a CSS Grid */
+  display: block !important;
+  grid-template-columns: none !important;
+}
+
+/* Ensure the react-window Grid takes full width */
+/* react-window uses absolute positioning, not CSS Grid */
+.virtualized-book-grid .virtual-grid {
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+  /* Override mobile-fixes.css global grid rule */
+  display: block !important;
+  grid-template-columns: none !important;
+}
+
+/* Ensure grid fills available space on all screen sizes */
+@media (max-width: 768px) {
+  .virtualized-book-grid {
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .virtualized-book-grid {
+    min-height: 250px;
+  }
 }
 
 .virtual-grid {

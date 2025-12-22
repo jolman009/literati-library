@@ -9,6 +9,13 @@
   padding: 24px;
   background: var(--md-sys-color-surface, #f8fafc);
   color: var(--md-sys-color-on-surface, #1e293b);
+
+  /* Critical: Width constraints for responsive behavior */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Allows shrinking below content size */
+  overflow-x: hidden; /* Contain content within available space */
+  box-sizing: border-box;
 }
 
 .library-v2.dark {
@@ -123,13 +130,69 @@
 }
 
 /* ========================================
+   SORT CONTROLS
+   ======================================== */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant, #64748b);
+  font-weight: 500;
+}
+
+.sort-btn {
+  padding: 6px 12px;
+  background: var(--md-sys-color-surface-container-lowest, white);
+  border: 1px solid var(--md-sys-color-outline-variant, #cbd5e1);
+  border-radius: 6px;
+  color: var(--md-sys-color-on-surface-variant, #64748b);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sort-btn:hover {
+  background: var(--md-sys-color-surface-container, #f1f5f9);
+  border-color: var(--md-sys-color-outline, #94a3b8);
+}
+
+.sort-btn.active {
+  background: var(--md-sys-color-primary-container, #eff6ff);
+  border-color: var(--md-sys-color-primary, #3b82f6);
+  color: var(--md-sys-color-primary, #3b82f6);
+}
+
+.library-v2.dark .sort-btn {
+  background: #1e293b;
+  border-color: #475569;
+  color: #94a3b8;
+}
+
+.library-v2.dark .sort-btn:hover {
+  background: #334155;
+}
+
+.library-v2.dark .sort-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+/* ========================================
    TABLE
    ======================================== */
 .table-container {
   background: var(--md-sys-color-surface-container-lowest, white);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-width: 0;
 }
 
 .library-v2.dark .table-container {
@@ -139,7 +202,9 @@
 
 .books-table {
   width: 100%;
+  min-width: 0;
   border-collapse: collapse;
+  table-layout: fixed; /* KEY: enables proportional column sizing */
 }
 
 /* Table Header */
@@ -154,19 +219,23 @@
 }
 
 .books-table th {
-  padding: 14px 16px;
+  padding: 12px 8px;
   text-align: left;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--md-sys-color-on-surface-variant, #64748b);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .books-table th.sortable {
   cursor: pointer;
   user-select: none;
+  transition: color 0.15s;
 }
 
 .books-table th.sortable:hover {
@@ -198,40 +267,47 @@
 }
 
 .books-table td {
-  padding: 12px 16px;
+  padding: 10px 8px;
   vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; /* Critical: allows cells to shrink below content size */
 }
 
-/* Column Widths */
-.col-cover { width: 80px; }
-.col-title { min-width: 200px; }
-.col-author { min-width: 150px; }
-.col-status { width: 120px; }
-.col-date { width: 100px; }
-.col-notes { width: 80px; text-align: center; }
-.col-actions { width: 80px; }
+/* Column Widths - Percentages for proportional shrinking */
+.books-table .col-cover   { width: 8%; }
+.books-table .col-title   { width: 22%; }
+.books-table .col-author  { width: 15%; }
+.books-table .col-status  { width: 12%; }
+.books-table .col-date    { width: 12%; }
+.books-table .col-notes   { width: 8%; text-align: center; }
+.books-table .col-actions { width: 7%; }
 
 /* ========================================
    BOOK COVER THUMBNAIL
    ======================================== */
 .book-cover-thumb {
-  width: 80px;
-  height: 110px;
+  width: 100%;
+  max-width: 60px;
+  min-width: 30px;
+  aspect-ratio: 2/3;
   border-radius: 4px;
   overflow: hidden;
   background: var(--md-sys-color-surface-container, #e2e8f0);
   flex-shrink: 0;
+  position: relative;
 }
 
 .book-cover-thumb img {
   width: 100%;
-  height: 110px;
+  height: 100%;
   object-fit: cover;
 }
 
 .cover-placeholder {
   width: 100%;
-  height: 110px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,13 +316,18 @@
 }
 
 .cover-placeholder .material-symbols-outlined {
-  font-size: 24px;
+  font-size: clamp(16px, 3vw, 24px);
   opacity: 0.8;
 }
 
 /* ========================================
-   BOOK TITLE
+   BOOK TITLE & AUTHOR - Scalable text
    ======================================== */
+.books-table .col-title {
+  font-size: clamp(11px, 1.8vw, 14px);
+  font-weight: 500;
+}
+
 .book-title {
   font-weight: 500;
   color: var(--md-sys-color-on-surface, #1e293b);
@@ -260,16 +341,30 @@
   color: #f1f5f9;
 }
 
+.books-table .col-author {
+  font-size: clamp(10px, 1.5vw, 13px);
+  color: var(--md-sys-color-on-surface-variant, #64748b);
+}
+
+.books-table .col-date {
+  font-size: clamp(10px, 1.4vw, 12px);
+  color: var(--md-sys-color-on-surface-variant, #64748b);
+}
+
 /* ========================================
    STATUS BADGE
    ======================================== */
 .status-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: clamp(9px, 1.5vw, 12px);
   font-weight: 500;
   text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .status-badge.read {
@@ -309,13 +404,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 8px;
+  min-width: 0;
+  padding: 2px 6px;
   background: var(--md-sys-color-tertiary-container, #fef3c7);
   color: var(--md-sys-color-on-tertiary-container, #92400e);
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 10px;
+  font-size: clamp(9px, 1.5vw, 12px);
   font-weight: 600;
 }
 
@@ -491,16 +585,22 @@
 }
 
 .actions-trigger {
-  width: 32px;
-  height: 32px;
+  width: 100%;
+  max-width: 32px;
+  min-width: 24px;
+  aspect-ratio: 1;
   border: none;
   background: transparent;
   border-radius: 50%;
-  font-size: 18px;
+  font-size: clamp(14px, 2vw, 18px);
   font-weight: bold;
   cursor: pointer;
   color: var(--md-sys-color-on-surface-variant, #64748b);
   transition: all 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .actions-trigger:hover {
@@ -583,17 +683,42 @@
 }
 
 /* ========================================
-   RESPONSIVE
+   RESPONSIVE BREAKPOINTS
    ======================================== */
-@media (max-width: 1024px) {
-  .col-date {
+
+/* Below 1000px: Hide Status, Date Read, Date Added */
+@media (max-width: 1000px) {
+  .books-table .col-status,
+  .books-table .col-date {
     display: none;
+  }
+
+  /* Redistribute column widths when 3 columns hidden */
+  .books-table .col-cover   { width: 12%; }
+  .books-table .col-title   { width: 40%; }
+  .books-table .col-author  { width: 25%; }
+  .books-table .col-notes   { width: 12%; }
+  .books-table .col-actions { width: 11%; }
+
+  /* Smaller cover thumbnail */
+  .book-cover-thumb {
+    max-width: 40px;
+    min-width: 25px;
+  }
+
+  /* Reduce cell padding */
+  .books-table td,
+  .books-table th {
+    padding: 6px 4px;
   }
 }
 
-@media (max-width: 768px) {
+/* ========================================
+   MOBILE CARD LAYOUT (below 600px)
+   ======================================== */
+@media (max-width: 600px) {
   .library-v2 {
-    padding: 16px;
+    padding: 12px;
   }
 
   .library-header {
@@ -603,34 +728,182 @@
   }
 
   .library-header h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
+  /* Filter bar mobile */
   .filter-bar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 10px;
   }
 
-  .table-container {
-    overflow-x: auto;
+  .filter-tabs {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
   }
 
-  .books-table {
-    min-width: 600px;
+  .filter-tab {
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 11px;
   }
 
-  .col-author,
-  .col-notes {
+  .sort-controls {
+    justify-content: center;
+  }
+
+  .sort-label {
+    font-size: 12px;
+  }
+
+  .sort-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .showing-count {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Hide table header on mobile */
+  .books-table thead {
     display: none;
   }
-}
 
-@media (max-width: 480px) {
-  .col-status {
+  /* Make table behave like a block container */
+  .books-table,
+  .books-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  /* Each row becomes a horizontal card */
+  .books-table tbody tr {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "cover title   action"
+      "cover author  action"
+      "cover meta    meta";
+    gap: 4px 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--md-sys-color-surface-container-lowest, white);
+    border-radius: 12px;
+    border: 1px solid var(--md-sys-color-outline-variant, #e2e8f0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    align-items: start;
+  }
+
+  .library-v2.dark .books-table tbody tr {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  /* Reset all cells */
+  .books-table td {
+    display: block;
+    padding: 0;
+    border: none;
+    white-space: normal;
+    overflow: visible;
+    width: auto !important;
+  }
+
+  /* Cover - spans all rows on left */
+  .books-table .col-cover {
+    grid-area: cover;
+    align-self: start;
+  }
+
+  .book-cover-thumb {
+    width: 60px;
+    max-width: 60px;
+    min-width: 60px;
+    height: 85px;
+    aspect-ratio: auto;
+  }
+
+  /* Title - top right */
+  .books-table .col-title {
+    grid-area: title;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .book-title {
+    -webkit-line-clamp: 2;
+  }
+
+  /* Author - below title */
+  .books-table .col-author {
+    grid-area: author;
+    font-size: 13px;
+  }
+
+  /* Status - show in meta row */
+  .books-table .col-status {
+    display: block !important;
+    grid-area: meta;
+    justify-self: start;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* Hide date columns on mobile */
+  .books-table .col-date {
+    display: none !important;
+  }
+
+  /* Notes - hidden on mobile card view */
+  .books-table .col-notes {
     display: none;
   }
 
-  .books-table {
-    min-width: 400px;
+  /* Action button - top right corner */
+  .books-table .col-actions {
+    grid-area: action;
+    justify-self: end;
+    align-self: start;
+  }
+
+  .actions-trigger {
+    width: 36px;
+    max-width: 36px;
+    min-width: 36px;
+    height: 36px;
+    background: var(--md-sys-color-surface-container, #f1f5f9);
+    font-size: 18px;
+  }
+
+  .library-v2.dark .actions-trigger {
+    background: #334155;
+  }
+
+  /* Active session row in card layout */
+  .active-session-row {
+    border-color: var(--md-sys-color-primary, #3b82f6) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* Active session banner mobile */
+  .active-session-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .session-actions {
+    width: 100%;
+    justify-content: center;
   }
 }
