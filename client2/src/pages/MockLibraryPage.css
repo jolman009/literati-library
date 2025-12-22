@@ -981,3 +981,30 @@
 .mock-library-page.dark .mock-books-table tbody tr.active-session-row:hover {
   background: linear-gradient(90deg, #1e4080 0%, #1e3a5f 100%);
 }
+
+/* ========================================
+   MOBILE DARK MODE OVERRIDES
+   ======================================== */
+@media (max-width: 600px) {
+  .mock-library-page.dark .mock-books-table tbody tr {
+    background: #1f2937;
+    border-color: #374151;
+  }
+
+  .mock-library-page.dark .mock-books-table .col-title {
+    color: #f3f4f6;
+  }
+
+  .mock-library-page.dark .mock-books-table .col-author {
+    color: #9ca3af;
+  }
+
+  .mock-library-page.dark .action-btn {
+    background: #374151;
+    color: #e5e7eb;
+  }
+
+  .mock-library-page.dark .action-btn:hover {
+    background: #4b5563;
+  }
+}
