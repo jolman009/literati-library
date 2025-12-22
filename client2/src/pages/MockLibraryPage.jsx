@@ -1,24 +1,45 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
+import { useReadingSession } from '../contexts/ReadingSessionContext';
+import { useGamification } from '../contexts/GamificationContext';
+import API from '../config/api';
 import './MockLibraryPage.css';
 
 /**
- * MockLibraryPage - Table layout matching LibraryPageV2
- * With sorting and filtering functionality
- * Now uses REAL book data from the API
+ * MockLibraryPage - Full-featured library with pagination
+ * Matches LibraryPageV2 functionality + adds pagination
  */
 const BOOKS_PER_PAGE = 20;
 
 const MockLibraryPage = () => {
+  const { actualTheme } = useMaterial3Theme();
   const { user, makeAuthenticatedApiCall } = useAuth();
-  const [sortBy, setSortBy] = useState('title'); // 'title' | 'author'
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' | 'desc'
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'reading' | 'completed' | 'to-read'
+  const navigate = useNavigate();
+
+  // Reading session context
+  const {
+    activeSession,
+    isPaused,
+    startReadingSession,
+    pauseReadingSession,
+    resumeReadingSession,
+    stopReadingSession
+  } = useReadingSession();
+
+  // Gamification for completion tracking
+  const { trackAction } = useGamification();
+
+  const [sortBy, setSortBy] = useState('date_added');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   // Real book data from API
   const [books, setBooks] = useState([]);
-  const [notesCount, setNotesCount] = useState({}); // { bookId: count }
+  const [notesCount, setNotesCount] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -29,6 +50,15 @@ const MockLibraryPage = () => {
       fetchNotesCount();
     }
   }, [user]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenMenuId(null);
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openMenuId]);
 
   const fetchBooks = async () => {
     try {
@@ -60,14 +90,106 @@ const MockLibraryPage = () => {
     }
   };
 
-  // Helper to get book status for filtering
+  // ========================================
+  // SESSION & STATUS HANDLERS
+  // ========================================
+
+  const handleStartSession = async (book) => {
+    try {
+      await startReadingSession(book);
+      setBooks(prev => prev.map(b =>
+        b.id === book.id ? { ...b, is_reading: true } : b
+      ));
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error('Failed to start session:', err);
+    }
+  };
+
+  const handlePauseSession = () => {
+    pauseReadingSession();
+    setOpenMenuId(null);
+  };
+
+  const handleResumeSession = () => {
+    resumeReadingSession();
+    setOpenMenuId(null);
+  };
+
+  const handleEndSession = async () => {
+    await stopReadingSession();
+    setOpenMenuId(null);
+  };
+
+  const handleMarkCompleted = async (book) => {
+    try {
+      if (activeSession?.book?.id === book.id) {
+        await stopReadingSession();
+      }
+
+      await API.patch(`/books/${book.id}`, {
+        status: 'completed',
+        is_reading: false,
+        completed: true,
+        progress: 100,
+        completed_at: new Date().toISOString()
+      });
+
+      if (trackAction) {
+        await trackAction('book_completed', {
+          bookId: book.id,
+          bookTitle: book.title,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      setBooks(prev => prev.map(b =>
+        b.id === book.id
+          ? { ...b, status: 'completed', is_reading: false, completed: true, progress: 100, completed_at: new Date().toISOString() }
+          : b
+      ));
+
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error('Failed to mark as completed:', err);
+    }
+  };
+
+  const handleMarkToRead = async (book) => {
+    try {
+      if (activeSession?.book?.id === book.id) {
+        await stopReadingSession();
+      }
+
+      await API.patch(`/books/${book.id}`, {
+        status: 'unread',
+        is_reading: false,
+        completed: false,
+        progress: 0
+      });
+
+      setBooks(prev => prev.map(b =>
+        b.id === book.id
+          ? { ...b, status: 'unread', is_reading: false, completed: false, progress: 0 }
+          : b
+      ));
+
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error('Failed to mark as to-read:', err);
+    }
+  };
+
+  // ========================================
+  // HELPERS
+  // ========================================
+
   const getBookStatus = (book) => {
     if (book.completed) return 'completed';
     if (book.is_reading) return 'reading';
     return 'to-read';
   };
 
-  // Helper to format date
   const formatDate = (dateStr) => {
     if (!dateStr) return '—';
     const date = new Date(dateStr);
@@ -77,6 +199,8 @@ const MockLibraryPage = () => {
       year: 'numeric'
     });
   };
+
+  const isActiveSessionBook = (bookId) => activeSession?.book?.id === bookId;
 
   // Filter books by status
   const filteredBooks = useMemo(() => {
@@ -90,13 +214,36 @@ const MockLibraryPage = () => {
   // Sort filtered books
   const sortedBooks = useMemo(() => {
     return [...filteredBooks].sort((a, b) => {
-      const aVal = (a[sortBy] || '').toString().toLowerCase();
-      const bVal = (b[sortBy] || '').toString().toLowerCase();
+      let aVal, bVal;
+      switch (sortBy) {
+        case 'title':
+          aVal = (a.title || '').toLowerCase();
+          bVal = (b.title || '').toLowerCase();
+          break;
+        case 'author':
+          aVal = (a.author || '').toLowerCase();
+          bVal = (b.author || '').toLowerCase();
+          break;
+        case 'date_added':
+          aVal = new Date(a.created_at || 0);
+          bVal = new Date(b.created_at || 0);
+          break;
+        case 'date_read':
+          aVal = new Date(a.completed_at || 0);
+          bVal = new Date(b.completed_at || 0);
+          break;
+        case 'notes':
+          aVal = notesCount[a.id] || 0;
+          bVal = notesCount[b.id] || 0;
+          break;
+        default:
+          return 0;
+      }
       if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [filteredBooks, sortBy, sortOrder]);
+  }, [filteredBooks, sortBy, sortOrder, notesCount]);
 
   // Pagination
   const totalPages = Math.ceil(sortedBooks.length / BOOKS_PER_PAGE);
@@ -108,23 +255,20 @@ const MockLibraryPage = () => {
     setCurrentPage(1);
   }, [statusFilter, sortBy, sortOrder]);
 
-  // Handle column header click for sorting
   const handleSort = (column) => {
     if (sortBy === column) {
       setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(column);
-      setSortOrder('asc');
+      setSortOrder('desc');
     }
   };
 
-  // Sort indicator component
   const SortIndicator = ({ column }) => {
     if (sortBy !== column) return <span className="sort-indicator inactive">↕</span>;
     return <span className="sort-indicator active">{sortOrder === 'asc' ? '↑' : '↓'}</span>;
   };
 
-  // Count books by status
   const statusCounts = useMemo(() => ({
     all: books.length,
     reading: books.filter(b => b.is_reading && !b.completed).length,
@@ -135,7 +279,7 @@ const MockLibraryPage = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="mock-library-page">
+      <div className={`mock-library-page ${actualTheme}`}>
         <div className="mock-empty-state">Loading your library...</div>
       </div>
     );
@@ -144,17 +288,42 @@ const MockLibraryPage = () => {
   // Error state
   if (error) {
     return (
-      <div className="mock-library-page">
+      <div className={`mock-library-page ${actualTheme}`}>
         <div className="mock-empty-state" style={{ color: '#dc2626' }}>{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="mock-library-page">
+    <div className={`mock-library-page ${actualTheme}`}>
       <header className="library-header">
         <h1>My Library</h1>
       </header>
+
+      {/* Active Session Banner */}
+      {activeSession && (
+        <div className="active-session-banner">
+          <span className="session-icon">📖</span>
+          <span className="session-text">
+            Reading: <strong>{activeSession.book.title}</strong>
+            {isPaused && <span className="paused-badge">PAUSED</span>}
+          </span>
+          <div className="session-actions">
+            {isPaused ? (
+              <button className="session-btn resume" onClick={handleResumeSession}>
+                ▶ Resume
+              </button>
+            ) : (
+              <button className="session-btn pause" onClick={handlePauseSession}>
+                ⏸ Pause
+              </button>
+            )}
+            <button className="session-btn end" onClick={handleEndSession}>
+              ⏹ End Session
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filter tabs */}
       <div className="mock-filter-bar">
@@ -175,9 +344,9 @@ const MockLibraryPage = () => {
           ))}
         </div>
 
-        {/* Sort controls - visible on all screen sizes */}
+        {/* Sort controls */}
         <div className="sort-controls">
-          <span className="sort-label">Sort by:</span>
+          <span className="sort-label">Sort:</span>
           <button
             className={`sort-btn ${sortBy === 'title' ? 'active' : ''}`}
             onClick={() => handleSort('title')}
@@ -211,9 +380,15 @@ const MockLibraryPage = () => {
                 Author <SortIndicator column="author" />
               </th>
               <th className="col-status">Status</th>
-              <th className="col-date">Date Read</th>
-              <th className="col-date">Date Added</th>
-              <th className="col-notes">Notes</th>
+              <th className="col-date sortable" onClick={() => handleSort('date_read')}>
+                Date Read <SortIndicator column="date_read" />
+              </th>
+              <th className="col-date sortable" onClick={() => handleSort('date_added')}>
+                Date Added <SortIndicator column="date_added" />
+              </th>
+              <th className="col-notes sortable" onClick={() => handleSort('notes')}>
+                Notes <SortIndicator column="notes" />
+              </th>
               <th className="col-actions">Actions</th>
             </tr>
           </thead>
@@ -222,11 +397,11 @@ const MockLibraryPage = () => {
               const status = getBookStatus(book);
               const bookNotesCount = notesCount[book.id] || 0;
               return (
-                <tr key={book.id}>
-                  <td className="col-cover">
+                <tr key={book.id} className={isActiveSessionBook(book.id) ? 'active-session-row' : ''}>
+                  <td className="col-cover" onClick={() => navigate(`/read/${book.id}`)}>
                     <div className="book-cover-thumb">
                       {book.cover_url ? (
-                        <img src={book.cover_url} alt={book.title} />
+                        <img src={book.cover_url} alt={book.title} loading="lazy" />
                       ) : (
                         <div className="cover-placeholder">
                           <span>📚</span>
@@ -234,7 +409,9 @@ const MockLibraryPage = () => {
                       )}
                     </div>
                   </td>
-                  <td className="col-title">{book.title}</td>
+                  <td className="col-title" onClick={() => navigate(`/read/${book.id}`)}>
+                    {book.title}
+                  </td>
                   <td className="col-author">{book.author || '—'}</td>
                   <td className="col-status">
                     <span className={`status-badge ${status}`}>
@@ -247,7 +424,95 @@ const MockLibraryPage = () => {
                     {bookNotesCount > 0 ? <span className="notes-badge">{bookNotesCount}</span> : '—'}
                   </td>
                   <td className="col-actions">
-                    <button className="action-btn">⋮</button>
+                    <div className="actions-dropdown">
+                      <button
+                        className="actions-trigger"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId(openMenuId === book.id ? null : book.id);
+                        }}
+                      >
+                        ⋮
+                      </button>
+
+                      {openMenuId === book.id && (
+                        <div className="actions-menu" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            className="menu-item"
+                            onClick={() => {
+                              setOpenMenuId(null);
+                              navigate(`/read/${book.id}`);
+                            }}
+                          >
+                            📖 Open Book
+                          </button>
+
+                          <div className="menu-divider" />
+
+                          {isActiveSessionBook(book.id) && (
+                            <>
+                              {isPaused ? (
+                                <button className="menu-item" onClick={handleResumeSession}>
+                                  ▶️ Resume Timer
+                                </button>
+                              ) : (
+                                <button className="menu-item" onClick={handlePauseSession}>
+                                  ⏸️ Pause Timer
+                                </button>
+                              )}
+                              <button className="menu-item" onClick={handleEndSession}>
+                                ⏹️ Stop Timer
+                              </button>
+                              <div className="menu-divider" />
+                            </>
+                          )}
+
+                          {!activeSession && (
+                            <button
+                              className="menu-item primary"
+                              onClick={() => handleStartSession(book)}
+                            >
+                              ▶️ Start Reading Session
+                            </button>
+                          )}
+
+                          {book.is_reading && !book.completed && (
+                            <>
+                              <button
+                                className="menu-item"
+                                onClick={() => handleMarkToRead(book)}
+                              >
+                                ⏹️ End Session (Stop Reading)
+                              </button>
+                              <button
+                                className="menu-item success"
+                                onClick={() => handleMarkCompleted(book)}
+                              >
+                                ✅ Mark as Completed
+                              </button>
+                            </>
+                          )}
+
+                          {book.completed && (
+                            <button
+                              className="menu-item"
+                              onClick={() => handleMarkToRead(book)}
+                            >
+                              📚 Mark as To Read
+                            </button>
+                          )}
+
+                          {!book.is_reading && !book.completed && (
+                            <button
+                              className="menu-item success"
+                              onClick={() => handleMarkCompleted(book)}
+                            >
+                              ✅ Mark as Completed
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
@@ -284,12 +549,6 @@ const MockLibraryPage = () => {
           No books match the selected filter.
         </div>
       )}
-
-      <div className="mock-explanation">
-        <strong>Features:</strong> Click Title or Author headers to sort. Use filter tabs to filter by status.
-        <br />
-        <strong>Responsive:</strong> At &lt;1000px hides Status/Dates. At &lt;600px switches to card layout.
-      </div>
     </div>
   );
 };
