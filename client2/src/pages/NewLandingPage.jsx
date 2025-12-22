@@ -277,24 +277,6 @@ const NewLandingPage = () => {
               Catalog, track, and discover with zero friction.
             </p>
 
-            <div className="hero-cta-group">
-              <button
-                className="hero-btn hero-btn-primary"
-                onClick={() => navigate('/signup')}
-                data-testid="register-link"
-              >
-                Start Your Quest
-              </button>
-              <button
-                className="hero-btn hero-btn-secondary"
-                onClick={() => navigate('/login')}
-                data-testid="login-link"
-              >
-                <span className="material-symbols-outlined">play_circle</span>
-                Watch Demo
-              </button>
-            </div>
-
             <div className="hero-social-proof">
               <div className="launch-badge">
                 <span className="material-symbols-outlined">rocket_launch</span>
