@@ -36,6 +36,7 @@ const MockLibraryPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   // Real book data from API
   const [books, setBooks] = useState([]);
@@ -404,7 +405,7 @@ const MockLibraryPage = () => {
                         <img src={book.cover_url} alt={book.title} loading="lazy" />
                       ) : (
                         <div className="cover-placeholder">
-                          <span>📚</span>
+                          <span className="material-symbols-outlined">menu_book</span>
                         </div>
                       )}
                     </div>
@@ -429,14 +430,27 @@ const MockLibraryPage = () => {
                         className="actions-trigger"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setOpenMenuId(openMenuId === book.id ? null : book.id);
+                          if (openMenuId === book.id) {
+                            setOpenMenuId(null);
+                          } else {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setMenuPosition({
+                              top: rect.bottom + 4,
+                              left: rect.right - 200 // Menu width is 200px
+                            });
+                            setOpenMenuId(book.id);
+                          }
                         }}
                       >
                         ⋮
                       </button>
 
                       {openMenuId === book.id && (
-                        <div className="actions-menu" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="actions-menu"
+                          style={{ top: menuPosition.top, left: Math.max(8, menuPosition.left) }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             className="menu-item"
                             onClick={() => {
