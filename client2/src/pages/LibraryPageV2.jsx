@@ -326,7 +326,7 @@ const LibraryPageV2 = () => {
         </div>
       )}
 
-      {/* Filters */}
+      {/* Filters & Sort Controls */}
       <div className="filter-bar">
         <div className="filter-tabs">
           {[
@@ -344,6 +344,24 @@ const LibraryPageV2 = () => {
             </button>
           ))}
         </div>
+
+        {/* Sort controls - visible on all screen sizes */}
+        <div className="sort-controls">
+          <span className="sort-label">Sort:</span>
+          <button
+            className={`sort-btn ${sortBy === 'title' ? 'active' : ''}`}
+            onClick={() => handleSort('title')}
+          >
+            Title {sortBy === 'title' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+          <button
+            className={`sort-btn ${sortBy === 'author' ? 'active' : ''}`}
+            onClick={() => handleSort('author')}
+          >
+            Author {sortBy === 'author' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+        </div>
+
         <div className="showing-count">
           Showing {sortedBooks.length} books
         </div>
