@@ -19,7 +19,7 @@ import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-const WelcomeSection = ({ user, onStartTour }) => {
+const WelcomeSection = ({ user, onStartTour, activeSession }) => {
   const { stats, achievements } = useGamification();
   const navigate = useNavigate();
 
@@ -45,6 +45,15 @@ const WelcomeSection = ({ user, onStartTour }) => {
     return `${timeGreeting}! Ready to dive into your next great read?`;
   };
 
+  const primaryCtaLabel = activeSession?.book ? 'Resume reading' : 'Start reading';
+  const handlePrimaryCta = () => {
+    if (activeSession?.book?.id) {
+      navigate(`/read/${activeSession.book.id}`);
+      return;
+    }
+    navigate('/library');
+  };
+
   return (
     <div className="welcome-section-compact">
       <div className="welcome-content">
@@ -54,6 +63,8 @@ const WelcomeSection = ({ user, onStartTour }) => {
             {getMotivationalMessage()}
           </h1>
 
+          <p className="welcome-purpose">Track reading, earn rewards, and grow your library.</p>
+
           {/* Subtitle - Activity streak auto-tracked from user activities */}
           <div className="welcome-subtitle-row">
             <p className="welcome-subtitle-compact">
@@ -62,22 +73,45 @@ const WelcomeSection = ({ user, onStartTour }) => {
             </p>
           </div>
 
+          <div className="welcome-cta-row">
+            <button className="md3-filled-button" onClick={handlePrimaryCta}>
+              <span className="material-symbols-outlined" aria-hidden>auto_stories</span>
+              {primaryCtaLabel}
+            </button>
+            <button className="md3-tonal-button" onClick={() => navigate('/upload')}>
+              <span className="material-symbols-outlined" aria-hidden>add</span>
+              Add a book
+            </button>
+          </div>
+
           {/* Level Progress Bar with Total Points */}
-          <div className="level-progress-container">
-            <div className="level-progress-header">
-              <span className="level-progress-text">
-                {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
-              </span>
-              <span className="total-points-display" title="Total Points Earned">
-                ⭐ {stats?.totalPoints?.toLocaleString() || 0} pts
-              </span>
-            </div>
-            <div className="level-progress-bar">
-              <div
-                className="level-progress-fill"
-                style={{ width: `${levelProgress}%` }}
-                aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
-              />
+          <div className="progress-block-elevated">
+            <div className="level-progress-container">
+              <div className="level-progress-header">
+                <span className="level-progress-text">
+                  {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
+                </span>
+                <span className="total-points-display" title="Total Points Earned">
+                  ⭐ {stats?.totalPoints?.toLocaleString() || 0} pts
+                </span>
+              </div>
+              <div className="level-progress-bar">
+                <div
+                  className="level-progress-fill"
+                  style={{ width: `${levelProgress}%` }}
+                  aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
+                />
+              </div>
+              {achievements?.length > 0 && (
+                <div className="badge-strip" aria-label="Recent achievements">
+                  {achievements.slice(0, 8).map((achievement, index) => (
+                    <div className="badge-chip" key={achievement.id || index} title={achievement.description || achievement.title}>
+                      <span className="material-symbols-outlined" aria-hidden>workspace_premium</span>
+                      <span className="badge-chip-label">{achievement.title}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -85,6 +119,92 @@ const WelcomeSection = ({ user, onStartTour }) => {
 
       {/* Mentor Preview Card - Bottom of Welcome Section */}
       <MentorPreviewCard />
+    </div>
+  );
+};
+
+const GoalSelector = () => {
+  const { goalPreference, setGoalPreference } = useGamification();
+  const [preference, setPreference] = useState(goalPreference || 'minutes');
+
+  useEffect(() => {
+    setPreference(goalPreference || 'minutes');
+  }, [goalPreference]);
+
+  const handleChange = (value) => {
+    setPreference(value);
+    setGoalPreference?.(value);
+  };
+
+  return (
+    <div className="goal-selector" aria-label="Choose your goal type">
+      <div className="goal-selector-header">
+        <div>
+          <p className="goal-selector-label">Goal focus</p>
+          <p className="goal-selector-subtext">Choose how you want to measure progress</p>
+        </div>
+      </div>
+      <div className="goal-toggle-group" role="group" aria-label="Goal preference">
+        <button
+          className={`md3-segmented ${preference === 'minutes' ? 'active' : ''}`}
+          onClick={() => handleChange('minutes')}
+        >
+          Minutes per week
+        </button>
+        <button
+          className={`md3-segmented ${preference === 'books' ? 'active' : ''}`}
+          onClick={() => handleChange('books')}
+        >
+          Books per month
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const SmartResumeCard = ({ books }) => {
+  const navigate = useNavigate();
+  const { activeSession, getSessionHistory } = useReadingSession();
+  const [recentSession, setRecentSession] = useState(null);
+
+  useEffect(() => {
+    const history = typeof getSessionHistory === 'function' ? getSessionHistory() : [];
+    if (history?.length > 0) {
+      setRecentSession(history[history.length - 1]);
+    }
+  }, [getSessionHistory]);
+
+  const session = activeSession || recentSession;
+  if (!session || !session.book) return null;
+
+  const book = session.book.id ? books?.find(b => b.id === session.book.id) || session.book : session.book;
+  const totalPages = book?.total_pages || book?.totalPages || book?.page_count;
+  const currentPage = book?.current_page || session.book.current_page || session.book.page || 1;
+  const pagesLeft = totalPages ? Math.max(totalPages - currentPage, 0) : null;
+  const estimatedMinutes = pagesLeft ? Math.max(Math.round(pagesLeft * 1), 5) : 10;
+
+  return (
+    <div className="smart-resume-card">
+      <div className="smart-resume-meta">
+        <p className="smart-resume-label">Continue reading</p>
+        <h3 className="smart-resume-title">{book.title}</h3>
+        {book.author && <p className="smart-resume-author">by {book.author}</p>}
+        <p className="smart-resume-progress">
+          Page {currentPage}
+          {totalPages ? ` of ${totalPages}` : ''}
+          {pagesLeft !== null && ` • ~${estimatedMinutes} min to finish`}
+        </p>
+      </div>
+      <div className="smart-resume-actions">
+        <button className="md3-filled-button" onClick={() => navigate(`/read/${book.id}`)}>
+          <span className="material-symbols-outlined" aria-hidden>play_arrow</span>
+          Resume
+        </button>
+        <button className="md3-tonal-button" onClick={() => navigate('/notes')}>
+          <span className="material-symbols-outlined" aria-hidden>post_add</span>
+          Add note
+        </button>
+      </div>
     </div>
   );
 };
@@ -1345,6 +1465,8 @@ const DashboardPage = () => {
         {/* Mobile-Only: Quick Actions */}
         <MobileQuickActions navigate={navigate} />
 
+        <SmartResumeCard books={books} />
+
         {/* Global Resume banner (desktop only - mobile uses hero card) */}
         {activeSession?.book?.id && (activeSession?.isPaused) && (
           <div className="desktop-only" style={{
@@ -1395,7 +1517,8 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
-            <WelcomeSection user={user} onStartTour={startDashboardTour} />
+            <WelcomeSection user={user} activeSession={activeSession} onStartTour={startDashboardTour} />
+            <GoalSelector />
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
               <button

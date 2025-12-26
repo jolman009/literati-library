@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import API from '../config/api';
+import { useSnackbar } from '../components/Material3';
 
 // 🔧 ADDITIONAL IMPORT CHECK - Make sure React hooks are available
 if (!useEffect) {
@@ -85,6 +86,7 @@ export const GamificationProvider = ({ children }) => {
 
   const [achievements, setAchievements] = useState([]);
   const [goals, setGoals] = useState([]);
+  const [goalPreference, setGoalPreference] = useState('minutes');
   const [unlockedAchievements, setUnlockedAchievements] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [recentAchievement, setRecentAchievement] = useState(null);
@@ -92,6 +94,7 @@ export const GamificationProvider = ({ children }) => {
 
   // Get auth context (AuthContext uses HttpOnly cookies; no token needed here)
   const { user, makeApiCall, loading: authLoading, isAuthenticated } = useAuth();
+  const { showSnackbar } = useSnackbar();
 
   // Reset offline mode when we have an authenticated user
   useEffect(() => {
@@ -100,6 +103,15 @@ export const GamificationProvider = ({ children }) => {
       setOfflineMode(false);
     }
   }, [user, offlineMode]);
+
+  useEffect(() => {
+    if (!user) {
+      setGoalPreference('minutes');
+      return;
+    }
+    const stored = localStorage.getItem(`goal_preference_${user.id}`);
+    if (stored) setGoalPreference(stored);
+  }, [user]);
 
   // 🔧 FIXED: Safe API helper that handles 401s gracefully
   const makeSafeApiCall = useCallback(async (endpoint, options = {}) => {
@@ -207,6 +219,13 @@ export const GamificationProvider = ({ children }) => {
       return 0;
     }
   }, []);
+
+  const updateGoalPreference = useCallback((value) => {
+    setGoalPreference(value);
+    if (user) {
+      localStorage.setItem(`goal_preference_${user.id}`, value);
+    }
+  }, [user]);
 
   // Fetch all gamification data
   const fetchData = useCallback(async () => {
@@ -425,6 +444,33 @@ export const GamificationProvider = ({ children }) => {
     });
   }, [stats, unlockedAchievements, user]);
 
+  const triggerFeedback = useCallback((actionType, points) => {
+    const labels = {
+      note_created: 'Note captured',
+      reading_session_completed: 'Session completed'
+    };
+    const label = labels[actionType] || 'Progress recorded';
+
+    showSnackbar?.({
+      message: `${label}: +${points} pts`,
+      variant: 'success'
+    });
+
+    try {
+      const confetti = document.createElement('div');
+      confetti.className = 'points-confetti';
+      confetti.textContent = `+${points}`;
+      document.body.appendChild(confetti);
+      requestAnimationFrame(() => confetti.classList.add('show'));
+      setTimeout(() => {
+        confetti.classList.remove('show');
+        confetti.remove();
+      }, 1800);
+    } catch (err) {
+      console.warn('Gamification feedback animation failed:', err);
+    }
+  }, [showSnackbar]);
+
   // Track user action and award points
   const trackAction = useCallback(async (actionType, data = {}, options = {}) => {
     if (!user) {
@@ -555,6 +601,10 @@ export const GamificationProvider = ({ children }) => {
     window.dispatchEvent(event);
     console.warn(`✅ GamificationContext: Event dispatched successfully`);
 
+    if (['note_created', 'reading_session_completed'].includes(actionType)) {
+      triggerFeedback(actionType, points || 0);
+    }
+
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
@@ -612,7 +662,7 @@ export const GamificationProvider = ({ children }) => {
 
     // Check for achievement unlocks
     checkAchievements(actionType, data);
-  }, [user, offlineMode, checkAchievements, fetchDataDebounced]);
+  }, [user, offlineMode, checkAchievements, fetchDataDebounced, triggerFeedback]);
 
   // Listen for daily login events from AuthContext
   useEffect(() => {
@@ -787,6 +837,7 @@ export const GamificationProvider = ({ children }) => {
     stats,
     achievements,
     goals,
+    goalPreference,
     unlockedAchievements,
     recentAchievement,
     loading,
@@ -794,6 +845,7 @@ export const GamificationProvider = ({ children }) => {
 
     // Actions
     trackAction,
+    setGoalPreference: updateGoalPreference,
     createGoal,
     updateGoalProgress,
     syncWithServer,
