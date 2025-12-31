@@ -60,6 +60,12 @@ class EnvironmentConfig {
         name: import.meta.env.VITE_APP_NAME || 'ShelfQuest',
         version: import.meta.env.VITE_APP_VERSION || '1.0.0',
         buildHash: import.meta.env.VITE_BUILD_HASH || 'dev'
+      },
+
+      // Google API Configuration
+      google: {
+        apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
+        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
       }
     };
 
@@ -174,6 +180,10 @@ class EnvironmentConfig {
     return this.config.app;
   }
 
+  get google() {
+    return this.config.google;
+  }
+
   // Utility methods
   getTokenKey() {
     return this.security.tokenKey;
@@ -255,5 +265,6 @@ export const {
   features,
   security,
   storage,
-  app
+  app,
+  google
 } = environmentConfig;
