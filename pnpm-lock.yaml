@@ -42,6 +42,9 @@ importers:
       epubjs:
         specifier: ^0.3.93
         version: 0.3.93
+      form-data:
+        specifier: ^4.0.5
+        version: 4.0.5
       framer-motion:
         specifier: ^12.23.25
         version: 12.23.25(react-dom@19.2.1)(react@19.2.1)
@@ -63,6 +66,9 @@ importers:
       react-dropzone:
         specifier: ^14.3.8
         version: 14.3.8(react@19.2.1)
+      react-google-drive-picker:
+        specifier: ^1.2.2
+        version: 1.2.2(react-dom@19.2.1)(react@19.2.1)
       react-horizontal-scrolling-menu:
         specifier: ^8.2.0
         version: 8.2.0(react-dom@19.2.1)(react@19.2.1)
@@ -10502,6 +10508,16 @@ packages:
       file-selector: 2.1.2
       prop-types: 15.8.1
       react: 19.2.1
+    dev: false
+
+  /react-google-drive-picker@1.2.2(react-dom@19.2.1)(react@19.2.1):
+    resolution: {integrity: sha512-x30mYkt9MIwPCgL+fyK75HZ8E6G5L/WGW0bfMG6kbD4NG2kmdlmV9oH5lPa6P6d46y9hj5Y3btAMrZd4JRRkSA==}
+    peerDependencies:
+      react: '>=17.0.0'
+      react-dom: '>=17.0.0'
+    dependencies:
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
     dev: false
 
   /react-horizontal-scrolling-menu@8.2.0(react-dom@19.2.1)(react@19.2.1):

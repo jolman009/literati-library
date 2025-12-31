@@ -1,6 +1,7 @@
 // src/routes/cloudStorage.js - Cloud Storage Token Management
 import express from 'express';
 import { supabase } from '../config/supabaseClient.js';
+import axios from 'axios'; // Required for file download
 
 /**
  * Cloud Storage Management Routes
@@ -9,8 +10,11 @@ import { supabase } from '../config/supabaseClient.js';
  * - View connected services
  * - Disconnect services
  * - Clear OAuth tokens
+ * - NEW: Upload files from Drive to Supabase
  *
- * Security: Admin-only access (checked in middleware)
+ * Security: 
+ * - Admin routes: Checked by requireAdmin
+ * - Upload routes: Checked by authenticateToken (available to all logged-in users)
  */
 
 export function cloudStorageRouter(authenticateToken) {
@@ -198,6 +202,73 @@ export function cloudStorageRouter(authenticateToken) {
     } catch (error) {
       console.error('Store token error:', error);
       res.status(500).json({ error: 'Failed to store token' });
+    }
+  });
+
+  /**
+   * POST /api/cloud-storage/drive/upload
+   * NEW FEATURE: Download file from Google Drive and stream to Supabase
+   * This route allows standard users (authenticateToken) to import books.
+   */
+  router.post('/drive/upload', authenticateToken, async (req, res) => {
+    const { fileId, accessToken, fileName, mimeType } = req.body;
+    const userId = req.user.id; // From authenticateToken middleware
+
+    if (!fileId || !accessToken) {
+      return res.status(400).json({ error: 'Missing fileId or accessToken' });
+    }
+
+    try {
+      console.log(`Starting Drive download for file: ${fileName} (${fileId})`);
+
+      // 1. Download file stream from Google Drive
+      const driveResponse = await axios({
+        method: 'GET',
+        url: `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        responseType: 'arraybuffer' // Get raw data buffer
+      });
+
+      const buffer = driveResponse.data;
+      const cleanFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+      
+      // Create a path compatible with Supabase storage conventions
+      // Stores in: {userId}/{timestamp}_{filename}
+      const storagePath = `${userId}/${Date.now()}_${cleanFileName}`;
+
+      console.log(`Uploading to Supabase path: ${storagePath}`);
+
+      // 2. Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('books')
+        .upload(storagePath, buffer, {
+          contentType: mimeType,
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Supabase upload error:', error);
+        throw error;
+      }
+
+      // 3. Return success with the path needed for the "Save Book" step
+      res.json({
+        success: true,
+        path: data.path, 
+        fullPath: data.fullPath,
+        filename: cleanFileName,
+        originalName: fileName,
+        mimeType: mimeType
+      });
+
+    } catch (error) {
+      console.error('Drive integration error:', error.response?.data || error.message);
+      res.status(500).json({ 
+        error: 'Failed to process Google Drive file',
+        details: error.message 
+      });
     }
   });
 

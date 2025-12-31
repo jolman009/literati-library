@@ -1,5 +1,5 @@
 // src/pages/MD3UploadPage.jsx - Material Design 3 Upload Page
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../config/api';
 import { useGamification } from '../contexts/GamificationContext';
@@ -8,7 +8,6 @@ import {
   MD3Card,
   MD3Button,
   MD3TextField,
-  MD3Chip,
   MD3Progress,
   MD3Surface,
   useSnackbar
@@ -24,7 +23,13 @@ const MD3UploadPage = () => {
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // State for file handling
   const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadSource, setUploadSource] = useState('local'); // 'local' or 'google-drive'
+  const [externalFilePath, setExternalFilePath] = useState(null); // Stores Supabase path for Drive files
+  const [originalFileName, setOriginalFileName] = useState(''); 
+
   const [uploadStep, setUploadStep] = useState('select'); // select, details, uploading, complete
   const [formData, setFormData] = useState({
     title: '',
@@ -33,7 +38,7 @@ const MD3UploadPage = () => {
     description: ''
   });
 
-  // Handle file selection
+  // Handle local file selection
   const handleFileSelect = (file) => {
     if (!file) return;
 
@@ -58,12 +63,39 @@ const MD3UploadPage = () => {
     }
 
     setSelectedFile(file);
+    setOriginalFileName(file.name);
+    setUploadSource('local');
+    setExternalFilePath(null);
     setUploadStep('details');
 
     // Auto-extract metadata from filename
     const fileName = file.name.replace(/\.(pdf|epub)$/i, '');
     const titleGuess = fileName.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     setFormData(prev => ({ ...prev, title: titleGuess }));
+  };
+
+  // Handle Google Drive Success
+  const handleDriveUploadSuccess = (result) => {
+    // result contains { path, filename, originalName, mimeType }
+    
+    // Note: The file is ALREADY uploaded to Supabase by the component at this stage.
+    // We just need to save the metadata to the database.
+    
+    setSelectedFile(null); // No local file
+    setExternalFilePath(result.path); // Save the Supabase storage path
+    setOriginalFileName(result.originalName);
+    setUploadSource('google-drive');
+    
+    // Auto-extract metadata
+    const titleGuess = result.originalName.replace(/\.(pdf|epub)$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    setFormData(prev => ({ ...prev, title: titleGuess }));
+    setUploadStep('details');
+    
+    showSnackbar({
+        message: 'File imported from Drive. Please confirm details to finish.',
+        variant: 'success'
+    });
   };
 
   // Handle drag and drop
@@ -87,9 +119,10 @@ const MD3UploadPage = () => {
     }
   };
 
-  // Handle upload
+  // Handle upload (or Metadata save for Drive files)
   const handleUpload = async () => {
-    if (!selectedFile || !formData.title || !formData.author) {
+    // Check validation: need a title, author, and EITHER a local file OR a drive path
+    if ((!selectedFile && !externalFilePath) || !formData.title || !formData.author) {
       showSnackbar({
         message: 'Please fill in the required fields',
         variant: 'error'
@@ -103,7 +136,8 @@ const MD3UploadPage = () => {
 
     try {
       const uploadData = new FormData();
-      uploadData.append('book', selectedFile);
+      
+      // Basic Metadata
       uploadData.append('title', formData.title.trim());
       uploadData.append('author', formData.author.trim());
       uploadData.append('genre', formData.genre.trim());
@@ -111,11 +145,27 @@ const MD3UploadPage = () => {
         uploadData.append('description', formData.description.trim());
       }
 
+      // Handle File Source
+      if (uploadSource === 'google-drive' && externalFilePath) {
+        // For Drive, we send the path that was already uploaded to Supabase
+        uploadData.append('fileUrl', externalFilePath);
+        uploadData.append('uploadSource', 'google-drive');
+        // Fake progress for UX since file is already on server
+        setUploadProgress(100); 
+      } else if (selectedFile) {
+        // For Local, we stream the file now
+        uploadData.append('book', selectedFile);
+        uploadData.append('uploadSource', 'local');
+      }
+
       const response = await API.post('/books/upload', uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setUploadProgress(percentCompleted);
+          // Only track real progress for local uploads
+          if (uploadSource === 'local') {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted);
+          }
         },
       });
 
@@ -129,17 +179,17 @@ const MD3UploadPage = () => {
           bookId: uploadedBook.id,
           bookTitle: uploadedBook.title,
           bookAuthor: uploadedBook.author,
-          fileType: selectedFile.type,
-          fileSize: selectedFile.size
+          fileType: selectedFile ? selectedFile.type : 'application/pdf', // Fallback for drive
+          fileSize: selectedFile ? selectedFile.size : 0,
+          source: uploadSource
         });
         console.warn('✅ Book upload tracked successfully - 25 points awarded');
       } catch (trackError) {
         console.error('Failed to track book upload:', trackError);
-        // Don't fail the upload if tracking fails
       }
 
       showSnackbar({
-        message: `"${uploadedBook.title}" uploaded successfully! +25 points earned!`,
+        message: `"${uploadedBook.title}" saved successfully! +25 points earned!`,
         variant: 'success'
       });
 
@@ -150,12 +200,9 @@ const MD3UploadPage = () => {
 
     } catch (error) {
       console.error('Upload error:', error);
-      console.error('Upload error response:', error.response);
-      console.error('Upload error data:', error.response?.data);
-      console.error('Upload error status:', error.response?.status);
       
       setIsUploading(false);
-      setUploadStep('select');
+      setUploadStep('select'); // Go back to start on error? Or maybe details?
       
       const errorMessage = error.response?.data?.error || 
                            error.response?.data?.details || 
@@ -171,10 +218,21 @@ const MD3UploadPage = () => {
 
   const resetUpload = () => {
     setSelectedFile(null);
+    setExternalFilePath(null);
+    setOriginalFileName('');
+    setUploadSource('local');
     setUploadStep('select');
     setUploadProgress(0);
     setIsUploading(false);
     setFormData({ title: '', author: '', genre: '', description: '' });
+  };
+
+  // Helper to display file size nicely
+  const displayFileSize = () => {
+    if (selectedFile) {
+        return `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB`;
+    }
+    return 'Imported from Drive';
   };
 
   return (
@@ -252,22 +310,21 @@ const MD3UploadPage = () => {
                 <span className="divider-line"></span>
               </div>
 
-              <GoogleDriveUploader
-                onUploadSuccess={(book) => {
-                  showSnackbar({
-                    message: `"${book.title}" imported successfully! +25 points earned!`,
-                    variant: 'success'
-                  });
-                  setTimeout(() => navigate('/library'), 2000);
-                }}
-                onUploadError={(error) => {
-                  showSnackbar({
-                    message: `Import failed: ${error}`,
-                    variant: 'error'
-                  });
-                }}
-                disabled={isUploading}
-              />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleDriveUploader
+                    onUploadSuccess={handleDriveUploadSuccess}
+                    onUploadStart={() => {
+                        // Optional: show loading state
+                        showSnackbar({ message: 'Connecting to Google Drive...', variant: 'info' });
+                    }}
+                    onError={(error) => {
+                        showSnackbar({
+                            message: `Import failed: ${error}`,
+                            variant: 'error'
+                        });
+                    }}
+                />
+              </div>
             </div>
           )}
 
@@ -278,10 +335,13 @@ const MD3UploadPage = () => {
                 <MD3Surface className="md3-file-info">
                   <span className="file-icon">📄</span>
                   <div>
-                    <p className="md-label-large">{selectedFile?.name}</p>
+                    <p className="md-label-large">{originalFileName}</p>
                     <p className="md-label-small on-surface-variant">
-                      {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
+                      {displayFileSize()}
                     </p>
+                    {uploadSource === 'google-drive' && (
+                        <MD3Chip label="Via Google Drive" icon="cloud" />
+                    )}
                   </div>
                 </MD3Surface>
               </div>
@@ -368,7 +428,7 @@ const MD3UploadPage = () => {
                     WebkitTapHighlightColor: 'transparent'
                   }}
                 >
-                  Upload Book
+                  {uploadSource === 'google-drive' ? 'Save Book' : 'Upload Book'}
                 </MD3Button>
               </div>
             </div>
@@ -378,7 +438,9 @@ const MD3UploadPage = () => {
           {uploadStep === 'uploading' && (
             <div className="md3-upload-progress">
               <div className="md3-progress-icon">⏳</div>
-              <h3 className="md-title-large">Uploading Your Book</h3>
+              <h3 className="md-title-large">
+                  {uploadSource === 'google-drive' ? 'Saving Details' : 'Uploading Your Book'}
+              </h3>
               <p className="md-body-medium on-surface-variant">
                 Please wait while we process your book...
               </p>
