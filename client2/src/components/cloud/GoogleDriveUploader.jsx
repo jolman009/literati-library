@@ -27,6 +27,7 @@ const GoogleDriveUploader = ({ onUploadSuccess, onUploadStart, onError }) => {
       setSelectFolderEnabled: false,
       // Filter for relevant mime types
       mimeTypes: 'application/pdf,application/epub+zip',
+      customScopes: ['https://www.googleapis.com/auth/drive.file'],
       callbackFunction: (data) => {
         if (data.action === 'cancel') {
           console.log('User clicked cancel/close button');
