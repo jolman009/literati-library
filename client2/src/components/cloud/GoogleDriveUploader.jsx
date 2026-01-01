@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { useAuth } from '../../contexts/AuthContext';
 import { config } from '../../config/environment';
-import { api } from '../../config/api'; // Assuming you have an API wrapper
+import api from '../../config/api'; // Assuming you have an API wrapper
 import './GoogleDriveUploader.css';
 
 // Ensure you install this package: npm install react-google-drive-picker
