@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useGamification } from '../contexts/GamificationContext';
-import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import BottomSheet from '../components/BottomSheet';
 import haptics from '../utils/haptics';
 import {
@@ -84,7 +83,9 @@ const AchievementsPage = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   // Get user's unlocked achievements
-  const unlockedAchievements = gamificationState?.achievements || [];
+  const unlockedAchievements = useMemo(() => {
+    return gamificationState?.achievements || [];
+  }, [gamificationState?.achievements]);
 
   // Filter achievements
   const filteredAchievements = useMemo(() => {

@@ -79,7 +79,7 @@ const ContactPage = () => {
       const mailto = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${body}`;
       window.location.href = mailto;
       showSnackbar({ message: 'Opening your email app…', variant: 'info' });
-    } catch (err) {
+    } catch {
       // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(

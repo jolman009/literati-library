@@ -94,7 +94,7 @@ const ContactDialog = () => {
       const mailto = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${body}`;
       window.location.href = mailto;
       showSnackbar({ message: 'Opening your email app…', variant: 'info' });
-    } catch (err) {
+    } catch {
       try {
         await navigator.clipboard.writeText(
           `To: ${emailTo}\nSubject: ${subject}\n\n${decodeURIComponent(body)}`

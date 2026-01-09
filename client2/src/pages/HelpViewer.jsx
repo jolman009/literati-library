@@ -30,7 +30,7 @@ export default function HelpViewer() {
         const enc = encodeURIComponent(sourcePath);
         const res = await makeAuthenticatedApiCall(`/api/guide/source-by-path?path=${enc}&limit=10`);
         if (!cancelled) setChunks(res?.chunks || []);
-      } catch (e) {
+      } catch {
         if (!cancelled) setError('Failed to load sources.');
       } finally {
         if (!cancelled) setLoading(false);
