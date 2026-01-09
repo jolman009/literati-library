@@ -56,6 +56,7 @@ import { challengesRouter } from './routes/challenges.js';
 import { leaderboardRouter } from './routes/leaderboard.js';
 import { aiRouter } from './routes/ai.js';
 import guideRouter from './routes/guide.js';
+import { integrityRouter } from './routes/integrity.js';
 import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
@@ -205,6 +206,9 @@ app.use('/api/leaderboard', rateLimitSuite.gamification, leaderboardRouter(authe
 
 // In-app Guide Assistant (rate limited like general API)
 app.use('/api/guide', rateLimitSuite.api, slowDownSuite.general, guideRouter(authenticateTokenEnhanced));
+
+// Play Integrity API verification (for Android app)
+app.use('/api/integrity', rateLimitSuite.api, integrityRouter(authenticateTokenEnhanced));
 
 // Optional: preserve your older client that calls POST /api/reading-session
 registerLegacyReadingEndpoints(app, authenticateTokenEnhanced);
