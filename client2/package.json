@@ -5,6 +5,8 @@
   "private": true,
   "packageManager": "pnpm@8.15.6",
   "dependencies": {
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
     "@sentry/react": "^10.29.0",
     "@supabase/supabase-js": "^2.86.2",
     "@uiw/react-md-editor": "^4.0.11",
@@ -49,7 +51,13 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "test:all": "pnpm run test:coverage && pnpm run test:e2e"
+    "test:all": "pnpm run test:coverage && pnpm run test:e2e",
+    "cap:sync": "npx cap sync",
+    "cap:sync:ios": "npx cap sync ios",
+    "cap:open:ios": "npx cap open ios",
+    "ios:build": "pnpm build && npx cap sync ios",
+    "ios:open": "npx cap open ios",
+    "ios:run": "npx cap run ios"
   },
   "browserslist": {
     "production": [
@@ -68,6 +76,7 @@
     "@babel/core": "^7.28.5",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",
+    "@capacitor/cli": "^8.0.0",
     "@eslint/js": "^9.39.1",
     "@playwright/test": "^1.57.0",
     "@testing-library/dom": "^10.4.1",
@@ -91,6 +100,7 @@
     "playwright": "^1.57.0",
     "postcss-import": "^16.1.1",
     "rollup-plugin-visualizer": "^6.0.5",
+    "typescript": "^5.9.3",
     "vite": "^7.2.6",
     "vite-bundle-analyzer": "^1.2.4",
     "vite-plugin-pwa": "^1.2.0",
