@@ -111,6 +111,20 @@
 -keep class androidx.security.crypto.** { *; }
 
 # =============================================================================
+# GOOGLE PLAY INTEGRITY API
+# =============================================================================
+
+# Keep Play Integrity API classes
+-keep class com.google.android.play.core.integrity.** { *; }
+-keep class com.google.android.play.core.integrity.model.** { *; }
+
+# Keep Google Play Tasks API (used by Play Integrity)
+-keep class com.google.android.gms.tasks.** { *; }
+
+# Keep our custom integrity manager
+-keep class org.shelfquest.app.integrity.** { *; }
+
+# =============================================================================
 # WORK MANAGER
 # =============================================================================
 

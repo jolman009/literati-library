@@ -1,4 +1,10 @@
 // src/config/environment.js - Centralized Configuration Module
+
+/**
+ * Environment Configuration Class
+ * Manages all environment-specific settings, feature flags, and API configurations.
+ * Handles fallback logic for different deployment scenarios (Dev, Staging, Prod).
+ */
 class EnvironmentConfig {
   constructor() {
     this.config = this.loadConfiguration();
@@ -228,7 +234,7 @@ class EnvironmentConfig {
     if (!token && typeof window !== 'undefined') {
       try {
         token = localStorage.getItem(this.getTokenKey()) ||
-                sessionStorage.getItem(this.getTokenKey());
+          sessionStorage.getItem(this.getTokenKey());
       } catch (error) {
         console.warn('Failed to retrieve token from storage:', error);
       }
@@ -250,7 +256,10 @@ class EnvironmentConfig {
 // Create singleton instance
 const environmentConfig = new EnvironmentConfig();
 
-// Export both the instance and the class
+// EXPORTS
+// This named export 'config' is what fixes your import error
+export const config = environmentConfig;
+
 export { environmentConfig, EnvironmentConfig };
 export default environmentConfig;
 
