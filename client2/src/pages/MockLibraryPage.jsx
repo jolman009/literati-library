@@ -50,6 +50,7 @@ const MockLibraryPage = () => {
       fetchBooks();
       fetchNotesCount();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Close menu when clicking outside

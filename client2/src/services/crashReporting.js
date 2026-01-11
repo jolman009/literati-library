@@ -232,7 +232,8 @@ class CrashReportingService {
    */
   captureMessage(message, level = 'info', context = {}) {
     if (!this.isInitialized) {
-      console[level](message, context);
+      // eslint-disable-next-line no-console
+      (console[level] || console.warn)(message, context);
       return null;
     }
 
@@ -340,7 +341,7 @@ class CrashReportingService {
   createErrorBoundary() {
     if (!this.isInitialized) {
       // Return a simple error boundary fallback
-      return ({ children, fallback }) => {
+      return ({ children: _children, fallback }) => {
         class SimpleErrorBoundary extends React.Component {
           constructor(props) {
             super(props);
@@ -530,7 +531,7 @@ class CrashReportingService {
         indexed_db: !!window.indexedDB,
         cookies_enabled: navigator.cookieEnabled
       };
-    } catch (error) {
+    } catch (_error) {
       return { available: false };
     }
   }

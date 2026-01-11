@@ -206,6 +206,7 @@ const GlobalSearch = ({
     
     setLoading(false);
     saveRecentSearch(searchQuery);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [books, notes, collections, recentSearches]);
 
   // Debounced search

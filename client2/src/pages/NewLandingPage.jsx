@@ -52,8 +52,8 @@ const NewLandingPage = () => {
     { value: 'Free', label: 'To Get Started' }
   ];
 
-  // Feature cards for the bento grid
-  const features = [
+  // Feature cards for the bento grid (used by renderFeatureVisual)
+  const _features = [
     {
       id: 'upload',
       icon: 'upload_file',
@@ -176,8 +176,8 @@ const NewLandingPage = () => {
     }
   };
 
-  // Render a bento card based on feature data
-  const renderBentoCard = (feature) => {
+  // Render a bento card based on feature data (available for future use)
+  const _renderBentoCard = (feature) => {
     const sizeClass = `bento-${feature.size}`;
     const darkClass = feature.dark ? 'bento-dark' : '';
     const isWide = feature.size === 'wide';

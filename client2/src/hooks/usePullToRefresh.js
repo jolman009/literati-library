@@ -23,7 +23,6 @@ const usePullToRefresh = (onRefresh, options = {}) => {
   const [refreshComplete, setRefreshComplete] = useState(false);
 
   const touchStartY = useRef(0);
-  const scrollableElement = useRef(null);
   const currentPullDistance = useRef(0);
 
   useEffect(() => {

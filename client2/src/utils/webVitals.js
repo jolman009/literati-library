@@ -77,6 +77,7 @@ const reportWebVitals = (metric) => {
   
   // Send to console for debugging
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.table({
       [name]: {
         'Value': formattedValue,
@@ -152,6 +153,7 @@ export const initWebVitals = () => {
         };
         
         console.warn('📊 Navigation Timing Breakdown:');
+        // eslint-disable-next-line no-console
         console.table(metrics);
       }
     }, 0);

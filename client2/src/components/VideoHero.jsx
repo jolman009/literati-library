@@ -62,9 +62,8 @@ const VideoHero = () => {
       const playPromise = videoRef.current.play();
 
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log('Auto-play was prevented:', error);
-          // If auto-play is blocked, the poster will be shown
+        playPromise.catch(_error => {
+          // Auto-play was prevented - the poster will be shown
         });
       }
     }

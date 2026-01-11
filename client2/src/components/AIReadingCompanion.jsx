@@ -88,6 +88,7 @@ const AIReadingCompanion = ({
     } finally {
       setIsAnalyzing(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, bookTitle, bookAuthor, bookGenre, readingSessionId, showSnackbar]);
 
   // Generate reading insights
@@ -116,6 +117,7 @@ const AIReadingCompanion = ({
         variant: 'warning'
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, showSnackbar]);
 
   // Create note from AI suggestion

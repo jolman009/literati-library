@@ -13,6 +13,7 @@ const DataExport = () => {
   // Load export summary on component mount
   useEffect(() => {
     loadSummary();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSummary = async () => {

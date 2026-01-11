@@ -72,7 +72,7 @@ if (import.meta.env.DEV) {
 }
 
 // Standard error boundary fallback (no Sentry)
-const ErrorFallback = ({ error, resetError }) => (
+const ErrorFallback = ({ error: _error, resetError: _resetError }) => (
   <div className="min-h-screen flex items-center justify-center bg-surface text-on-surface">
     <div className="w-full max-w-md p-8 rounded-3xl shadow-elevation-3 bg-surface border border-outline-variant text-center">
       <span className="material-symbols-outlined text-6xl text-error">error</span>
