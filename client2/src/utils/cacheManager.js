@@ -254,9 +254,9 @@ export class CacheManager {
    */
   async getFromIndexedDB(key) {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _reject) => {
         const request = indexedDB.open('ShelfQuestCache', 1);
-        
+
         request.onerror = () => resolve(null);
         
         request.onupgradeneeded = (event) => {
@@ -295,9 +295,9 @@ export class CacheManager {
    */
   async setInIndexedDB(key, value, ttl) {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _reject) => {
         const request = indexedDB.open('ShelfQuestCache', 1);
-        
+
         request.onerror = () => resolve(false);
         
         request.onupgradeneeded = (event) => {
@@ -350,7 +350,7 @@ export class CacheManager {
           if (item.expiry && Date.now() > item.expiry) {
             keysToRemove.push(key);
           }
-        } catch (error) {
+        } catch (_error) {
           keysToRemove.push(key); // Remove malformed entries
         }
       }
@@ -418,7 +418,7 @@ export class CacheManager {
         itemCount: cacheCount,
         available: this.getAvailableStorage()
       };
-    } catch (error) {
+    } catch (_error) {
       return { totalSize: 0, itemCount: 0, available: 0 };
     }
   }

@@ -154,7 +154,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--md-sys-color-on-surface);
-  font-family: 'Google Sans', 'Inter', system-ui, sans-serif;
+  font-family: 'Google Sans', Inter, system-ui, sans-serif;
 }
 
 @keyframes fadeIn {

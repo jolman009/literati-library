@@ -1,4 +1,5 @@
 // src/config/debug.js - Configuration Debugging Utilities
+/* eslint-disable no-console */
 import environmentConfig from './environment.js';
 
 /**

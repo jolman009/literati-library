@@ -65,25 +65,25 @@ class BrowserCompatibilityTester {
         try {
           eval('(async () => {})');
           return true;
-        } catch (e) { return false; }
+        } catch (_e) { return false; }
       },
       destructuring: () => {
         try {
           eval('const {a} = {a: 1}');
           return true;
-        } catch (e) { return false; }
+        } catch (_e) { return false; }
       },
       arrowFunctions: () => {
         try {
           eval('() => {}');
           return true;
-        } catch (e) { return false; }
+        } catch (_e) { return false; }
       },
       templateLiterals: () => {
         try {
           eval('`template`');
           return true;
-        } catch (e) { return false; }
+        } catch (_e) { return false; }
       },
       promises: () => typeof Promise !== 'undefined',
       fetch: () => typeof fetch !== 'undefined'
@@ -97,7 +97,7 @@ class BrowserCompatibilityTester {
         const passed = testFn();
         jsResults[testName] = passed;
         if (passed) passedTests++;
-      } catch (error) {
+      } catch (_error) {
         jsResults[testName] = false;
       }
     });
@@ -175,7 +175,7 @@ class BrowserCompatibilityTester {
         const supported = testFn();
         cssResults[testName] = supported;
         if (supported) passedCSS++;
-      } catch (error) {
+      } catch (_error) {
         cssResults[testName] = false;
       }
     });
@@ -223,7 +223,7 @@ class BrowserCompatibilityTester {
         performance.measure('compatibility-test', 'compatibility-test-start', 'compatibility-test-end');
         perfResults.performanceMeasurement = true;
         passedPerf++;
-      } catch (error) {
+      } catch (_error) {
         perfResults.performanceMeasurement = false;
       }
     }
@@ -256,7 +256,7 @@ class BrowserCompatibilityTester {
       localStorage.setItem('compat-test', 'test');
       storageResults.localStorage = localStorage.getItem('compat-test') === 'test';
       localStorage.removeItem('compat-test');
-    } catch (error) {
+    } catch (_error) {
       storageResults.localStorage = false;
     }
 
@@ -265,7 +265,7 @@ class BrowserCompatibilityTester {
       sessionStorage.setItem('compat-test', 'test');
       storageResults.sessionStorage = sessionStorage.getItem('compat-test') === 'test';
       sessionStorage.removeItem('compat-test');
-    } catch (error) {
+    } catch (_error) {
       storageResults.sessionStorage = false;
     }
 

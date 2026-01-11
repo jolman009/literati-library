@@ -177,7 +177,7 @@ class SyncManager {
    * Sync new note to backend
    */
   async syncCreateNote(payload) {
-    const { bookId, content, page, position, timestamp, noteId } = payload;
+    const { bookId, content, page, position, timestamp: _timestamp, noteId: _noteId } = payload;
 
     const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.createNote(token, {
@@ -195,7 +195,7 @@ class SyncManager {
    * Sync note update to backend
    */
   async syncUpdateNote(payload) {
-    const { noteId, content, timestamp } = payload;
+    const { noteId, content, timestamp: _timestamp } = payload;
 
     const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
     const data = await gamificationAPI.updateNote(token, noteId, {

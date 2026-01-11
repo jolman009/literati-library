@@ -87,7 +87,7 @@ export async function isOfflineReadyReady() {
   try {
     const storageCheck = await isStorageAvailable();
     return storageCheck.available && 'indexedDB' in window && 'serviceWorker' in navigator;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

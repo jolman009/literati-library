@@ -16,18 +16,18 @@ import './EnhancedCollectionsPage.css';
 
 const EnhancedCollectionsPage = ({
   books = [],
-  onBookUpdate,
-  user,
+  onBookUpdate: _onBookUpdate,
+  user: _user,
   className = ''
 }) => {
-  const { actualTheme } = useMaterial3Theme();
+  const { actualTheme: _actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   
   // collections books setup
   // State management
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [_selectedCollection, _setSelectedCollection] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [editingCollection, setEditingCollection] = useState(null);
   const [collectionDetailView, setCollectionDetailView] = useState(null);
@@ -35,11 +35,11 @@ const EnhancedCollectionsPage = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBooks, setSelectedBooks] = useState(new Set());
   const [batchMode, setBatchMode] = useState(false);
-  const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
+  const [_currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
   
   // Enhanced UX states
   const [operationLoading, setOperationLoading] = useState(false);
-  const [lastError, setLastError] = useState(null);
+  const [_lastError, _setLastError] = useState(null);
   const [actionFeedback, setActionFeedback] = useState(null);
 
   // Collection creation state
@@ -246,10 +246,10 @@ const EnhancedCollectionsPage = ({
         message: `${bookCount} book${bookCount > 1 ? 's' : ''} added to "${targetCollection?.name}"` 
       });
       setTimeout(() => setActionFeedback(null), 3000);
-    } catch (error) {
-      setActionFeedback({ 
-        type: 'error', 
-        message: 'Failed to add books to collection' 
+    } catch (_error) {
+      setActionFeedback({
+        type: 'error',
+        message: 'Failed to add books to collection'
       });
       setTimeout(() => setActionFeedback(null), 3000);
     } finally {
@@ -349,7 +349,7 @@ const EnhancedCollectionsPage = ({
         <div className="collection-book-preview-area">
           {collectionBooks.length > 0 ? (
             <div className="collection-book-grid">
-              {collectionBooks.slice(0, 8).map((book, index) => (
+              {collectionBooks.slice(0, 8).map((book) => (
                 <div
                   key={book.id}
                   className="collection-book-item"

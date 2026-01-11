@@ -9,19 +9,19 @@ import AchievementSystem from '../../components/gamification/AchievementSystem';
 import GoalSystem from '../../components/gamification/GoalSystem';
 import './EnhancedStatisticsPage.css';
 
-const EnhancedStatisticsPage = ({ books = [], user }) => {
-  const { actualTheme } = useMaterial3Theme();
+const EnhancedStatisticsPage = ({ books = [], user: _user }) => {
+  const { actualTheme: _actualTheme } = useMaterial3Theme();
   const navigate = useNavigate();
   
   // Safely access context with error handling
-  let gamificationStats = {};
+  let _gamificationStats = {};
   let trackAction = () => {};
   let getSessionHistory = () => [];
   
   try {
     const gamificationContext = useGamification();
     if (gamificationContext) {
-      gamificationStats = gamificationContext.stats || {};
+      _gamificationStats = gamificationContext.stats || {};
       trackAction = gamificationContext.trackAction || (() => {});
     }
   } catch (error) {
@@ -378,8 +378,8 @@ const EnhancedStatisticsPage = ({ books = [], user }) => {
     }
   ];
 
-  // Chart data for reading activity
-  const readingActivityData = {
+  // Chart data for reading activity (available for chart components)
+  const _readingActivityData = {
     labels: Object.keys(statistics.booksByMonth),
     datasets: [{
       label: 'Books Completed',

@@ -11,7 +11,7 @@ const CACHE_EXPIRY_DAYS = 30; // Remove cached books older than 30 days
  */
 export async function cacheBook(bookId, bookData) {
   try {
-    const { url, title, author, coverUrl, fileType, fileSize } = bookData;
+    const { url, title, author, coverUrl, fileType, fileSize: _fileSize } = bookData;
 
     console.warn(`📥 Caching book: ${title} (${bookId})`);
 

@@ -6,7 +6,7 @@ export function isChildMode() {
   try {
     const raw = localStorage.getItem(CHILD_MODE_KEY);
     return raw === 'true';
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }
@@ -15,7 +15,7 @@ export function setChildMode(enabled) {
   try {
     localStorage.setItem(CHILD_MODE_KEY, enabled ? 'true' : 'false');
     window.dispatchEvent(new CustomEvent('shelfquest:child-mode-changed', { detail: { enabled } }));
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
 }

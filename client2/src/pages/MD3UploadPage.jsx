@@ -22,7 +22,7 @@ const MD3UploadPage = () => {
   
   const [dragActive, setDragActive] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
+  const [_isUploading, setIsUploading] = useState(false);
   
   // State for file handling
   const [selectedFile, setSelectedFile] = useState(null);

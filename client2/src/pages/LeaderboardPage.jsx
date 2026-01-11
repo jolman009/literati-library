@@ -377,7 +377,7 @@ const LeaderboardPage = () => {
               )}
             </div>
           ) : (
-            leaderboard.map((entry, index) => {
+            leaderboard.map((entry) => {
               const rankStyle = getRankStyle(entry.rank);
               const isCurrentUser = entry.is_current_user;
               const followingIds = new Set(following.map(f => f.id));

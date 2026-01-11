@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { MD3Card, MD3Progress } from '../../components/Material3';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 
-const StatisticsPage = ({ books = [], readingSessions = [], user }) => {
+const StatisticsPage = ({ books = [], readingSessions = [], user: _user }) => {
   const { actualTheme } = useMaterial3Theme();
   const [stats, setStats] = useState({
     totalBooks: 0,
@@ -20,6 +20,7 @@ const StatisticsPage = ({ books = [], readingSessions = [], user }) => {
 
   useEffect(() => {
     calculateStats();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [books, readingSessions]);
 
   const calculateStats = () => {
@@ -94,7 +95,7 @@ const StatisticsPage = ({ books = [], readingSessions = [], user }) => {
       }
 
       let longestStreak = 1;
-      let currentStreak = 1;
+      let _currentStreak = 1;
       let tempStreak = 1;
 
       // Calculate streaks by checking consecutive days

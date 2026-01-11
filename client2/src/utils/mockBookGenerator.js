@@ -78,7 +78,7 @@ export const performanceTest = {
       console.warn(`🧪 Testing virtual scrolling with ${size} books...`);
       
       const startTime = performance.now();
-      const books = generateMockBooks(size);
+      const _books = generateMockBooks(size);
       const generationTime = performance.now() - startTime;
       
       // Test memory usage

@@ -37,7 +37,7 @@
   color: rgb(var(--_label-text-color));
   line-height: var(--md-sys-typescale-body-small-line-height);
   text-align: center;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Tooltip Variants */

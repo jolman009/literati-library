@@ -13,7 +13,7 @@ const EnhancedWelcomeComponent = ({
 
   // Always call the hook, but handle the case where the context might not be available
   const gamification = useGamification();
-  const gamificationStats = gamification?.stats || {};
+  const gamificationStats = useMemo(() => gamification?.stats || {}, [gamification?.stats]);
   const gamificationAvailable = !!gamification;
 
   // Enhanced analytics combining gamification and regular analytics
@@ -21,7 +21,7 @@ const EnhancedWelcomeComponent = ({
     const totalBooks = books.length;
     const readingBooks = books.filter(book => book.isReading).length;
     const completedBooks = books.filter(book => book.status === 'completed').length;
-    
+
     return {
       totalBooks,
       readingBooks,

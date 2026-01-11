@@ -127,7 +127,8 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     if (onPageChange && pageNumber) {
       onPageChange(pageNumber);
     }
-  }, [pageNumber, onPageChange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNumber]);
 
   // Check if we have a valid PDF file (after all hooks)
   if (!pdfFile) {
