@@ -13,6 +13,9 @@
   transition: background 0.3s ease;
   position: relative;
   z-index: 1; /* Ensure proper stacking below header */
+  /* iOS safe area support */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .dashboard-content {
@@ -23,11 +26,22 @@
   box-shadow: var(--md-sys-elevation-level5);
 }
 
-/* Mobile: remove forced side padding on dashboard container */
+/* Mobile: iOS safe area and padding adjustments */
 @media (max-width: 767px) {
   .dashboard-container {
     padding-left: 0 !important;
     padding-right: 0 !important;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); /* Account for bottom nav */
+    min-height: 100vh;
+  }
+
+  .dashboard-content {
+    padding: 16px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    border: none;
+    box-shadow: none;
   }
 }
 
@@ -1336,6 +1350,8 @@
 @media (max-width: 768px) {
   .dashboard-content {
     padding: 16px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
 
   .welcome-header {

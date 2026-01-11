@@ -104,11 +104,11 @@ const Login = () => {
             {/* Logo */}
             <div className="logo-container">
               <img
-                src="/ShelfQuest_logo_v2.png"
+                src="/Shelfquest_logo.png"
                 alt="ShelfQuest"
                 className="logo-image"
-                width="80"
-                height="80"
+                width="120"
+                height="120"
               />
             </div>
 
