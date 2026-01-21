@@ -31,6 +31,7 @@ export const BookCoverManager = ({ book, size = 'medium', onClick, className = '
     if (!coverUrl || coverUrl.includes('placeholder')) {
       fetchCover();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book.id]);
   
   const fetchCover = async () => {

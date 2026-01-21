@@ -111,7 +111,7 @@ const AchievementsPage = () => {
       .filter(a => unlockedAchievements.includes(a.id))
       .reduce((sum, a) => sum + a.points, 0);
   }, [unlockedAchievements]);
-  const totalPossiblePoints = getTotalPossiblePoints();
+  const _totalPossiblePoints = getTotalPossiblePoints();
 
   // Category stats
   const categoryStats = useMemo(() => {

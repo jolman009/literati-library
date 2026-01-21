@@ -38,7 +38,7 @@ export function testTokenRefresh() {
  * Quick authentication status check
  */
 export function checkAuthStatus() {
-  const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+  const _cookies = document.cookie.split(';').reduce((acc, cookie) => {
     const [key, value] = cookie.trim().split('=');
     acc[key] = value;
     return acc;

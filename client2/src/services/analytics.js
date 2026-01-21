@@ -168,7 +168,7 @@ class AnalyticsService {
       }).catch(() => {
         // web-vitals not available, skip
       });
-    } catch (error) {
+    } catch (_error) {
       // Fallback metrics using Performance Observer
       this.trackFallbackWebVitals();
     }
@@ -200,7 +200,7 @@ class AnalyticsService {
         this.trackPerformance('lcp', { value: lastEntry.startTime });
       });
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
-    } catch (error) {
+    } catch (_error) {
       // PerformanceObserver not fully supported
     }
   }

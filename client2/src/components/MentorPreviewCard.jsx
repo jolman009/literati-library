@@ -19,6 +19,7 @@ const MentorPreviewCard = () => {
 
   useEffect(() => {
     initializePreview();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const initializePreview = async () => {

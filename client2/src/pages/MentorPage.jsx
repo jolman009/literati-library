@@ -7,9 +7,9 @@ import API from '../config/api';
 import '../styles/mentor-page.css';
 
 const MentorPage = () => {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const { actualTheme } = useMaterial3Theme();
-  const [books, setBooks] = useState([]);
+  const [_books, setBooks] = useState([]);
   const [currentBook, setCurrentBook] = useState(null);
   const [loading, setLoading] = useState(true);
 

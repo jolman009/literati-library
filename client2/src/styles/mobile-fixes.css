@@ -57,7 +57,7 @@ nav:not([class*="login-"]),
 aside:not([class*="login-"]) {
   max-width: 100vw !important;
   overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 /* Prevent specific elements from causing overflow */
@@ -92,7 +92,7 @@ h5,
 h6,
 div {
   overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
   word-break: break-word !important;
   hyphens: auto !important;
 }
@@ -102,7 +102,7 @@ a,
 code,
 pre {
   overflow-wrap: break-word !important;
-  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
   word-break: break-all !important;
 }
 

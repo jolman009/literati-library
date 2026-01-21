@@ -41,7 +41,7 @@
   line-height: var(--md-sys-typescale-body-medium-line-height);
   flex: 1;
   min-width: 0;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .md3-snackbar__action {

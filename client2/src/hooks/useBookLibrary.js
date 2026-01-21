@@ -51,13 +51,13 @@ export const useBookLibrary = () => {
       // De-dupe by key + cooldown
       if (inFlight.current) {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('📚 loadBooks ignored (in flight)', { key });
+          console.warn('📚 loadBooks ignored (in flight)', { key });
         }
         return;
       }
       if (lastKeyRef.current === key && now - lastAtRef.current < COOLDOWN_MS) {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('📚 loadBooks ignored (cooldown)', { key });
+          console.warn('📚 loadBooks ignored (cooldown)', { key });
         }
         return;
       }

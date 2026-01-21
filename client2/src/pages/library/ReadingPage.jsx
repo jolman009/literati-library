@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './ReadingPage.module.css';
 
 const ReadingPage = ({ books = [], onBookAction }) => {
-  const { actualTheme } = useMaterial3Theme();
+  const { actualTheme: _actualTheme } = useMaterial3Theme();
   const {
     activeSession,
     isPaused,
@@ -18,7 +18,7 @@ const ReadingPage = ({ books = [], onBookAction }) => {
   const navigate = useNavigate();
   const [currentlyReadingBooks, setCurrentlyReadingBooks] = useState([]);
   const [recentSessions, setRecentSessions] = useState([]);
-  const [sessionHistory, setSessionHistory] = useState([]);
+  const [_sessionHistory, setSessionHistory] = useState([]);
   const [todayStats, setTodayStats] = useState({
     timeRead: 0,
     pagesRead: 0,

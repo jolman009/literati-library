@@ -332,8 +332,8 @@ class MobileResponsivenessTester {
       const fontSize = parseFloat(computedStyle.fontSize);
       const lineHeight = parseFloat(computedStyle.lineHeight) || fontSize * 1.2;
       const fontWeight = computedStyle.fontWeight;
-      const color = computedStyle.color;
-      const backgroundColor = computedStyle.backgroundColor;
+      const _color = computedStyle.color;
+      const _backgroundColor = computedStyle.backgroundColor;
       
       // Check minimum font size for mobile (16px recommended)
       const isReadableSize = fontSize >= 14; // Minimum acceptable

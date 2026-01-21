@@ -20,6 +20,7 @@ const PointsHistory = ({ limit = 10 }) => {
       return;
     }
     fetchHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit, isAuthenticated]);
 
   // Local fallback mapping for display label/icon
@@ -70,6 +71,7 @@ const PointsHistory = ({ limit = 10 }) => {
       window.removeEventListener('gamificationUpdate', handleGamificationUpdate);
       console.warn('👋 PointsHistory: Stopped listening for gamificationUpdate events');
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
 
   const fetchHistory = async () => {
