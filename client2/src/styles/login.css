@@ -59,11 +59,14 @@
   position: relative;
   z-index: 10;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: 100vh;
-  padding: 3rem 2rem;
+  padding: 2rem;
+  padding-top: calc(2rem + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
   animation: slideInUp 0.6s cubic-bezier(0.2, 0, 0, 1);
+  overflow-y: auto;
 }
 
 @keyframes slideInUp {
@@ -171,6 +174,7 @@
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+  transform: scale(1.4);
 }
 
 .brand-title {
@@ -265,7 +269,7 @@
 
 .login-card-content {
   padding: 2rem;
-  width: px;
+  width: 100%;
 }
 
 /* ================================================
@@ -598,6 +602,8 @@
 @media (max-width: 640px) {
   .login-container {
     padding: 1.5rem 1rem;
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   .login-content-wrapper {
@@ -615,8 +621,13 @@
   }
 
   .logo-container {
-    width: 4rem;
-    height: 4rem;
+    width: 5rem;
+    height: 5rem;
+    overflow: hidden;
+  }
+
+  .logo-image {
+    transform: scale(1.4);
   }
 
   .login-button-primary {

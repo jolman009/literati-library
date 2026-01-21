@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useDrivePicker from 'react-google-drive-picker';
 import { useAuth } from '../../contexts/AuthContext';
 import { config } from '../../config/environment';
@@ -9,7 +9,7 @@ import './GoogleDriveUploader.css';
 // Or use the hook implementation below if you prefer fewer dependencies.
 
 const GoogleDriveUploader = ({ onUploadSuccess, onUploadStart, onError }) => {
-  const [openPicker, authResponse] = useDrivePicker();
+  const [openPicker] = useDrivePicker();
   const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -30,7 +30,7 @@ const GoogleDriveUploader = ({ onUploadSuccess, onUploadStart, onError }) => {
       customScopes: ['https://www.googleapis.com/auth/drive.file'],
       callbackFunction: (data) => {
         if (data.action === 'cancel') {
-          console.log('User clicked cancel/close button');
+          // User cancelled - no action needed
         }
         if (data.action === 'picked') {
           processPickedFile(data.docs[0]);

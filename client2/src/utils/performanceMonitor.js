@@ -261,10 +261,12 @@ class ShelfQuestPerformanceMonitor {
     
     // Real-time logging for debugging
     if (interaction.exceededThreshold) {
+      // eslint-disable-next-line no-console
       console.group(`⚠️ Performance Warning: ${interaction.type}`);
       console.warn('Duration:', `${interaction.duration.toFixed(1)}ms`);
       console.warn('Threshold:', `${this.getThresholdForType(interaction.type)}ms`);
       console.warn('Details:', interaction);
+      // eslint-disable-next-line no-console
       console.groupEnd();
     }
 
@@ -398,10 +400,12 @@ class ShelfQuestPerformanceMonitor {
 
   // Console logging with performance data
   logPerformanceReport() {
+    // eslint-disable-next-line no-console
     console.group('📊 ShelfQuest Performance Report');
     console.warn('Current Metrics:', this.metrics);
     console.warn('Recent Interactions:', this.interactions.slice(-10));
     console.warn('Summary:', this.getPerformanceSummary());
+    // eslint-disable-next-line no-console
     console.groupEnd();
   }
 

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 export const useOptionalGamification = () => {
-  const [gamificationContext, setGamificationContext] = useState({
+  const [gamificationContext] = useState({
     trackAction: () => Promise.resolve(),
   });
 

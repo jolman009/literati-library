@@ -704,7 +704,7 @@
   .activeSessionCard,
   .todayStatsCard,
   .sessionHistoryCard {
-    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }
 

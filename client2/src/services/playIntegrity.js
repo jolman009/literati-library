@@ -95,7 +95,7 @@ export async function verifyIntegrity() {
 
   try {
     // Step 1: Get a nonce from the backend
-    console.log('[PlayIntegrity] Requesting nonce from backend...');
+    console.warn('[PlayIntegrity] Requesting nonce from backend...');
     const nonceResponse = await API.post('/api/integrity/nonce');
     const { nonce } = nonceResponse.data;
 
@@ -107,7 +107,7 @@ export async function verifyIntegrity() {
       };
     }
 
-    console.log('[PlayIntegrity] Nonce received, requesting token from Android...');
+    console.warn('[PlayIntegrity] Nonce received, requesting token from Android...');
 
     // Step 2: Request integrity token from Android
     const tokenResultJson = window.IntegrityBridge.requestTokenSync(nonce);
@@ -122,7 +122,7 @@ export async function verifyIntegrity() {
       };
     }
 
-    console.log('[PlayIntegrity] Token received, sending to backend for verification...');
+    console.warn('[PlayIntegrity] Token received, sending to backend for verification...');
 
     // Step 3: Send token to backend for verification
     const verifyResponse = await API.post('/api/integrity/verify', {
@@ -133,7 +133,7 @@ export async function verifyIntegrity() {
     const { verified, verdict, error, code } = verifyResponse.data;
 
     if (verified) {
-      console.log('[PlayIntegrity] Verification successful');
+      console.warn('[PlayIntegrity] Verification successful');
       return {
         verified: true,
         verdict

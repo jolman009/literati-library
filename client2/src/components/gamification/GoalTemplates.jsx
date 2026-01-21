@@ -5,9 +5,7 @@ import {
   GOAL_TEMPLATES,
   GOAL_CATEGORIES,
   getPopularTemplates,
-  getTemplatesByCategory,
-  getDifficultyColor,
-  getCategoryIcon
+  getDifficultyColor
 } from '../../data/goalTemplates';
 import './GoalTemplates.css';
 

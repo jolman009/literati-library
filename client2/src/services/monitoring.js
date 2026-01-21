@@ -299,7 +299,7 @@ class MonitoringService {
 
     if (!ErrorBoundary) {
       // Fallback error boundary
-      return ({ children, fallback }) => {
+      return ({ children: _children, fallback }) => {
         class FallbackErrorBoundary extends React.Component {
           constructor(props) {
             super(props);

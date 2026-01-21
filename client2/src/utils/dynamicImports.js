@@ -7,7 +7,7 @@ import { lazy } from 'react';
 
 // Error fallback component factory
 const createErrorFallback = (componentName) => {
-  return function ErrorFallback({ error, retry }) {
+  return function ErrorFallback({ error: _error, retry }) {
     return (
       <div className="dynamic-import-error">
         <div className="error-content">
@@ -139,6 +139,7 @@ export const analyzeBundleSize = () => {
       cached: file.transferSize === 0
     }));
 
+    // eslint-disable-next-line no-console
     console.table(bundleAnalysis);
     return bundleAnalysis;
   }

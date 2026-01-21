@@ -150,6 +150,7 @@ export const useOfflineState = () => {
     if (isOnline) {
       processOfflineQueue();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline]);
 
   return {

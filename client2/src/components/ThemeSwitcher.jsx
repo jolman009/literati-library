@@ -108,6 +108,7 @@ const ThemeSwitcher = () => {
     } else {
       setActiveTheme('classic');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update theme when mode changes (light/dark)

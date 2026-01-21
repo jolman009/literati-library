@@ -20,10 +20,10 @@ const config: CapacitorConfig = {
     backgroundColor: '#FFFBFE',
   },
 
-  // Server configuration for development
+  // Server configuration
   server: {
-    // For development: uncomment to use live reload from your dev server
-    // url: 'http://192.168.1.x:5173', // Replace with your machine's local IP
+    // For development: uncomment to use live reload from dev server
+    // url: 'http://localhost:5173',
     // cleartext: true,
 
     // Allow navigation to your API server

@@ -172,7 +172,7 @@ class AIKeyManager {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -189,7 +189,7 @@ class AIKeyManager {
         }
       });
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -202,7 +202,7 @@ class AIKeyManager {
       // Note: Anthropic doesn't have a simple validation endpoint
       // This is a basic format check - real validation happens on first use
       return apiKey.startsWith('sk-ant-api') && apiKey.length > 95;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -225,7 +225,7 @@ class AIKeyManager {
         })
       });
       return response.ok || response.status === 400; // 400 might indicate valid auth but bad request
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -235,7 +235,7 @@ class AIKeyManager {
   /**
    * Verify API key before making AI requests
    */
-  async authenticateRequest(provider, operation = 'general') {
+  async authenticateRequest(provider, _operation = 'general') {
     if (!this.hasValidKey(provider)) {
       throw new Error(`No valid API key found for ${provider}. Please configure your API key first.`);
     }

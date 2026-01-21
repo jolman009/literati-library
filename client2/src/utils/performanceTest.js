@@ -1,5 +1,6 @@
 // src/utils/performanceTest.js
 // Performance testing utilities
+/* eslint-disable no-console */
 
 import { measureCustomMetric } from './webVitals';
 

@@ -387,12 +387,12 @@ html {
 
   .legal-section h2 {
     border-bottom: 1px solid #000;
-    page-break-after: avoid;
+    break-after: avoid;
   }
 
   .legal-section h3,
   .legal-section h4 {
-    page-break-after: avoid;
+    break-after: avoid;
   }
 
   .legal-highlight,

@@ -29,7 +29,7 @@ export const syncPendingNotes = async () => {
     for (const pendingNote of pendingNotes) {
       try {
         // Remove our tracking fields before sending to API
-        const { timestamp, status, ...noteData } = pendingNote;
+        const { timestamp, status: _status, ...noteData } = pendingNote;
 
         const response = await API.post('/notes', noteData, {
           timeout: 10000

@@ -129,9 +129,11 @@ const SignUpPage = () => {
           <div className="md3-signup-logo-container">
             <div className="md3-signup-logo-circle">
               <img
-                src="/ShelfQuest_logo_favicon.png"
+                src="/Shelfquest_logo.png"
                 alt="ShelfQuest"
                 className="md3-signup-logo"
+                width="80"
+                height="80"
               />
             </div>
             <span className="md3-signup-brand">ShelfQuest</span>
