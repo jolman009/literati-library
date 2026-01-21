@@ -11,21 +11,94 @@
 
 .pdf-controls-bar {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
+  justify-content: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   background: var(--md-sys-color-surface);
+  flex-wrap: wrap;
+}
+
+/* Control groups for page nav and zoom */
+.pdf-controls-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pdf-controls-group button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 8px;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.pdf-controls-group button:hover:not(:disabled) {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.pdf-controls-group button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pdf-page-indicator,
+.pdf-zoom-indicator {
+  min-width: 60px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.pdf-zoom-indicator {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.pdf-zoom-indicator:hover {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.pdf-fit-button {
+  font-size: 12px !important;
+  padding: 0 8px !important;
+  min-width: auto !important;
+}
+
+/* Zoom controls separator */
+.pdf-zoom-controls {
+  padding-left: 16px;
+  border-left: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .pdf-content-area {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   /* Leave room for the floating reader topbar so PDF controls are not covered */
   padding-top: calc(64px + env(safe-area-inset-top, 0px));
   padding-left: 380px;  /* Space for floating notepad on left */
   padding-right: 100px; /* Space for timer on right */
   box-sizing: border-box;
+}
+
+/* When zoomed in, allow scrolling/panning */
+.pdf-content-area.pdf-zoomed {
+  overflow: auto;
+  cursor: grab;
+}
+
+.pdf-content-area.pdf-zoomed:active {
+  cursor: grabbing;
 }
 
 .pdf-page-container {
@@ -34,8 +107,20 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 900px;
+  min-height: 100%;
   margin: 0 auto;
+}
+
+/* When not zoomed, constrain to viewport */
+.pdf-content-area:not(.pdf-zoomed) .pdf-page-container {
+  max-width: 900px;
+}
+
+/* When zoomed, allow content to expand */
+.pdf-content-area.pdf-zoomed .pdf-page-container {
+  width: fit-content;
+  min-width: 100%;
+  padding: 20px;
 }
 
 .pdf-click-layer {
@@ -45,12 +130,21 @@
   justify-content: center;
 }
 
+/* Disable click-to-navigate cursor when zoomed */
+.pdf-content-area.pdf-zoomed .pdf-click-layer {
+  cursor: inherit;
+}
+
 /* Tablet and smaller - reduce padding as widgets may collapse */
 @media (max-width: 1024px) {
   .pdf-content-area {
     padding-top: calc(56px + env(safe-area-inset-top, 0px));
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .pdf-zoom-controls {
+    padding-left: 12px;
   }
 }
 
@@ -60,5 +154,51 @@
     padding-top: calc(52px + env(safe-area-inset-top, 0px));
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  .pdf-controls-bar {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .pdf-controls-group {
+    gap: 4px;
+  }
+
+  .pdf-controls-group button {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    font-size: 14px;
+  }
+
+  .pdf-page-indicator,
+  .pdf-zoom-indicator {
+    min-width: 50px;
+    font-size: 12px;
+  }
+
+  .pdf-zoom-controls {
+    padding-left: 8px;
+    border-left: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  .pdf-fit-button {
+    font-size: 10px !important;
+  }
+}
+
+/* Very small screens - stack controls vertically */
+@media (max-width: 400px) {
+  .pdf-controls-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pdf-zoom-controls {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 8px;
+    border-top: 1px solid var(--md-sys-color-outline-variant);
   }
 }
