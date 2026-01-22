@@ -1,5 +1,5 @@
 // src/components/EpubReader.jsx
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { X, Download, ChevronLeft, ChevronRight, List, Minus, Plus } from "lucide-react";
 import ePub from "epubjs";
 import "../styles/epub-reader.css";
@@ -11,27 +11,36 @@ import "../styles/epub-reader.css";
  *
  * Props:
  * - book: { title, author, file_url, id, ... }
+ * - token: string (optional; for Authorization header when fetching EPUB file)
  * - onClose: () => void
  * - onLocationChange: ({ cfi: string, percent?: number }) => void
  * - initialLocation: string | null  // epubcfi(...) from query or a saved note
  */
-const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
+const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initialLocation }) => {
   // Use proxy endpoint for EPUB files to ensure proper authentication and CORS
   // Use environment config for consistent API URL across environments
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  const epubUrl = `${apiBaseUrl}/books/${book?.id}/file`;
+  // Memoize epubUrl to prevent recalculation on every render
+  const epubUrl = useMemo(() => {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    return `${apiBaseUrl}/books/${book?.id}/file`;
+  }, [book?.id]);
 
   console.warn('📖 EpubReader - Initializing paginated EPUB.js reader:', {
     bookTitle: book?.title,
     bookId: book?.id,
     proxy_epub_url: epubUrl,
-    initialLocation
+    initialLocation,
+    hasToken: !!token
   });
 
   const viewerRef = useRef(null);
   const renditionRef = useRef(null);
   const bookRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
+
+  // Use ref for callback to prevent re-initialization when callback identity changes
+  const onLocationChangeRef = useRef(onLocationChange);
+  onLocationChangeRef.current = onLocationChange;
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,15 +79,21 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       }
     }, 30000); // 30 second timeout
 
-    // Fetch the file with credentials, then load into EPUB.js
-    console.warn('🔧 Fetching EPUB file with credentials...');
+    // Fetch the file with Authorization header (Bearer token) for authentication
+    console.warn('🔧 Fetching EPUB file with Authorization header...');
+
+    // Build headers - always include Accept, add Authorization if token is available
+    const fetchHeaders = {
+      'Accept': 'application/epub+zip'
+    };
+    if (token) {
+      fetchHeaders['Authorization'] = `Bearer ${token}`;
+    }
 
     fetch(epubUrl, {
       method: 'GET',
-      credentials: 'include', // Send cookies for authentication
-      headers: {
-        'Accept': 'application/epub+zip'
-      }
+      credentials: 'include', // Also send cookies as fallback
+      headers: fetchHeaders
     })
     .then(response => {
       if (!response.ok) {
@@ -174,9 +189,9 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
           }
         }
 
-        // Notify parent of location change for bookmarks/notes
-        if (onLocationChange && location.start.cfi) {
-          onLocationChange({
+        // Notify parent of location change for bookmarks/notes (use ref to avoid re-init)
+        if (onLocationChangeRef.current && location.start.cfi) {
+          onLocationChangeRef.current({
             cfi: location.start.cfi,
             percent: location.start.percentage ? Math.round(location.start.percentage * 100) : undefined
           });
@@ -231,7 +246,9 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       bookRef.current?.destroy();
       console.warn('🧹 EPUB reader cleaned up');
     };
-  }, [epubUrl, initialLocation, onLocationChange]);
+  // Note: onLocationChange is accessed via ref to prevent re-initialization
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [epubUrl, initialLocation, token]);
 
   // UNIFIED NAVIGATION - both buttons and keyboard use epub.js next()/prev()
   const handleNext = useCallback(() => {
@@ -465,6 +482,9 @@ const EpubReader = ({ book, onClose, onLocationChange, initialLocation }) => {
       </div>
     </div>
   );
-};
+});
+
+// Display name for React DevTools
+EpubReader.displayName = 'EpubReader';
 
 export default EpubReader;

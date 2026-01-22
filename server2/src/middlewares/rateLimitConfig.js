@@ -8,6 +8,28 @@ import slowDown from 'express-slow-down';
  */
 
 // =====================================================
+// Helper: Check if request is from localhost (development)
+// =====================================================
+
+/**
+ * Check if request is from localhost in development mode
+ * Handles IPv4, IPv6, and IPv4-mapped IPv6 addresses
+ */
+const isLocalhostDev = (req) => {
+  if (process.env.NODE_ENV !== 'development') {
+    return false;
+  }
+  const ip = req.ip || '';
+  return (
+    ip === '::1' ||
+    ip === '127.0.0.1' ||
+    ip === 'localhost' ||
+    ip === '::ffff:127.0.0.1' ||
+    ip.startsWith('::ffff:127.')
+  );
+};
+
+// =====================================================
 // Rate Limit Configurations
 // =====================================================
 
@@ -26,12 +48,7 @@ export const generalRateLimit = rateLimit({
   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
   legacyHeaders: false, // Disable `X-RateLimit-*` headers
   // Skip rate limiting for localhost in development
-  skip: (req) => {
-    if (process.env.NODE_ENV === 'development') {
-      return req.ip === '::1' || req.ip === '127.0.0.1' || req.ip === 'localhost';
-    }
-    return false;
-  },
+  skip: isLocalhostDev,
   handler: (req, res) => {
     console.warn(`⚠️ Rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
     res.status(429).json({
@@ -57,6 +74,8 @@ export const authRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Don't count successful requests
+  // Skip rate limiting for localhost in development
+  skip: isLocalhostDev,
   handler: (req, res) => {
     console.warn(`🔐 Auth rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
     res.status(429).json({
@@ -82,6 +101,8 @@ export const uploadRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for localhost in development
+  skip: isLocalhostDev,
   handler: (req, res) => {
     console.warn(`📤 Upload rate limit exceeded for IP: ${req.ip}`);
     res.status(429).json({
@@ -107,6 +128,8 @@ export const apiRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for localhost in development
+  skip: isLocalhostDev,
   handler: (req, res) => {
     console.warn(`🔌 API rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
     res.status(429).json({
@@ -131,6 +154,8 @@ export const gamificationRateLimit = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for localhost in development
+  skip: isLocalhostDev,
   handler: (req, res) => {
     console.warn(`🎮 Gamification rate limit exceeded for IP: ${req.ip}`);
     res.status(429).json({
