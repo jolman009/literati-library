@@ -18,8 +18,8 @@ const ReadBook = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();              // <-- for deep-link ?cfi=...
 
-  // Get auth context
-  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  // Get auth context (including token for file fetching)
+  const { user, loading: authLoading, isAuthenticated, token } = useAuth();
   const { activeSession, hasActiveSession, stopReadingSession, startReadingSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
   const [stopping, setStopping] = useState(false);
@@ -171,6 +171,15 @@ const ReadBook = () => {
       setCurrentPage(1);
     }
   }, [book, currentPage]);
+
+  // Memoized callbacks to prevent EPUB/PDF reader re-initialization on every render
+  const handleLocationChange = useCallback((loc) => {
+    setCurrentLocator(loc);
+  }, []);
+
+  const handlePageChange = useCallback((p) => {
+    setCurrentPage(p);
+  }, []);
 
   const handleClose = async () => {
     if (hasActiveSession) {
@@ -361,10 +370,11 @@ const ReadBook = () => {
 
           <ReadestReader
             book={book}
+            token={token}
             onClose={handleClose}
-            onLocationChange={(loc) => setCurrentLocator(loc)} // EPUB
+            onLocationChange={handleLocationChange}  // EPUB - memoized to prevent re-init
             initialLocation={initialLocation}
-            onPageChange={(p) => setCurrentPage(p)}            // ✅ PDF
+            onPageChange={handlePageChange}          // PDF - memoized to prevent re-init
           />
 
           {/* Notes: BottomSheet on mobile, Sidebar on desktop */}

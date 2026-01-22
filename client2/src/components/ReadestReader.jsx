@@ -37,6 +37,7 @@ const ReadestReader = ({
     return (
       <EpubReader
         book={book}
+        token={token}
         onClose={onClose}
         onLocationChange={onLocationChange}
         initialLocation={initialLocation}
