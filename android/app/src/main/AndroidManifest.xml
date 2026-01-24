@@ -32,9 +32,10 @@
 
         <!-- Splash Screen Activity -->
         <!-- exported=true is REQUIRED for launcher activities (MAIN/LAUNCHER intent) -->
+        <!-- nosemgrep: java.android.security.exported_activity.exported_activity -->
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
-            android:exported="true" <!-- nosemgrep: java.android.security.exported_activity.exported_activity -->
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ShelfQuest.Splash">
 
