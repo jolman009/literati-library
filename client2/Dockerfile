@@ -7,15 +7,15 @@ RUN corepack enable && corepack prepare pnpm@8.15.6 --activate
 # Set working directory (repo root as build context)
 WORKDIR /app
 
-# Copy workspace metadata and client package definition
+# Copy workspace metadata and client package definition (context must be repo root)
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
-COPY client2/package.json client2/package.json
+COPY ./client2/package.json ./client2/package.json
 
 # Install only client production deps using workspace lockfile
 RUN pnpm install --frozen-lockfile --filter client2...
 
 # Copy client source
-COPY client2/ ./client2
+COPY ./client2 ./client2
 
 # Switch to client workspace
 WORKDIR /app/client2
