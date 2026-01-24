@@ -17,12 +17,12 @@ from config.sentry_config import (
 initialize_sentry()
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Annotated, Optional
 
 import google.generativeai as genai
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, conint, constr
+from pydantic import BaseModel, Field
 
 # Configure the Gemini API with your key
 # Make sure you have a GOOGLE_API_KEY in your .env file
@@ -36,8 +36,8 @@ except Exception as e:
 
 # This defines the expected input data for our API endpoint
 class Note(BaseModel):
-    text: constr(min_length=1)
-    max_length: Optional[conint(gt=0)] = None
+    text: Annotated[str, Field(min_length=1)]
+    max_length: Optional[Annotated[int, Field(gt=0)]] = None
 
 
 # Initialize our FastAPI application
