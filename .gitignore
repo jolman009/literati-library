@@ -39,6 +39,12 @@ client2/build/
 server2/dist/
 server2/build/
 
+# Build artifacts and reports
+e2e-test-results.log
+lint-report.txt
+**/lint-report.txt
+**/e2e-test-results.log
+
 # Logs
 *.log
 npm-debug.log*
