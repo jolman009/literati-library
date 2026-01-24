@@ -1,9 +1,17 @@
 import winston from 'winston';
+import LokiTransport from 'winston-loki';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, '../../logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
 // Custom format for structured logging
 const logFormat = winston.format.combine(
@@ -38,9 +46,6 @@ const consoleFormat = winston.format.combine(
     return logMessage;
   })
 );
-
-// Create logs directory if it doesn't exist
-const logsDir = path.join(__dirname, '../../logs');
 
 // Configure transports based on environment
 const createTransports = () => {
@@ -88,6 +93,36 @@ const createTransports = () => {
         maxFiles: 10,
       })
     );
+  }
+
+  // Loki transport for Grafana monitoring stack
+  // Enable in production or explicitly via ENABLE_LOKI=true
+  if (environment === 'production' || process.env.ENABLE_LOKI === 'true') {
+    const lokiHost = process.env.LOKI_HOST || 'http://localhost:3100';
+
+    transports.push(
+      new LokiTransport({
+        host: lokiHost,
+        labels: {
+          app: 'shelfquest',
+          service: 'server',
+          environment: environment
+        },
+        json: true,
+        format: winston.format.json(),
+        replaceTimestamp: true,
+        onConnectionError: (err) => {
+          console.error('Error connecting to Loki:', err.message);
+        },
+        // Batching configuration for performance
+        batching: true,
+        interval: 5, // seconds
+        // Optional authentication
+        basicAuth: process.env.LOKI_BASIC_AUTH || undefined,
+      })
+    );
+
+    console.log(`📡 Loki transport enabled: ${lokiHost}`);
   }
 
   return transports;
