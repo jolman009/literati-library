@@ -158,13 +158,13 @@ services:
       - monitoring
 
   # cAdvisor - Container Metrics
-  # nosemgrep: yaml.docker-compose.security.privileged-service.privileged-service
   # cAdvisor REQUIRES privileged mode to access host system metrics (/sys, /proc, cgroups)
   # This is the standard deployment method: https://github.com/google/cadvisor
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: shelfquest-cadvisor
     restart: unless-stopped
+    # nosemgrep: yaml.docker-compose.security.privileged-service.privileged-service
     privileged: true  # Required for host metrics access
     volumes:
       - /:/rootfs:ro
