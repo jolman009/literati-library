@@ -1,80 +1,7 @@
-// src/middleware/security.js
-import rateLimit from 'express-rate-limit';
-import slowDown from 'express-slow-down';
+// src/middlewares/security.js
+// Consolidated security middleware (rate limiting moved to rateLimitConfig.js)
 import helmet from 'helmet';
 import morgan from 'morgan';
-
-// =====================================================
-// Rate Limiting Configuration
-// =====================================================
-
-// General API rate limiting
-export const generalRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP, please try again later.',
-    retryAfter: '15 minutes'
-  },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  skip: (req) => {
-    // Skip rate limiting for health checks
-    return req.path === '/health' || req.path === '/ping';
-  }
-});
-
-// Strict rate limiting for authentication endpoints
-export const authRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 auth requests per windowMs
-  message: {
-    error: 'Too many authentication attempts, please try again later.',
-    retryAfter: '15 minutes',
-    hint: 'For security, authentication requests are limited.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: true, // Don't count successful requests
-});
-
-// Rate limiting for file uploads
-export const uploadRateLimit = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // limit each IP to 20 uploads per hour
-  message: {
-    error: 'Too many file uploads, please try again later.',
-    retryAfter: '1 hour'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Rate limiting for gamification actions (prevent point farming)
-export const gamificationRateLimit = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 50, // limit each IP to 50 gamification actions per 5 minutes
-  message: {
-    error: 'Too many gamification actions, please slow down.',
-    retryAfter: '5 minutes'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// =====================================================
-// Slow Down Middleware (Progressive delays)
-// =====================================================
-
-export const speedLimiter = slowDown({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  delayAfter: 50, // allow 50 requests per 15 minutes at full speed
-  delayMs: () => 100, // add 100ms delay per request after delayAfter
-  maxDelayMs: 2000, // max delay of 2 seconds
-  skip: (req) => {
-    return req.path === '/health' || req.path === '/ping';
-  }
-});
 
 // =====================================================
 // Security Headers with Helmet
@@ -237,17 +164,11 @@ export const ipWhitelist = (req, res, next) => {
 
 // =====================================================
 // Export all middleware as a security suite
+// Note: Rate limiting is now in rateLimitConfig.js
 // =====================================================
 
 export const securitySuite = {
   headers: securityHeaders,
-  rateLimit: {
-    general: generalRateLimit,
-    auth: authRateLimit,
-    upload: uploadRateLimit,
-    gamification: gamificationRateLimit
-  },
-  slowDown: speedLimiter,
   logging: requestLogger,
   utils: {
     fileUpload: fileUploadSecurity,
