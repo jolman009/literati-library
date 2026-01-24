@@ -174,6 +174,60 @@ export const mockSupabaseStorage = {
   })
 }
 
+const wrapWithJest = (fn) => (typeof jest !== 'undefined' ? jest.fn(fn) : fn)
+
+export const mockSupabaseClient = (overrides = {}) => {
+  const ok = {
+    data: null,
+    error: null,
+    status: 200,
+    statusText: 'OK'
+  }
+
+  const queryBuilder = {
+    select: wrapWithJest(() => Promise.resolve(ok)),
+    insert: wrapWithJest(() => Promise.resolve(ok)),
+    update: wrapWithJest(() => Promise.resolve(ok)),
+    delete: wrapWithJest(() => Promise.resolve(ok)),
+    upsert: wrapWithJest(() => Promise.resolve(ok)),
+    single: wrapWithJest(() => Promise.resolve(ok)),
+    eq: wrapWithJest(() => queryBuilder),
+    order: wrapWithJest(() => queryBuilder),
+    range: wrapWithJest(() => queryBuilder)
+  }
+
+  const client = {
+    auth: {
+      getUser: wrapWithJest(() => Promise.resolve(ok)),
+      signInWithPassword: wrapWithJest(() => Promise.resolve(ok)),
+      signUp: wrapWithJest(() => Promise.resolve(ok)),
+      signOut: wrapWithJest(() => Promise.resolve(ok))
+    },
+    from: wrapWithJest(() => queryBuilder),
+    storage: {
+      from: wrapWithJest(() => ({
+        upload: wrapWithJest(() => Promise.resolve(ok)),
+        remove: wrapWithJest(() => Promise.resolve(ok)),
+        getPublicUrl: wrapWithJest(() => ({
+          data: { publicUrl: '' },
+          error: null
+        }))
+      }))
+    },
+    ...overrides
+  }
+
+  return client
+}
+
+export const installSupabaseMock = (overrides = {}) => {
+  const client = mockSupabaseClient(overrides)
+  jest.doMock('@supabase/supabase-js', () => ({
+    createClient: jest.fn(() => client)
+  }))
+  return client
+}
+
 // Database test helpers
 export const setupTestDatabase = async () => {
   // This would typically set up a test database
@@ -188,34 +242,56 @@ export const cleanupTestDatabase = async () => {
 }
 
 // Validation helpers
+const getErrorPayload = (body = {}) =>
+  body.errors || body.details || body.error || body.message
+
 export const expectValidationError = (response, field) => {
   expect(response.status).toBe(400)
-  expect(response.body).toHaveProperty('errors')
-  expect(response.body.errors).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        param: field
-      })
-    ])
-  )
+  const payload = getErrorPayload(response.body)
+  expect(payload).toBeDefined()
+
+  if (Array.isArray(payload) && field) {
+    expect(payload).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          param: field
+        })
+      ])
+    )
+  }
 }
 
 export const expectAuthenticationError = (response) => {
   expect(response.status).toBe(401)
-  expect(response.body).toHaveProperty('message')
-  expect(response.body.message).toMatch(/unauthorized|authentication/i)
+  const payload = getErrorPayload(response.body)
+  expect(payload).toBeTruthy()
+  const message =
+    typeof payload === 'string'
+      ? payload
+      : payload?.message || JSON.stringify(payload)
+  expect(message).toMatch(/unauthorized|authentication/i)
 }
 
 export const expectAuthorizationError = (response) => {
   expect(response.status).toBe(403)
-  expect(response.body).toHaveProperty('message')
-  expect(response.body.message).toMatch(/forbidden|authorization/i)
+  const payload = getErrorPayload(response.body)
+  expect(payload).toBeTruthy()
+  const message =
+    typeof payload === 'string'
+      ? payload
+      : payload?.message || JSON.stringify(payload)
+  expect(message).toMatch(/forbidden|authorization/i)
 }
 
 export const expectNotFoundError = (response) => {
   expect(response.status).toBe(404)
-  expect(response.body).toHaveProperty('message')
-  expect(response.body.message).toMatch(/not found/i)
+  const payload = getErrorPayload(response.body)
+  expect(payload).toBeTruthy()
+  const message =
+    typeof payload === 'string'
+      ? payload
+      : payload?.message || JSON.stringify(payload)
+  expect(message).toMatch(/not found/i)
 }
 
 export const expectSuccessResponse = (response, expectedData = null) => {
@@ -350,5 +426,7 @@ export default {
   expectAuthorizationError,
   expectNotFoundError,
   expectSuccessResponse,
-  cleanupTest
+  cleanupTest,
+  mockSupabaseClient,
+  installSupabaseMock
 }

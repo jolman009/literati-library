@@ -89,7 +89,8 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
           POSTGRES_DB: test_db
         options: >-
           --health-cmd pg_isready
@@ -121,7 +122,7 @@ jobs:
       - name: Setup test environment
         run: |
           cp .env.test .env
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> .env
+          echo "DATABASE_URL=postgresql://root:root@localhost:5432/test_db" >> .env
 
       - name: Run tests with coverage
         run: pnpm run test:coverage
