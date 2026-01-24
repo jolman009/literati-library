@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render, cleanupTest, createMockUser } from '../test-utils';
-import LibraryPage from '../pages/LibraryPage';
+import LibraryPage from '../pages/LibraryPageV2';
 import { useAuth } from '../contexts/AuthContext';
 
 // Mock external dependencies

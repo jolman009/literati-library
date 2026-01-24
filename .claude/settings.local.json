@@ -29,7 +29,8 @@
       "Bash(ls:*)",
       "Bash(wc:*)",
       "Bash(git reset:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
