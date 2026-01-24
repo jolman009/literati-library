@@ -3,6 +3,7 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { ReadingSessionProvider, useReadingSession } from '../../contexts/ReadingSessionContext';
 import API from '../../config/api';
 
@@ -19,6 +20,13 @@ vi.mock('../../contexts/GamificationContext', () => ({
 }));
 
 vi.mock('../../config/api');
+
+// Wrapper that provides both Router and ReadingSessionProvider
+const createWrapper = () => ({ children }) => (
+  <MemoryRouter>
+    <ReadingSessionProvider>{children}</ReadingSessionProvider>
+  </MemoryRouter>
+);
 
 describe('Reading Session Integration Tests', () => {
   beforeEach(() => {
@@ -37,11 +45,7 @@ describe('Reading Session Integration Tests', () => {
 
   describe('Timer Deployment During Reading Sessions', () => {
     it('should successfully deploy timer when starting a reading session', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -75,11 +79,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should update timer continuously during reading', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -106,11 +106,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should handle pause and resume correctly', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -168,11 +164,7 @@ describe('Reading Session Integration Tests', () => {
       localStorage.setItem('active_reading_session', JSON.stringify(mockSessionData));
 
       // Mount the provider (simulates page load)
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       // Wait for useEffect to run
       await waitFor(() => {
@@ -198,11 +190,7 @@ describe('Reading Session Integration Tests', () => {
       // Set invalid JSON in localStorage
       localStorage.setItem('active_reading_session', 'invalid-json-{{{');
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       // Should not crash and should have no active session
       await waitFor(() => {
@@ -233,11 +221,7 @@ describe('Reading Session Integration Tests', () => {
 
       localStorage.setItem('active_reading_session', JSON.stringify(pausedSession));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       await waitFor(() => {
         expect(result.current.activeSession).toBeTruthy();
@@ -269,11 +253,7 @@ describe('Reading Session Integration Tests', () => {
 
       localStorage.setItem('readingSessionHistory', JSON.stringify(completedSessions));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       // Retrieve session history
       const history = result.current.getSessionHistory();
@@ -286,11 +266,7 @@ describe('Reading Session Integration Tests', () => {
 
   describe('Backend Integration for Session Storage', () => {
     it('should update book reading status when starting session', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -316,11 +292,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should update book reading status when stopping session', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-456',
@@ -354,11 +326,7 @@ describe('Reading Session Integration Tests', () => {
     it('should handle API failures gracefully without blocking session', async () => {
       API.patch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-789',
@@ -382,11 +350,7 @@ describe('Reading Session Integration Tests', () => {
     it('should track reading_session_started action', async () => {
       // Note: useGamification is mocked at module level (lines 14-19)
       // This test verifies that starting a session doesn't break when gamification is available
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -404,11 +368,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should track reading_session_completed with duration', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-456',
@@ -440,11 +400,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should track page_read actions when updating progress', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-789',
@@ -507,11 +463,7 @@ describe('Reading Session Integration Tests', () => {
 
       localStorage.setItem('readingSessionHistory', JSON.stringify(sessions));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const stats = result.current.getReadingStats();
 
@@ -536,11 +488,7 @@ describe('Reading Session Integration Tests', () => {
 
       localStorage.setItem('readingSessionHistory', JSON.stringify(sessions));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const stats = result.current.getReadingStats();
 
@@ -552,11 +500,7 @@ describe('Reading Session Integration Tests', () => {
     it('should handle starting session without active token', async () => {
       // Note: This test relies on the module-level mock at lines 10-12
       // The ReadingSessionContext should gracefully handle sessions even with mock auth
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const mockBook = {
         id: 'book-123',
@@ -575,11 +519,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should prevent starting multiple sessions simultaneously', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       const book1 = { id: 'book-1', title: 'Book 1', author: 'Author 1' };
       const book2 = { id: 'book-2', title: 'Book 2', author: 'Author 2' };
@@ -600,11 +540,7 @@ describe('Reading Session Integration Tests', () => {
     });
 
     it('should handle stopping non-existent session', async () => {
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       // Try to stop without starting
       await act(async () => {
@@ -624,11 +560,7 @@ describe('Reading Session Integration Tests', () => {
         { book: { id: 'book-1' }, duration: 30 }
       ]));
 
-      const wrapper = ({ children }) => (
-        <ReadingSessionProvider>{children}</ReadingSessionProvider>
-      );
-
-      const { result } = renderHook(() => useReadingSession(), { wrapper });
+      const { result } = renderHook(() => useReadingSession(), { wrapper: createWrapper() });
 
       await waitFor(() => {
         expect(result.current.activeSession).toBeTruthy();

@@ -91,20 +91,17 @@ vi.mock('./contexts/Material3ThemeContext', () => ({
   })
 }))
 
-// Mock React Router
-vi.mock('react-router-dom', () => ({
-  BrowserRouter: ({ children }) => children,
-  Routes: ({ children }) => children,
-  Route: ({ children }) => children,
-  Navigate: ({ children }) => children,
-  useNavigate: () => vi.fn(),
-  useLocation: () => ({ pathname: '/test' }),
-  useParams: () => ({}),
-  Link: ({ children, to, ...props }) => {
-    const React = require('react');
-    return React.createElement('a', { href: to, ...props }, children);
+// Mock React Router - use actual implementation to preserve Router context
+// This provides working MemoryRouter, BrowserRouter, Routes, etc.
+// Only mock specific hooks that cause side-effects in tests
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    // Mock useNavigate to prevent actual navigation side-effects
+    useNavigate: () => vi.fn(),
   }
-}))
+})
 
 // Mock Material3 components and hooks
 vi.mock('./components/Material3', () => ({
