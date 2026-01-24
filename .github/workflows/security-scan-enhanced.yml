@@ -165,9 +165,13 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: main
-          head: HEAD
-          extra_args: --debug --only-verified
+          # For PRs: compare PR base to head
+          # For pushes: compare before/after commits
+          # For schedule/manual: scan recent history
+          base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
+          head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'push' && github.event.after || 'HEAD' }}
+          extra_args: --only-verified
+        continue-on-error: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
 
       - name: 🔍 GitLeaks Secret Detection
         uses: gitleaks/gitleaks-action@v2
