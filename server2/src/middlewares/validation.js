@@ -1,4 +1,4 @@
-// src/middleware/validation.js
+// src/middlewares/validation.js
 import { body, param, query, validationResult } from 'express-validator';
 
 // =====================================================

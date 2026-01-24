@@ -12,7 +12,7 @@ import {
   REFRESH_COOKIE_OPTIONS
 } from '../middlewares/enhancedAuth.js';
 import { advancedSecuritySuite } from '../middlewares/advancedSecurity.js';
-import { validationSuite } from '../middleware/validation.js';
+import { validationSuite } from '../middlewares/validation.js';
 
 const router = express.Router();
 

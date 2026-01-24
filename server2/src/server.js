@@ -34,8 +34,8 @@ import {
   REFRESH_COOKIE_OPTIONS,
   validateCookieEnvironment
 } from './middlewares/enhancedAuth.js';
-import { securitySuite } from './middleware/security.js';
-import { validationSuite } from './middleware/validation.js';
+import { securitySuite } from './middlewares/security.js';
+import { validationSuite } from './middlewares/validation.js';
 import { advancedSecuritySuite } from './middlewares/advancedSecurity.js';
 import { rateLimitSuite, slowDownSuite } from './middlewares/rateLimitConfig.js';
 import { initializeSecurity, getSecurityStatus } from './config/securityConfig.js';
