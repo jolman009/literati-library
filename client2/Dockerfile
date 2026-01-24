@@ -4,17 +4,21 @@ FROM node:20-alpine AS builder
 # Enable corepack and install pnpm 8.15.6 to match lockfile version 6.0
 RUN corepack enable && corepack prepare pnpm@8.15.6 --activate
 
-# Set working directory
+# Set working directory (repo root as build context)
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy workspace metadata and client package definition
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc ./
+COPY client2/package.json client2/package.json
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install only client production deps using workspace lockfile
+RUN pnpm install --frozen-lockfile --filter client2...
 
-# Copy source code
-COPY . .
+# Copy client source
+COPY client2/ ./client2
+
+# Switch to client workspace
+WORKDIR /app/client2
 
 # Build the application
 ENV NODE_ENV=production
@@ -27,14 +31,14 @@ FROM nginx:alpine AS production
 RUN apk add --no-cache dumb-init
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY client2/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built assets from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/client2/dist /usr/share/nginx/html
 
 # Copy environment template and script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY env.template.js /usr/share/nginx/html/env.template.js
+COPY client2/docker-entrypoint.sh /docker-entrypoint.sh
+COPY client2/env.template.js /usr/share/nginx/html/env.template.js
 
 # Make script executable and ensure proper ownership
 RUN chmod +x /docker-entrypoint.sh && \
