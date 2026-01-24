@@ -1,0 +1,55 @@
+# Semgrep Ignore File
+# Exclude files that shouldn't be scanned for security issues
+
+# Test files (contain intentional mock data and test patterns)
+**/tests/**
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+**/__tests__/**
+**/setupTests.js
+**/jest.config.js
+
+# Build outputs and dependencies
+**/node_modules/**
+**/dist/**
+**/build/**
+**/.next/**
+**/coverage/**
+**/*.min.js
+**/*.bundle.js
+
+# Generated files
+**/generated/**
+**/*.generated.*
+**/pnpm-lock.yaml
+**/package-lock.json
+
+# Documentation with code examples
+**/docs/**/*.md
+
+# IDE and config files
+**/.vscode/**
+**/.vs/**
+**/.idea/**
+
+# Migration and seed files (contain example data)
+**/migrations/**
+**/seeds/**
+
+# Mock and fixture data
+**/fixtures/**
+**/mocks/**
+**/__mocks__/**
+
+# Vendor/third-party code
+**/vendor/**
+
+# Android build files
+**/android/app/build/**
+**/android/.gradle/**
+
+# iOS build files
+**/ios/build/**
+**/ios/Pods/**
