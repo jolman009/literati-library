@@ -14,13 +14,15 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@8.15.6 --activate
 
 # Copy package files
-COPY --chown=server:nodejs package.json pnpm-lock.yaml ./
+# NOTE: Build context must be the repo root so we can reuse the root lockfile
+COPY --chown=server:nodejs server2/package.json ./package.json
+COPY --chown=server:nodejs pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install dependencies
 RUN pnpm install --prod --frozen-lockfile
 
 # Copy source code
-COPY --chown=server:nodejs . .
+COPY --chown=server:nodejs server2/. .
 
 # Switch to non-root user
 USER server
