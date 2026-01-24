@@ -12,6 +12,31 @@ export const readingRouter = (authenticateToken) => {
       const { book_id, page, position } = req.body;
       if (!book_id) return res.status(400).json({ error: 'Book ID is required' });
 
+      // Verify book exists and belongs to user
+      const { data: book, error: bookError } = await supabase
+        .from('books')
+        .select('id')
+        .eq('id', book_id)
+        .eq('user_id', req.user.id)
+        .single();
+
+      if (bookError || !book) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+
+      // Check for existing active session (no end_time)
+      const { data: activeSession } = await supabase
+        .from('reading_sessions')
+        .select('id')
+        .eq('user_id', req.user.id)
+        .eq('book_id', book_id)
+        .is('end_time', null)
+        .single();
+
+      if (activeSession) {
+        return res.status(409).json({ error: 'Active session already exists for this book' });
+      }
+
       const nowIso = new Date().toISOString();
       const sessionData = {
         user_id: req.user.id,
@@ -28,7 +53,7 @@ export const readingRouter = (authenticateToken) => {
         .select()
         .single();
 
-      if (error) {
+      if (error || !session) {
         console.error('Reading session start error:', error);
         return res.status(500).json({ error: 'Failed to start reading session' });
       }
@@ -45,6 +70,24 @@ export const readingRouter = (authenticateToken) => {
     try {
       const { id } = req.params;
       const { end_page, end_position, notes } = req.body;
+
+      // First, verify the session exists and belongs to user
+      const { data: existingSession, error: fetchError } = await supabase
+        .from('reading_sessions')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', req.user.id)
+        .single();
+
+      if (fetchError || !existingSession) {
+        return res.status(404).json({ error: 'Session not found' });
+      }
+
+      // Check if session is already ended
+      if (existingSession.end_time) {
+        return res.status(409).json({ error: 'Session already ended' });
+      }
+
       const endTime = new Date().toISOString();
 
       const { data: session, error } = await supabase
@@ -61,13 +104,13 @@ export const readingRouter = (authenticateToken) => {
         .select()
         .single();
 
-      if (error) {
+      if (error || !session) {
         console.error('Reading session end error:', error);
         return res.status(500).json({ error: 'Failed to end reading session' });
       }
 
       // Backfill duration in minutes
-      if (session?.start_time) {
+      if (session.start_time) {
         const startTime = new Date(session.start_time);
         const endTimeObj = new Date(endTime);
         const duration = Math.max(0, Math.floor((endTimeObj - startTime) / 60000));

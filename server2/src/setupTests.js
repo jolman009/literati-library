@@ -9,32 +9,70 @@ process.env.SUPABASE_URL = 'https://test.supabase.co'
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key'
 process.env.SUPABASE_SERVICE_KEY = 'test-service-key'
 
-// Mock Supabase client
-jest.mock('./config/supabaseClient.js', () => ({
-  supabase: {
-    from: jest.fn(() => ({
+// Mock Supabase client with chainable methods
+jest.mock('./config/supabaseClient.js', () => {
+  // Factory to create a chainable query builder
+  const createQueryBuilder = (defaultData = null) => {
+    let mockData = defaultData;
+    let mockError = null;
+
+    const builder = {
       select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockImplementation(() => {
+        // Insert should return the inserted data
+        mockData = mockData || {
+          id: 'mock-id-' + Date.now(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        return builder;
+      }),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null })
-    })),
-    auth: {
-      signUp: jest.fn(),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      getUser: jest.fn()
-    },
-    storage: {
-      from: jest.fn(() => ({
-        upload: jest.fn().mockResolvedValue({ data: { path: 'test-path' }, error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'test-url' } }),
-        remove: jest.fn().mockResolvedValue({ data: null, error: null })
-      }))
+      neq: jest.fn().mockReturnThis(),
+      is: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      gte: jest.fn().mockReturnThis(),
+      lte: jest.fn().mockReturnThis(),
+      not: jest.fn().mockReturnThis(),
+      or: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      range: jest.fn().mockReturnThis(),
+      single: jest.fn().mockImplementation(() =>
+        Promise.resolve({ data: mockData, error: mockError })
+      ),
+      then: jest.fn().mockImplementation((resolve) =>
+        Promise.resolve({ data: mockData ? [mockData] : [], error: mockError }).then(resolve)
+      ),
+      // Allow tests to override mock data
+      _setMockData: (data) => { mockData = data; return builder; },
+      _setMockError: (error) => { mockError = error; return builder; }
+    };
+    return builder;
+  };
+
+  return {
+    supabase: {
+      from: jest.fn((table) => createQueryBuilder()),
+      auth: {
+        signUp: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+        signIn: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+        signInWithPassword: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+        signOut: jest.fn().mockResolvedValue({ error: null }),
+        getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null })
+      },
+      storage: {
+        from: jest.fn(() => ({
+          upload: jest.fn().mockResolvedValue({ data: { path: 'test-path' }, error: null }),
+          getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'test-url' } }),
+          remove: jest.fn().mockResolvedValue({ data: null, error: null })
+        }))
+      }
     }
-  }
-}))
+  };
+})
 
 // Mock bcryptjs
 jest.mock('bcryptjs', () => ({
