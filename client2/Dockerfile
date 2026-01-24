@@ -31,14 +31,14 @@ FROM nginx:alpine AS production
 RUN apk add --no-cache dumb-init
 
 # Copy custom nginx configuration
-COPY client2/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/client2/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built assets from builder stage
 COPY --from=builder /app/client2/dist /usr/share/nginx/html
 
 # Copy environment template and script
-COPY client2/docker-entrypoint.sh /docker-entrypoint.sh
-COPY client2/env.template.js /usr/share/nginx/html/env.template.js
+COPY --from=builder /app/client2/docker-entrypoint.sh /docker-entrypoint.sh
+COPY --from=builder /app/client2/env.template.js /usr/share/nginx/html/env.template.js
 
 # Make script executable and ensure proper ownership
 RUN chmod +x /docker-entrypoint.sh && \
