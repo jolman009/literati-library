@@ -19,6 +19,13 @@ on:
         default: false
         type: boolean
 
+# Required permissions for CodeQL and security scanning
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  issues: write  # For creating security alert issues
+
 env:
   NODE_VERSION: '20.x'
   PYTHON_VERSION: '3.11'
