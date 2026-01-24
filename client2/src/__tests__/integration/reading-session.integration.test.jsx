@@ -312,11 +312,14 @@ describe('Reading Session Integration Tests', () => {
       });
 
       // Verify API call to update book status
+      // Note: When stopping a session, the book is intentionally kept as is_reading: true
+      // with status: 'paused' so it remains in the "Currently Reading" list
       await waitFor(() => {
         expect(API.patch).toHaveBeenCalledWith(
           `/books/${mockBook.id}`,
           expect.objectContaining({
-            is_reading: false,
+            is_reading: true,
+            status: 'paused',
             last_opened: expect.any(String)
           })
         );
