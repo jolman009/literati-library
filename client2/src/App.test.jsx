@@ -217,13 +217,15 @@ describe('App Component', () => {
     expect(appElement).toBeInTheDocument();
   });
 
-  test('renders performance monitoring components', () => {
+  test('renders core app components', () => {
     renderAppWithRouter();
-    
-    // Check that performance monitoring components are rendered
-    expect(screen.getByTestId('performance-monitor')).toBeInTheDocument();
-    expect(screen.getByTestId('cache-monitor')).toBeInTheDocument();
+
+    // Check that reading session timer is rendered (performance monitors are currently disabled)
     expect(screen.getByTestId('reading-session-timer')).toBeInTheDocument();
+
+    // App structure should be intact
+    const appElement = document.querySelector('.app');
+    expect(appElement).toBeInTheDocument();
   });
 
   test('renders landing page when not authenticated', async () => {
@@ -249,14 +251,12 @@ describe('App Component', () => {
   test('renders with all required context providers', () => {
     // This test ensures all the context providers are properly wrapped
     renderAppWithRouter();
-    
+
     // Check that the app renders without context-related errors
     const appElement = document.querySelector('.app');
     expect(appElement).toBeInTheDocument();
-    
-    // Verify monitoring components are present (confirms providers are working)
-    expect(screen.getByTestId('performance-monitor')).toBeInTheDocument();
-    expect(screen.getByTestId('cache-monitor')).toBeInTheDocument();
+
+    // Verify core components are present (confirms providers are working)
     expect(screen.getByTestId('reading-session-timer')).toBeInTheDocument();
   });
 });

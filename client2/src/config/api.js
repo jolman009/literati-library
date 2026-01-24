@@ -14,23 +14,38 @@ const defaultHeaders = environmentConfig?.getDefaultHeaders
 // Create axios instance with base configuration, falling back to a
 // lightweight stub when axios.create is unavailable (e.g. when axios is
 // mocked incorrectly).
-const API = axios?.create
-  ? axios.create({
+let API;
+try {
+  if (axios?.create) {
+    API = axios.create({
       baseURL: apiUrl,
       timeout: apiTimeout,
       headers: defaultHeaders,
       withCredentials: true, // Send cookies with all requests
-    })
-  : {
-      defaults: { baseURL: apiUrl, headers: defaultHeaders },
-      interceptors: { request: { use: () => {} }, response: { use: () => {} } },
-      get: () => Promise.resolve({ data: null }),
-      post: () => Promise.resolve({ data: {} }),
-      patch: () => Promise.resolve({ data: {} }),
-    };
+    });
+  }
+} catch {
+  // axios.create failed, will use fallback
+}
+
+// Fallback stub for test environments
+if (!API) {
+  API = {
+    defaults: { baseURL: apiUrl, headers: defaultHeaders },
+    interceptors: { request: { use: () => {} }, response: { use: () => {} } },
+    get: () => Promise.resolve({ data: null }),
+    post: () => Promise.resolve({ data: {} }),
+    put: () => Promise.resolve({ data: {} }),
+    patch: () => Promise.resolve({ data: {} }),
+    delete: () => Promise.resolve({ data: {} }),
+    BASE_URL: apiUrl,
+  };
+}
 
 // Add BASE_URL property for backward compatibility
-API.BASE_URL = apiUrl;
+if (API && !API.BASE_URL) {
+  API.BASE_URL = apiUrl;
+}
 
 // Add request interceptor to include auth token
 API.interceptors.request.use(

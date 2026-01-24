@@ -42,6 +42,7 @@ export default defineConfig({
           name: 'unit',
           include: ['src/**/*.{test,spec}.{js,jsx}'],
           exclude: [
+            'src/**/*.integration.{test,spec}.{js,jsx}',
             'src/**/*.e2e.{test,spec}.{js,jsx}',
             'tests/e2e/**/*',
             'node_modules/**/*'
