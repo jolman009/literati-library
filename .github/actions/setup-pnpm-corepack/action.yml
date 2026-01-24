@@ -9,6 +9,8 @@ runs:
   using: composite
   steps:
     - shell: bash
+      env:
+        PNPM_VERSION: ${{ inputs.version }}
       run: |
         set -euo pipefail
 
@@ -16,7 +18,7 @@ runs:
         npm install -g corepack@latest
         corepack enable
 
-        VER="${{ inputs.version }}"
+        VER="${PNPM_VERSION}"
         if [[ "$VER" == "latest" || "$VER" == *".x"* || -z "$VER" ]]; then
           VER=8.15.6
         fi

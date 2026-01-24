@@ -135,14 +135,18 @@ jobs:
       # Deployment Decision Logic
       - name: 🎯 Determine Deployment Strategy
         id: deploy-decision
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GIT_REF: ${{ github.ref }}
+          INPUT_ENV: ${{ github.event.inputs.environment }}
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             SHOULD_DEPLOY="true"
-            TARGET_ENV="${{ github.event.inputs.environment }}"
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            TARGET_ENV="$INPUT_ENV"
+          elif [[ "$GIT_REF" == "refs/heads/main" ]]; then
             SHOULD_DEPLOY="true"
             TARGET_ENV="production"
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+          elif [[ "$GIT_REF" == "refs/heads/develop" ]]; then
             SHOULD_DEPLOY="true"
             TARGET_ENV="staging"
           else
