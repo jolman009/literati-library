@@ -43,13 +43,23 @@ class Note(BaseModel):
 # Initialize our FastAPI application
 app = FastAPI()
 
-# Enable CORS for testing and integration with other services
+# CORS Configuration - use environment-based allowed origins
+# In production, set ALLOWED_ORIGINS to your specific domains
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",") if os.getenv("ALLOWED_ORIGINS") else [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5000",
+    "https://shelfquest.app",
+    "https://www.shelfquest.app",
+    "https://api.shelfquest.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 

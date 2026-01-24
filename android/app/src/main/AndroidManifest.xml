@@ -31,6 +31,8 @@
         tools:targetApi="34">
 
         <!-- Splash Screen Activity -->
+        <!-- nosemgrep: java.android.security.exported_activity.exported_activity -->
+        <!-- exported=true is REQUIRED for launcher activities (MAIN/LAUNCHER intent) -->
         <activity
             android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:exported="true"

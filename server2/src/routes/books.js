@@ -8,6 +8,25 @@ import { dbOptimizer } from '../services/database-optimization.js';
 import { optimizedQuery, optimizedSearch, optimizedBatch } from '../services/query-optimizer.js';
 import { advancedCache } from '../services/advanced-caching.js';
 
+// Allowed CORS origins for book file streaming
+const ALLOWED_ORIGINS = new Set([
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'https://shelfquest.app',
+  'https://www.shelfquest.app',
+  process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
+].filter(Boolean));
+
+// Validate and return allowed origin or null
+function getAllowedOrigin(requestOrigin) {
+  if (!requestOrigin) return null;
+  // Also handle referer-style URLs by extracting origin
+  const origin = requestOrigin.replace(/\/$/, '').split('/').slice(0, 3).join('/');
+  return ALLOWED_ORIGINS.has(origin) ? origin : null;
+}
+
 // Multer configuration for book upload
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -27,9 +46,9 @@ export function booksRouter(authenticateToken) {
 
   // Handle OPTIONS preflight for CORS
   router.options("/:id/file", (req, res) => {
-    const origin = req.headers.origin || req.headers.referer;
-    if (origin) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
+    const allowedOrigin = getAllowedOrigin(req.headers.origin || req.headers.referer);
+    if (allowedOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
@@ -91,10 +110,10 @@ export function booksRouter(authenticateToken) {
       res.setHeader('Accept-Ranges', 'bytes');
       res.setHeader('Cache-Control', 'public, max-age=3600');
 
-      // Enable CORS with credentials - must specify exact origin, not wildcard
-      const origin = req.headers.origin || req.headers.referer;
-      if (origin) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
+      // Enable CORS with credentials - validate against allowed origins
+      const allowedOrigin = getAllowedOrigin(req.headers.origin || req.headers.referer);
+      if (allowedOrigin) {
+        res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
       }
       res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
