@@ -48,6 +48,8 @@ export function booksRouter(authenticateToken) {
   router.options("/:id/file", (req, res) => {
     const allowedOrigin = getAllowedOrigin(req.headers.origin || req.headers.referer);
     if (allowedOrigin) {
+      // nosemgrep: javascript.express.security.cors-misconfiguration.cors-misconfiguration
+      // Origin is validated against allowlist in getAllowedOrigin() - not user-controlled
       res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
     }
@@ -113,6 +115,8 @@ export function booksRouter(authenticateToken) {
       // Enable CORS with credentials - validate against allowed origins
       const allowedOrigin = getAllowedOrigin(req.headers.origin || req.headers.referer);
       if (allowedOrigin) {
+        // nosemgrep: javascript.express.security.cors-misconfiguration.cors-misconfiguration
+        // Origin is validated against allowlist in getAllowedOrigin() - not user-controlled
         res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
       }
@@ -123,6 +127,8 @@ export function booksRouter(authenticateToken) {
       const arrayBuffer = await fileData.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
+      // nosemgrep: javascript.express.security.audit.xss.direct-response-write.direct-response-write
+      // This sends a binary file buffer (EPUB/PDF), not user-controlled HTML content
       res.send(buffer);
     } catch (error) {
       console.error("Error proxying book file:", error);

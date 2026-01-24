@@ -345,10 +345,10 @@ async function getGoogleAccessToken() {
   // Option 2: Use Application Default Credentials (when running on GCP)
   // This works automatically on Cloud Run, App Engine, etc.
   try {
-    // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
     // GCP metadata service ONLY accepts HTTP (not HTTPS) - this is by design
     // See: https://cloud.google.com/compute/docs/metadata/overview
     const metadataUrl = 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token';
+    // nosemgrep: typescript.react.security.react-insecure-request.react-insecure-request
     const response = await fetch(metadataUrl, {
       headers: {
         'Metadata-Flavor': 'Google'
