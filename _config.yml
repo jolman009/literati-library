@@ -1,0 +1,58 @@
+# Jekyll Configuration for GitHub Pages
+# Only processes README.md and docs/ folder
+
+title: ShelfQuest - Digital Library
+description: A full-stack digital library application for book lovers
+
+# Theme
+theme: jekyll-theme-primer
+
+# Only include README.md for GitHub Pages landing
+include:
+  - README.md
+
+# Exclude everything else from Jekyll processing
+# (docs/ contains code samples with JSX that breaks Liquid parsing)
+exclude:
+  - docs
+  - .github
+  - .vscode
+  - .vs
+  - .claude
+  - android
+  - ai-service
+  - app-store-assets
+  - client2
+  - server2
+  - monitoring
+  - ios
+  - node_modules
+  - "*.json"
+  - "*.lock"
+  - "*.log"
+  - Dockerfile
+  - docker-compose*.yml
+  - "*.sh"
+  - "*.bat"
+  - "*.ps1"
+  - Makefile
+  - .env*
+  - .nvmrc
+  - .gitignore
+  - .dockerignore
+  - coverage
+  - dist
+  - build
+  - tmp
+  - temp
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-relative-links
