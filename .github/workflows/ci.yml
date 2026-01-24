@@ -97,7 +97,8 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
           POSTGRES_DB: literati_test
         options: >-
           --health-cmd pg_isready
@@ -114,7 +115,7 @@ jobs:
       - name: Load Server Test Env
         run: |
           cp .env.test .env
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/literati_test" >> .env
+          echo "DATABASE_URL=postgresql://root:root@localhost:5432/literati_test" >> .env
         working-directory: server2
 
       - name: Setup pnpm
