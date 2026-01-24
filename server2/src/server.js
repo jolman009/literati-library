@@ -44,7 +44,6 @@ import secureAuthRouter from './routes/secureAuth.js';
 import { booksRouter } from './routes/books.js';
 import { cloudStorageRouter } from './routes/cloudStorage.js';
 import { coversRouter } from './routes/covers.js';
-import coversEnhancedRouter from './routes/coversEnhanced.js';
 import { uploadCover } from './services/covers.js';
 import { supabase } from './config/supabaseClient.js';
 const supabaseAdmin = supabase; // Using service role key, so it has admin privileges
@@ -270,7 +269,6 @@ app.use('/api/cloud-storage', cloudStorageRouter(authenticateTokenEnhanced));
 app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
 app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));
-app.use('/covers-enhanced', coversEnhancedRouter(authenticateTokenEnhanced));
 app.use('/ai', aiRouter(authenticateTokenEnhanced));
 app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
 
