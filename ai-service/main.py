@@ -45,14 +45,18 @@ app = FastAPI()
 
 # CORS Configuration - use environment-based allowed origins
 # In production, set ALLOWED_ORIGINS to your specific domains
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",") if os.getenv("ALLOWED_ORIGINS") else [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:5000",
-    "https://shelfquest.app",
-    "https://www.shelfquest.app",
-    "https://api.shelfquest.app",
-]
+ALLOWED_ORIGINS = (
+    os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if os.getenv("ALLOWED_ORIGINS")
+    else [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5000",
+        "https://shelfquest.app",
+        "https://www.shelfquest.app",
+        "https://api.shelfquest.app",
+    ]
+)
 
 app.add_middleware(
     CORSMiddleware,
