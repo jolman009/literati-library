@@ -65,7 +65,7 @@ jobs:
       - name: Build and Push Server Image
         uses: docker/build-push-action@v5
         with:
-          context: ./server2
+          context: .
           file: ./server2/Dockerfile
           push: true
           tags: |

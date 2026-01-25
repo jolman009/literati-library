@@ -228,7 +228,7 @@ jobs:
       - name: Build Server Image
         uses: docker/build-push-action@v5
         with:
-          context: ./server2
+          context: .
           file: ./server2/Dockerfile
           push: false
           tags: literati-server:test
