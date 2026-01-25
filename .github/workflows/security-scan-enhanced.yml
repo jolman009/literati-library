@@ -202,7 +202,7 @@ jobs:
       - name: 🏗️ Build Client Image
         uses: docker/build-push-action@v5
         with:
-          context: ./client2
+          context: .
           file: ./client2/Dockerfile
           tags: literati-client:scan
           push: false
