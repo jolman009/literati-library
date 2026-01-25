@@ -191,7 +191,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          pytest test_main.py -v --cov=main --cov-report=xml
+          pytest tests/ -v --cov=main --cov-report=xml
         env:
           GOOGLE_API_KEY: test_key
 
