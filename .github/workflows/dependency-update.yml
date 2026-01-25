@@ -85,7 +85,7 @@ jobs:
         working-directory: ./${{ matrix.component }}
         run: |
           pip install pytest
-          pytest test_main.py -v || true
+          pytest tests/ -v || true
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
