@@ -122,7 +122,7 @@ jobs:
       - name: Build and Push Client Image
         uses: docker/build-push-action@v5
         with:
-          context: ./client2
+          context: .
           file: ./client2/Dockerfile
           target: production
           push: true
