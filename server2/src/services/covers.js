@@ -2,10 +2,9 @@
 // Unified Cover Service - combines multiple sources, fallback generation, and batch processing
 import fetch from 'node-fetch';
 import Sharp from 'sharp';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../config/supabaseClient.js';
 import crypto from 'crypto';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const BUCKET = 'covers';
 
 // =====================================================
