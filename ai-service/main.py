@@ -1,4 +1,7 @@
 # main.py
+# isort: skip_file
+# Note: Import order is intentional - dotenv must load before other modules
+# that depend on environment variables, and Sentry must initialize early
 import os
 
 from dotenv import load_dotenv
