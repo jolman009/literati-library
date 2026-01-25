@@ -1,10 +1,8 @@
 // src/routes/covers.js
 // Unified Covers Route - single book, batch, status, and regeneration endpoints
 import { Router } from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../config/supabaseClient.js';
 import { ensureCoverForBook, ensureCoversForBooks } from '../services/covers.js';
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 export function coversRouter(authenticateToken) {
   const router = Router();
