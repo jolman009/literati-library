@@ -274,19 +274,22 @@
 .md3-password-requirements {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
-  background: var(--md-sys-color-surface-container-highest);
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
-  border-radius: var(--md-sys-shape-corner-small, 8px);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  margin-top: -0.5rem;
+  border-radius: var(--md-sys-shape-corner-medium, 12px);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid var(--md-sys-color-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .requirements-icon {
-  font-size: 1.125rem;
-  color: var(--md-sys-color-secondary);
+  font-size: 1.5rem;
+  color: var(--md-sys-color-on-secondary-container);
   flex-shrink: 0;
   margin-top: 0.125rem;
 }
@@ -297,25 +300,26 @@
 
 .requirements-text strong {
   display: block;
-  font-size: 0.8125rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--md-sys-color-on-surface);
-  margin-bottom: 0.375rem;
+  color: var(--md-sys-color-on-secondary-container);
+  margin-bottom: 0.5rem;
 }
 
 .requirements-list {
   margin: 0;
-  padding-left: 1.125rem;
+  padding-left: 1.25rem;
   list-style-type: disc;
 }
 
 .requirements-list li {
-  color: var(--md-sys-color-on-surface-variant);
-  padding: 0.125rem 0;
+  color: var(--md-sys-color-on-secondary-container);
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
 }
 
 .requirements-list li::marker {
-  color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary-container);
 }
 
 /* ================================================
@@ -470,17 +474,21 @@
   }
 
   .md3-password-requirements {
-    font-size: 0.75rem;
-    padding: 0.625rem 0.875rem;
-    gap: 0.5rem;
+    font-size: 0.875rem;
+    padding: 1rem 1.25rem;
+    gap: 0.75rem;
   }
 
   .requirements-text strong {
-    font-size: 0.75rem;
+    font-size: 0.9375rem;
   }
 
   .requirements-list {
     padding-left: 1rem;
+  }
+
+  .requirements-list li {
+    font-size: 0.8125rem;
   }
 
   .md3-checkbox-label {
