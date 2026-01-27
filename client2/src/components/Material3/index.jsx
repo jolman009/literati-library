@@ -44,6 +44,7 @@ export { useMaterial3Theme, Material3ThemeProvider } from '../../contexts/Materi
 // Import for internal use
 import MD3Chip_Imported from './MD3Chip.jsx';
 import MD3Snackbar_Imported from './MD3Snackbar.jsx';
+import MD3TextField_Imported from './MD3TextField.jsx';
 
 // ===============================================
 // THEME PROVIDER - Now using feature-rich implementation from contexts
@@ -174,59 +175,8 @@ export const MD3Card = React.forwardRef(({
 });
 MD3Card.displayName = 'MD3Card';
 
-// TextField Component
-export const MD3TextField = React.forwardRef(({
-  label,
-  value,
-  onChange,
-  error,
-  helperText,
-  leadingIcon,
-  trailingIcon,
-  type = 'text',
-  multiline = false,
-  rows = 3,
-  disabled = false,
-  className = '',
-  ...props
-}, ref) => {
-  const [focused, setFocused] = useState(false);
-  const hasValue = value && value.length > 0;
-
-  const containerClass = `md3-text-field ${focused ? 'md3-text-field--focused' : ''} ${error ? 'md3-text-field--error' : ''} ${disabled ? 'md3-text-field--disabled' : ''} ${className}`;
-
-  const InputElement = multiline ? 'textarea' : 'input';
-
-  return (
-    <div className={containerClass}>
-      {leadingIcon && <span className="md3-text-field__leading-icon">{leadingIcon}</span>}
-      <div className="md3-text-field__input-wrapper">
-        <InputElement
-          ref={ref}
-          type={multiline ? undefined : type}
-          rows={multiline ? rows : undefined}
-          value={value}
-          onChange={onChange}
-          disabled={disabled}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className="md3-text-field__input"
-          {...props}
-        />
-        <label className={`md3-text-field__label ${hasValue || focused ? 'md3-text-field__label--floating' : ''}`}>
-          {label}
-        </label>
-      </div>
-      {trailingIcon && <span className="md3-text-field__trailing-icon">{trailingIcon}</span>}
-      {(helperText || error) && (
-        <div className="md3-text-field__helper-text">
-          {error || helperText}
-        </div>
-      )}
-    </div>
-  );
-});
-MD3TextField.displayName = 'MD3TextField';
+// TextField Component - Import from dedicated file with CSS
+export { default as MD3TextField } from './MD3TextField.jsx';
 
 // Switch Component
 export const MD3Switch = React.forwardRef(({
@@ -498,7 +448,7 @@ MD3Tab.displayName = 'MD3Tab';
 const Material3 = {
   Button: MD3Button,
   Card: MD3Card,
-  TextField: MD3TextField,
+  TextField: MD3TextField_Imported,
   Switch: MD3Switch,
   ChipGroup: MD3ChipGroup,
   IconButton: MD3IconButton,
