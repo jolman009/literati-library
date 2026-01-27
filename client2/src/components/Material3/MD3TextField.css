@@ -19,11 +19,17 @@
 .dark .md3-text-field textarea {
   color: #e0e0e0;
   background: transparent;
+  border: none;
 }
 
 [data-theme="dark"] .md3-text-field__label,
 .dark .md3-text-field__label {
   color: #b0b0b0;
+}
+
+[data-theme="dark"] .md3-text-field--outlined .md3-text-field__label,
+.dark .md3-text-field--outlined .md3-text-field__label {
+  background-color: var(--md-sys-color-surface, #1c1b1f);
 }
 
 .md3-text-field {
@@ -90,6 +96,10 @@
   padding: 0 16px;
 }
 
+.md3-text-field--outlined .md3-text-field__input {
+  padding: 0;
+}
+
 .md3-text-field--outlined:hover:not(.md3-text-field--disabled) .md3-text-field__container {
   border-color: rgb(var(--md-sys-color-on-surface, 28 27 31));
 }
@@ -117,28 +127,28 @@
 
 .md3-text-field__input {
   /* Reset browser styles */
-  border: 1px solid;
-  border-radius: 5px;
+  border: none;
+  border-radius: 0;
   outline: none;
-  background: rgba(59, 130, 246, 0.2);
+  background: transparent;
   margin: 0;
-  padding: 0;
-  
+  padding: 0 16px;
+
   /* Layout */
   width: 100%;
-  height: 45px;
-  
+  height: 100%;
+
   /* Typography */
   font-family: inherit;
   font-size: var(--md-sys-typescale-body-large-size, 1rem);
   font-weight: var(--md-sys-typescale-body-large-weight, 400);
   line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
-  
+
   /* Colors */
   color: rgb(var(--md-sys-color-on-surface, 28 27 31));
   caret-color: rgb(var(--md-sys-color-primary, 103 80 164));
-  
+
   /* Remove autofill styling */
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -163,25 +173,25 @@
 
 .md3-text-field__label {
   position: absolute;
-  left: 0;
+  left: 16px;
   top: 50%;
-  transform: translateY(-10%);
-  
+  transform: translateY(-50%);
+
   /* Typography */
-  font-size: var(--md-sys-typescale-body-large-size, .8rem);
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
   font-weight: var(--md-sys-typescale-body-large-weight, 400);
   line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
-  
+
   /* Colors */
   color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
-  
+
   /* Animation */
-  transition: 
+  transition:
     transform var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
     font-size var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
     color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
-  
+
   /* Interaction */
   pointer-events: none;
   user-select: none;
@@ -190,7 +200,7 @@
 /* Floating label states */
 .md3-text-field--focused .md3-text-field__label,
 .md3-text-field--populated .md3-text-field__label {
-  transform: translateY(-28px);
+  transform: translateY(-150%);
   font-size: var(--md-sys-typescale-body-small-size, 0.75rem);
   font-weight: var(--md-sys-typescale-body-small-weight, 400);
   line-height: var(--md-sys-typescale-body-small-line-height, 1rem);
@@ -207,6 +217,7 @@
 
 /* Outlined variant label adjustments */
 .md3-text-field--outlined .md3-text-field__label {
+  left: 0;
   background-color: rgb(var(--md-sys-color-surface, 255 255 255));
   padding: 0 4px;
   margin-left: -4px;
@@ -214,7 +225,7 @@
 
 .md3-text-field--outlined.md3-text-field--focused .md3-text-field__label,
 .md3-text-field--outlined.md3-text-field--populated .md3-text-field__label {
-  transform: translateY(-32px);
+  transform: translateY(-160%);
 }
 
 /* ===============================================
