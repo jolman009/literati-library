@@ -73,6 +73,14 @@ const SignUpPage = () => {
         passwordIssues.push('a special character');
       }
 
+      // Check if password contains email username
+      if (email) {
+        const emailUsername = email.split('@')[0].toLowerCase();
+        if (emailUsername.length >= 3 && password.toLowerCase().includes(emailUsername)) {
+          passwordIssues.push('cannot contain your email username');
+        }
+      }
+
       if (passwordIssues.length > 0) {
         setPasswordError(`Password must contain ${passwordIssues.join(', ')}.`);
         ok = false;
@@ -226,9 +234,16 @@ const SignUpPage = () => {
           {/* Password Requirements */}
           <div className="md3-password-requirements">
             <span className="material-symbols-outlined requirements-icon">info</span>
-            <span className="requirements-text">
-              Password must contain: 8+ characters, uppercase, lowercase, number, and special character
-            </span>
+            <div className="requirements-text">
+              <strong>Password requirements:</strong>
+              <ul className="requirements-list">
+                <li>At least 8 characters</li>
+                <li>Uppercase and lowercase letters</li>
+                <li>At least one number</li>
+                <li>At least one special character (!@#$%^&* etc.)</li>
+                <li>Cannot contain your email username</li>
+              </ul>
+            </div>
           </div>
 
           {/* Terms Checkbox */}
