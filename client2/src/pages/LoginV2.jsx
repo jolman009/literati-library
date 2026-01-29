@@ -17,30 +17,8 @@ const LoginV2 = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useMaterial3();
 
-  // Password Validation Logic
-  const validation = {
-    length: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    noUsername: () => {
-      if (!email || !email.includes('@')) return true;
-      const username = email.split('@')[0].toLowerCase();
-      return !password.toLowerCase().includes(username);
-    }
-  };
-
-  const isPasswordValid = Object.values(validation).every(v => 
-    typeof v === 'function' ? v() : v
-  );
-
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!isPasswordValid) {
-      setError('Please ensure your password meets all requirements.');
-      return;
-    }
 
     try {
       setError('');
@@ -62,7 +40,7 @@ const LoginV2 = () => {
           <p>Sign in to your Literati Library</p>
         </div>
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleLogin} className="login-form" data-testid="login-form">
           <MD3TextField
             label="Email Address"
             type="email"
@@ -70,6 +48,7 @@ const LoginV2 = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
             fullWidth
+            data-testid="email-input"
           />
 
           <MD3TextField
@@ -79,6 +58,7 @@ const LoginV2 = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            data-testid="password-input"
             trailingIcon={
               <span 
                 style={{ cursor: 'pointer', fontSize: '1.2rem' }}
@@ -89,15 +69,11 @@ const LoginV2 = () => {
             }
           />
 
-          <div className="password-requirements">
-            <Requirement label="8+ characters" met={validation.length} />
-            <Requirement label="Uppercase & Lowercase" met={validation.upper && validation.lower} />
-            <Requirement label="Number & Special Character" met={validation.number && validation.special} />
-            <Requirement label="Does not contain email username" met={validation.noUsername()} />
-          </div>
-
           {error && (
-            <div style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }}>
+            <div 
+              style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }}
+              data-testid="login-error"
+            >
               {error}
             </div>
           )}
@@ -105,14 +81,20 @@ const LoginV2 = () => {
           <MD3Button 
             type="submit" 
             variant="primary" 
-            disabled={loading || !isPasswordValid}
+            disabled={loading}
+            data-testid="login-button"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </MD3Button>
         </form>
 
         <div className="login-footer">
-          <Link to="/forgot-password" title="Forgot Password" className="login-link">
+          <Link 
+            to="/forgot-password" 
+            title="Forgot Password" 
+            className="login-link"
+            data-testid="forgot-password-link"
+          >
             Forgot Password?
           </Link>
           <p style={{ fontSize: '0.875rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
@@ -123,13 +105,5 @@ const LoginV2 = () => {
     </div>
   );
 };
-
-// Small helper component for requirements
-const Requirement = ({ label, met }) => (
-  <div className={`requirement-item ${met ? 'met' : 'unmet'}`}>
-    <span>{met ? '✓' : '○'}</span>
-    <span>{label}</span>
-  </div>
-);
 
 export default LoginV2;

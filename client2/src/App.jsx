@@ -67,8 +67,9 @@ import PremiumModal from './components/premium/PremiumModal';
 
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
-// 🔄 Updated: Import the new MD3 Login page
+// 🔄 Updated: Import the new MD3 Login and SignUp pages
 import LoginV2 from './pages/LoginV2';
+import SignUpV2 from './pages/SignUpV2';
 import ResetPassword from './components/ResetPassword';
 
 // Lazy load all other pages for better performance
@@ -171,13 +172,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <NewLandingPage />} />
-      <Route path="/signup" element={
-        <ErrorBoundary fallbackComponent="signup" variant="full">
-          <Suspense fallback={<AppLoadingSpinner message="Loading sign up..." />}>
-            <SignUpPage />
-          </Suspense>
-        </ErrorBoundary>
-      } />
+      {/* 🔄 Updated: Use SignUpV2 for both /signup and /register routes */}
+      <Route path="/signup" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpV2 />} />
+      {/* Alias /register to /signup for E2E test compatibility */}
+      <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpV2 />} />
       {/* 🔄 Updated: Route now points to LoginV2 */}
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginV2 />} />
       <Route path="/reset-password" element={<ResetPassword />} />
