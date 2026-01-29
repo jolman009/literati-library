@@ -68,9 +68,9 @@ const SignUpV2 = () => {
           <p style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>Join Literati Library today</p>
         </div>
 
-        <form onSubmit={handleSignUp} className="signup-form">
-          <MD3TextField label="Full Name" value={formData.name} onChange={e => updateField('name', e.target.value)} required fullWidth />
-          <MD3TextField label="Email Address" type="email" value={formData.email} onChange={e => updateField('email', e.target.value)} required fullWidth />
+        <form onSubmit={handleSignUp} className="signup-form" data-testid="register-form">
+          <MD3TextField label="Full Name" value={formData.name} onChange={e => updateField('name', e.target.value)} required fullWidth data-testid="name-input" />
+          <MD3TextField label="Email Address" type="email" value={formData.email} onChange={e => updateField('email', e.target.value)} required fullWidth data-testid="email-input" />
           
           <MD3TextField
             label="Password"
@@ -79,12 +79,13 @@ const SignUpV2 = () => {
             onChange={e => updateField('password', e.target.value)}
             required
             fullWidth
+            data-testid="password-input"
             trailingIcon={<span style={{ cursor: 'pointer' }} onClick={() => setShowPassword(!showPassword)}>{showPassword ? '👁️' : '🙈'}</span>}
           />
 
-          <MD3TextField label="Confirm Password" type="password" value={formData.confirmPassword} onChange={e => updateField('confirmPassword', e.target.value)} required fullWidth />
+          <MD3TextField label="Confirm Password" type="password" value={formData.confirmPassword} onChange={e => updateField('confirmPassword', e.target.value)} required fullWidth data-testid="confirm-password-input" />
 
-          <div className="password-requirements">
+          <div className="password-requirements" data-testid="password-strength-error">
             <Requirement label="8+ characters" met={validation.length} />
             <Requirement label="Upper, Lower, & Number" met={validation.upper && validation.lower && validation.number} />
             <Requirement label="Special character" met={validation.special} />
@@ -94,9 +95,9 @@ const SignUpV2 = () => {
 
           <MD3Checkbox checked={acceptedTos} onChange={e => setAcceptedTos(e.target.checked)} label="I agree to the Terms and Privacy Policy" />
 
-          {error && <div style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }} data-testid="signup-error">{error}</div>}
 
-          <MD3Button type="submit" variant="primary" disabled={loading || !isFormValid}>
+          <MD3Button type="submit" variant="primary" disabled={loading || !isFormValid} data-testid="register-button">
             {loading ? 'Creating Account...' : 'Sign Up'}
           </MD3Button>
         </form>
