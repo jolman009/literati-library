@@ -1,6 +1,5 @@
 // src/services/crashReporting.js - Server-side Crash Reporting
 import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 class ServerCrashReporting {
   constructor() {
@@ -27,14 +26,8 @@ class ServerCrashReporting {
         release: `shelfquest-server@${appVersion}`,
         debug: environment === 'development',
 
-       // Integrations
-integrations: [
-  nodeProfilingIntegration(),
-],
-
         // Performance monitoring
         tracesSampleRate: environment === 'production' ? 0.1 : 1.0,
-        profilesSampleRate: environment === 'production' ? 0.1 : 1.0,
 
         // Error filtering
         beforeSend: (event) => {
