@@ -40,8 +40,27 @@ describe('Secure Auth Routes', () => {
       name: 'Test User'
     }
 
-    test.skip('should register a new user successfully', async () => {
-      // Skipped: Requires complex Supabase mocking that's handled by integration tests
+    test('should register a new user successfully', async () => {
+      const mockUser = createTestUser({ email: validRegistrationData.email })
+
+      // Mock Supabase responses
+      const mockSupabase = require('@supabase/supabase-js').createClient()
+      mockSupabase.from().select().eq().single.mockResolvedValue(
+        mockSupabaseSelect(null) // No existing user
+      )
+      mockSupabase.from().insert().single.mockResolvedValue(
+        mockSupabaseInsert(mockUser)
+      )
+
+      const response = await request(app)
+        .post('/auth/register')
+        .send(validRegistrationData)
+
+      expectSuccessResponse(response)
+      expect(response.body).toHaveProperty('user')
+      expect(response.body).toHaveProperty('token')
+      expect(response.body.user.email).toBe(validRegistrationData.email)
+      expect(response.body.user).not.toHaveProperty('password')
     })
 
     test('should reject registration with existing email', async () => {
