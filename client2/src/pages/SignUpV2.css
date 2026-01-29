@@ -1,0 +1,90 @@
+/* client2/src/pages/SignUpV2.css */
+.signup-v2-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background-color: var(--md-sys-color-surface);
+  transition: background-color 0.3s ease;
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 480px; /* Slightly wider than login for multi-field rows */
+  padding: 2.5rem;
+  border-radius: 28px;
+  background-color: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-3);
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* FIX: Improved Logo Container to prevent cropping */
+.signup-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.signup-logo-wrapper {
+  padding: 8px;
+  background: var(--md-sys-color-surface);
+  border-radius: 16px; /* Rounded corners instead of circle to fit wider logos */
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+.signup-logo-img {
+  height: 48px;
+  width: auto; /* Allow natural aspect ratio */
+  display: block;
+  object-fit: contain;
+}
+
+.signup-header h1 {
+  color: var(--md-sys-color-on-surface);
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.password-requirements {
+  margin-top: -0.25rem;
+  padding: 0 0.5rem;
+  background: var(--md-sys-color-surface-container-low);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.requirement-item {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.requirement-item.met { color: var(--md-sys-color-primary); }
+.requirement-item.unmet { color: var(--md-sys-color-error); }
+
+.signup-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.signup-link {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link:hover { text-decoration: underline; }
