@@ -67,7 +67,8 @@ import PremiumModal from './components/premium/PremiumModal';
 
 // Import only critical auth pages directly
 import NewLandingPage from './pages/NewLandingPage';
-import Login from './pages/Login';
+// 🔄 Updated: Import the new MD3 Login page
+import LoginV2 from './pages/LoginV2';
 import ResetPassword from './components/ResetPassword';
 
 // Lazy load all other pages for better performance
@@ -177,7 +178,8 @@ const AppRoutes = () => {
           </Suspense>
         </ErrorBoundary>
       } />
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+      {/* 🔄 Updated: Route now points to LoginV2 */}
+      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginV2 />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/update-password" element={<ResetPassword />} />
       <Route element={<ProtectedAppLayout />}>
