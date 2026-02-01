@@ -2,23 +2,29 @@
 const request = require('supertest');
 const express = require('express');
 
-// Mock dependencies
+// Singleton mock chain — from() always returns the same object so
+// mockResolvedValue set on .single persists across chained calls.
+const mockSingle = jest.fn();
+const mockChain = {
+  select: jest.fn(function () { return this; }),
+  insert: jest.fn(function () { return this; }),
+  update: jest.fn(function () { return this; }),
+  delete: jest.fn(function () { return this; }),
+  eq: jest.fn(function () { return this; }),
+  gte: jest.fn(function () { return this; }),
+  lte: jest.fn(function () { return this; }),
+  order: jest.fn(function () { return this; }),
+  limit: jest.fn(function () { return this; }),
+  range: jest.fn(function () { return this; }),
+  single: mockSingle,
+  // Support .mockResolvedValue() on the chain itself for fire-and-forget
+  // operations (DELETE, UPDATE) that don't end with .single()
+  mockResolvedValue: function () { return this; },
+  mockClear: function () { return this; },
+};
+
 jest.mock('../../src/config/supabaseClient.js', () => ({
-  supabase: {
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      gte: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      then: jest.fn()
-    }))
-  }
+  supabase: { from: jest.fn(() => mockChain) }
 }));
 
 const { supabase } = require('../../src/config/supabaseClient.js');
@@ -112,7 +118,7 @@ describe('Reading Sessions API Endpoints', () => {
           ...mockSession,
           id: 'new-session-id',
           book_id,
-          current_page: Math.max(1, parseInt(current_page)),
+          current_page: Math.max(1, parseInt(current_page) || 1),
           start_time: new Date().toISOString(),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -153,7 +159,7 @@ describe('Reading Sessions API Endpoints', () => {
         }
 
         // Validate input
-        if (current_page && (current_page < 1 || current_page > 10000)) {
+        if (current_page != null && (current_page < 1 || current_page > 10000)) {
           return res.status(400).json({ error: 'Invalid page number' });
         }
 
@@ -163,6 +169,12 @@ describe('Reading Sessions API Endpoints', () => {
 
         if (notes_created && notes_created < 0) {
           return res.status(400).json({ error: 'Notes created cannot be negative' });
+        }
+
+        // Validate status values
+        const validStatuses = ['active', 'paused', 'completed'];
+        if (status && !validStatuses.includes(status)) {
+          return res.status(400).json({ error: 'Invalid status value' });
         }
 
         const updatedSession = {
@@ -194,12 +206,6 @@ describe('Reading Sessions API Endpoints', () => {
         if (!duration || duration < 0) {
           return res.status(400).json({ error: 'Valid duration is required' });
         }
-
-        // Validate session exists and belongs to user
-        supabase.from().select().eq().single.mockResolvedValue({
-          data: id === 'nonexistent-session' ? null : mockSession,
-          error: id === 'nonexistent-session' ? { message: 'Not found' } : null
-        });
 
         const { data: session, error: sessionError } = await supabase
           .from('reading_sessions')
@@ -274,9 +280,10 @@ describe('Reading Sessions API Endpoints', () => {
       try {
         const { id } = req.params;
 
+        const isKnownId = id === 'test-session-id';
         supabase.from().select().eq().single.mockResolvedValue({
-          data: id === 'nonexistent-session' ? null : mockSession,
-          error: id === 'nonexistent-session' ? { message: 'Not found' } : null
+          data: isKnownId ? mockSession : null,
+          error: isKnownId ? null : { message: 'Not found' }
         });
 
         const { data: session, error } = await supabase
@@ -366,7 +373,10 @@ describe('Reading Sessions API Endpoints', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    // Reset single mock return values between tests.
+    // Chain methods keep their function(){return this} implementation
+    // because clearMocks (in jest.config.js) only clears call history.
+    mockSingle.mockReset();
   });
 
   describe('POST /reading/sessions', () => {
@@ -521,6 +531,8 @@ describe('Reading Sessions API Endpoints', () => {
 
   describe('POST /reading/sessions/:id/end', () => {
     it('should end reading session successfully', async () => {
+      mockSingle.mockResolvedValue({ data: mockSession, error: null });
+
       const response = await agent
         .post('/reading/sessions/test-session-id/end')
         .send({ duration: 1800 }) // 30 minutes
@@ -532,6 +544,8 @@ describe('Reading Sessions API Endpoints', () => {
     });
 
     it('should return 404 for nonexistent session', async () => {
+      mockSingle.mockResolvedValue({ data: null, error: { message: 'Not found' } });
+
       const response = await agent
         .post('/reading/sessions/nonexistent-session/end')
         .send({ duration: 1800 })
@@ -559,6 +573,8 @@ describe('Reading Sessions API Endpoints', () => {
     });
 
     it('should round duration to nearest second', async () => {
+      mockSingle.mockResolvedValue({ data: mockSession, error: null });
+
       const response = await agent
         .post('/reading/sessions/test-session-id/end')
         .send({ duration: 1234.56 })

@@ -5,6 +5,7 @@ const request = require('supertest');
 const express = require('express');
 
 // Mock Supabase client for faster testing
+// Uses per-chain state tracking to distinguish active-session checks from fetch-by-ID
 jest.mock('../../src/config/supabaseClient.js', () => {
   const mockSessions = [];
   let sessionIdCounter = 1;
@@ -27,56 +28,116 @@ jest.mock('../../src/config/supabaseClient.js', () => {
   return {
     supabase: {
       from: jest.fn((table) => {
-        const mockChain = {
-          select: jest.fn().mockReturnThis(),
-          insert: jest.fn().mockReturnThis(),
-          update: jest.fn().mockReturnThis(),
-          delete: jest.fn().mockReturnThis(),
-          eq: jest.fn().mockReturnThis(),
-          is: jest.fn().mockReturnThis(),
-          not: jest.fn().mockReturnThis(),
-          gte: jest.fn().mockReturnThis(),
-          lte: jest.fn().mockReturnThis(),
-          order: jest.fn().mockReturnThis(),
-          single: jest.fn(async () => {
-            if (table === 'reading_sessions' && mockSessions.length > 0) {
-              return { data: mockSessions[0], error: null };
+        // Per-chain state tracks what operations were called
+        const state = {
+          isActiveCheck: false,
+          sessionId: null,
+          bookId: null,
+          updateData: null,
+          isInsert: false,
+          insertedSession: null
+        };
+
+        const chain = {
+          select: jest.fn(function () { return this; }),
+          delete: jest.fn(function () { return this; }),
+          eq: jest.fn(function (field, value) {
+            if (field === 'id') state.sessionId = value;
+            if (field === 'book_id') state.bookId = value;
+            return this;
+          }),
+          is: jest.fn(function (field, value) {
+            if (field === 'end_time' && value === null) state.isActiveCheck = true;
+            return this;
+          }),
+          not: jest.fn(function () { return this; }),
+          gte: jest.fn(function () { return this; }),
+          lte: jest.fn(function () { return this; }),
+          order: jest.fn(function () { return this; }),
+          insert: jest.fn(function (data) {
+            state.isInsert = true;
+            if (table === 'reading_sessions') {
+              const newSession = createMockSession(data.user_id, data.book_id, data.start_page);
+              mockSessions.push(newSession);
+              state.insertedSession = newSession;
             }
+            return this;
+          }),
+          update: jest.fn(function (data) {
+            state.updateData = data;
+            return this;
+          }),
+          single: jest.fn(async () => {
+            // Books table: always return a valid book
+            if (table === 'books') {
+              return { data: { id: state.sessionId || 'test-book-456', user_id: 'test-user-123', title: 'Test Book', status: 'reading' }, error: null };
+            }
+
+            if (table === 'reading_sessions') {
+              // After insert: return the newly created session
+              if (state.isInsert && state.insertedSession) {
+                return { data: state.insertedSession, error: null };
+              }
+
+              // After update: apply update to matching session and return it
+              if (state.updateData) {
+                const target = state.sessionId
+                  ? mockSessions.find(s => s.id === state.sessionId)
+                  : mockSessions[0];
+                if (target) {
+                  Object.assign(target, state.updateData, { updated_at: new Date().toISOString() });
+                  return { data: { ...target }, error: null };
+                }
+                return { data: null, error: { message: 'Not found' } };
+              }
+
+              // Active session check: only return sessions with end_time === null
+              if (state.isActiveCheck) {
+                const active = mockSessions.find(s =>
+                  s.end_time === null &&
+                  (!state.bookId || s.book_id === state.bookId)
+                );
+                return active
+                  ? { data: active, error: null }
+                  : { data: null, error: { message: 'Not found' } };
+              }
+
+              // Fetch by ID
+              if (state.sessionId) {
+                const session = mockSessions.find(s => s.id === state.sessionId);
+                return session
+                  ? { data: session, error: null }
+                  : { data: null, error: { message: 'Not found' } };
+              }
+
+              // Default: return first session or not found
+              return mockSessions.length > 0
+                ? { data: mockSessions[0], error: null }
+                : { data: null, error: { message: 'Not found' } };
+            }
+
             return { data: null, error: { message: 'Not found' } };
+          }),
+          // Thenable for chains that don't end with .single()
+          then: jest.fn(function (resolve) {
+            let result;
+            if (table === 'reading_sessions') {
+              let filtered = [...mockSessions];
+              if (state.isActiveCheck) filtered = filtered.filter(s => s.end_time === null);
+              result = { data: filtered, error: null };
+            } else {
+              result = { data: [], error: null };
+            }
+            return Promise.resolve(result).then(resolve);
           })
         };
 
-        // Implement insert for reading_sessions
-        const originalInsert = mockChain.insert;
-        mockChain.insert = jest.fn((data) => {
-          if (table === 'reading_sessions') {
-            const newSession = createMockSession(
-              data.user_id,
-              data.book_id,
-              data.start_page
-            );
-            mockSessions.push(newSession);
-
-            return {
-              select: jest.fn(() => ({
-                single: jest.fn(async () => ({ data: newSession, error: null }))
-              }))
-            };
-          }
-          return mockChain;
-        });
-
-        // Implement update for reading_sessions
-        const originalUpdate = mockChain.update;
-        mockChain.update = jest.fn((data) => {
-          if (table === 'reading_sessions' && mockSessions.length > 0) {
-            Object.assign(mockSessions[0], data, { updated_at: new Date().toISOString() });
-          }
-          return mockChain;
-        });
-
-        return mockChain;
+        return chain;
       })
+    },
+    __resetMockState: () => {
+      mockSessions.length = 0;
+      sessionIdCounter = 1;
     }
   };
 });
@@ -108,6 +169,8 @@ describe('Reading Session Backend Integration Verification', () => {
   });
 
   beforeEach(() => {
+    const { __resetMockState } = require('../../src/config/supabaseClient.js');
+    __resetMockState();
     jest.clearAllMocks();
   });
 
@@ -127,8 +190,10 @@ describe('Reading Session Backend Integration Verification', () => {
         .post('/api/reading/sessions/session-1/end')
         .send({ end_page: 10 });
 
-      // Should not return 404 (endpoint exists)
-      expect(response.status).not.toBe(404);
+      // Endpoint exists and processes the request (returns JSON, not Express default HTML)
+      // 404 here means "session not found" (handled), not "route not found" (unhandled)
+      expect(response.headers['content-type']).toMatch(/json/);
+      expect(response.body).toHaveProperty('error');
       console.log('✅ POST /api/reading/sessions/:id/end endpoint exists');
     });
 

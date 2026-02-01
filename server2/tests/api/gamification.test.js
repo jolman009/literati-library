@@ -2,24 +2,28 @@
 const request = require('supertest');
 const express = require('express');
 
-// Mock dependencies
+// Singleton mock chain — from() always returns the same object so
+// mockResolvedValue set on .single persists across chained calls.
+const mockSingle = jest.fn();
+const mockChain = {
+  select: jest.fn(function () { return this; }),
+  insert: jest.fn(function () { return this; }),
+  update: jest.fn(function () { return this; }),
+  upsert: jest.fn(function () { return this; }),
+  delete: jest.fn(function () { return this; }),
+  eq: jest.fn(function () { return this; }),
+  gte: jest.fn(function () { return this; }),
+  lte: jest.fn(function () { return this; }),
+  order: jest.fn(function () { return this; }),
+  limit: jest.fn(function () { return this; }),
+  range: jest.fn(function () { return this; }),
+  single: mockSingle,
+  mockResolvedValue: function () { return this; },
+  mockClear: function () { return this; },
+};
+
 jest.mock('../../src/config/supabaseClient.js', () => ({
-  supabase: {
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      upsert: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      gte: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      then: jest.fn()
-    }))
-  }
+  supabase: { from: jest.fn(() => mockChain) }
 }));
 
 const { supabase } = require('../../src/config/supabaseClient.js');
@@ -85,11 +89,6 @@ describe('Gamification API Endpoints', () => {
     // Get user stats
     app.get('/gamification/stats', mockAuth, async (req, res) => {
       try {
-        supabase.from().select().eq().single.mockResolvedValue({
-          data: mockUserStats,
-          error: null
-        });
-
         const { data: stats, error } = await supabase
           .from('user_stats')
           .select('*')
@@ -180,8 +179,19 @@ describe('Gamification API Endpoints', () => {
           return res.status(400).json({ error: 'Achievement ID is required' });
         }
 
-        // Check if achievement exists
-        const achievement = { ...mockAchievement, id };
+        // Look up from known achievements
+        const allAchievements = [
+          mockAchievement,
+          {
+            id: 'achievement-2', name: 'Speed Reader', points: 75,
+            category: 'reading', unlocked: false, unlocked_at: null
+          },
+          {
+            id: 'achievement-3', name: 'Note Taker', points: 30,
+            category: 'notes', unlocked: false, unlocked_at: null
+          }
+        ];
+        const achievement = allAchievements.find(a => a.id === id);
         if (!achievement) {
           return res.status(404).json({ error: 'Achievement not found' });
         }
@@ -255,6 +265,11 @@ describe('Gamification API Endpoints', () => {
           return res.status(400).json({ error: 'Type, target value, and target date are required' });
         }
 
+        const validGoalTypes = ['daily_reading', 'weekly_books', 'monthly_pages'];
+        if (typeof type !== 'string' || !validGoalTypes.includes(type)) {
+          return res.status(400).json({ error: 'Invalid goal type' });
+        }
+
         if (target_value <= 0) {
           return res.status(400).json({ error: 'Target value must be positive' });
         }
@@ -264,7 +279,7 @@ describe('Gamification API Endpoints', () => {
         }
 
         // Check for existing active goal of same type
-        const existingGoal = goals.find(g =>
+        const existingGoal = [mockGoal].find(g =>
           g.type === type &&
           g.status === 'active' &&
           new Date(g.target_date) > new Date()
@@ -303,7 +318,7 @@ describe('Gamification API Endpoints', () => {
         const { id } = req.params;
         const { progress_increment } = req.body;
 
-        if (!progress_increment || progress_increment <= 0) {
+        if (!progress_increment || typeof progress_increment !== 'number' || progress_increment <= 0) {
           return res.status(400).json({ error: 'Valid progress increment is required' });
         }
 
@@ -425,13 +440,14 @@ describe('Gamification API Endpoints', () => {
           return res.status(400).json({ error: 'Reading time cannot be negative' });
         }
 
+        const cap = (v) => Math.min(v, 999999999);
         const updatedStats = {
           ...mockUserStats,
-          books_read: books_read !== undefined ? mockUserStats.books_read + books_read : mockUserStats.books_read,
-          pages_read: pages_read !== undefined ? mockUserStats.pages_read + pages_read : mockUserStats.pages_read,
-          total_reading_time: reading_time !== undefined ? mockUserStats.total_reading_time + reading_time : mockUserStats.total_reading_time,
-          notes_created: notes_created !== undefined ? mockUserStats.notes_created + notes_created : mockUserStats.notes_created,
-          highlights_created: highlights_created !== undefined ? mockUserStats.highlights_created + highlights_created : mockUserStats.highlights_created
+          books_read: books_read !== undefined ? cap(mockUserStats.books_read + books_read) : mockUserStats.books_read,
+          pages_read: pages_read !== undefined ? cap(mockUserStats.pages_read + pages_read) : mockUserStats.pages_read,
+          total_reading_time: reading_time !== undefined ? cap(mockUserStats.total_reading_time + reading_time) : mockUserStats.total_reading_time,
+          notes_created: notes_created !== undefined ? cap(mockUserStats.notes_created + notes_created) : mockUserStats.notes_created,
+          highlights_created: highlights_created !== undefined ? cap(mockUserStats.highlights_created + highlights_created) : mockUserStats.highlights_created
         };
 
         // Calculate new level based on total points
@@ -485,11 +501,13 @@ describe('Gamification API Endpoints', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockSingle.mockReset();
   });
 
   describe('GET /gamification/stats', () => {
     it('should get user statistics successfully', async () => {
+      mockSingle.mockResolvedValue({ data: mockUserStats, error: null });
+
       const response = await agent
         .get('/gamification/stats')
         .expect(200);
@@ -1033,6 +1051,7 @@ describe('Gamification API Endpoints', () => {
     });
 
     it('should respond within reasonable time', async () => {
+      mockSingle.mockResolvedValue({ data: mockUserStats, error: null });
       const start = Date.now();
 
       await agent

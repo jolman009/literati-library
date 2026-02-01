@@ -1,17 +1,18 @@
 const request = require('supertest');
 const express = require('express');
 
-// Mock all dependencies before importing
+// Singleton mock chain — from() always returns the same object
+const mockSingle = jest.fn();
+const mockChain = {
+  select: jest.fn(function () { return this; }),
+  insert: jest.fn(function () { return this; }),
+  update: jest.fn(function () { return this; }),
+  eq: jest.fn(function () { return this; }),
+  single: mockSingle,
+};
+
 jest.mock('../../src/config/supabaseClient.js', () => ({
-  supabase: {
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null })
-    }))
-  }
+  supabase: { from: jest.fn(() => mockChain) }
 }));
 
 jest.mock('../../src/middlewares/enhancedAuth.js', () => ({
@@ -60,15 +61,18 @@ describe('Authentication API Endpoints', () => {
         }
 
         // Check if user exists
-        const existingUser = supabase.from('users').select('id').eq('email', email).single();
-        if (existingUser.data) {
+        const existingUser = await supabase.from('users').select('id').eq('email', email).single();
+        if (existingUser && existingUser.data) {
           return res.status(409).json({ error: 'User already exists' });
         }
+
+        // Sanitize name to prevent XSS
+        const sanitizedName = name.replace(/<[^>]*>/g, '').replace(/javascript:/gi, '');
 
         const user = {
           id: 'new-user-id',
           email,
-          name,
+          name: sanitizedName,
           created_at: new Date().toISOString()
         };
 
@@ -146,7 +150,7 @@ describe('Authentication API Endpoints', () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    mockSingle.mockReset();
   });
 
   describe('POST /auth/register', () => {

@@ -8,6 +8,7 @@ describe('API Security Integration Tests', () => {
 
   beforeAll(async () => {
     app = express();
+    app.disable('x-powered-by');
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true }));
 
@@ -20,9 +21,14 @@ describe('API Security Integration Tests', () => {
       next();
     };
 
+    const VALID_TEST_TOKENS = ['valid-token', 'admin-token'];
     const mockAuth = (req, res, next) => {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const token = authHeader.slice(7).trim();
+      if (!token || !VALID_TEST_TOKENS.includes(token)) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
       req.user = { id: 'test-user-id', email: 'test@example.com' };
@@ -52,7 +58,8 @@ describe('API Security Integration Tests', () => {
       }
 
       // XSS prevention
-      if (content.includes('<script>') || content.includes('javascript:')) {
+      const xssPatterns = ['<script', 'javascript:', '<img', '<svg', '<iframe', '<embed', '<object', '<link', 'onerror=', 'onload='];
+      if (xssPatterns.some(p => content.toLowerCase().includes(p))) {
         return res.status(400).json({ error: 'Invalid content detected' });
       }
 
@@ -168,12 +175,17 @@ describe('API Security Integration Tests', () => {
       ];
 
       for (const header of maliciousHeaders) {
-        const response = await agent
-          .get('/api/protected')
-          .set('Authorization', header);
+        try {
+          const response = await agent
+            .get('/api/protected')
+            .set('Authorization', header);
 
-        // Should not succeed with injected headers
-        expect([401, 400]).toContain(response.status);
+          // Should not succeed with injected headers
+          expect([401, 400]).toContain(response.status);
+        } catch (error) {
+          // Node.js HTTP module rejects invalid header characters — this is the expected defense
+          expect(error.message).toMatch(/Invalid character/i);
+        }
       }
     });
   });
@@ -492,12 +504,17 @@ describe('API Security Integration Tests', () => {
       };
 
       for (const [header, value] of Object.entries(maliciousHeaders)) {
-        const response = await agent
-          .get('/public/health')
-          .set(header, value);
+        try {
+          const response = await agent
+            .get('/public/health')
+            .set(header, value);
 
-        // Should handle gracefully
-        expect(response.status).toBeLessThan(500);
+          // Should handle gracefully
+          expect(response.status).toBeLessThan(500);
+        } catch (error) {
+          // Node.js HTTP module rejects invalid header characters — this is the expected defense
+          expect(error.message).toMatch(/Invalid character/i);
+        }
       }
     });
   });
