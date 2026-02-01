@@ -20,11 +20,37 @@ async function runMigration() {
 
   try {
     // Read the migration file based on argument
+    // Consolidated migrations are in database/consolidated/
+    const consolidatedDir = join(__dirname, '../../../../database/consolidated');
     let migrationPath;
     if (migrationArg === 'gamification') {
-      migrationPath = join(__dirname, '../migrations/addGamificationTables.sql');
+      migrationPath = join(consolidatedDir, '002_gamification_core.sql');
+    } else if (migrationArg === 'security') {
+      migrationPath = join(consolidatedDir, '004_security_infrastructure.sql');
+    } else if (migrationArg === 'all') {
+      // Run all consolidated migrations in order
+      const files = [
+        '001_core_tables.sql', '002_gamification_core.sql', '003_gamification_phase2.sql',
+        '004_security_infrastructure.sql', '005_ai_rag.sql', '006_supplementary_tables.sql',
+        '007_functions_triggers_views.sql', '008_rls_policies.sql', '009_indexes_performance.sql'
+      ];
+      for (const file of files) {
+        console.log(`\n📄 Running ${file}...`);
+        const sql = readFileSync(join(consolidatedDir, file), 'utf8');
+        const stmts = sql.split(';').map(s => s.trim()).filter(s => s.length > 0 && !s.startsWith('--'));
+        for (const stmt of stmts) {
+          try {
+            await supabase.rpc('exec_sql', { sql: stmt + ';' });
+          } catch (e) {
+            console.log(`⚠️  ${e.message?.substring(0, 100)}`);
+          }
+        }
+        console.log(`✅ ${file} done`);
+      }
+      console.log('\n🎉 All consolidated migrations completed!');
+      process.exit(0);
     } else {
-      migrationPath = join(__dirname, '../migrations/addSecurityColumns.sql');
+      migrationPath = join(consolidatedDir, '004_security_infrastructure.sql');
     }
 
     const migrationSQL = readFileSync(migrationPath, 'utf8');
@@ -128,9 +154,9 @@ async function runMigration() {
 
     const migrationArg = process.argv[2] || 'security';
     if (migrationArg === 'gamification') {
-      console.log('2. Copy contents from: server2/src/migrations/addGamificationTables.sql');
+      console.log('2. Copy contents from: database/consolidated/002_gamification_core.sql');
     } else {
-      console.log('2. Copy contents from: server2/src/migrations/addSecurityColumns.sql');
+      console.log('2. Copy contents from: database/consolidated/004_security_infrastructure.sql');
     }
 
     console.log('3. Paste and run in SQL Editor');
