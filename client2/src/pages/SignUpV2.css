@@ -15,7 +15,7 @@
 
 .signup-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 440px !important;
   padding: 2.5rem;
   border-radius: 28px;
   background-color: var(--md-sys-color-surface-container-high, #e6e8f0);
