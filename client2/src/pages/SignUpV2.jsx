@@ -16,7 +16,7 @@ const SignUpV2 = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
-  const { isDarkMode } = useMaterial3();
+  const { isDark } = useMaterial3();
 
   // Unified validation engine
   const validation = {
@@ -56,16 +56,16 @@ const SignUpV2 = () => {
   const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
   return (
-    <div className={`signup-v2-container ${isDarkMode ? 'dark' : 'light'}`}>
+    <div className={`signup-v2-container ${isDark ? 'dark' : 'light'}`}>
       <div className="signup-card">
         <div className="signup-header">
           <div className="signup-logo-container">
             <div className="signup-logo-wrapper">
-              <img src="/ShelfQuest_logo_v2.png" alt="Logo" className="signup-logo-img" />
+              <img src="/ShelfQuest_logo_v2.png" alt="ShelfQuest Logo" className="signup-logo-img" />
             </div>
           </div>
           <h1>Create Account</h1>
-          <p style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>Join Literati Library today</p>
+          <p style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>Join ShelfQuest Digital Library today</p>
         </div>
 
         <form onSubmit={handleSignUp} className="signup-form" data-testid="register-form">

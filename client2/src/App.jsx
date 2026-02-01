@@ -9,9 +9,6 @@ import { initOfflineReading } from './utils/offlineInit';
 // import PerformanceMonitor from './components/PerformanceMonitor';
 // import CacheMonitor from './components/CacheMonitor';
 
-// ⚠️ CRITICAL: Import mobile-fixes FIRST! ⚠️
-import './styles/mobile-fixes.css';
-
 // Modern responsive design tokens (Material Design 3)
 import './styles/responsive-tokens.css';
 

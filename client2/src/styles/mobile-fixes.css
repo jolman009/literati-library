@@ -198,6 +198,13 @@ nav ol,
   overflow-x: hidden !important;
 }
 
+/* Auth cards — fixed width, must override the wildcard above */
+.login-card,
+.signup-card {
+  max-width: 440px !important;
+  overflow-x: visible !important;
+}
+
 /* Constrain all modals */
 [class*="modal"]:not(.md3-dialog),
 [class*="Modal"]:not(.md3-dialog),

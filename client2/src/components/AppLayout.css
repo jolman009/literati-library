@@ -567,7 +567,9 @@
   padding: 16px;
   padding-top: 24px;
   width: 100%;
-  max-width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
   min-width: 0; /* Critical: allows content to shrink properly */
   overflow-x: hidden; /* Prevent horizontal overflow at this level */
   overflow-y: visible;
