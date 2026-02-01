@@ -189,11 +189,11 @@ nav ol,
    CARD & MODAL FIXES
    ================================================ */
 
-/* Constrain all cards (except login cards which have their own constraints) */
-[class*="card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced),
-[class*="Card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced),
-.card:not(.login-card):not(.login-card-enhanced),
-.Card:not(.login-card):not(.login-card-enhanced) {
+/* Constrain all cards (except auth cards which have their own constraints) */
+[class*="card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced):not(.signup-card),
+[class*="Card"]:not([class*="login-card"]):not(.login-card):not(.login-card-enhanced):not(.signup-card),
+.card:not(.login-card):not(.login-card-enhanced):not(.signup-card),
+.Card:not(.login-card):not(.login-card-enhanced):not(.signup-card) {
   max-width: 100% !important;
   overflow-x: hidden !important;
 }
