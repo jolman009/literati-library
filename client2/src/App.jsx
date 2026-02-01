@@ -73,7 +73,6 @@ import SignUpV2 from './pages/SignUpV2';
 import ResetPassword from './components/ResetPassword';
 
 // Lazy load all other pages for better performance
-const SignUpPage = lazy(() => import('./pages/SignUpPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));

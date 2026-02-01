@@ -5,17 +5,26 @@
   justify-content: center;
   min-height: 100vh;
   padding: 2rem 1rem;
-  background-color: var(--md-sys-color-surface);
+  background-color: var(--md-sys-color-surface, #f6f8ff);
   transition: background-color 0.3s ease;
+}
+
+.signup-v2-container.dark {
+  background-color: var(--md-sys-color-surface, #111318);
 }
 
 .signup-card {
   width: 100%;
-  max-width: 480px; /* Slightly wider than login for multi-field rows */
+  max-width: 440px;
   padding: 2.5rem;
   border-radius: 28px;
-  background-color: var(--md-sys-color-surface-container-high);
-  box-shadow: var(--md-sys-elevation-3);
+  background-color: var(--md-sys-color-surface-container-high, #e6e8f0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dark .signup-card {
+  background-color: var(--md-sys-color-surface-container-high, #1e2028);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .signup-header {
@@ -23,7 +32,6 @@
   margin-bottom: 2rem;
 }
 
-/* FIX: Improved Logo Container to prevent cropping */
 .signup-logo-container {
   display: flex;
   justify-content: center;
@@ -32,23 +40,39 @@
 
 .signup-logo-wrapper {
   padding: 8px;
-  background: var(--md-sys-color-surface);
-  border-radius: 16px; /* Rounded corners instead of circle to fit wider logos */
-  box-shadow: var(--md-sys-elevation-1);
+  background: var(--md-sys-color-surface, #f6f8ff);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .signup-logo-wrapper {
+  background: var(--md-sys-color-surface, #111318);
 }
 
 .signup-logo-img {
   height: 48px;
-  width: auto; /* Allow natural aspect ratio */
+  width: auto;
   display: block;
   object-fit: contain;
 }
 
 .signup-header h1 {
-  color: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-on-surface, #1a1c28);
   font-size: 1.75rem;
   margin-bottom: 0.5rem;
   font-weight: 400;
+}
+
+.dark .signup-header h1 {
+  color: var(--md-sys-color-on-surface, #e2e2e9);
+}
+
+.signup-header p {
+  color: var(--md-sys-color-on-surface-variant, #434752);
+}
+
+.dark .signup-header p {
+  color: var(--md-sys-color-on-surface-variant, #c3c6cf);
 }
 
 .signup-form {
@@ -57,34 +81,95 @@
   gap: 1.25rem;
 }
 
+/* ================================================
+   PASSWORD REQUIREMENTS - Prominent callout
+   ================================================ */
 .password-requirements {
-  margin-top: -0.25rem;
-  padding: 0 0.5rem;
-  background: var(--md-sys-color-surface-container-low);
-  padding: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--md-sys-color-secondary-container, #cce5ff);
   border-radius: 12px;
+  border-left: 4px solid var(--md-sys-color-secondary, #0077b6);
+}
+
+.dark .password-requirements {
+  background: var(--md-sys-color-secondary-container, #1a3a50);
+  border-left-color: var(--md-sys-color-secondary, #7fc8f8);
 }
 
 .requirement-item {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  gap: 0.625rem;
+  padding: 0.25rem 0;
+  transition: color 0.2s ease;
 }
 
-.requirement-item.met { color: var(--md-sys-color-primary); }
-.requirement-item.unmet { color: var(--md-sys-color-error); }
+.requirement-item.met {
+  color: var(--md-sys-color-primary, #023e8a);
+}
 
+.dark .requirement-item.met {
+  color: var(--md-sys-color-primary, #a4c9ff);
+}
+
+.requirement-item.unmet {
+  color: var(--md-sys-color-error, #ba1a1a);
+}
+
+.dark .requirement-item.unmet {
+  color: var(--md-sys-color-error, #ffb4ab);
+}
+
+/* ================================================
+   PASSWORD VISIBILITY TOGGLE
+   ================================================ */
+.password-toggle {
+  cursor: pointer;
+  color: var(--md-sys-color-on-surface-variant, #434752);
+  font-size: 1.25rem;
+  user-select: none;
+  line-height: 1;
+}
+
+.dark .password-toggle {
+  color: var(--md-sys-color-on-surface-variant, #c3c6cf);
+}
+
+.password-toggle:hover {
+  color: var(--md-sys-color-primary, #023e8a);
+}
+
+.dark .password-toggle:hover {
+  color: var(--md-sys-color-primary, #a4c9ff);
+}
+
+/* ================================================
+   FOOTER
+   ================================================ */
 .signup-footer {
   margin-top: 2rem;
   text-align: center;
 }
 
+.signup-footer p {
+  color: var(--md-sys-color-on-surface-variant, #434752);
+}
+
+.dark .signup-footer p {
+  color: var(--md-sys-color-on-surface-variant, #c3c6cf);
+}
+
 .signup-link {
-  color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-primary, #023e8a);
   text-decoration: none;
   font-weight: 500;
 }
 
-.signup-link:hover { text-decoration: underline; }
+.dark .signup-link {
+  color: var(--md-sys-color-primary, #a4c9ff);
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
