@@ -162,16 +162,6 @@ export const AuthProvider = ({ children }) => {
             console.warn('    ↳ User data updated in state and localStorage');
           }
 
-          // If server returns token in body for backward compatibility, update localStorage
-          if (data?.token) {
-            try {
-              localStorage.setItem(environmentConfig.getTokenKey(), data.token);
-              console.warn('    ↳ Token updated in localStorage (fallback for header auth)');
-            } catch (e) {
-              console.warn('    ⚠️ Could not update localStorage token:', e.message);
-            }
-          }
-
           // Return true to indicate success
           return true;
         }
@@ -258,6 +248,10 @@ export const AuthProvider = ({ children }) => {
    */
   useEffect(() => {
     try {
+      // One-time migration: remove stale tokens left from localStorage-based auth
+      localStorage.removeItem('token');
+      localStorage.removeItem('shelfquest_token');
+
       const storedUser = localStorage.getItem(USER_KEY);
 
       if (storedUser) {
@@ -322,71 +316,9 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      console.warn('🔍 [AUTH] User found in localStorage, verifying session...');
+      console.warn('🔍 [AUTH] User found in localStorage, verifying session via cookies...');
 
-      // Get dev header auth setting
-      const devHeaderAuth = typeof environmentConfig.shouldUseDevHeaderAuth === 'function'
-        ? environmentConfig.shouldUseDevHeaderAuth()
-        : false;
-
-      // In production OR when dev header auth is disabled: rely on cookies only
-      // In dev with header auth enabled: check if token exists as fallback
-      if (import.meta.env.DEV && devHeaderAuth) {
-        let hasToken = false;
-        try {
-          hasToken = !!localStorage.getItem(environmentConfig.getTokenKey());
-        } catch (e) {
-          console.warn('⚠️ [AUTH] Could not check localStorage for token:', e.message);
-        }
-
-        // Only log out if BOTH conditions are true:
-        // 1. Dev header auth is enabled
-        // 2. No token in localStorage AND verification fails
-        if (!hasToken) {
-          console.warn('🔧 [AUTH] Dev header auth enabled but no token in localStorage');
-          console.warn('    ↳ Attempting cookie-based verification anyway...');
-
-          // Try to verify with cookies first
-          try {
-            setLoading(true);
-            await verifyToken();
-            console.warn('✅ [AUTH] Cookie verification successful despite missing header token');
-            if (!cancelled) setLoading(false);
-            return;
-          } catch {
-            // Both cookie AND header auth failed
-            if (!cancelled) {
-              console.warn('❌ [AUTH] Both cookie and header auth failed in dev mode');
-              console.warn('    ↳ Clearing session and prompting sign-in');
-
-              try {
-                showSnackbar({
-                  message: 'Session expired. Please sign in again.',
-                  variant: 'warning',
-                  duration: 5000,
-                  position: 'top-center',
-                  action: (
-                    <button className="md3-snackbar__action-button" onClick={() => navigate('/login')}>
-                      Sign in
-                    </button>
-                  )
-                });
-              } catch (snackbarErr) {
-                console.warn('⚠️ [AUTH] Could not show snackbar:', snackbarErr.message);
-              }
-
-              localStorage.removeItem(USER_KEY);
-              setUser(null);
-            }
-            if (!cancelled) setLoading(false);
-            return;
-          }
-        } else {
-          console.warn('✓ [AUTH] Dev header auth: token found in localStorage');
-        }
-      }
-
-      // Normal verification flow (cookie-based, works in all modes)
+      // Cookie-based verification — works in all environments
       try {
         setLoading(true);
         await verifyToken();
@@ -404,7 +336,7 @@ export const AuthProvider = ({ children }) => {
 
     verifyIfNeeded();
     return () => { cancelled = true; };
-  }, [user, verifyToken, showSnackbar, navigate]);
+  }, [user, verifyToken]);
 
   /**
    * Auth actions
@@ -419,13 +351,7 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password, name }),
         });
 
-        // Capture access token for header-based auth (server also sets HttpOnly cookies)
-        const accessToken = data.token || data.accessToken || data.access_token;
-        if (accessToken) {
-          localStorage.setItem(environmentConfig.getTokenKey(), accessToken);
-        }
-
-        // We only need to store user data in localStorage
+        // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
@@ -451,14 +377,7 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password }),
         });
 
-        // Store token in localStorage for Authorization header (cross-domain support)
-        // Server also sets HttpOnly cookies as fallback
-        const accessToken = data.token || data.accessToken || data.access_token;
-        if (accessToken) {
-          localStorage.setItem(environmentConfig.getTokenKey(), accessToken);
-        }
-
-        // Store user data
+        // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
 
@@ -514,7 +433,7 @@ export const AuthProvider = ({ children }) => {
           // Don't fail login if sync fails
         }
 
-        console.warn('✅ Login successful - token stored in localStorage');
+        console.warn('✅ Login successful - using HttpOnly cookie authentication');
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
@@ -538,7 +457,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       // Always clear local state, even if API call fails
       localStorage.removeItem(USER_KEY);
-      localStorage.removeItem(environmentConfig.getTokenKey());
+      // Clean up any stale tokens from previous localStorage-based auth
+      localStorage.removeItem('token');
+      localStorage.removeItem('shelfquest_token');
       setUser(null);
       setError(null);
     }
@@ -640,14 +561,9 @@ export const AuthProvider = ({ children }) => {
   // User is authenticated if we have user data (cookies handle the actual auth)
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
 
-  // Expose token for compatibility with components that still read it directly
-  const token = useMemo(() => {
-    try {
-      return localStorage.getItem(environmentConfig.getTokenKey()) || null;
-    } catch {
-      return null;
-    }
-  }, []);
+  // Token is no longer stored in localStorage — it's in httpOnly cookies.
+  // Expose null for backward compatibility with components that read token.
+  const token = null;
 
   const value = useMemo(
     () => ({
