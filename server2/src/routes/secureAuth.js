@@ -153,8 +153,7 @@ router.post('/register',
           id: user.id,
           email: user.email,
           name: user.name
-        },
-        accessToken // Also return for clients that prefer headers
+        }
       });
 
     } catch (error) {
@@ -251,8 +250,7 @@ router.post('/login',
           email: user.email,
           name: user.name,
           lastLogin: user.last_login
-        },
-        accessToken // Also return for clients that prefer headers
+        }
       });
 
     } catch (error) {
