@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import Icon from './ui/Icon';
 import { getCacheMetrics, cacheManager } from '../utils/cacheManager';
 import { getApiMetrics } from '../api/cachedApi';
-import environmentConfig from '../config/environment.js';
 
 const CacheMonitor = () => {
   const [metrics, setMetrics] = useState({});
@@ -70,11 +69,10 @@ const CacheMonitor = () => {
 
   const getUserId = () => {
     try {
-      const key = environmentConfig.getTokenKey();
-      const token = localStorage.getItem(key) || localStorage.getItem('shelfquest_token');
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.sub || payload.user_id || payload.id;
+      const userData = localStorage.getItem('shelfquest_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        return user.id || user.user_id || null;
       }
     } catch {
       return null;

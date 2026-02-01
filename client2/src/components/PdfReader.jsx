@@ -14,23 +14,21 @@ const ZOOM_STEP = 0.25; // 25% increments
 export default function PdfReader({ file, book, token, onClose, onPageChange, initialPage }) {
   // Support both 'file' prop (legacy) and 'book' prop (new) - memoized to prevent unnecessary reloads
   const pdfFile = useMemo(() => {
-    const result = file || (book?.file_url ? (
-      token
-        ? { url: book.file_url, httpHeaders: { Authorization: `Bearer ${token}` } }
-        : book.file_url
-    ) : null);
+    // Use withCredentials for cookie-based auth instead of Bearer header
+    const result = file || (book?.file_url
+      ? { url: book.file_url, withCredentials: true }
+      : null);
 
     console.warn('📄 PdfReader - Preparing PDF file:', {
       hasFile: !!file,
       hasBook: !!book,
       file_url: book?.file_url,
-      hasToken: !!token,
       pdfFileType: typeof result,
       pdfFileValue: result
     });
 
     return result;
-  }, [file, book?.file_url, token]);
+  }, [file, book?.file_url]);
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   const containerRef = useRef(null);

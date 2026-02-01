@@ -59,31 +59,15 @@ class BookStorageService {
     return this.config.apiUrl;
   }
 
-  // Get authentication token using centralized configuration
-  getAuthToken() {
-    try {
-      const tokenKey = this.config.getTokenKey();
-      return localStorage.getItem(tokenKey) || sessionStorage.getItem(tokenKey);
-    } catch (error) {
-      console.error('Failed to get auth token:', error);
-      return null;
-    }
-  }
-
-  // Make authenticated API request
+  // Make authenticated API request — cookies sent automatically via credentials:'include'
   async makeAuthenticatedRequest(endpoint, options = {}) {
-    const token = this.getAuthToken();
-    
-    if (!token) {
-      throw new Error('No authentication token found. Please log in again.');
-    }
-
     const baseUrl = this.getApiBaseUrl();
     const url = `${baseUrl}${endpoint}`;
 
     const defaultOptions = {
+      credentials: 'include',
       headers: {
-        ...this.config.getAuthHeaders(token),
+        'Content-Type': 'application/json',
         ...options.headers
       }
     };
@@ -92,18 +76,18 @@ class BookStorageService {
 
     try {
       const response = await fetch(url, requestOptions);
-      
+
       if (response.status === 401) {
-        // Token expired, redirect to login
+        // Session expired, redirect to login
         this.handleAuthError();
         throw new Error('Session expired. Please log in again.');
       }
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Request failed: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error(`API request failed for ${endpoint}:`, error);
@@ -114,10 +98,7 @@ class BookStorageService {
   // Handle authentication errors
   handleAuthError() {
     try {
-      const tokenKey = this.config.getTokenKey();
-      localStorage.removeItem(tokenKey);
-      sessionStorage.removeItem(tokenKey);
-      localStorage.removeItem('user');
+      localStorage.removeItem('shelfquest_user');
       // Redirect to login
       window.location.href = '/login';
     } catch (error) {
@@ -213,17 +194,9 @@ class BookStorageService {
         }
       });
 
-      const token = this.getAuthToken();
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
       const response = await fetch(`${this.getApiBaseUrl()}/books/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-          // Don't set Content-Type for FormData
-        },
+        credentials: 'include', // Cookies sent automatically
         body: formData
       });
 

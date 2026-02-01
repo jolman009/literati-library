@@ -2,7 +2,6 @@
 // API wrapper with intelligent caching and offline support
 
 import API from '../config/api.js';
-import environmentConfig from '../config/environment.js';
 import { cacheManager } from '../utils/cacheManager.js';
 import { measureCustomMetric } from '../utils/webVitals.js';
 
@@ -342,17 +341,17 @@ export class CachedApiService {
    * Get current user ID from auth context
    */
   getCurrentUserId() {
-    // Try to get from localStorage token
+    // Read user ID from stored user data (tokens are in httpOnly cookies)
     try {
-      const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.sub || payload.user_id || payload.id;
+      const userData = localStorage.getItem('shelfquest_user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        return user.id || user.user_id || null;
       }
     } catch {
-      console.warn('Failed to extract user ID from token');
+      console.warn('Failed to extract user ID from stored user data');
     }
-    
+
     return null;
   }
 

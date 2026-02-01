@@ -2,7 +2,6 @@
 // Sync Manager - processes sync queue and syncs with backend
 
 import API, { gamificationAPI } from '../config/api';
-import environmentConfig from '../config/environment.js';
 import {
   getPendingActions,
   getRetryableActions,
@@ -179,8 +178,8 @@ class SyncManager {
   async syncCreateNote(payload) {
     const { bookId, content, page, position, timestamp: _timestamp, noteId: _noteId } = payload;
 
-    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
-    const data = await gamificationAPI.createNote(token, {
+    // Token param is vestigial — cookies sent automatically via withCredentials
+    const data = await gamificationAPI.createNote(null, {
       book_id: bookId,
       content,
       page_number: page,
@@ -197,8 +196,8 @@ class SyncManager {
   async syncUpdateNote(payload) {
     const { noteId, content, timestamp: _timestamp } = payload;
 
-    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
-    const data = await gamificationAPI.updateNote(token, noteId, {
+    // Token param is vestigial — cookies sent automatically via withCredentials
+    const data = await gamificationAPI.updateNote(null, noteId, {
       content,
       type: 'note',
     });
@@ -212,8 +211,8 @@ class SyncManager {
   async syncDeleteNote(payload) {
     const { noteId } = payload;
 
-    const token = localStorage.getItem(environmentConfig.getTokenKey()) || localStorage.getItem('shelfquest_token');
-    const data = await gamificationAPI.deleteNote(token, noteId);
+    // Token param is vestigial — cookies sent automatically via withCredentials
+    const data = await gamificationAPI.deleteNote(null, noteId);
 
     return data;
   }
