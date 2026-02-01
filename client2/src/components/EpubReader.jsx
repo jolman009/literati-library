@@ -82,18 +82,11 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
     // Fetch the file with Authorization header (Bearer token) for authentication
     console.warn('🔧 Fetching EPUB file with Authorization header...');
 
-    // Build headers - always include Accept, add Authorization if token is available
-    const fetchHeaders = {
-      'Accept': 'application/epub+zip'
-    };
-    if (token) {
-      fetchHeaders['Authorization'] = `Bearer ${token}`;
-    }
-
+    // Cookies are sent automatically via credentials:'include'
     fetch(epubUrl, {
       method: 'GET',
-      credentials: 'include', // Also send cookies as fallback
-      headers: fetchHeaders
+      credentials: 'include',
+      headers: { 'Accept': 'application/epub+zip' }
     })
     .then(response => {
       if (!response.ok) {
@@ -248,7 +241,7 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
     };
   // Note: onLocationChange is accessed via ref to prevent re-initialization
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [epubUrl, initialLocation, token]);
+  }, [epubUrl, initialLocation]);
 
   // UNIFIED NAVIGATION - both buttons and keyboard use epub.js next()/prev()
   const handleNext = useCallback(() => {

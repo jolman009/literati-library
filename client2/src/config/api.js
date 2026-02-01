@@ -47,24 +47,7 @@ if (API && !API.BASE_URL) {
   API.BASE_URL = apiUrl;
 }
 
-// Add request interceptor to include auth token
-API.interceptors.request.use(
-  (config) => {
-    // Get token from localStorage or sessionStorage
-    const token = localStorage.getItem(environmentConfig.getTokenKey()) ||
-                  sessionStorage.getItem(environmentConfig.getTokenKey());
-
-    // Add Authorization header if token exists
-    if (token && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// No request interceptor needed — cookies are sent automatically via withCredentials: true
 
 // Response interceptor for error handling ONLY
 // NOTE: Token refresh is handled exclusively by AuthContext to prevent race conditions

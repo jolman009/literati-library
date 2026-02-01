@@ -227,24 +227,9 @@ class EnvironmentConfig {
   }
 
   // Method to get authenticated headers
-  getAuthHeaders(token = null) {
-    const headers = this.getDefaultHeaders();
-
-    // Try to get token from storage if not provided
-    if (!token && typeof window !== 'undefined') {
-      try {
-        token = localStorage.getItem(this.getTokenKey()) ||
-          sessionStorage.getItem(this.getTokenKey());
-      } catch (error) {
-        console.warn('Failed to retrieve token from storage:', error);
-      }
-    }
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    return headers;
+  // Tokens are now in httpOnly cookies — no Bearer header needed
+  getAuthHeaders() {
+    return this.getDefaultHeaders();
   }
 
   // Dev helper: should we force header auth in development?
