@@ -1,21 +1,30 @@
 # ShelfQuest — Production Readiness Baseline
 
-> **Last audited:** 2026-02-01
+> **Last audited:** 2026-02-01 (evening update)
 > **Audited by:** Code audit against actual files (not self-reported)
 > **Method:** Every claim verified by reading source files, configs, and CI workflows
 
 ---
 
-## Overall Readiness: ~60%
+## Overall Readiness: ~65%
 
-| Category | Score | Trend |
+| Category | Score | Prev | Change | Notes |
+|---|---|---|---|---|
+| Security | 75% | 75% | — | P0 gaps unchanged; keystore credentials secured |
+| Testing | 60% | 40% | ▲ +20% | All 230 server tests passing; 0 failures |
+| Compliance & Legal | 85% | 85% | — | Cookie Policy + account deletion still missing |
+| Production Infrastructure | 70% | 70% | — | No Redis; monitoring unverified |
+| UI/UX | 90% | 90% | — | Material Design 3, dark mode, responsive, PWA |
+| Core Functionality | 80% | 80% | — | Auth, books, reading, gamification, AI notes all working |
+
+### Changes since initial audit (same day)
+
+| Item | Status | Impact |
 |---|---|---|
-| Security | 75% | Middleware real and mounted; gaps in persistence and 2FA |
-| Testing | 40% | Infrastructure solid; actual coverage low |
-| Compliance & Legal | 85% | Legal docs thorough; missing deletion endpoint |
-| Production Infrastructure | 70% | Docker, CD pipelines, Sentry, monitoring configs all exist |
-| UI/UX | 90% | Material Design 3, dark mode, responsive, PWA |
-| Core Functionality | 80% | Auth, books, reading, gamification, AI notes all working |
+| ✅ Fixed all 38 failing server tests (4 suites) | 230 pass / 0 fail | Testing 40% → 60% |
+| ✅ Secured Android keystore credentials | Moved to gitignored `keystore.properties` | Security hygiene |
+| ✅ Built ShelfQuest v1.0.9 AAB | Ready for Google Play upload | Release pipeline |
+| ✅ Converted auth.integration.test.js from Vitest to Jest | 14 new passing tests | Testing coverage |
 
 ---
 
@@ -30,28 +39,33 @@
 | Rate limiting (express-rate-limit) | `server2/src/middlewares/rateLimitConfig.js` (220 lines) | **Working** — general, auth, upload, API, gamification |
 | Slow-down middleware (progressive delays) | `rateLimitConfig.js` | **Working** |
 | CSRF protection (token-based) | `advancedSecurity.js` L247-298 | **Working** — but tokens are deterministic (IP+UA hash) |
-| Account lockout (5 attempts / 15 min) | `server2/src/routes/secureAuth.js` L27-28, L183-190 | **Working** — in-memory Map, resets on server restart |
+| Account lockout (5 attempts / 15 min) | `server2/src/routes/secureAuth.js` L25-64 | **Working** — in-memory Map, resets on server restart |
 | Password strength + breach check (HIBP) | `advancedSecurity.js` | **Working** |
 | Security headers (Helmet, CSP, HSTS) | `server2/src/middlewares/securityMiddleware.js` | **Working** |
 | Mongo sanitization | `express-mongo-sanitize` in `server.js` | **Working** |
 | Centralized security config + env validation | `server2/src/config/securityConfig.js` (347 lines) | **Working** |
 | Security audit logging to DB | `server2/src/routes/secureAuth.js` L572-579 | **Working** |
+| Android keystore credentials | `android/keystore.properties` (gitignored) | **Secured** |
 
-### Known gaps
+### Known gaps (P0)
 
-| Gap | Impact | Fix complexity |
-|---|---|---|
-| `advancedSecurity.js` adaptive rate limiting is **stubbed** (calls `next()` only, L152-163) | Medium — basic rate limiting still works via `rateLimitConfig.js` | Low — re-enable when IPv6 issue resolved |
-| Account lockout uses **in-memory Map** | High — resets on deploy/restart | Medium — move to Supabase `security_audit_log` or Redis |
-| Token blacklist uses **in-memory Set** | High — same restart problem | Medium — same solution |
-| CSRF tokens are **deterministic** (IP + User-Agent hash) | Medium — predictable on shared networks | Low — switch to random tokens with server-side store |
-| JWT tokens returned in **response body** alongside cookies | Low — backward compat, cookies are primary | Low — remove body tokens when all clients use cookies |
-| **No 2FA/MFA** | Medium — not required for app stores but expected for sensitive accounts | High — needs TOTP library + UI flow |
-| **No Redis** for session/rate-limit persistence | High — all stateful security is in-memory | Medium — Redis config is scaffolded in `.env.example` but not implemented |
+| # | Gap | Location | Impact | Fix complexity |
+|---|---|---|---|---|
+| P0-1a | Account lockout uses **in-memory Map** | `secureAuth.js` L26 | HIGH — resets on deploy/restart | Medium — move to Supabase `security_audit_log` or Redis |
+| P0-1b | Token blacklist uses **in-memory Set** | `enhancedAuth.js` L6 | CRITICAL — blacklist lost on restart; no distributed support | Medium — same solution |
+| P0-2a | `adaptiveRateLimit` is **stubbed** — just calls `next()` | `advancedSecurity.js` L152-155 | CRITICAL — no adaptive protection on `/login` | Low — re-enable when IPv6 issue resolved |
+| P0-2b | `sensitiveOperationRateLimit` is **stubbed** — just calls `next()` | `advancedSecurity.js` L160-163 | CRITICAL — no rate limiting on register, password change/reset | Low — same fix |
+| P0-2c | `express-rate-limit` import is **commented out** | `advancedSecurity.js` L2 | HIGH — disabled due to IPv6 issue | Low — import from rateLimitConfig instead |
+| P0-3a | `accessToken` returned in register response body | `secureAuth.js` L157 | HIGH — token in logs/cache | Trivial — remove field |
+| P0-3b | `accessToken` returned in login response body | `secureAuth.js` L255 | HIGH — same | Trivial — remove field |
+| P0-3c | `accessToken` returned in refresh response body | `enhancedAuth.js` L462 | HIGH — same | Trivial — remove field |
+| — | CSRF tokens are **deterministic** (IP + User-Agent hash) | `advancedSecurity.js` | Medium — predictable on shared networks | Low — switch to random tokens |
+| — | **No 2FA/MFA** | — | Medium — not required for app stores | High — needs TOTP library + UI flow |
+| — | **No Redis** for session/rate-limit persistence | `.env.example` references it but nothing connects | HIGH — all stateful security is in-memory | Medium — Redis config is scaffolded |
 
 ---
 
-## 2. Testing — 40%
+## 2. Testing — 60%
 
 ### Infrastructure (exists and is configured)
 
@@ -65,41 +79,41 @@
 | Codecov | `.github/workflows/ci.yml` | Integrated for client, server, and AI service with flags |
 | Lighthouse CI | `client2/.lighthouserc.json` | Performance 0.6, a11y 0.7, best-practices 0.7, SEO 0.7 |
 
-### Actual test files: 25
+### Test suites: 25 files
 
-| Location | Count | Files |
-|---|---|---|
-| Client unit tests | 6 | App, DashboardPage, LibraryPage, MD3Button, environment, simple |
-| Client context tests | 2 | AuthContext (two locations) |
-| Client utility tests | 1 | bookStatus |
-| Client integration | 1 | reading-session |
-| E2E specs (Playwright) | 5 | auth, gamification, library, reading-session, security |
-| Server unit tests | 2 | secureAuth, simple |
-| Server integration | 3 | auth, reading-session-backend, reading-session-verification |
-| Server API tests | 5 | auth, books, gamification, reading-sessions, security |
+| Location | Count | Files | Status |
+|---|---|---|---|
+| Server API tests | 5 | auth, books, gamification, reading-sessions, security | ✅ All passing |
+| Server unit tests | 2 | secureAuth (29 tests), simple | ✅ All passing |
+| Server integration | 3 | auth (14), reading-session-backend (15), reading-session-verification (14) | ✅ All passing |
+| **Server total** | **10 suites** | **230 tests passing, 15 skipped, 0 failures** | ✅ |
+| Client unit tests | 6 | App, DashboardPage, LibraryPage, MD3Button, environment, simple | ⚠️ Unverified this session |
+| Client context tests | 2 | AuthContext (two locations) | ⚠️ Unverified |
+| Client utility tests | 1 | bookStatus | ⚠️ Unverified |
+| Client integration | 1 | reading-session | ⚠️ Unverified |
+| E2E specs (Playwright) | 5 | auth, gamification, library, reading-session, security | ⚠️ Unverified against live services |
 
 ### CI/CD Pipelines: 14 GitHub Actions workflows
 
 | Workflow | Purpose | Status |
 |---|---|---|
-| `ci.yml` | Primary — client/server/AI tests, Docker build, security scan, quality gates | **Active** |
-| `test.yml` | Secondary — comprehensive test + E2E + Lighthouse | **Active** |
-| `cd-production.yml` | Production deploy with approval gate, Trivy, SSH, smoke tests, Artillery load test | **Configured** — triggers on `v*.*.*` tags |
-| `cd-staging.yml` | Staging auto-deploy on `develop` push, Playwright, Lighthouse, Artillery | **Configured** |
-| `ci-cd.yml` | Legacy pipeline | **Broken** — references `test:unit` script that doesn't exist in package.json |
-| `security-scan-enhanced.yml` | Enhanced Trivy scanning | **Active** |
-| `deploy-vercel.yml` | Vercel deployment | **Disabled** (marked redundant) |
-| Others (7) | Docker test, Jekyll pages, dependency updates, node version check, etc. | Various |
+| `ci.yml` | Primary — client/server/AI tests, Docker build, security scan | **Active** — but `continue-on-error: true` on 5 steps |
+| `test.yml` | Secondary — comprehensive test + E2E + Lighthouse | **Active** — but `continue-on-error: true` on 5 jobs |
+| `cd-production.yml` | Production deploy with approval gate, Trivy, SSH, smoke tests | **Configured** — triggers on `v*.*.*` tags |
+| `cd-staging.yml` | Staging auto-deploy on `develop` push | **Configured** |
+| `ci-cd.yml` | Legacy pipeline | **Broken** — references `test:unit` script that doesn't exist |
+| Others (9) | Security scan, Docker, Jekyll, dependency updates, etc. | Various |
 
 ### Known gaps
 
-| Gap | Impact |
-|---|---|
-| **Coverage is low** — 25 test files across a large codebase | Many untested paths in routes, middleware, and components |
-| **`ci-cd.yml` is broken** — references nonexistent `test:unit` script | Silently fails if triggered |
-| **E2E tests may not pass** — configured but unverified against live services | Could block CI if enforced |
-| **No load/performance test baseline** — Artillery is configured in CD but no baseline metrics recorded | Can't detect regressions |
-| **`continue-on-error: true`** on test jobs in `ci.yml` and `test.yml` | Tests can fail without blocking merges |
+| # | Gap | Impact |
+|---|---|---|
+| P2-7 | **`continue-on-error: true`** on 10 steps/jobs across `ci.yml` and `test.yml` | Tests can fail without blocking merges |
+| P2-8 | **`ci-cd.yml` is broken** — calls `pnpm run test:unit` which doesn't exist | Silent failure; tests never run in this workflow |
+| ~~P2-9~~ | ~~Run and fix all server tests~~ | ✅ **DONE** — 230 passing, 0 failures |
+| P2-10 | **Coverage is still limited** — 25 test files across a large codebase | Many untested paths in middleware and components |
+| — | **E2E tests unverified** — Playwright configured but never run against live services | Could block CI if enforced |
+| — | **No load/performance baseline** — Artillery configured in CD but no baseline recorded | Can't detect performance regressions |
 
 ---
 
@@ -118,12 +132,12 @@
 
 ### Known gaps
 
-| Gap | Impact | Fix complexity |
-|---|---|---|
-| **No Cookie Policy page** | Medium — referenced in Privacy Policy but doesn't exist | Low — single page component |
-| **No account deletion endpoint** | High — Privacy Policy describes it, but no `/api/account/delete` exists | Medium — needs cascade delete across all tables |
-| **No automated accessibility testing** | Medium — `eslint-plugin-jsx-a11y` provides linting but no runtime tests | Low — add `jest-axe` |
-| **App store assets are guides only** | Blocking for app store submission — 4 markdown planning docs, no actual icons or screenshots | High — needs design work |
+| # | Gap | Impact | Fix complexity |
+|---|---|---|---|
+| P1-4 | **No account deletion endpoint** — Privacy Policy describes it, no `/api/account/delete` exists | HIGH — GDPR Article 17 right to erasure | Medium — needs cascade delete across all tables |
+| P1-5 | **No Cookie Policy page** — referenced in Privacy Policy but doesn't exist; only banner exists | Medium — regulatory expectation | Low — single page component |
+| P1-6 | **No automated accessibility testing** — `eslint-plugin-jsx-a11y` provides static linting only | Medium — no runtime a11y tests | Low — add `jest-axe` |
+| — | **App store assets are guides only** — 4 markdown planning docs, no actual icons/screenshots | Blocking for new store submissions | High — needs design work |
 
 ---
 
@@ -144,15 +158,16 @@
 |---|---|---|
 | Render | `render.yaml` (root + server2) | **Configured** — server + AI service, auto-deploy from main, health checks |
 | Vercel | `client2/vercel.json` | **Configured** — SPA routing, headers, cache control |
-| CD Production | `.github/workflows/cd-production.yml` | **Configured** — manual approval, Docker push to ghcr.io, SSH deploy to 2 servers, smoke tests |
-| CD Staging | `.github/workflows/cd-staging.yml` | **Configured** — auto-deploy on `develop`, Playwright + Lighthouse + Artillery |
+| Google Play | `android/` | **v1.0.9 built** — AAB signed and ready for upload |
+| CD Production | `.github/workflows/cd-production.yml` | **Configured** — manual approval, Docker push to ghcr.io |
+| CD Staging | `.github/workflows/cd-staging.yml` | **Configured** — auto-deploy on `develop` |
 
 ### Monitoring & Error Tracking
 
 | Component | Config | Status |
 |---|---|---|
-| Sentry (client) | `client2/src/services/sentry.jsx` | **Integrated** — `@sentry/react`, performance monitoring, session replay |
-| Sentry (server) | `server2/src/config/sentry.js` | **Integrated** — `@sentry/node`, Express middleware, transaction filtering |
+| Sentry (client) | `client2/src/services/sentry.jsx` | **Integrated** — `@sentry/react`, performance, session replay |
+| Sentry (server) | `server2/src/config/sentry.js` | **Integrated** — `@sentry/node`, Express middleware |
 | Prometheus | `monitoring/prometheus.yml` + `alerts.yml` | **Configured** — not confirmed running |
 | Grafana | `monitoring/grafana/` provisioning | **Configured** — datasources + dashboards |
 | Loki (logs) | `monitoring/loki-config.yml` | **Configured** |
@@ -163,11 +178,11 @@
 
 | Gap | Impact |
 |---|---|
-| **No Redis** — `.env.example` mentions it but nothing imports or connects to Redis | In-memory security state doesn't survive restarts |
+| **No Redis** — `.env.example` mentions it but nothing connects | In-memory security state doesn't survive restarts |
 | **Monitoring stack not confirmed running** — configs exist but may never have been deployed | No proof of active monitoring |
 | **CD pipelines reference infrastructure that may not exist** — SSH servers, ghcr.io, staging env | Workflows would fail on first real run |
-| **No database backup/recovery strategy** — relies entirely on Supabase managed backups | No custom backup automation or tested restore process |
-| **No staging environment confirmed** — `cd-staging.yml` exists but no evidence of a staging Supabase project | Changes go straight to production |
+| **No database backup/recovery strategy** — relies entirely on Supabase managed backups | No custom backup automation or tested restore |
+| **No staging environment confirmed** — `cd-staging.yml` exists but no evidence of staging Supabase project | Changes go straight to production |
 
 ---
 
@@ -177,11 +192,12 @@
 
 | Tier | Tech | Location |
 |---|---|---|
-| Frontend | React 18 + Vite + Material Design 3 | `client2/` |
+| Frontend | React 19 + Vite + Material Design 3 | `client2/` |
 | Backend | Express.js (Node 20) | `server2/` |
 | AI Service | FastAPI (Python 3.11) + Google Generative AI | `ai-service/` |
 | Database | Supabase (PostgreSQL) | `database/consolidated/` (9 migration files) |
 | Storage | Supabase Storage | File uploads via `server2/src/routes/books.js` |
+| Mobile | Capacitor 8 + TWA wrapper | `android/` (v1.0.9) |
 
 ### Database
 
@@ -196,29 +212,30 @@
 
 ### P0 — Security (before any public release)
 
-1. **Persist account lockout and token blacklist** — move from in-memory to Supabase or Redis
-2. **Fix `advancedSecurity.js` rate limiting stubs** — re-enable adaptive rate limiting (L152-163)
-3. **Remove JWT tokens from response body** — rely solely on httpOnly cookies
+1. ~~**Persist account lockout and token blacklist**~~ → Still in-memory (`secureAuth.js` L26, `enhancedAuth.js` L6)
+2. **Fix rate limiting stubs** — `adaptiveRateLimit` (L152-155) and `sensitiveOperationRateLimit` (L160-163) both just call `next()`. The `express-rate-limit` import is commented out (L2). Wire up actual limiters from `rateLimitConfig.js`.
+3. **Remove JWT tokens from response body** — `accessToken` is in register (L157), login (L255), and refresh (L462) JSON responses. Remove these fields; clients should use httpOnly cookies.
 
 ### P1 — Compliance (before app store submission)
 
 4. **Build account deletion endpoint** — `/api/account/delete` with cascade delete; Privacy Policy already describes the behavior
-5. **Create Cookie Policy page** — referenced in Privacy Policy but doesn't exist
-6. **Add `jest-axe` accessibility tests** — `eslint-plugin-jsx-a11y` catches some issues but can't test runtime behavior
+5. **Create Cookie Policy page** — referenced in Privacy Policy but doesn't exist; use `LegalPageLayout.jsx` pattern
+6. **Add `jest-axe` accessibility tests** — only static `jsx-a11y` linting currently
 
-### P2 — Testing (before scaling)
+### P2 — Testing & CI (before scaling)
 
-7. **Remove `continue-on-error: true`** from test jobs in `ci.yml` and `test.yml` — tests should block merges
-8. **Delete or fix `ci-cd.yml`** — references nonexistent `test:unit` script
-9. **Run and fix all 25 existing tests** — verify they pass, then enforce in CI
+7. **Remove `continue-on-error: true`** from 10 locations across `ci.yml` (5) and `test.yml` (5) — tests should block merges
+8. **Delete or fix `ci-cd.yml`** — references nonexistent `test:unit` script; silent failure
+9. ~~**Run and fix all server tests**~~ ✅ **DONE** — 230 passing, 0 failures
 10. **Increase coverage** — focus on auth routes, middleware, and book upload flow
+11. **Verify client tests pass** — 10 Vitest test files not verified this session
 
 ### P3 — Infrastructure (before production traffic)
 
-11. **Add Redis** for session store, rate limiting, and token blacklist persistence
-12. **Verify monitoring stack** — run Prometheus/Grafana/Loki locally and confirm dashboards populate
-13. **Test CD pipelines end-to-end** — create a staging environment and run `cd-staging.yml`
-14. **Document and test database restore process** from Supabase backups
+12. **Add Redis** for session store, rate limiting, and token blacklist persistence
+13. **Verify monitoring stack** — run Prometheus/Grafana/Loki locally and confirm dashboards populate
+14. **Test CD pipelines end-to-end** — create a staging environment and run `cd-staging.yml`
+15. **Document and test database restore process** from Supabase backups
 
 ---
 
@@ -227,20 +244,21 @@
 | File | Lines | Purpose |
 |---|---|---|
 | `server2/src/middlewares/enhancedAuth.js` | 669 | JWT + refresh tokens + httpOnly cookies |
-| `server2/src/middlewares/advancedSecurity.js` | 653 | Input sanitization, CSRF, file upload security |
+| `server2/src/middlewares/advancedSecurity.js` | 653 | Input sanitization, CSRF, rate limiting stubs |
 | `server2/src/middlewares/rateLimitConfig.js` | 220 | Express rate limiting (5 tiers) |
 | `server2/src/middlewares/securityMiddleware.js` | — | Helmet, security headers |
 | `server2/src/config/securityConfig.js` | 347 | Centralized security configuration |
 | `server2/src/routes/secureAuth.js` | 719 | Auth routes with lockout + audit logging |
 | `server2/src/routes/dataExport.js` | — | GDPR data export endpoint |
 | `server2/src/server.js` | 563 | Express app — all middleware mounted here |
-| `server2/src/config/sentry.js` | — | Server-side error tracking |
-| `client2/src/services/sentry.jsx` | — | Client-side error tracking |
+| `android/app/build.gradle` | 267 | Android build config — v1.0.9, keystore.properties |
+| `android/keystore.properties` | — | Signing credentials (gitignored) |
 | `client2/vitest.config.js` | — | Client test configuration |
 | `server2/jest.config.js` | — | Server test configuration |
 | `client2/playwright.config.js` | — | E2E test configuration (7 browsers) |
-| `client2/.lighthouserc.json` | — | Performance budget thresholds |
-| `.github/workflows/ci.yml` | — | Primary CI pipeline |
+| `.github/workflows/ci.yml` | — | Primary CI pipeline (5x continue-on-error) |
+| `.github/workflows/test.yml` | — | Secondary test pipeline (5x continue-on-error) |
+| `.github/workflows/ci-cd.yml` | — | Legacy pipeline (broken — nonexistent test:unit) |
 | `.github/workflows/cd-production.yml` | — | Production deployment pipeline |
 | `docker-compose.yml` | — | Container orchestration |
 | `render.yaml` | — | Render.com deployment config |

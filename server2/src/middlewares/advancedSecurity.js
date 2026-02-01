@@ -1,6 +1,6 @@
 // src/middlewares/advancedSecurity.js
-// import rateLimit from 'express-rate-limit'; // Temporarily disabled due to IPv6 issue
 import crypto from 'crypto';
+import rateLimit from 'express-rate-limit';
 import { validationResult } from 'express-validator';
 
 // =====================================================
@@ -147,20 +147,59 @@ export const noSQLInjectionProtection = (req, res, next) => {
 // =====================================================
 
 /**
- * Adaptive rate limiting based on user behavior
+ * Skip rate limiting in test env (tests share module-level state)
+ * and for localhost in development (handles IPv4, IPv6, and mapped addresses).
  */
-export const adaptiveRateLimit = (req, res, next) => {
-  // Temporarily disable rate limiting to fix server startup
-  next();
+const shouldSkipRateLimit = (req) => {
+  if (process.env.NODE_ENV === 'test') return true;
+  if (process.env.NODE_ENV === 'development') {
+    const ip = req.ip || '';
+    return ip === '::1' || ip === '127.0.0.1' || ip === 'localhost' ||
+           ip === '::ffff:127.0.0.1' || ip.startsWith('::ffff:127.');
+  }
+  return false;
 };
 
 /**
- * Strict rate limiting for sensitive operations
+ * Adaptive rate limiting for login endpoint.
+ * 5 failed attempts per IP per 15 minutes; successful requests are free.
  */
-export const sensitiveOperationRateLimit = (req, res, next) => {
-  // Temporarily disable rate limiting to fix server startup
-  next();
-};
+export const adaptiveRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true,
+  skip: shouldSkipRateLimit,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    console.warn(`🔐 Adaptive rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
+    res.status(429).json({
+      error: 'Too many failed attempts. Please try again later.',
+      code: 'AUTH_RATE_LIMIT_EXCEEDED',
+      retryAfter: '15 minutes'
+    });
+  }
+});
+
+/**
+ * Strict rate limiting for sensitive operations (register, password change/reset).
+ * 10 requests per IP per 15 minutes (all counted, not just failures).
+ */
+export const sensitiveOperationRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  skip: shouldSkipRateLimit,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    console.warn(`🔒 Sensitive operation rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
+    res.status(429).json({
+      error: 'Too many requests. Please try again later.',
+      code: 'SENSITIVE_RATE_LIMIT_EXCEEDED',
+      retryAfter: '15 minutes'
+    });
+  }
+});
 
 // =====================================================
 // Request Validation and Monitoring
