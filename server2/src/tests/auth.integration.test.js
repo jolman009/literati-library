@@ -78,7 +78,6 @@ jest.mock('../middlewares/enhancedAuth.js', () => {
 
         return res.json({
           message: 'Tokens refreshed successfully',
-          accessToken: newTokens.accessToken,
           user
         })
       } catch (err) {
@@ -186,7 +185,7 @@ describe('Authentication Integration Tests', () => {
         .expect(200)
 
       expect(response.body).toHaveProperty('message', 'Tokens refreshed successfully')
-      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body).not.toHaveProperty('accessToken')
       expect(response.body).toHaveProperty('user')
       expect(response.body.user).toHaveProperty('id', testUser.id)
 
@@ -236,7 +235,7 @@ describe('Authentication Integration Tests', () => {
         .set('Cookie', [`refreshToken=${tokens.refreshToken}`])
         .expect(200)
 
-      expect(firstRefresh.body).toHaveProperty('accessToken')
+      expect(firstRefresh.body).toHaveProperty('message', 'Tokens refreshed successfully')
 
       // Try to reuse the same refresh token (token reuse attack)
       const secondRefresh = await request(app)
@@ -375,7 +374,14 @@ describe('Authentication Integration Tests', () => {
         .set('Cookie', [`refreshToken=${tokens.refreshToken}`])
         .expect(200)
 
-      expect(refreshResponse.body).toHaveProperty('accessToken')
+      expect(refreshResponse.body).toHaveProperty('message', 'Tokens refreshed successfully')
+
+      // Extract the new access token from Set-Cookie header (cookies-only auth)
+      const cookies = refreshResponse.headers['set-cookie']
+      expect(cookies).toBeDefined()
+      const accessTokenCookie = cookies.find(c => c.startsWith('accessToken='))
+      expect(accessTokenCookie).toBeDefined()
+      const newAccessToken = accessTokenCookie.split(';')[0].split('=')[1]
 
       // Mock supabase for profile
       mockSingle.mockResolvedValue({
@@ -391,10 +397,10 @@ describe('Authentication Integration Tests', () => {
         error: null
       })
 
-      // Retry with new token should succeed
+      // Retry with new cookie should succeed
       const retryResponse = await request(app)
         .get('/auth/profile')
-        .set('Cookie', [`accessToken=${refreshResponse.body.accessToken}`])
+        .set('Cookie', [`accessToken=${newAccessToken}`])
         .expect(200)
 
       expect(retryResponse.body.user).toHaveProperty('id', testUser.id)

@@ -459,7 +459,6 @@ export const handleTokenRefresh = async (req, res) => {
 
     const response = {
       message: 'Tokens refreshed successfully',
-      accessToken, // Also return in body for clients that prefer headers
       user: {
         id: user.id,
         email: user.email

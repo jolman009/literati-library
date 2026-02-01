@@ -79,7 +79,6 @@ jest.mock('../middlewares/enhancedAuth.js', () => ({
       const decoded = jwtMod.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'test-secret')
       res.json({
         message: 'Tokens refreshed',
-        accessToken: 'new-access-token',
         user: { id: decoded.id || decoded.userId, email: decoded.email, name: 'Test User' }
       })
     } catch (err) {
@@ -149,7 +148,8 @@ describe('Secure Auth Routes', () => {
 
       expectSuccessResponse(response)
       expect(response.body).toHaveProperty('user')
-      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body).not.toHaveProperty('accessToken')
+      expect(response.body).not.toHaveProperty('refreshToken')
       expect(response.body.user.email).toBe(validRegistrationData.email)
       expect(response.body.user).not.toHaveProperty('password')
     })
@@ -267,7 +267,8 @@ describe('Secure Auth Routes', () => {
 
       expectSuccessResponse(response)
       expect(response.body).toHaveProperty('user')
-      expect(response.body).toHaveProperty('accessToken')
+      expect(response.body).not.toHaveProperty('accessToken')
+      expect(response.body).not.toHaveProperty('refreshToken')
       expect(response.body.user.email).toBe(validLoginData.email)
     })
 
