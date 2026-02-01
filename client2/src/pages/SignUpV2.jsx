@@ -80,7 +80,7 @@ const SignUpV2 = () => {
             required
             fullWidth
             data-testid="password-input"
-            trailingIcon={<span style={{ cursor: 'pointer' }} onClick={() => setShowPassword(!showPassword)}>{showPassword ? '👁️' : '🙈'}</span>}
+            trailingIcon={<span className="material-symbols-outlined password-toggle" onClick={() => setShowPassword(!showPassword)}>{showPassword ? 'visibility' : 'visibility_off'}</span>}
           />
 
           <MD3TextField label="Confirm Password" type="password" value={formData.confirmPassword} onChange={e => updateField('confirmPassword', e.target.value)} required fullWidth data-testid="confirm-password-input" />

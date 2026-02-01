@@ -60,11 +60,11 @@ const LoginV2 = () => {
             fullWidth
             data-testid="password-input"
             trailingIcon={
-              <span 
-                style={{ cursor: 'pointer', fontSize: '1.2rem' }}
+              <span
+                className="material-symbols-outlined password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? '👁️' : '🙈'}
+                {showPassword ? 'visibility' : 'visibility_off'}
               </span>
             }
           />

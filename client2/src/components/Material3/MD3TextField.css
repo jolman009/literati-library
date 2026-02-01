@@ -57,7 +57,7 @@
   min-height: 56px;
   
   /* Colors */
-  background-color: rgb(var(--md-sys-color-surface-container-highest, 230 224 233));
+  background-color: var(--md-sys-color-surface-container-highest, #e6e0e9);
   
   /* Animation */
   transition: 
@@ -72,20 +72,21 @@
 /* Filled Variant (Default) */
 .md3-text-field--filled .md3-text-field__container {
   border-radius: var(--md-sys-shape-corner-small, 8px) var(--md-sys-shape-corner-small, 8px) 0 0;
-  border-bottom: 1px solid rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  border-bottom: 1px solid var(--md-sys-color-on-surface-variant, #49454f);
 }
 
 .md3-text-field--filled:hover:not(.md3-text-field--disabled) .md3-text-field__container {
-  background-color: color-mix(in srgb, rgb(var(--md-sys-color-surface-container-highest)) 92%, rgb(var(--md-sys-color-on-surface)) 8%);
+  background-color: var(--md-sys-color-surface-container-highest, #e6e0e9);
+  filter: brightness(0.97);
 }
 
 .md3-text-field--filled.md3-text-field--focused .md3-text-field__container {
   border-bottom-width: 2px;
-  border-bottom-color: rgb(var(--md-sys-color-primary, 103 80 164));
+  border-bottom-color: var(--md-sys-color-primary, #023e8a);
 }
 
 .md3-text-field--filled.md3-text-field--error .md3-text-field__container {
-  border-bottom-color: rgb(var(--md-sys-color-error, 186 26 26));
+  border-bottom-color: var(--md-sys-color-error, #ba1a1a);
 }
 
 /* Outlined Variant */
@@ -158,8 +159,8 @@
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
 
   /* Colors */
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
-  caret-color: rgb(var(--md-sys-color-primary, 103 80 164));
+  color: var(--md-sys-color-on-surface, #1c1b1f);
+  caret-color: var(--md-sys-color-primary, #023e8a);
 
   /* Remove autofill styling */
   -webkit-appearance: none;
@@ -168,15 +169,15 @@
 }
 
 .md3-text-field__input::placeholder {
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
   opacity: 1;
 }
 
 .md3-text-field__input::-webkit-autofill,
 .md3-text-field__input::-webkit-autofill:hover,
 .md3-text-field__input::-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px rgb(var(--md-sys-color-surface-container-highest, 230 224 233)) inset;
-  -webkit-text-fill-color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  -webkit-box-shadow: 0 0 0 1000px var(--md-sys-color-surface-container-highest, #e6e0e9) inset;
+  -webkit-text-fill-color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 /* ===============================================
@@ -196,7 +197,7 @@
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
 
   /* Colors */
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
 
   /* Animation */
   transition:
@@ -220,17 +221,17 @@
 }
 
 .md3-text-field--focused .md3-text-field__label {
-  color: rgb(var(--md-sys-color-primary, 103 80 164));
+  color: var(--md-sys-color-primary, #023e8a);
 }
 
 .md3-text-field--error .md3-text-field__label {
-  color: rgb(var(--md-sys-color-error, 186 26 26));
+  color: var(--md-sys-color-error, #ba1a1a);
 }
 
 /* Outlined variant label adjustments */
 .md3-text-field--outlined .md3-text-field__label {
   left: 0;
-  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
+  background-color: var(--md-sys-color-surface, #ffffff);
   padding: 0 4px;
   margin-left: -4px;
 }
@@ -250,7 +251,7 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
   transition: color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
 }
 
@@ -264,15 +265,15 @@
 }
 
 .md3-text-field__icon--trailing:hover {
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 .md3-text-field--focused .md3-text-field__icon--leading {
-  color: rgb(var(--md-sys-color-primary, 103 80 164));
+  color: var(--md-sys-color-primary, #023e8a);
 }
 
 .md3-text-field--error .md3-text-field__icon {
-  color: rgb(var(--md-sys-color-error, 186 26 26));
+  color: var(--md-sys-color-error, #ba1a1a);
 }
 
 /* Password Toggle Button */
@@ -283,7 +284,7 @@
   padding: 4px;
   border: none;
   background: transparent;
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
   cursor: pointer;
   border-radius: 50%;
   transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
@@ -293,16 +294,16 @@
 }
 
 .md3-text-field__password-toggle:hover {
-  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 8%, transparent);
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface, #1c1b1f) 8%, transparent);
+  color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 .md3-text-field__password-toggle:active {
-  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 12%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface, #1c1b1f) 12%, transparent);
 }
 
 .md3-text-field__password-toggle:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline: 2px solid var(--md-sys-color-primary, #023e8a);
   outline-offset: 2px;
 }
 
@@ -344,14 +345,14 @@
   letter-spacing: var(--md-sys-typescale-body-small-tracking, 0.4px);
   
   /* Colors */
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
   
   /* Animation */
   transition: color var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
 }
 
 .md3-text-field--error .md3-text-field__supporting-text {
-  color: rgb(var(--md-sys-color-error, 186 26 26));
+  color: var(--md-sys-color-error, #ba1a1a);
 }
 
 /* ===============================================
@@ -359,7 +360,7 @@
    =============================================== */
 
 .md3-text-field__asterisk {
-  color: rgb(var(--md-sys-color-error, 186 26 26));
+  color: var(--md-sys-color-error, #ba1a1a);
   margin-left: 2px;
 }
 
@@ -374,20 +375,20 @@
 }
 
 .md3-text-field--disabled .md3-text-field__container {
-  background-color: color-mix(in srgb, rgb(var(--md-sys-color-on-surface)) 4%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface, #1c1b1f) 4%, transparent);
 }
 
 .md3-text-field--disabled .md3-text-field__input {
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 .md3-text-field--disabled .md3-text-field__label {
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 /* Error State */
 .md3-text-field--error .md3-text-field__input {
-  caret-color: rgb(var(--md-sys-color-error, 186 26 26));
+  caret-color: var(--md-sys-color-error, #ba1a1a);
 }
 
 /* ===============================================
