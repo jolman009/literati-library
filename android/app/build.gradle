@@ -3,6 +3,13 @@ plugins {
     id 'kotlin-android'
 }
 
+// Load keystore credentials from local file (not checked into git)
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace 'org.shelfquest.app'
     compileSdk 35
@@ -11,8 +18,8 @@ android {
         applicationId "org.shelfquest.app"
         minSdk 24
         targetSdk 35
-        versionCode 8
-        versionName "1.0.8"
+        versionCode 9
+        versionName "1.0.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -46,13 +53,14 @@ android {
     }
 
     // Signing configurations (must be before buildTypes)
+    // Credentials loaded from keystore.properties (gitignored)
     signingConfigs {
         release {
-            if (project.hasProperty('KEYSTORE_FILE')) {
-                storeFile file(project.property('KEYSTORE_FILE'))
-                storePassword project.property('KEYSTORE_PASSWORD')
-                keyAlias project.property('KEY_ALIAS')
-                keyPassword project.property('KEY_PASSWORD')
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['KEYSTORE_FILE'])
+                storePassword keystoreProperties['KEYSTORE_PASSWORD']
+                keyAlias keystoreProperties['KEY_ALIAS']
+                keyPassword keystoreProperties['KEY_PASSWORD']
             }
         }
     }
@@ -73,7 +81,7 @@ android {
             zipAlignEnabled true
 
             // Release signing configuration
-            if (project.hasProperty('KEYSTORE_FILE')) {
+            if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
             }
         }
