@@ -30,7 +30,12 @@
       "Bash(wc:*)",
       "Bash(git reset:*)",
       "Bash(git rm:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" add client2/src/pages/LoginV2.jsx client2/src/pages/LoginV2.css client2/src/pages/SignUpV2.jsx client2/src/pages/SignUpV2.css client2/src/pages/SignUpPage.jsx client2/src/pages/SignUpPage.css client2/src/components/Material3/MD3TextField.css client2/src/App.jsx)",
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" status)",
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" push)",
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" add client2/src/styles/mobile-fixes.css)",
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" commit -m \"$\\(cat <<''EOF''\nfix\\(ui\\): exclude signup-card from mobile-fixes max-width override\n\nmobile-fixes.css forced max-width: 100% !important on all elements\nwith \"card\" in their class name. It excluded .login-card but not\n.signup-card, causing the signup form to stretch to full width while\nlogin stayed at 440px.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ],
     "deny": [],
     "ask": []

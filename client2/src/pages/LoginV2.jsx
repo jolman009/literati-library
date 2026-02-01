@@ -15,7 +15,7 @@ const LoginV2 = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { isDarkMode } = useMaterial3();
+  const { isDark } = useMaterial3();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,11 +33,16 @@ const LoginV2 = () => {
   };
 
   return (
-    <div className={`login-v2-container ${isDarkMode ? 'dark' : 'light'}`}>
+    <div className={`login-v2-container ${isDark ? 'dark' : 'light'}`}>
       <div className="login-card">
         <div className="login-header">
+          <div className="login-logo-container">
+            <div className="login-logo-wrapper">
+              <img src="/ShelfQuest_logo_v2.png" alt="ShelfQuest Logo" className="login-logo-img" />
+            </div>
+          </div>
           <h1>Welcome Back</h1>
-          <p>Sign in to your Literati Library</p>
+          <p>Sign in to your ShelfQuest Digital Library</p>
         </div>
 
         <form onSubmit={handleLogin} className="login-form" data-testid="login-form">
