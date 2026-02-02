@@ -20,6 +20,34 @@
   flex-wrap: wrap;
 }
 
+/* Inline variant: rendered inside the reader-topbar via portal */
+.pdf-controls-inline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.pdf-controls-inline .pdf-controls-group button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  font-size: 14px;
+}
+
+.pdf-controls-inline .pdf-page-indicator,
+.pdf-controls-inline .pdf-zoom-indicator {
+  font-size: 13px;
+  min-width: 50px;
+}
+
+.pdf-controls-inline .pdf-zoom-controls {
+  padding-left: 12px;
+}
+
+.pdf-controls-inline .pdf-fit-button {
+  font-size: 11px !important;
+}
+
 /* Control groups for page nav and zoom */
 .pdf-controls-group {
   display: flex;
@@ -200,5 +228,12 @@
     border-left: none;
     padding-top: 8px;
     border-top: 1px solid var(--md-sys-color-outline-variant);
+  }
+}
+
+/* When portaled into the topbar, hide zoom on very small screens */
+@media (max-width: 480px) {
+  .pdf-controls-inline .pdf-zoom-controls {
+    display: none;
   }
 }

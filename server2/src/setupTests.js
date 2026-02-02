@@ -95,6 +95,37 @@ jest.mock('jsonwebtoken', () => ({
   decode: jest.fn().mockReturnValue({ id: 'test-user-id', email: 'test@example.com' })
 }))
 
+// Mock securityStore — prevents real DB calls from the persistent security store
+jest.mock('./services/securityStore.js', () => {
+  const store = {
+    initialize: jest.fn().mockResolvedValue(undefined),
+    shutdown: jest.fn(),
+    blacklistToken: jest.fn(),
+    isTokenBlacklisted: jest.fn().mockReturnValue(false),
+    storeTokenFamily: jest.fn(),
+    getTokenFamily: jest.fn().mockReturnValue(undefined),
+    familyHasToken: jest.fn().mockReturnValue(false),
+    removeTokenFromFamily: jest.fn(),
+    removeTokenFamily: jest.fn(),
+    getFamiliesForUser: jest.fn().mockReturnValue([]),
+    recordFailedLogin: jest.fn().mockResolvedValue(undefined),
+    getFailedAttempts: jest.fn().mockReturnValue({ count: 0, lastAttempt: 0, lockedUntil: 0 }),
+    clearFailedAttempts: jest.fn().mockResolvedValue(undefined),
+    isAccountLocked: jest.fn().mockReturnValue(false),
+    cleanup: jest.fn().mockResolvedValue(undefined),
+    tokenBlacklist: new Set(),
+    refreshTokenFamilies: new Map(),
+    loginAttempts: new Map(),
+    initialized: true
+  }
+  return {
+    securityStore: store,
+    default: store,
+    PersistentSecurityStore: jest.fn(() => store),
+    hashToken: jest.fn((t) => 'mock-hash-' + t)
+  }
+})
+
 // Mock multer
 jest.mock('multer', () => {
   const multer = () => ({

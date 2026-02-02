@@ -219,10 +219,16 @@
 }
 
 .reader-topbar-left,
+.reader-topbar-center,
 .reader-topbar-right {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Center section: PDF controls portaled from PdfReader */
+.reader-topbar-center:empty {
+  display: none; /* Collapse when no PDF controls (e.g., EPUB reader) */
 }
 
 .reader-topbar-btn {

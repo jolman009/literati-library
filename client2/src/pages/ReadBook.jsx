@@ -320,6 +320,10 @@ const ReadBook = () => {
                 <span className="reader-topbar-text">Dashboard</span>
               </button>
             </div>
+
+            {/* Portal target: PdfReader injects page/zoom controls here */}
+            <div id="pdf-controls-portal" className="reader-topbar-center" />
+
             <div className="reader-topbar-right" style={{ gap: 8, display: 'flex', alignItems: 'center' }}>
               {/* Resume when session exists but is paused */}
               {hasActiveSession && activeSession?.isPaused && (

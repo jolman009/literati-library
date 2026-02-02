@@ -19,6 +19,37 @@ import jwt from 'jsonwebtoken'
 // This is required so generateTokens creates actual JWTs we can decode.
 jest.unmock('jsonwebtoken')
 
+// ── Mock securityStore (needed by enhancedAuth.js requireActual) ─
+jest.mock('../services/securityStore.js', () => {
+  const store = {
+    initialize: jest.fn().mockResolvedValue(undefined),
+    shutdown: jest.fn(),
+    blacklistToken: jest.fn(),
+    isTokenBlacklisted: jest.fn().mockReturnValue(false),
+    storeTokenFamily: jest.fn(),
+    getTokenFamily: jest.fn().mockReturnValue(undefined),
+    familyHasToken: jest.fn().mockReturnValue(false),
+    removeTokenFromFamily: jest.fn(),
+    removeTokenFamily: jest.fn(),
+    getFamiliesForUser: jest.fn().mockReturnValue([]),
+    recordFailedLogin: jest.fn().mockResolvedValue(undefined),
+    getFailedAttempts: jest.fn().mockReturnValue({ count: 0, lastAttempt: 0, lockedUntil: 0 }),
+    clearFailedAttempts: jest.fn().mockResolvedValue(undefined),
+    isAccountLocked: jest.fn().mockReturnValue(false),
+    cleanup: jest.fn().mockResolvedValue(undefined),
+    tokenBlacklist: new Set(),
+    refreshTokenFamilies: new Map(),
+    loginAttempts: new Map(),
+    initialized: true
+  }
+  return {
+    securityStore: store,
+    default: store,
+    PersistentSecurityStore: jest.fn(() => store),
+    hashToken: jest.fn((t) => 'mock-hash-' + t)
+  }
+})
+
 // ── Supabase mock (singleton chain pattern) ──────────────────
 const mockSingle = jest.fn()
 const mockMaybeSingle = jest.fn()

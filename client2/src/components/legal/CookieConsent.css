@@ -22,7 +22,8 @@
 }
 
 .cookie-consent-container {
-  max-width: 50px;
+  max-width: 500px;
+  width: 100%;
   animation: slideUp 0.3s ease-out;
 }
 

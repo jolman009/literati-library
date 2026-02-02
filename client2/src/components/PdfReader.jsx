@@ -1,5 +1,6 @@
 // src/components/PdfReader.jsx
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import '../styles/pdf-reader.css';
 
@@ -14,9 +15,10 @@ const ZOOM_STEP = 0.25; // 25% increments
 export default function PdfReader({ file, book, token, onClose, onPageChange, initialPage }) {
   // Support both 'file' prop (legacy) and 'book' prop (new) - memoized to prevent unnecessary reloads
   const pdfFile = useMemo(() => {
-    // Use withCredentials for cookie-based auth instead of Bearer header
+    // Supabase public storage URLs don't need credentials — they use
+    // Access-Control-Allow-Origin: * which is incompatible with withCredentials.
     const result = file || (book?.file_url
-      ? { url: book.file_url, withCredentials: true }
+      ? { url: book.file_url }
       : null);
 
     console.warn('📄 PdfReader - Preparing PDF file:', {
@@ -287,8 +289,47 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     );
   }
 
+  // Portal target: render controls inside the reader-topbar if the slot exists
+  const portalTarget = document.getElementById('pdf-controls-portal');
+
+  const controlsJSX = (
+    <div className={portalTarget ? 'pdf-controls-inline' : 'pdf-controls-bar'}>
+      {/* Page navigation */}
+      <div className="pdf-controls-group">
+        <button onClick={prevPage} disabled={pageNumber <= 1} title="Previous page (←)">
+          ◀
+        </button>
+        <span className="pdf-page-indicator">{pageNumber} / {numPages ?? '—'}</span>
+        <button onClick={nextPage} disabled={!numPages || pageNumber >= numPages} title="Next page (→)">
+          ▶
+        </button>
+      </div>
+
+      {/* Zoom controls */}
+      <div className="pdf-controls-group pdf-zoom-controls">
+        <button onClick={zoomOut} disabled={zoomLevel <= MIN_ZOOM} title="Zoom out (-)">
+          −
+        </button>
+        <span className="pdf-zoom-indicator" onClick={resetZoom} title="Click to reset zoom (Ctrl+0)">
+          {Math.round(zoomLevel * 100)}%
+        </span>
+        <button onClick={zoomIn} disabled={zoomLevel >= MAX_ZOOM} title="Zoom in (+)">
+          +
+        </button>
+        {isZoomed && (
+          <button onClick={resetZoom} className="pdf-fit-button" title="Fit to page (Ctrl+0)">
+            Fit
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="pdf-reader-container">
+      {/* Render controls via portal into reader-topbar, or inline as fallback */}
+      {portalTarget ? createPortal(controlsJSX, portalTarget) : controlsJSX}
+
       <div
         ref={containerRef}
         className={`pdf-content-area ${isZoomed ? 'pdf-zoomed' : ''}`}
@@ -297,38 +338,6 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Top controls */}
-        <div className="pdf-controls-bar">
-          {/* Page navigation */}
-          <div className="pdf-controls-group">
-            <button onClick={prevPage} disabled={pageNumber <= 1} title="Previous page (←)">
-              ◀
-            </button>
-            <span className="pdf-page-indicator">{pageNumber} / {numPages ?? '—'}</span>
-            <button onClick={nextPage} disabled={!numPages || pageNumber >= numPages} title="Next page (→)">
-              ▶
-            </button>
-          </div>
-
-          {/* Zoom controls */}
-          <div className="pdf-controls-group pdf-zoom-controls">
-            <button onClick={zoomOut} disabled={zoomLevel <= MIN_ZOOM} title="Zoom out (-)">
-              −
-            </button>
-            <span className="pdf-zoom-indicator" onClick={resetZoom} title="Click to reset zoom (Ctrl+0)">
-              {Math.round(zoomLevel * 100)}%
-            </span>
-            <button onClick={zoomIn} disabled={zoomLevel >= MAX_ZOOM} title="Zoom in (+)">
-              +
-            </button>
-            {isZoomed && (
-              <button onClick={resetZoom} className="pdf-fit-button" title="Fit to page (Ctrl+0)">
-                Fit
-              </button>
-            )}
-          </div>
-        </div>
-
         <div className="pdf-page-container" ref={pageContainerRef}>
         <Document
           file={pdfFile}
