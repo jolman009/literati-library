@@ -1,12 +1,8 @@
 // src/middlewares/enhancedAuth.js
 import jwt from 'jsonwebtoken';
 import { supabase } from '../config/supabaseClient.js';
+import { securityStore } from '../services/securityStore.js';
 
-// Token blacklist storage (in production, use Redis or database)
-const tokenBlacklist = new Set();
-
-// Refresh token family tracking (in production, use Redis or database)
-const refreshTokenFamilies = new Map(); // family_id -> { userId, tokens: Set(), createdAt }
 const activeRefreshAttempts = new Map(); // userId -> Promise (to prevent concurrent refresh)
 
 // Configuration constants
@@ -114,15 +110,8 @@ export const generateTokens = (user, parentRefreshToken = null) => {
     audience: 'shelfquest-client'
   });
 
-  // Track the refresh token family
-  if (!refreshTokenFamilies.has(familyId)) {
-    refreshTokenFamilies.set(familyId, {
-      userId: user.id,
-      tokens: new Set(),
-      createdAt: Date.now()
-    });
-  }
-  refreshTokenFamilies.get(familyId).tokens.add(refreshToken);
+  // Track the refresh token family (write-through to DB via securityStore)
+  securityStore.storeTokenFamily(familyId, user.id, refreshToken);
 
   return { accessToken, refreshToken, familyId };
 };
@@ -133,8 +122,8 @@ export const generateTokens = (user, parentRefreshToken = null) => {
  */
 export const verifyAccessToken = (token) => {
   try {
-    // Check if token is blacklisted
-    if (tokenBlacklist.has(token)) {
+    // Check if token is blacklisted (fast in-memory lookup via securityStore)
+    if (securityStore.isTokenBlacklisted(token)) {
       throw new Error('Token has been revoked');
     }
 
@@ -178,7 +167,7 @@ export const verifyAccessToken = (token) => {
  */
 export const verifyRefreshToken = (token) => {
   try {
-    if (tokenBlacklist.has(token)) {
+    if (securityStore.isTokenBlacklisted(token)) {
       throw new Error('Refresh token has been revoked');
     }
 
@@ -311,15 +300,10 @@ export const authenticateTokenEnhanced = async (req, res, next) => {
 // =====================================================
 
 /**
- * Blacklist a token (for logout)
+ * Blacklist a token (for logout). Persisted via securityStore.
  */
 export const blacklistToken = (token) => {
-  tokenBlacklist.add(token);
-
-  // Optional: Set timeout to remove from blacklist after expiry
-  setTimeout(() => {
-    tokenBlacklist.delete(token);
-  }, 15 * 60 * 1000); // 15 minutes (access token expiry)
+  securityStore.blacklistToken(token);
 };
 
 /**
@@ -379,16 +363,14 @@ export const handleTokenRefresh = async (req, res) => {
     const familyId = decoded.familyId;
 
     // Enhanced security: Check if this token belongs to a known family
-    if (familyId && refreshTokenFamilies.has(familyId)) {
-      const family = refreshTokenFamilies.get(familyId);
-
-      // Verify the token exists in the family
-      if (!family.tokens.has(refreshToken)) {
+    const family = familyId ? securityStore.getTokenFamily(familyId) : null;
+    if (familyId && family) {
+      // Verify the token exists in the family (uses hashed comparison)
+      if (!securityStore.familyHasToken(familyId, refreshToken)) {
         console.error(`🚨 SECURITY BREACH: Refresh token not in family ${familyId} for user ${decoded.id}`);
 
-        // Invalidate the entire family (all tokens for this family)
-        family.tokens.forEach(token => blacklistToken(token));
-        refreshTokenFamilies.delete(familyId);
+        // Invalidate the entire family
+        securityStore.removeTokenFamily(familyId);
 
         // Force logout by incrementing token version
         await supabase
@@ -403,7 +385,7 @@ export const handleTokenRefresh = async (req, res) => {
           code: 'TOKEN_FAMILY_BREACH'
         });
       }
-    } else if (familyId && !refreshTokenFamilies.has(familyId)) {
+    } else if (familyId && !family) {
       console.warn(`⚠️ Unknown token family ${familyId} - possible expired family or legacy token`);
       // For legacy tokens or expired families, we'll allow the refresh but create a new family
     }
@@ -438,8 +420,8 @@ export const handleTokenRefresh = async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken, familyId: newFamilyId } = generateTokens(user, refreshToken);
 
     // Remove old refresh token from family and blacklist it
-    if (familyId && refreshTokenFamilies.has(familyId)) {
-      refreshTokenFamilies.get(familyId).tokens.delete(refreshToken);
+    if (familyId) {
+      securityStore.removeTokenFromFamily(familyId, refreshToken);
     }
     blacklistToken(refreshToken);
 
@@ -447,15 +429,7 @@ export const handleTokenRefresh = async (req, res) => {
     res.cookie('accessToken', accessToken, ACCESS_COOKIE_OPTIONS);
     res.cookie('refreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
 
-    // Clean up old families (older than 7 days)
-    const now = Date.now();
-    for (const [fId, family] of refreshTokenFamilies.entries()) {
-      if (now - family.createdAt > 7 * 24 * 60 * 60 * 1000) {
-        // Family is older than 7 days, clean it up
-        family.tokens.forEach(token => blacklistToken(token));
-        refreshTokenFamilies.delete(fId);
-      }
-    }
+    // Old family cleanup is handled by securityStore's periodic cleanup job
 
     const response = {
       message: 'Tokens refreshed successfully',
@@ -517,17 +491,14 @@ export const handleLogout = async (req, res) => {
         blacklistToken(refreshToken);
 
         // If this token has a family, optionally clean up the entire family
-        if (familyId && refreshTokenFamilies.has(familyId)) {
-          const family = refreshTokenFamilies.get(familyId);
-
+        if (familyId && securityStore.getTokenFamily(familyId)) {
           // For logout from this device only, just remove this token from the family
           if (!req.body.logoutAllDevices) {
-            family.tokens.delete(refreshToken);
+            securityStore.removeTokenFromFamily(familyId, refreshToken);
             console.log(`🔓 Single device logout: removed token from family ${familyId}`);
           } else {
             // For logout from all devices, invalidate the entire family
-            family.tokens.forEach(token => blacklistToken(token));
-            refreshTokenFamilies.delete(familyId);
+            securityStore.removeTokenFamily(familyId);
             console.log(`🔓 All devices logout: invalidated entire family ${familyId}`);
           }
         }
@@ -555,11 +526,9 @@ export const handleLogout = async (req, res) => {
 
       // Also clean up any families for this user (belt and suspenders approach)
       const userId = req.user.id;
-      for (const [familyId, family] of refreshTokenFamilies.entries()) {
-        if (family.userId === userId) {
-          family.tokens.forEach(token => blacklistToken(token));
-          refreshTokenFamilies.delete(familyId);
-        }
+      const userFamilies = securityStore.getFamiliesForUser(userId);
+      for (const familyId of userFamilies) {
+        securityStore.removeTokenFamily(familyId);
       }
 
       console.log(`🔓 Force logout all devices for user ${userId}`);
@@ -596,17 +565,12 @@ export const forceLogoutAllDevices = async (userId) => {
       .eq('id', userId);
 
     // Clean up all token families for this user
-    let familiesCleared = 0;
-    for (const [familyId, family] of refreshTokenFamilies.entries()) {
-      if (family.userId === userId) {
-        // Blacklist all tokens in the family
-        family.tokens.forEach(token => blacklistToken(token));
-        refreshTokenFamilies.delete(familyId);
-        familiesCleared++;
-      }
+    const userFamilies = securityStore.getFamiliesForUser(userId);
+    for (const familyId of userFamilies) {
+      securityStore.removeTokenFamily(familyId);
     }
 
-    console.log(`🔓 Force logout for user ${userId}: cleared ${familiesCleared} token families`);
+    console.log(`🔓 Force logout for user ${userId}: cleared ${userFamilies.length} token families`);
     return true;
   } catch (error) {
     console.error('Force logout error:', error);
@@ -629,17 +593,12 @@ export const deactivateAccount = async (userId) => {
       .eq('id', userId);
 
     // Clean up all token families for this user
-    let familiesCleared = 0;
-    for (const [familyId, family] of refreshTokenFamilies.entries()) {
-      if (family.userId === userId) {
-        // Blacklist all tokens in the family
-        family.tokens.forEach(token => blacklistToken(token));
-        refreshTokenFamilies.delete(familyId);
-        familiesCleared++;
-      }
+    const userFamilies = securityStore.getFamiliesForUser(userId);
+    for (const familyId of userFamilies) {
+      securityStore.removeTokenFamily(familyId);
     }
 
-    console.log(`🔒 Account deactivated for user ${userId}: cleared ${familiesCleared} token families`);
+    console.log(`🔒 Account deactivated for user ${userId}: cleared ${userFamilies.length} token families`);
     return true;
   } catch (error) {
     console.error('Account deactivation error:', error);

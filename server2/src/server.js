@@ -1,15 +1,32 @@
 // src/server.js
 import 'dotenv/config';
 
+// Import securityStore early so shutdown handlers can reference it
+import { securityStore } from './services/securityStore.js';
+
 // Add global error handlers for debugging
 process.on('uncaughtException', (error) => {
   console.error('🚨 Uncaught Exception:', error);
+  securityStore.shutdown();
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('🚨 Unhandled Rejection at:', promise, 'reason:', reason);
+  securityStore.shutdown();
   process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  console.log('📴 SIGTERM received — shutting down gracefully');
+  securityStore.shutdown();
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('📴 SIGINT received — shutting down gracefully');
+  securityStore.shutdown();
+  process.exit(0);
 });
 
 // Initialize Sentry first (must be before other imports)
@@ -547,7 +564,8 @@ const serverConfig = createHTTPSServer(app, {
   httpsPort: process.env.HTTPS_PORT || 5443
 });
 
-serverConfig.start().then((result) => {
+// Initialize persistent security state before accepting requests
+securityStore.initialize().then(() => serverConfig.start()).then((result) => {
   console.log('✅ Server startup complete');
   console.log(`🔗 Protocol: ${result.protocol}`);
   if (result.httpsServer) {

@@ -132,6 +132,13 @@ const TermsOfServicePage = lazy(() =>
   })
 );
 
+const CookiePolicyPage = lazy(() =>
+  import('./pages/legal/CookiePolicyPage').catch(err => {
+    console.error('Failed to load CookiePolicyPage:', err);
+    return { default: () => <div>Error loading Cookie Policy. Please refresh.</div> };
+  })
+);
+
 // Contact dialog (modal)
 const ContactDialog = lazy(() =>
   import('./pages/ContactDialog').catch(err => {
@@ -316,6 +323,14 @@ const AppRoutes = () => {
         <ErrorBoundary fallbackComponent="terms-of-service" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Loading Terms of Service..." />}>
             <TermsOfServicePage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+
+      <Route path="/legal/cookie-policy" element={
+        <ErrorBoundary fallbackComponent="cookie-policy" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Cookie Policy..." />}>
+            <CookiePolicyPage />
           </Suspense>
         </ErrorBoundary>
       } />

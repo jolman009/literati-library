@@ -277,7 +277,7 @@ export default defineConfig({
   },
 
   server: {
-    host: '127.0.0.1',  // Use IPv4 localhost
+    host: 'localhost',  // Must match VITE_API_BASE_URL hostname for cookie compatibility
     port: 5173,  // Port 3000 blocked by Windows (see docs/PORT-3000-ISSUE.md and fix-port-3000.ps1)
     strictPort: false,  // auto-increment if busy
     open: true,

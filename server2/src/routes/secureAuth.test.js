@@ -45,6 +45,52 @@ jest.mock('../config/supabaseClient.js', () => ({
   default: { supabase: { from: jest.fn(() => mockChain) } }
 }))
 
+// ─── Mock securityStore with working lockout logic ──────────
+const mockLoginAttempts = new Map()
+jest.mock('../services/securityStore.js', () => ({
+  securityStore: {
+    initialize: jest.fn().mockResolvedValue(undefined),
+    shutdown: jest.fn(),
+    blacklistToken: jest.fn(),
+    isTokenBlacklisted: jest.fn().mockReturnValue(false),
+    storeTokenFamily: jest.fn(),
+    getTokenFamily: jest.fn().mockReturnValue(undefined),
+    familyHasToken: jest.fn().mockReturnValue(false),
+    removeTokenFromFamily: jest.fn(),
+    removeTokenFamily: jest.fn(),
+    getFamiliesForUser: jest.fn().mockReturnValue([]),
+    recordFailedLogin: jest.fn().mockImplementation(async (identifier) => {
+      const attempts = mockLoginAttempts.get(identifier) || { count: 0, lastAttempt: 0, lockedUntil: 0 }
+      attempts.count++
+      attempts.lastAttempt = Date.now()
+      if (attempts.count >= 5) {
+        attempts.lockedUntil = Date.now() + 15 * 60 * 1000
+      }
+      mockLoginAttempts.set(identifier, attempts)
+    }),
+    getFailedAttempts: jest.fn().mockImplementation((identifier) => {
+      return mockLoginAttempts.get(identifier) || { count: 0, lastAttempt: 0, lockedUntil: 0 }
+    }),
+    clearFailedAttempts: jest.fn().mockImplementation(async (identifier) => {
+      mockLoginAttempts.delete(identifier)
+    }),
+    isAccountLocked: jest.fn().mockImplementation((identifier) => {
+      const attempts = mockLoginAttempts.get(identifier)
+      if (!attempts) return false
+      if (attempts.count >= 5 && Date.now() < attempts.lockedUntil) return true
+      return false
+    }),
+    cleanup: jest.fn().mockResolvedValue(undefined),
+    tokenBlacklist: new Set(),
+    refreshTokenFamilies: new Map(),
+    loginAttempts: new Map(),
+    initialized: true
+  },
+  default: {},
+  PersistentSecurityStore: jest.fn(),
+  hashToken: jest.fn((t) => 'mock-hash-' + t)
+}))
+
 // ─── Mock enhancedAuth.js ────────────────────────────────────
 // Real handleTokenRefresh has a bug (rejectRefresh undefined) that hangs tests.
 // Real authenticateTokenEnhanced returns 403 in test env.
@@ -112,6 +158,7 @@ describe('Secure Auth Routes', () => {
     // (cleanupTest() called resetAllMocks which wiped jwt/bcrypt mocks → 500s)
     jest.clearAllMocks()
     mockSingle.mockReset()
+    mockLoginAttempts.clear()
 
     // Restore jwt.verify default behavior (refresh tests override it to throw)
     jwt.verify.mockImplementation(() => ({

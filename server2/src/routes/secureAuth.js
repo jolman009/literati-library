@@ -13,6 +13,7 @@ import {
 } from '../middlewares/enhancedAuth.js';
 import { advancedSecuritySuite } from '../middlewares/advancedSecurity.js';
 import { validationSuite } from '../middlewares/validation.js';
+import { securityStore } from '../services/securityStore.js';
 
 const router = express.Router();
 
@@ -21,47 +22,6 @@ router.use(advancedSecuritySuite.sanitization.deep);
 router.use(advancedSecuritySuite.sanitization.sqlInjection);
 router.use(advancedSecuritySuite.sanitization.noSQLInjection);
 router.use(advancedSecuritySuite.monitoring.suspicious);
-
-// Account lockout tracking (in production, use Redis or database)
-const loginAttempts = new Map();
-const LOCKOUT_THRESHOLD = 5;
-const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
-
-/**
- * Check if account is locked out
- */
-const isAccountLocked = (identifier) => {
-  const attempts = loginAttempts.get(identifier);
-  if (!attempts) return false;
-
-  if (attempts.count >= LOCKOUT_THRESHOLD) {
-    if (Date.now() - attempts.lastAttempt < LOCKOUT_DURATION) {
-      return true;
-    } else {
-      // Reset after lockout period
-      loginAttempts.delete(identifier);
-      return false;
-    }
-  }
-  return false;
-};
-
-/**
- * Record failed login attempt
- */
-const recordFailedAttempt = (identifier) => {
-  const attempts = loginAttempts.get(identifier) || { count: 0, lastAttempt: 0 };
-  attempts.count++;
-  attempts.lastAttempt = Date.now();
-  loginAttempts.set(identifier, attempts);
-};
-
-/**
- * Clear failed attempts on successful login
- */
-const clearFailedAttempts = (identifier) => {
-  loginAttempts.delete(identifier);
-};
 
 // =====================================================
 // Authentication Routes
@@ -178,8 +138,8 @@ router.post('/login',
       const { email, password } = req.body;
       const identifier = email.toLowerCase();
 
-      // Check account lockout
-      if (isAccountLocked(identifier)) {
+      // Check account lockout (fast in-memory check via securityStore)
+      if (securityStore.isAccountLocked(identifier)) {
         return res.status(429).json({
           error: 'Account temporarily locked due to too many failed attempts',
           code: 'ACCOUNT_LOCKED',
@@ -196,7 +156,7 @@ router.post('/login',
         .single();
 
       if (error || !user) {
-        recordFailedAttempt(identifier);
+        await securityStore.recordFailedLogin(identifier);
         return res.status(401).json({
           error: 'Invalid credentials',
           code: 'INVALID_CREDENTIALS',
@@ -216,7 +176,7 @@ router.post('/login',
       // Verify password
       const passwordValid = await bcrypt.compare(password, user.password);
       if (!passwordValid) {
-        recordFailedAttempt(identifier);
+        await securityStore.recordFailedLogin(identifier);
         return res.status(401).json({
           error: 'Invalid credentials',
           code: 'INVALID_CREDENTIALS',
@@ -224,8 +184,8 @@ router.post('/login',
         });
       }
 
-      // Clear failed attempts
-      clearFailedAttempts(identifier);
+      // Clear failed attempts (async write-through to DB)
+      await securityStore.clearFailedAttempts(identifier);
 
       // Update last login
       await supabase
@@ -705,6 +665,111 @@ router.post('/reset-password/confirm',
 
     } catch (error) {
       console.error('Password reset confirm error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR',
+        requestId: req.requestId
+      });
+    }
+  }
+);
+
+/**
+ * Delete user account with cascade delete
+ * Requires password re-verification for safety.
+ * All related data is removed via ON DELETE CASCADE FK constraints.
+ */
+router.post('/delete-account',
+  authenticateTokenEnhanced,
+  advancedSecuritySuite.rateLimit.sensitive,
+  async (req, res) => {
+    try {
+      const { password } = req.body;
+
+      if (!password) {
+        return res.status(400).json({
+          error: 'Password is required to confirm account deletion',
+          code: 'MISSING_PASSWORD',
+          requestId: req.requestId
+        });
+      }
+
+      // Get user with current password hash
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id, email, password')
+        .eq('id', req.user.id)
+        .single();
+
+      if (userError || !user) {
+        return res.status(404).json({
+          error: 'User not found',
+          code: 'USER_NOT_FOUND',
+          requestId: req.requestId
+        });
+      }
+
+      // Verify password before destructive action
+      const passwordValid = await bcrypt.compare(password, user.password);
+      if (!passwordValid) {
+        return res.status(401).json({
+          error: 'Incorrect password',
+          code: 'INVALID_PASSWORD',
+          requestId: req.requestId
+        });
+      }
+
+      // Log the deletion event BEFORE deleting (so user_id FK is still valid)
+      try {
+        await supabase.from('security_audit_log').insert({
+          user_id: user.id,
+          event_type: 'ACCOUNT_DELETED',
+          event_data: { email: user.email },
+          ip_address: req.ip,
+          user_agent: req.get('user-agent'),
+          success: true
+        });
+      } catch (logError) {
+        console.warn('Failed to log account deletion event:', logError);
+      }
+
+      // Clean up security store state (token families, blacklist entries)
+      const userFamilies = securityStore.getFamiliesForUser(user.id);
+      for (const familyId of userFamilies) {
+        securityStore.removeTokenFamily(familyId);
+      }
+      if (req.currentToken) {
+        securityStore.blacklistToken(req.currentToken);
+      }
+
+      // Delete the user — ON DELETE CASCADE removes all related rows
+      const { error: deleteError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', user.id);
+
+      if (deleteError) {
+        console.error('Account deletion error:', deleteError);
+        return res.status(500).json({
+          error: 'Failed to delete account',
+          code: 'DELETION_FAILED',
+          requestId: req.requestId
+        });
+      }
+
+      console.log(`🗑️ Account deleted for user: ${user.email} from IP: ${req.ip}`);
+
+      // Clear auth cookies
+      res.clearCookie('accessToken', ACCESS_COOKIE_OPTIONS);
+      res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
+
+      res.json({
+        message: 'Your account and all associated data have been permanently deleted',
+        success: true
+      });
+
+    } catch (error) {
+      console.error('Account deletion error:', error);
       res.status(500).json({
         error: 'Internal server error',
         code: 'INTERNAL_ERROR',

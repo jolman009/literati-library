@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
 import environmentConfig from '../config/environment.js';
 import { syncPendingNotes } from '../utils/noteSyncUtil.js';
@@ -49,6 +50,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // gate initial render
   const [error, setError] = useState(null);
+
+  // Ref: when true, the verify effect skips re-verification because the
+  // session was just established by a fresh login/register/refresh response.
+  const freshAuthRef = useRef(false);
 
   // Note: We no longer store token in state since it's in HttpOnly cookies
   // The browser automatically includes it in requests via credentials: 'include'
@@ -157,6 +162,7 @@ export const AuthProvider = ({ children }) => {
 
           // Update user data if provided
           if (data.user) {
+            freshAuthRef.current = true;
             setUser(data.user);
             localStorage.setItem(USER_KEY, JSON.stringify(data.user));
             console.warn('    ↳ User data updated in state and localStorage');
@@ -305,7 +311,11 @@ export const AuthProvider = ({ children }) => {
     [makeApiCall]
   );
 
-  // Verify cookie/header session after restoring user from storage
+  // Verify cookie/header session after restoring user from storage.
+  // Uses makeAuthenticatedApiCall so an expired access token is automatically
+  // refreshed via the refresh token cookie (7-day lifetime) before giving up.
+  // Skips verification when the user was just set by a fresh auth action
+  // (login, register, or token refresh) to avoid a destructive re-verify loop.
   useEffect(() => {
     let cancelled = false;
 
@@ -316,18 +326,27 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
+      // Fresh login/register/refresh — session is already verified by the API response
+      if (freshAuthRef.current) {
+        console.warn('ℹ️ [AUTH] Skipping verification — session just established');
+        freshAuthRef.current = false;
+        return;
+      }
+
       console.warn('🔍 [AUTH] User found in localStorage, verifying session via cookies...');
 
-      // Cookie-based verification — works in all environments
       try {
         setLoading(true);
-        await verifyToken();
+        // Use the authenticated wrapper so that an expired access token
+        // triggers an automatic refresh attempt before we give up.
+        await makeAuthenticatedApiCall('/auth/profile');
         console.warn('✅ [AUTH] Session verification complete');
       } catch (err) {
         if (!cancelled) {
-          console.warn('❌ [AUTH] Token verification failed, clearing user:', err.message);
-          localStorage.removeItem(USER_KEY);
-          setUser(null);
+          console.warn('❌ [AUTH] Session verification failed:', err.message);
+          // makeAuthenticatedApiCall already clears user state on auth failures
+          // (expired refresh token, revoked session, etc.).
+          // For transient network errors, keep user state — they may be offline.
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -336,7 +355,7 @@ export const AuthProvider = ({ children }) => {
 
     verifyIfNeeded();
     return () => { cancelled = true; };
-  }, [user, verifyToken]);
+  }, [user, makeAuthenticatedApiCall]);
 
   /**
    * Auth actions
@@ -353,6 +372,7 @@ export const AuthProvider = ({ children }) => {
 
         // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        freshAuthRef.current = true;
         setUser(data.user);
 
         console.warn('✅ Registration successful - using HttpOnly cookie authentication');
@@ -379,6 +399,7 @@ export const AuthProvider = ({ children }) => {
 
         // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        freshAuthRef.current = true;
         setUser(data.user);
 
         // Track daily login for gamification (once per day)

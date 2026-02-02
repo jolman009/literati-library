@@ -110,7 +110,8 @@ export const GamificationProvider = ({ children }) => {
   });
 
   // Get auth context (AuthContext uses HttpOnly cookies; no token needed here)
-  const { user, makeApiCall, loading: authLoading, isAuthenticated } = useAuth();
+  // Use makeAuthenticatedApiCall so expired access tokens are auto-refreshed
+  const { user, makeAuthenticatedApiCall, loading: authLoading, isAuthenticated } = useAuth();
 
   // Reset offline mode when we have an authenticated user
   useEffect(() => {
@@ -121,6 +122,7 @@ export const GamificationProvider = ({ children }) => {
   }, [user, offlineMode]);
 
   // 🔧 FIXED: Safe API helper that handles 401s gracefully
+  // Uses makeAuthenticatedApiCall so expired access tokens are silently refreshed
   const makeSafeApiCall = useCallback(async (endpoint, options = {}) => {
     try {
       if (!user) {
@@ -129,13 +131,13 @@ export const GamificationProvider = ({ children }) => {
         return null;
       }
 
-      const response = await makeApiCall(endpoint, options);
+      const response = await makeAuthenticatedApiCall(endpoint, options);
       return response;
     } catch (error) {
       console.warn(`🎯 GamificationContext API error for ${endpoint}:`, error.message || error);
 
-      // If it's a 401, don't propagate it up - just go offline
-      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+      // If it's a 401 after refresh attempt, go offline
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized') || error.message?.includes('session has expired')) {
         console.warn('🔄 Switching to offline mode due to auth issues');
         setOfflineMode(true);
         return null;
@@ -159,7 +161,7 @@ export const GamificationProvider = ({ children }) => {
       setOfflineMode(true);
       return null;
     }
-  }, [user, makeApiCall]);
+  }, [user, makeAuthenticatedApiCall]);
 
   // Persist goal preferences
   useEffect(() => {
