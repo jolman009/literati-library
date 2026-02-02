@@ -1,6 +1,7 @@
 // src/routes/gamification.js
 import { Router } from 'express';
 import { supabase } from '../config/supabaseClient.js';
+import { sendNotification } from '../services/notificationService.js';
 
 // Achievement definitions (synchronized with client)
 const ACHIEVEMENTS = {
@@ -288,6 +289,15 @@ const checkAchievements = async (userId, currentStats) => {
         // from actual activity tables, not user_actions table (which was deleted)
 
         newlyUnlocked.push(achievement);
+
+        // Fire-and-forget achievement notification
+        sendNotification(userId, {
+          type: 'achievement_unlocked',
+          title: `Achievement Unlocked: ${achievement.title}`,
+          body: achievement.description,
+          icon: 'emoji_events',
+          data: { achievement_id: achievement.id, points: achievement.points },
+        }).catch(err => console.warn('Notification error:', err.message));
       } catch (dbErr) {
         console.warn('Failed to persist achievement unlock:', dbErr?.message || dbErr);
       }
@@ -404,6 +414,30 @@ export const gamificationRouter = (authenticateToken) => {
 
       // Check for newly unlocked achievements
       const newlyUnlocked = await checkAchievements(userId, stats);
+
+      // Check for level-up by comparing with stored level
+      const { data: storedStats } = await supabase
+        .from('user_stats')
+        .select('level')
+        .eq('user_id', userId)
+        .single();
+
+      const previousLevel = storedStats?.level || 1;
+      if (stats.level > previousLevel) {
+        // Update stored level
+        await supabase
+          .from('user_stats')
+          .update({ level: stats.level })
+          .eq('user_id', userId);
+
+        sendNotification(userId, {
+          type: 'level_up',
+          title: `Level Up! You're now Level ${stats.level}`,
+          body: `Keep reading to reach Level ${stats.level + 1}!`,
+          icon: 'arrow_upward',
+          data: { new_level: stats.level, previous_level: previousLevel },
+        }).catch(err => console.warn('Notification error:', err.message));
+      }
 
       res.json({
         ...stats,
@@ -874,6 +908,18 @@ export const gamificationRouter = (authenticateToken) => {
       // Calculate current streak after recording activity
       const currentStreak = await calculateReadingStreak(userId);
 
+      // Check if the current streak hits a milestone
+      const STREAK_MILESTONES = [3, 7, 14, 30, 60, 100];
+      if (STREAK_MILESTONES.includes(currentStreak)) {
+        sendNotification(userId, {
+          type: 'streak_milestone',
+          title: `${currentStreak}-Day Streak!`,
+          body: `You've been active for ${currentStreak} days in a row. Keep it up!`,
+          icon: 'local_fire_department',
+          data: { streak: currentStreak },
+        }).catch(err => console.warn('Notification error:', err.message));
+      }
+
       // Check if user earned a streak shield at 7-day milestone
       let shieldEarned = false;
       if (currentStreak > 0 && currentStreak % 7 === 0) {
@@ -927,6 +973,14 @@ export const gamificationRouter = (authenticateToken) => {
 
             shieldEarned = true;
             console.log(`🛡️ Streak shield earned for ${currentStreak}-day streak!`);
+
+            sendNotification(userId, {
+              type: 'streak_shield',
+              title: 'Streak Shield Earned!',
+              body: `You earned a Streak Shield for your ${currentStreak}-day streak. Use it to protect your streak on a missed day.`,
+              icon: 'shield',
+              data: { streak: currentStreak, shields: currentShields + 1 },
+            }).catch(err => console.warn('Notification error:', err.message));
           }
         }
       }

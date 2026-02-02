@@ -76,6 +76,8 @@ import { integrityRouter } from './routes/integrity.js';
 import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
+import { notificationsRouter } from './routes/notifications.js';
+import { sendNotification } from './services/notificationService.js';
 import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
 import { monitor } from './services/monitoring.js';
 
@@ -219,6 +221,9 @@ app.use('/api/gamification', rateLimitSuite.gamification, gamificationRouter(aut
 app.use('/api/challenges', rateLimitSuite.gamification, challengesRouter(authenticateTokenEnhanced));
 // Leaderboard system (rankings, social features)
 app.use('/api/leaderboard', rateLimitSuite.gamification, leaderboardRouter(authenticateTokenEnhanced));
+
+// Notification inbox + web push management
+app.use('/api/notifications', rateLimitSuite.api, notificationsRouter(authenticateTokenEnhanced));
 
 // In-app Guide Assistant (rate limited like general API)
 app.use('/api/guide', rateLimitSuite.api, slowDownSuite.general, guideRouter(authenticateTokenEnhanced));
@@ -557,7 +562,61 @@ app.use('*', (req, res) => {
     requestId: req.requestId
   });
 });
-// relook at this ----
+// ----- Streak Warning Cron Job (Phase 3) -----
+// Runs hourly from 18:00-22:00 UTC to warn users at risk of losing their streak
+import('node-cron').then(({ default: cron }) => {
+  cron.schedule('0 18-22 * * *', async () => {
+    try {
+      console.log('🔔 Running streak warning check...');
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+
+      // Find users who were active yesterday but NOT today (at-risk streaks)
+      const { data: yesterdayActive } = await supabase
+        .from('reading_streaks')
+        .select('user_id')
+        .eq('streak_date', yesterdayStr);
+
+      if (!yesterdayActive?.length) return;
+
+      const { data: todayActive } = await supabase
+        .from('reading_streaks')
+        .select('user_id')
+        .eq('streak_date', today);
+
+      const todaySet = new Set((todayActive || []).map(r => r.user_id));
+      const atRiskUsers = yesterdayActive.filter(r => !todaySet.has(r.user_id));
+
+      // Dedup: only send one warning per user per day
+      const { data: existingWarnings } = await supabase
+        .from('notifications')
+        .select('user_id')
+        .eq('type', 'streak_warning')
+        .gte('created_at', today + 'T00:00:00Z');
+
+      const alreadyWarned = new Set((existingWarnings || []).map(n => n.user_id));
+
+      for (const { user_id } of atRiskUsers) {
+        if (alreadyWarned.has(user_id)) continue;
+        sendNotification(user_id, {
+          type: 'streak_warning',
+          title: 'Your streak is at risk!',
+          body: "You haven't logged any activity today. Don't let your streak end!",
+          icon: 'warning',
+          data: {},
+        }).catch(err => console.warn('Streak warning error:', err.message));
+      }
+
+      console.log(`🔔 Streak warnings sent to ${atRiskUsers.length - alreadyWarned.size} users`);
+    } catch (err) {
+      console.error('Streak warning cron error:', err.message);
+    }
+  });
+  console.log('⏰ Streak warning cron job scheduled (18:00-22:00 UTC)');
+}).catch(err => console.warn('node-cron not available:', err.message));
+
 // ----- Start Server with HTTPS Support -----
 const serverConfig = createHTTPSServer(app, {
   port: PORT,

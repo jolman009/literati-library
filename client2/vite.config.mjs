@@ -12,6 +12,10 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw-custom.js',
+
       includeAssets: [
         'favicon.ico',
         'literatiLOGO.png',
@@ -23,113 +27,11 @@ export default defineConfig({
       // Use the comprehensive manifest.json from public/ directory
       manifest: false, // This tells Vite to use public/manifest.json directly
 
-      workbox: {
-        // Ensure SPA works on deep links when offline
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/, /\.(pdf|epub)$/],
-
+      injectManifest: {
         // Comprehensive glob patterns for precaching
         globPatterns: [
           '**/*.{js,css,html,ico,png,svg,woff,woff2}',
           '**/manifest.json'
-        ],
-
-        // Clean up old caches automatically
-        cleanupOutdatedCaches: true,
-
-        // Skip waiting and claim clients immediately on update
-        skipWaiting: true,
-        clientsClaim: true,
-
-        // Runtime caching rules optimized for Literati
-        runtimeCaching: [
-          // 1. API calls to backend (NetworkFirst with offline fallback)
-          {
-            urlPattern: /^https:\/\/library-server-m6gr\.onrender\.com\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'literati-api-cache',
-              networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200]
-              },
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 // 24 hours
-              }
-            },
-          },
-
-          // 2. Supabase Storage - Book files (PDFs, EPUBs)
-          {
-            urlPattern: ({ url }) => {
-              return url.pathname.includes('.pdf') ||
-                     url.pathname.includes('.epub') ||
-                     url.hostname.includes('supabase.co');
-            },
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'literati-books-cache',
-              cacheableResponse: {
-                statuses: [0, 200]
-              },
-              expiration: {
-                maxEntries: 50, // Store up to 50 books offline
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              }
-            },
-          },
-
-          // 3. Book covers and images (StaleWhileRevalidate for freshness)
-          {
-            urlPattern: ({ request, url }) => {
-              return request.destination === 'image' ||
-                     url.hostname.includes('covers.openlibrary.org') ||
-                     url.hostname.includes('picsum.photos') ||
-                     url.pathname.includes('/covers/');
-            },
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'literati-images-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 14 // 14 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            },
-          },
-
-          // 4. Google Fonts and Material Icons
-          {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'literati-fonts-cache',
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-
-          // 5. Static assets (JS/CSS/Workers)
-          {
-            urlPattern: ({ request }) =>
-              ['style', 'script', 'worker'].includes(request.destination),
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'literati-assets-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              },
-            },
-          },
         ],
       },
 
