@@ -68,10 +68,10 @@ describe('EnvironmentConfig', () => {
     expect(['development', 'test']).toContain(headers['X-Environment']);
   });
 
-  test('should provide auth headers with token', () => {
-    const token = 'test-token-123';
-    const headers = config.getAuthHeaders(token);
-    expect(headers).toHaveProperty('Authorization', `Bearer ${token}`);
+  test('should provide auth headers (cookie-based, no Authorization header)', () => {
+    const headers = config.getAuthHeaders();
+    // Tokens are now in HttpOnly cookies — no Authorization header needed
+    expect(headers).not.toHaveProperty('Authorization');
     expect(headers).toHaveProperty('Content-Type', 'application/json');
   });
 
