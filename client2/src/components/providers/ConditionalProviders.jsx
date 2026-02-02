@@ -2,6 +2,7 @@
 // Smart provider loading - only loads gamification/session providers when authenticated
 import React, { Suspense, lazy, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { NotificationProvider } from '../../contexts/NotificationContext';
 import { LoadingSpinner } from '../ui/LoadingStates';
 
 // Lazy load the heavy providers
@@ -50,11 +51,13 @@ const ConditionalProviders = ({ children }) => {
         variant="primary"
       />
     }>
-      <GamificationProvider>
-        <ReadingSessionProvider>
-          {children}
-        </ReadingSessionProvider>
-      </GamificationProvider>
+      <NotificationProvider>
+        <GamificationProvider>
+          <ReadingSessionProvider>
+            {children}
+          </ReadingSessionProvider>
+        </GamificationProvider>
+      </NotificationProvider>
     </Suspense>
   );
 };

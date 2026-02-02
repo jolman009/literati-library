@@ -1,6 +1,7 @@
 // src/routes/leaderboard.js
 import { Router } from 'express';
 import { supabase } from '../config/supabaseClient.js';
+import { sendNotification } from '../services/notificationService.js';
 
 /**
  * Leaderboard System with Social Features
@@ -441,6 +442,21 @@ export const leaderboardRouter = (authenticateToken) => {
         console.error('Error creating follow:', error);
         return res.status(500).json({ error: 'Failed to follow user' });
       }
+
+      // Notify the target user about the new follower
+      const { data: follower } = await supabase
+        .from('users')
+        .select('name')
+        .eq('id', userId)
+        .single();
+
+      sendNotification(targetUserId, {
+        type: 'new_follower',
+        title: 'New Follower',
+        body: `${follower?.name || 'Someone'} started following you!`,
+        icon: 'person_add',
+        data: { follower_id: userId },
+      }).catch(err => console.warn('Notification error:', err.message));
 
       res.json({
         success: true,

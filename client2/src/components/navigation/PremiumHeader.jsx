@@ -5,6 +5,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import './PremiumHeader.css';
 import { useEntitlements } from '../../contexts/EntitlementsContext';
 import GoPremiumCTA from '../premium/GoPremiumCTA';
+import { useNotifications } from '../../contexts/NotificationContext';
+import NotificationPanel from '../notifications/NotificationPanel';
 
 /**
  * A Material Design 3–compliant header for the premium experience.
@@ -28,6 +30,8 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
   const [query, setQuery] = useState('');
   const { isPremium, openPremiumModal } = useEntitlements();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifPanelOpen, setNotifPanelOpen] = useState(false);
+  const { unreadCount } = useNotifications();
   const userMenuButtonRef = useRef(null);
   const userMenuRef = useRef(null);
 
@@ -210,13 +214,26 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
             </span>
           </button>
 
-          {/* Notifications (placeholder for future) */}
-          <button
-            className="premium-header-action-btn"
-            aria-label="Notifications"
-          >
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
+          {/* Notifications */}
+          <div className="notification-bell-wrapper" style={{ position: 'relative' }}>
+            <button
+              className="premium-header-action-btn"
+              aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+              onClick={() => setNotifPanelOpen(prev => !prev)}
+            >
+              <span className="material-symbols-outlined">
+                {unreadCount > 0 ? 'notifications_active' : 'notifications'}
+              </span>
+              {unreadCount > 0 && (
+                <span className="notification-badge">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
+            {notifPanelOpen && (
+              <NotificationPanel onClose={() => setNotifPanelOpen(false)} />
+            )}
+          </div>
 
           {/* User Menu */}
           <div className="premium-header-user-menu">

@@ -1,6 +1,7 @@
 // src/routes/challenges.js
 import { Router } from 'express';
 import { supabase } from '../config/supabaseClient.js';
+import { sendNotification } from '../services/notificationService.js';
 
 /**
  * Challenge Definitions - Daily & Weekly challenges
@@ -574,6 +575,14 @@ export const challengesRouter = (authenticateToken) => {
       }
 
       console.log(`Challenge claimed: ${challengeId} by user ${userId} for ${challenge.reward_points} points`);
+
+      sendNotification(userId, {
+        type: 'challenge_completed',
+        title: `Challenge Complete: ${challenge.title}`,
+        body: `You earned ${challenge.reward_points} points!`,
+        icon: challenge.icon || 'military_tech',
+        data: { challenge_id: challengeId, points: challenge.reward_points },
+      }).catch(err => console.warn('Notification error:', err.message));
 
       res.json({
         success: true,
