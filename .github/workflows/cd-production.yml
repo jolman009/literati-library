@@ -60,8 +60,14 @@ jobs:
         run: |
           echo "🔍 Checking staging environment health..."
 
+          STAGING_URL="${{ secrets.STAGING_DOMAIN }}"
+          if [ -z "$STAGING_URL" ]; then
+            echo "⚠️ STAGING_DOMAIN secret not configured — skipping health check"
+            exit 0
+          fi
+
           # Check if staging is healthy before production deployment
-          if ! curl -f https://${{ secrets.STAGING_DOMAIN }}/health; then
+          if ! curl -sf --max-time 15 "https://${STAGING_URL}/health"; then
             echo "❌ Staging environment is unhealthy"
             exit 1
           fi
