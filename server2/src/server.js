@@ -163,6 +163,11 @@ app.use(cors({
       ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
       : [];
 
+    // ✅ Allow Capacitor iOS/Android native app origin
+    if (origin === 'capacitor://localhost') {
+      return callback(null, true);
+    }
+
     // ✅ Production domains (static URLs only)
     const defaultAllowedOrigins = [
       'https://shelfquest.org',
