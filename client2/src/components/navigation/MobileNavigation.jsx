@@ -5,7 +5,7 @@ import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 /**
  * More Menu Modal Component
  */
-const MoreMenu = ({ isOpen, onClose, navigate, isDark }) => {
+const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
   if (!isOpen) return null;
 
   const menuItems = [
@@ -74,6 +74,28 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark }) => {
     <div style={overlayStyle} onClick={onClose}>
       <div style={menuStyle} onClick={(e) => e.stopPropagation()}>
         <h2 style={headerStyle}>More Options</h2>
+        {/* Theme Toggle Row */}
+        <button
+          style={menuItemStyle}
+          onClick={onToggleTheme}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = isDark ? '#4a4a4a' : '#f3f4f6';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+            {isDark ? 'light_mode' : 'dark_mode'}
+          </span>
+          <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
+        <div style={{
+          height: '1px',
+          backgroundColor: isDark ? '#444' : '#e5e7eb',
+          margin: '4px 16px',
+        }} />
         {menuItems.map((item) => (
           <button
             key={item.path}
@@ -121,7 +143,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark }) => {
 const MobileNavigation = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { actualTheme } = useMaterial3Theme();
+  const { actualTheme, toggleTheme } = useMaterial3Theme();
   const [isMobile, setIsMobile] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
@@ -261,6 +283,7 @@ const MobileNavigation = () => {
         onClose={() => setIsMoreMenuOpen(false)}
         navigate={navigate}
         isDark={actualTheme === 'dark'}
+        onToggleTheme={toggleTheme}
       />
     </>
   );
