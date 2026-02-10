@@ -27,7 +27,7 @@ ShelfQuest uses **Sentry** for:
 
 ### Step 2: Configure Environment Variables
 
-#### Production (.env.production)
+#### Production (client2/.env.production from .env.production.example)
 ```bash
 # Sentry DSN for production error tracking
 VITE_SENTRY_DSN=https://your-actual-production-dsn@sentry.io/project-id

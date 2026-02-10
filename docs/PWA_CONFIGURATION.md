@@ -341,7 +341,7 @@ pnpm run preview
 Control service worker registration in production:
 
 ```bash
-# .env.production
+# client2/.env.production (from .env.production.example)
 VITE_ENABLE_SERVICE_WORKER=true  # Enable PWA (default)
 
 # To disable temporarily:
