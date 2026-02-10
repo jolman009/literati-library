@@ -75,8 +75,12 @@ const SignUpV2 = () => {
             try {
               setError('');
               setLoading(true);
-              await loginWithGoogle(credential);
-              navigate('/dashboard');
+              const result = await loginWithGoogle(credential);
+              if (result.success) {
+                navigate('/dashboard');
+              } else {
+                setError(result.error || 'Google sign-up failed. Please try again.');
+              }
             } catch (err) {
               setError('Google sign-up failed. Please try again.');
             } finally {
