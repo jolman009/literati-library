@@ -5,6 +5,7 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
   const buttonRef = useRef(null);
   const initializedRef = useRef(false);
   const [statusMessage, setStatusMessage] = useState('');
+  const [retryNonce, setRetryNonce] = useState(0);
 
   const handleCredentialResponse = useCallback((response) => {
     if (response.credential) {
@@ -66,7 +67,13 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
       clearInterval(interval);
       initializedRef.current = false;
     };
-  }, [handleCredentialResponse, text]);
+  }, [handleCredentialResponse, text, retryNonce]);
+
+  const handleRetry = () => {
+    setStatusMessage('');
+    initializedRef.current = false;
+    setRetryNonce((value) => value + 1);
+  };
 
   return (
     <div
@@ -80,9 +87,21 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
       aria-live="polite"
     >
       {statusMessage && (
-        <span className="google-signin-fallback md3-body-medium md3-on-surface-variant">
-          {statusMessage}
-        </span>
+        <div className="google-signin-fallback md3-surface-container">
+          <span className="material-symbols-outlined google-signin-fallback__icon" aria-hidden="true">
+            info
+          </span>
+          <span className="md3-body-medium md3-on-surface-variant">
+            {statusMessage}
+          </span>
+          <button
+            type="button"
+            className="md3-button md3-button--text md3-button--small google-signin-fallback__retry"
+            onClick={handleRetry}
+          >
+            Retry
+          </button>
+        </div>
       )}
     </div>
   );

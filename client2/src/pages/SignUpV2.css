@@ -200,7 +200,30 @@
 }
 
 .google-signin-fallback {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   width: 100%;
-  text-align: center;
+  padding: 0.75rem 0.875rem;
+  border-radius: 12px;
+  border: 1px solid var(--md-sys-color-outline-variant, #c4c6d0);
+}
+
+.google-signin-fallback__icon {
+  font-size: 1.125rem;
+  color: var(--md-sys-color-on-surface-variant, #434752);
+}
+
+.google-signin-fallback__retry {
+  margin-left: auto;
+  padding: 0.125rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .google-signin-fallback__retry {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
 }
