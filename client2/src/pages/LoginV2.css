@@ -73,6 +73,34 @@
   color: var(--md-sys-color-on-surface-variant, #c3c6cf);
 }
 
+/* Auth divider (or separator) */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  color: var(--md-sys-color-on-surface-variant, #434752);
+  font-size: 0.8rem;
+  text-transform: lowercase;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--md-sys-color-outline-variant, #c4c6d0);
+}
+
+.dark .auth-divider {
+  color: var(--md-sys-color-on-surface-variant, #c3c6cf);
+}
+
+.dark .auth-divider::before,
+.dark .auth-divider::after {
+  background-color: var(--md-sys-color-outline-variant, #44464f);
+}
+
 .login-form {
   display: flex;
   flex-direction: column;

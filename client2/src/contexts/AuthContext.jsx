@@ -466,6 +466,75 @@ export const AuthProvider = ({ children }) => {
     [makeApiCall]
   );
 
+  const loginWithGoogle = useCallback(
+    async (credential) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await makeApiCall('/auth/secure/google', {
+          method: 'POST',
+          body: JSON.stringify({ credential }),
+        });
+
+        // Store user data only — tokens are in httpOnly cookies
+        localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        freshAuthRef.current = true;
+        setUser(data.user);
+
+        // Track daily login for gamification (once per day)
+        try {
+          const lastLogin = localStorage.getItem('lastDailyLogin');
+          const today = new Date().toDateString();
+
+          if (lastLogin !== today) {
+            localStorage.setItem('lastDailyLogin', today);
+
+            window.dispatchEvent(new CustomEvent('dailyLoginTracked', {
+              detail: {
+                userId: data.user.id,
+                timestamp: new Date().toISOString(),
+                date: today
+              }
+            }));
+          }
+        } catch (loginTrackError) {
+          console.warn('Failed to track daily login:', loginTrackError);
+        }
+
+        // Sync any pending notes
+        try {
+          const syncResults = await syncPendingNotes();
+
+          if (syncResults.synced > 0) {
+            window.dispatchEvent(new CustomEvent('pendingNotesSynced', {
+              detail: {
+                synced: syncResults.synced,
+                failed: syncResults.failed,
+                timestamp: new Date().toISOString()
+              }
+            }));
+          }
+        } catch (syncError) {
+          console.warn('Failed to sync pending notes:', syncError);
+        }
+
+        console.warn('✅ Google login successful - using HttpOnly cookie authentication');
+        return {
+          success: true,
+          user: data.user,
+          isNewUser: data.isNewUser,
+          isLinkedAccount: data.isLinkedAccount
+        };
+      } catch (err) {
+        setError(err.message);
+        return { success: false, error: err.message };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [makeApiCall]
+  );
+
   const logout = useCallback(async () => {
     try {
       // Call backend to clear HttpOnly cookies
@@ -598,6 +667,7 @@ export const AuthProvider = ({ children }) => {
       // actions
       register,
       login,
+      loginWithGoogle,
       logout,
       updateProfile,
       changePassword,
@@ -619,6 +689,7 @@ export const AuthProvider = ({ children }) => {
       token,
       register,
       login,
+      loginWithGoogle,
       logout,
       updateProfile,
       changePassword,

@@ -5,6 +5,7 @@ import { useMaterial3 } from '../hooks/useMaterial3';
 import MD3TextField from '../components/Material3/MD3TextField';
 import MD3Button from '../components/Material3/MD3Button';
 import MD3Checkbox from '../components/Material3/MD3Checkbox';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import './SignUpV2.css';
 
 const SignUpV2 = () => {
@@ -14,7 +15,7 @@ const SignUpV2 = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { isDark } = useMaterial3();
 
@@ -66,6 +67,27 @@ const SignUpV2 = () => {
           </div>
           <h1>Create Account</h1>
           <p style={{ color: 'var(--md-sys-color-on-surface-variant)' }}>Join ShelfQuest Digital Library today</p>
+        </div>
+
+        <GoogleSignInButton
+          text="signup_with"
+          onSuccess={async (credential) => {
+            try {
+              setError('');
+              setLoading(true);
+              await loginWithGoogle(credential);
+              navigate('/dashboard');
+            } catch (err) {
+              setError('Google sign-up failed. Please try again.');
+            } finally {
+              setLoading(false);
+            }
+          }}
+          onError={() => setError('Google sign-up failed. Please try again.')}
+        />
+
+        <div className="auth-divider">
+          <span>or</span>
         </div>
 
         <form onSubmit={handleSignUp} className="signup-form" data-testid="register-form">
