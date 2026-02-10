@@ -98,7 +98,7 @@ vercel env ls
 **Common Causes & Fixes**:
 ```javascript
 // API URL misconfiguration
-// Check client2/.env.production
+// Check client2/.env.production (copy from client2/.env.production.example)
 VITE_API_BASE_URL=https://your-backend.onrender.com  // ✅ Correct
 VITE_API_BASE_URL=http://localhost:5000              // ❌ Wrong for prod
 

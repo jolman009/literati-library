@@ -16,7 +16,7 @@ client2/.env.*
 !client2/.env.test
 !client2/.env.example
 !client2/.env.development
-!client2/.env.production
+!client2/.env.production.example
 server2/.env
 server2/.env.*
 !server2/.env.test

@@ -30,7 +30,7 @@ What you have:
 |-----------------|--------|---------|
 | `.env.development` | ✅ Complete | Local development (localhost:5000) |
 | `.env.staging` | ✅ Complete | Pre-production testing |
-| `.env.production` | ✅ Complete | Live deployment (library-server-m6gr.onrender.com) |
+| `client2/.env.production.example` | ✅ Complete | Production template (copy to `client2/.env.production`) |
 | `.env.example` | ✅ Complete | Documented template for team |
 | `environment.js` | ✅ Complete | Centralized config class with validation |
 | `api.js` | ✅ Complete | API client using environment config |
@@ -63,7 +63,7 @@ pnpm run build --mode staging
 
 # Production
 pnpm run build
-# → Loads: .env.production
+# → Loads: .env.production (create from client2/.env.production.example)
 # → API URL: https://library-server-m6gr.onrender.com
 ```
 
@@ -259,7 +259,7 @@ LOG_LEVEL=info
 !.env.example
 !.env.development
 !.env.staging
-!.env.production
+!.env.production.example
 ```
 
 ### 2. Secret Rotation
@@ -397,7 +397,7 @@ VITE_API_BASE_URL=http://localhost:5000
 
 - `client2/.env.development` - Complete configuration
 - `client2/.env.staging` - Complete configuration
-- `client2/.env.production` - Complete configuration
+- `client2/.env.production.example` - Complete production template
 - `client2/src/config/environment.js` - Centralized config class
 - `client2/src/config/api.js` - Environment-aware API client
 - `server2/.env.example` - Comprehensive server template
@@ -468,6 +468,7 @@ Simply deploy and the correct URLs will be used automatically.
 - **Environment Config Class:** [client2/src/config/environment.js](../client2/src/config/environment.js)
 - **API Client:** [client2/src/config/api.js](../client2/src/config/api.js)
 - **Client Template:** [client2/.env.example](../client2/.env.example)
+- **Production Template:** [client2/.env.production.example](../client2/.env.production.example)
 - **Server Template:** [server2/.env.example](../server2/.env.example)
 - **Deployment Guide:** [PRODUCTION_DEPLOYMENT_GUIDE.md](../PRODUCTION_DEPLOYMENT_GUIDE.md)
 
