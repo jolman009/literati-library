@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3 } from '../hooks/useMaterial3';
 import MD3TextField from '../components/Material3/MD3TextField';
 import MD3Button from '../components/Material3/MD3Button';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import './LoginV2.css';
 
 const LoginV2 = () => {
@@ -13,7 +14,7 @@ const LoginV2 = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { isDark } = useMaterial3();
 
@@ -43,6 +44,26 @@ const LoginV2 = () => {
           </div>
           <h1>Welcome Back</h1>
           <p>Sign in to your ShelfQuest Digital Library</p>
+        </div>
+
+        <GoogleSignInButton
+          onSuccess={async (credential) => {
+            try {
+              setError('');
+              setLoading(true);
+              await loginWithGoogle(credential);
+              navigate('/dashboard');
+            } catch (err) {
+              setError('Google sign-in failed. Please try again.');
+            } finally {
+              setLoading(false);
+            }
+          }}
+          onError={() => setError('Google sign-in failed. Please try again.')}
+        />
+
+        <div className="auth-divider">
+          <span>or</span>
         </div>
 
         <form onSubmit={handleLogin} className="login-form" data-testid="login-form">

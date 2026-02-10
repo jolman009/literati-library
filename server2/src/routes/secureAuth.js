@@ -1,6 +1,7 @@
 // src/routes/secureAuth.js
 import express from 'express';
 import bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import { supabase } from '../config/supabaseClient.js';
 import {
   generateTokens,
@@ -14,6 +15,8 @@ import {
 import { advancedSecuritySuite } from '../middlewares/advancedSecurity.js';
 import { validationSuite } from '../middlewares/validation.js';
 import { securityStore } from '../services/securityStore.js';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const router = express.Router();
 
@@ -173,6 +176,15 @@ router.post('/login',
         });
       }
 
+      // Guard: Google-only users have no password set
+      if (!user.password) {
+        return res.status(400).json({
+          error: 'This account uses Google Sign-In. Please use the Google button to log in.',
+          code: 'GOOGLE_ACCOUNT',
+          requestId: req.requestId
+        });
+      }
+
       // Verify password
       const passwordValid = await bcrypt.compare(password, user.password);
       if (!passwordValid) {
@@ -225,6 +237,196 @@ router.post('/login',
 );
 
 /**
+ * Google Sign-In — handles login, signup, and account linking
+ */
+router.post('/google',
+  advancedSecuritySuite.rateLimit.adaptive,
+  async (req, res) => {
+    try {
+      const { credential } = req.body;
+
+      if (!credential) {
+        return res.status(400).json({
+          error: 'Google credential is required',
+          code: 'MISSING_CREDENTIAL',
+          requestId: req.requestId
+        });
+      }
+
+      // Verify the Google ID token
+      let ticket;
+      try {
+        ticket = await googleClient.verifyIdToken({
+          idToken: credential,
+          audience: process.env.GOOGLE_CLIENT_ID
+        });
+      } catch (verifyError) {
+        console.error('Google token verification failed:', verifyError.message);
+        return res.status(401).json({
+          error: 'Invalid Google credential',
+          code: 'INVALID_GOOGLE_TOKEN',
+          requestId: req.requestId
+        });
+      }
+
+      const payload = ticket.getPayload();
+      const { sub: googleId, email, name, picture } = payload;
+
+      if (!email) {
+        return res.status(400).json({
+          error: 'Email not provided by Google',
+          code: 'NO_EMAIL',
+          requestId: req.requestId
+        });
+      }
+
+      let user;
+      let isNewUser = false;
+      let isLinkedAccount = false;
+
+      // 1. Look up by google_id (returning Google user)
+      const { data: googleUser } = await supabase
+        .from('users')
+        .select('id, email, name, avatar, is_active, token_version, last_login')
+        .eq('google_id', googleId)
+        .single();
+
+      if (googleUser) {
+        // Existing Google user — login
+        if (!googleUser.is_active) {
+          return res.status(401).json({
+            error: 'Account has been deactivated',
+            code: 'ACCOUNT_DEACTIVATED',
+            requestId: req.requestId
+          });
+        }
+        user = googleUser;
+      } else {
+        // 2. Look up by email (potential linking or new user)
+        const { data: emailUser } = await supabase
+          .from('users')
+          .select('id, email, name, avatar, is_active, token_version, last_login, google_id')
+          .eq('email', email.toLowerCase())
+          .single();
+
+        if (emailUser) {
+          // Existing email user without google_id — link accounts
+          if (!emailUser.is_active) {
+            return res.status(401).json({
+              error: 'Account has been deactivated',
+              code: 'ACCOUNT_DEACTIVATED',
+              requestId: req.requestId
+            });
+          }
+
+          const { error: linkError } = await supabase
+            .from('users')
+            .update({
+              google_id: googleId,
+              auth_provider: 'google_linked',
+              avatar: emailUser.avatar || picture || null
+            })
+            .eq('id', emailUser.id);
+
+          if (linkError) {
+            console.error('Google account linking error:', linkError);
+            return res.status(500).json({
+              error: 'Failed to link Google account',
+              code: 'LINK_FAILED',
+              requestId: req.requestId
+            });
+          }
+
+          user = emailUser;
+          isLinkedAccount = true;
+          console.log(`Google account linked for user: ${email}`);
+        } else {
+          // 3. New user — create account
+          const { data: newUser, error: createError } = await supabase
+            .from('users')
+            .insert({
+              email: email.toLowerCase(),
+              password: null,
+              name: name || email.split('@')[0],
+              avatar: picture || null,
+              google_id: googleId,
+              auth_provider: 'google',
+              is_active: true,
+              token_version: 0,
+              created_at: new Date().toISOString(),
+              last_login: new Date().toISOString()
+            })
+            .select('id, email, name, avatar')
+            .single();
+
+          if (createError) {
+            console.error('Google user creation error:', createError);
+            return res.status(500).json({
+              error: 'Failed to create account',
+              code: 'USER_CREATION_FAILED',
+              requestId: req.requestId
+            });
+          }
+
+          // Initialize user stats
+          await supabase.from('user_stats').insert({
+            user_id: newUser.id,
+            total_points: 0,
+            level: 1,
+            books_read: 0,
+            pages_read: 0,
+            total_reading_time: 0,
+            reading_streak: 0,
+            notes_created: 0,
+            highlights_created: 0,
+            books_completed: 0
+          });
+
+          user = newUser;
+          isNewUser = true;
+          console.log(`New Google user created: ${email}`);
+        }
+      }
+
+      // Update last login
+      await supabase
+        .from('users')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', user.id);
+
+      // Generate tokens and set cookies
+      const { accessToken, refreshToken } = generateTokens(user);
+      res.cookie('accessToken', accessToken, ACCESS_COOKIE_OPTIONS);
+      res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
+
+      console.log(`Google sign-in successful: ${user.email} from IP: ${req.ip}`);
+
+      res.json({
+        message: isNewUser ? 'Account created successfully' :
+                 isLinkedAccount ? 'Google account linked successfully' :
+                 'Login successful',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar
+        },
+        isNewUser,
+        isLinkedAccount
+      });
+
+    } catch (error) {
+      console.error('Google auth error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        code: 'INTERNAL_ERROR',
+        requestId: req.requestId
+      });
+    }
+  }
+);
+
+/**
  * Refresh tokens
  */
 router.post('/refresh', handleTokenRefresh);
@@ -241,7 +443,7 @@ router.get('/profile', authenticateTokenEnhanced, async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, name, avatar, created_at, last_login, is_active')
+      .select('id, email, name, avatar, created_at, last_login, is_active, auth_provider')
       .eq('id', req.user.id)
       .single();
 
@@ -261,7 +463,8 @@ router.get('/profile', authenticateTokenEnhanced, async (req, res) => {
         avatar: user.avatar,
         createdAt: user.created_at,
         lastLogin: user.last_login,
-        isActive: user.is_active
+        isActive: user.is_active,
+        authProvider: user.auth_provider
       }
     });
 
