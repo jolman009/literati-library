@@ -198,3 +198,9 @@
 .signup-link:hover {
   text-decoration: underline;
 }
+
+.google-signin-fallback {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
