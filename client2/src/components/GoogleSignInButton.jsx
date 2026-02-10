@@ -1,9 +1,10 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import environmentConfig from '../config/environment.js';
 
 const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
   const buttonRef = useRef(null);
   const initializedRef = useRef(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const handleCredentialResponse = useCallback((response) => {
     if (response.credential) {
@@ -17,6 +18,7 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
     const clientId = environmentConfig.google.clientId;
     if (!clientId) {
       console.warn('Google Client ID not configured (VITE_GOOGLE_CLIENT_ID)');
+      setStatusMessage('Google sign-in is not configured for this environment.');
       return;
     }
 
@@ -29,6 +31,7 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
         attempts++;
         if (attempts >= maxAttempts) {
           console.warn('Google Identity Services failed to load');
+          setStatusMessage('Google sign-in failed to load. Please refresh or try again later.');
           return;
         }
         return; // interval will retry
@@ -71,9 +74,17 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        minHeight: 44
+        minHeight: 44,
+        width: '100%'
       }}
-    />
+      aria-live="polite"
+    >
+      {statusMessage && (
+        <span className="google-signin-fallback md3-body-medium md3-on-surface-variant">
+          {statusMessage}
+        </span>
+      )}
+    </div>
   );
 };
 

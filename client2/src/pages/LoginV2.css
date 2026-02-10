@@ -138,6 +138,12 @@
   text-decoration: underline;
 }
 
+.google-signin-fallback {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 /* Password visibility toggle */
 .password-toggle {
   cursor: pointer;
