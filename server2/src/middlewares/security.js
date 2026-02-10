@@ -25,6 +25,7 @@ export const securityHeaders = helmet({
   },
 
   // Configure other security headers
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Required for Google Sign-In popup flow
   crossOriginEmbedderPolicy: false, // Disable for file uploads
   crossOriginResourcePolicy: { policy: "cross-origin" },
 
