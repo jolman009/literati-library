@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
  * Only user data is kept in localStorage for quick access.
  */
 const USER_KEY = 'shelfquest_user';
+const TOKEN_KEY = environmentConfig.getTokenKey?.() || 'shelfquest_token';
+const REFRESH_TOKEN_KEY = 'shelfquest_refresh_token';
 
 /**
  * Mutex to prevent concurrent refresh attempts
@@ -55,6 +57,29 @@ export const AuthProvider = ({ children }) => {
   // session was just established by a fresh login/register/refresh response.
   const freshAuthRef = useRef(false);
 
+  const persistFallbackTokens = useCallback((payload) => {
+    try {
+      if (payload?.token) {
+        localStorage.setItem(TOKEN_KEY, payload.token);
+      }
+      if (payload?.refreshToken) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, payload.refreshToken);
+      }
+    } catch {
+      // Ignore storage failures (private mode/quota)
+    }
+  }, []);
+
+  const clearFallbackTokens = useCallback(() => {
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+    } catch {
+      // Ignore storage failures
+    }
+  }, []);
+
   // Note: We no longer store token in state since it's in HttpOnly cookies
   // The browser automatically includes it in requests via credentials: 'include'
 
@@ -81,6 +106,15 @@ export const AuthProvider = ({ children }) => {
         ...baseHeaders,
         ...(options.headers || {}),
       };
+      // Fallback: use header token when cookie transport is blocked.
+      try {
+        const fallbackToken = localStorage.getItem(TOKEN_KEY);
+        if (fallbackToken && !headers.Authorization) {
+          headers.Authorization = `Bearer ${fallbackToken}`;
+        }
+      } catch {
+        // Ignore storage failures
+      }
 
       const config = {
         method: options.method || 'GET',
@@ -146,12 +180,23 @@ export const AuthProvider = ({ children }) => {
         console.warn('🔄 [AUTH] Initiating token refresh via HttpOnly cookies...');
         const refreshStartTime = Date.now();
 
+        let refreshTokenBody;
+        try {
+          const fallbackRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+          if (fallbackRefreshToken) {
+            refreshTokenBody = JSON.stringify({ refreshToken: fallbackRefreshToken });
+          }
+        } catch {
+          // Ignore storage failures
+        }
+
         const response = await fetch(`${API_URL}/auth/refresh`, {
           method: 'POST',
           credentials: 'include', // Include HttpOnly cookies (refresh token)
           headers: {
             'Content-Type': 'application/json',
           },
+          body: refreshTokenBody,
         });
 
         const refreshDuration = Date.now() - refreshStartTime;
@@ -159,6 +204,7 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
           const data = await response.json();
           console.warn(`✅ [AUTH] Token refresh successful (${refreshDuration}ms) - new cookies set by server`);
+          persistFallbackTokens(data);
 
           // Update user data if provided
           if (data.user) {
@@ -186,7 +232,7 @@ export const AuthProvider = ({ children }) => {
 
     // Wait for and return the refresh promise
     return await refreshPromise;
-  }, []);
+  }, [persistFallbackTokens]);
 
   /**
    * Wrap protected calls to handle token expiry centrally.
@@ -238,13 +284,14 @@ export const AuthProvider = ({ children }) => {
             }
             localStorage.removeItem(USER_KEY);
             setUser(null);
+            clearFallbackTokens();
             throw new Error('Your session has expired. Please log in again.');
           }
         }
         throw err;
       }
     },
-    [makeApiCall, attemptTokenRefresh, navigate, showSnackbar]
+    [makeApiCall, attemptTokenRefresh, navigate, showSnackbar, clearFallbackTokens]
   );
 
   /**
@@ -256,7 +303,6 @@ export const AuthProvider = ({ children }) => {
     try {
       // One-time migration: remove stale tokens left from localStorage-based auth
       localStorage.removeItem('token');
-      localStorage.removeItem('shelfquest_token');
 
       const storedUser = localStorage.getItem(USER_KEY);
 
@@ -372,6 +418,7 @@ export const AuthProvider = ({ children }) => {
 
         // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        persistFallbackTokens(data);
         freshAuthRef.current = true;
         setUser(data.user);
 
@@ -384,7 +431,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [makeApiCall]
+    [makeApiCall, persistFallbackTokens]
   );
 
   const login = useCallback(
@@ -399,6 +446,7 @@ export const AuthProvider = ({ children }) => {
 
         // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        persistFallbackTokens(data);
         freshAuthRef.current = true;
         setUser(data.user);
 
@@ -463,7 +511,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [makeApiCall]
+    [makeApiCall, persistFallbackTokens]
   );
 
   const loginWithGoogle = useCallback(
@@ -478,6 +526,7 @@ export const AuthProvider = ({ children }) => {
 
         // Store user data only — tokens are in httpOnly cookies
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        persistFallbackTokens(data);
         freshAuthRef.current = true;
         setUser(data.user);
 
@@ -532,7 +581,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [makeApiCall]
+    [makeApiCall, persistFallbackTokens]
   );
 
   const logout = useCallback(async () => {
@@ -547,13 +596,11 @@ export const AuthProvider = ({ children }) => {
     } finally {
       // Always clear local state, even if API call fails
       localStorage.removeItem(USER_KEY);
-      // Clean up any stale tokens from previous localStorage-based auth
-      localStorage.removeItem('token');
-      localStorage.removeItem('shelfquest_token');
+      clearFallbackTokens();
       setUser(null);
       setError(null);
     }
-  }, [makeApiCall]);
+  }, [makeApiCall, clearFallbackTokens]);
 
   const updateProfile = useCallback(
     async (updates) => {
@@ -651,9 +698,14 @@ export const AuthProvider = ({ children }) => {
   // User is authenticated if we have user data (cookies handle the actual auth)
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
 
-  // Token is no longer stored in localStorage — it's in httpOnly cookies.
-  // Expose null for backward compatibility with components that read token.
-  const token = null;
+  // Expose fallback token for compatibility in cookie-restricted environments.
+  const token = useMemo(() => {
+    try {
+      return localStorage.getItem(TOKEN_KEY);
+    } catch {
+      return null;
+    }
+  }, [user]);
 
   const value = useMemo(
     () => ({
