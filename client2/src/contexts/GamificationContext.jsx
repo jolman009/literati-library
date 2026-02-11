@@ -110,8 +110,16 @@ export const GamificationProvider = ({ children }) => {
   });
 
   // Get auth context (AuthContext uses HttpOnly cookies; no token needed here)
+<<<<<<< ours
   // Use makeAuthenticatedApiCall so expired access tokens are auto-refreshed
   const { user, makeAuthenticatedApiCall, loading: authLoading, isAuthenticated } = useAuth();
+=======
+  const { user, makeApiCall, loading: authLoading, isAuthenticated } = useAuth();
+<<<<<<< ours
+  const { showSnackbar } = useSnackbar();
+>>>>>>> theirs
+=======
+>>>>>>> theirs
 
   // Reset offline mode when we have an authenticated user
   useEffect(() => {
@@ -589,6 +597,8 @@ export const GamificationProvider = ({ children }) => {
     window.dispatchEvent(event);
     console.warn(`✅ GamificationContext: Event dispatched successfully`);
 
+<<<<<<< ours
+<<<<<<< ours
     if (['reading_session_completed', 'note_created'].includes(actionType) && points > 0) {
       setRewardFeedback({
         id: `${actionType}-${Date.now()}`,
@@ -596,8 +606,14 @@ export const GamificationProvider = ({ children }) => {
         points,
         meta: data
       });
+=======
+    if (['note_created', 'reading_session_completed'].includes(actionType)) {
+      triggerFeedback(actionType, points || 0);
+>>>>>>> theirs
     }
 
+=======
+>>>>>>> theirs
     // Try to sync with API if not in offline mode (skip actions without server endpoints)
     // Note: daily_login is now synced with server to prevent duplicate points across devices
     const localOnlyActions = ['daily_checkin', 'library_visited', 'quick_add_book', 'quick_start_reading', 'quick_add_note', 'quick_set_goal'];
