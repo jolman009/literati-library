@@ -19,15 +19,7 @@ import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 // Removed legacy onboarding overlay
 
 // Welcome Component with reduced padding
-<<<<<<< ours
-<<<<<<< ours
 const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
-=======
-const WelcomeSection = ({ user, onStartTour, activeSession }) => {
->>>>>>> theirs
-=======
-const WelcomeSection = ({ user, onStartTour }) => {
->>>>>>> theirs
   const { stats, achievements } = useGamification();
   const navigate = useNavigate();
 
@@ -53,8 +45,6 @@ const WelcomeSection = ({ user, onStartTour }) => {
     return `${timeGreeting}! Ready to dive into your next great read?`;
   };
 
-<<<<<<< ours
-<<<<<<< ours
   const primaryCtaLabel = activeSession?.book ? 'Resume reading' : 'Start a session';
   const handlePrimaryCta = () => {
     if (activeSession?.book?.id) {
@@ -62,19 +52,8 @@ const WelcomeSection = ({ user, onStartTour }) => {
     } else {
       navigate('/library');
     }
-=======
-  const primaryCtaLabel = activeSession?.book ? 'Resume reading' : 'Start reading';
-  const handlePrimaryCta = () => {
-    if (activeSession?.book?.id) {
-      navigate(`/read/${activeSession.book.id}`);
-      return;
-    }
-    navigate('/library');
->>>>>>> theirs
   };
 
-=======
->>>>>>> theirs
   return (
     <div className="welcome-section-compact">
       <div className="welcome-content">
@@ -106,28 +85,6 @@ const WelcomeSection = ({ user, onStartTour }) => {
           </div>
 
           {/* Level Progress Bar with Total Points */}
-<<<<<<< ours
-<<<<<<< ours
-          <div className="level-progress-container elevated">
-=======
-          <div className="level-progress-container">
->>>>>>> theirs
-            <div className="level-progress-header">
-              <span className="level-progress-text">
-                {Math.floor(levelProgress)}% to Level {(stats?.level || 1) + 1}
-              </span>
-              <span className="total-points-display" title="Total Points Earned">
-                ⭐ {stats?.totalPoints?.toLocaleString() || 0} pts
-              </span>
-            </div>
-            <div className="level-progress-bar">
-              <div
-                className="level-progress-fill"
-                style={{ width: `${levelProgress}%` }}
-                aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
-              />
-<<<<<<< ours
-=======
           <div className="progress-block-elevated">
             <div className="level-progress-container">
               <div className="level-progress-header">
@@ -145,17 +102,6 @@ const WelcomeSection = ({ user, onStartTour }) => {
                   aria-label={`${Math.floor(levelProgress)}% progress to Level ${(stats?.level || 1) + 1}`}
                 />
               </div>
-              {achievements?.length > 0 && (
-                <div className="badge-strip" aria-label="Recent achievements">
-                  {achievements.slice(0, 8).map((achievement, index) => (
-                    <div className="badge-chip" key={achievement.id || index} title={achievement.description || achievement.title}>
-                      <span className="material-symbols-outlined" aria-hidden>workspace_premium</span>
-                      <span className="badge-chip-label">{achievement.title}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
->>>>>>> theirs
             </div>
             <div className="level-inline-meta">
               <div className="inline-meta-item">
@@ -177,8 +123,6 @@ const WelcomeSection = ({ user, onStartTour }) => {
               {(!achievements || achievements.length === 0) && (
                 <div className="badge-empty">Unlock badges to see them here</div>
               )}
-=======
->>>>>>> theirs
             </div>
           </div>
         </div>
@@ -189,8 +133,6 @@ const WelcomeSection = ({ user, onStartTour }) => {
     </div>
   );
 };
-
-
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
 const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
   const { stats } = useGamification();
@@ -1512,15 +1454,7 @@ const DashboardPage = () => {
         {/* Mobile-Only: Quick Actions */}
         <MobileQuickActions navigate={navigate} />
 
-<<<<<<< ours
-<<<<<<< ours
         <ContinueReadingCard activeSession={activeSession} getSessionHistory={getSessionHistory} navigate={navigate} />
-=======
-        <SmartResumeCard books={books} />
->>>>>>> theirs
-
-=======
->>>>>>> theirs
         {/* Global Resume banner (desktop only - mobile uses hero card) */}
         {activeSession?.book?.id && (activeSession?.isPaused) && (
           <div className="desktop-only" style={{
@@ -1571,15 +1505,7 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
-<<<<<<< ours
-<<<<<<< ours
             <WelcomeSection user={user} onStartTour={startDashboardTour} activeSession={activeSession} />
-=======
-            <WelcomeSection user={user} activeSession={activeSession} onStartTour={startDashboardTour} />
-            <GoalSelector />
-=======
-            <WelcomeSection user={user} onStartTour={startDashboardTour} />
->>>>>>> theirs
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
               <button
@@ -1607,7 +1533,6 @@ const DashboardPage = () => {
                 Notes
               </button>
             </div>
->>>>>>> theirs
           </div>
 
           {/* Right Column - Currently Reading Sessions */}
@@ -1649,3 +1574,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
