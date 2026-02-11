@@ -10,6 +10,9 @@ const apiTimeout = environmentConfig?.apiTimeout ?? 10000;
 const defaultHeaders = environmentConfig?.getDefaultHeaders
   ? environmentConfig.getDefaultHeaders()
   : { 'Content-Type': 'application/json' };
+const tokenStorageKey = environmentConfig?.getTokenKey
+  ? environmentConfig.getTokenKey()
+  : 'shelfquest_token';
 
 // Create axios instance with base configuration, falling back to a
 // lightweight stub when axios.create is unavailable (e.g. when axios is
@@ -47,7 +50,26 @@ if (API && !API.BASE_URL) {
   API.BASE_URL = apiUrl;
 }
 
-// No request interceptor needed — cookies are sent automatically via withCredentials: true
+// Request interceptor:
+// Keep cookie-first auth, but add Bearer fallback for browsers/environments
+// where cross-site cookies are blocked (e.g., Safari ITP).
+API.interceptors.request.use(
+  (config) => {
+    try {
+      const fallbackToken = localStorage.getItem(tokenStorageKey);
+      if (fallbackToken) {
+        config.headers = config.headers || {};
+        if (!config.headers.Authorization) {
+          config.headers.Authorization = `Bearer ${fallbackToken}`;
+        }
+      }
+    } catch {
+      // Ignore storage access failures
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Response interceptor for error handling ONLY
 // NOTE: Token refresh is handled exclusively by AuthContext to prevent race conditions
