@@ -3,7 +3,7 @@
 
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { NetworkFirst, NetworkOnly, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { skipWaiting, clientsClaim } from 'workbox-core';
@@ -18,10 +18,31 @@ cleanupOutdatedCaches();
 
 // ─── Runtime caching rules (replicated from vite.config.mjs) ───
 
-// 1. API calls (NetworkFirst, 24h)
+const API_HOST = 'library-server-m6gr.onrender.com';
+
+// 1. Auth/cookie-protected backend calls must never be cached.
+// This avoids serving stale auth responses via SW and preserves cookie-based flows.
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/api/') ||
-    url.hostname === 'library-server-m6gr.onrender.com',
+  ({ request, url }) => {
+    const isBackendHost = url.hostname === API_HOST;
+    const isAuthPath = url.pathname.startsWith('/auth/') || url.pathname.startsWith('/api/auth/');
+    const hasAuthHeader = request.headers.has('authorization');
+    const usesCookies = request.credentials === 'include';
+    return isBackendHost && (isAuthPath || hasAuthHeader || usesCookies);
+  },
+  new NetworkOnly()
+);
+
+// 2. Public API calls only (NetworkFirst, 24h).
+// Excludes auth/credentialed traffic to prevent identity/session issues.
+registerRoute(
+  ({ request, url }) => {
+    const isApi = url.pathname.startsWith('/api/') || url.hostname === API_HOST;
+    const isAuthPath = url.pathname.startsWith('/auth/') || url.pathname.startsWith('/api/auth/');
+    const hasAuthHeader = request.headers.has('authorization');
+    const usesCookies = request.credentials === 'include';
+    return request.method === 'GET' && isApi && !isAuthPath && !hasAuthHeader && !usesCookies;
+  },
   new NetworkFirst({
     cacheName: 'literati-api-cache',
     networkTimeoutSeconds: 10,
@@ -32,7 +53,7 @@ registerRoute(
   })
 );
 
-// 2. Book files — PDFs and EPUBs (CacheFirst, 30 days)
+// 3. Book files — PDFs and EPUBs (CacheFirst, 30 days)
 registerRoute(
   ({ url }) =>
     url.pathname.includes('.pdf') ||
@@ -47,7 +68,7 @@ registerRoute(
   })
 );
 
-// 3. Images (StaleWhileRevalidate, 14 days)
+// 4. Images (StaleWhileRevalidate, 14 days)
 registerRoute(
   ({ request, url }) =>
     request.destination === 'image' ||
@@ -63,7 +84,7 @@ registerRoute(
   })
 );
 
-// 4. Google Fonts + Material Icons (CacheFirst, 1 year)
+// 5. Google Fonts + Material Icons (CacheFirst, 1 year)
 registerRoute(
   ({ url }) => url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com',
   new CacheFirst({
@@ -75,7 +96,7 @@ registerRoute(
   })
 );
 
-// 5. Static assets — JS/CSS/Workers (StaleWhileRevalidate, 30 days)
+// 6. Static assets — JS/CSS/Workers (StaleWhileRevalidate, 30 days)
 registerRoute(
   ({ request }) => ['style', 'script', 'worker'].includes(request.destination),
   new StaleWhileRevalidate({
