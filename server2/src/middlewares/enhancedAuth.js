@@ -436,7 +436,10 @@ export const handleTokenRefresh = async (req, res) => {
       user: {
         id: user.id,
         email: user.email
-      }
+      },
+      token: accessToken, // Fallback for clients/browsers blocking third-party cookies
+      refreshToken: newRefreshToken, // Fallback for token refresh without cookie transport
+      cookieAuth: true
     };
 
     // Add migration warning for legacy tokens
