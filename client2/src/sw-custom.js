@@ -119,7 +119,7 @@ self.addEventListener('notificationclick', (event) => {
   const url = event.notification.data?.url || '/dashboard';
 
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
       // If we already have a ShelfQuest tab, focus it and navigate
       for (const client of windowClients) {
         if (client.url.includes(self.location.origin)) {
@@ -129,7 +129,7 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       // Otherwise open a new window
-      return clients.openWindow(url);
+      return self.clients.openWindow(url);
     })
   );
 });
