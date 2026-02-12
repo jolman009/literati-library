@@ -16,7 +16,8 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
     { icon: 'account_circle', label: 'Profile', path: '/profile' },
     { icon: 'bar_chart', label: 'Analytics', path: '/analytics' },
     { icon: 'settings', label: 'Settings', path: '/settings' },
-    { icon: 'help', label: 'Help & Support', path: '/help' },
+    { icon: 'help', label: 'Help & FAQ', path: '/help' },
+    { icon: 'feedback', label: 'Send Feedback', path: '/feedback' },
   ];
 
   const overlayStyle = {

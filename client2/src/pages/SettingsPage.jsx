@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useEntitlements } from '../contexts/EntitlementsContext';
 import GoPremiumCTA from '../components/premium/GoPremiumCTA';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 
 const SettingsPage = () => {
+  const navigate = useNavigate();
   const { user, deleteAccount } = useAuth();
   const { isPremium, openPremiumModal } = useEntitlements();
   const [requesting, setRequesting] = useState(false);
@@ -87,6 +89,21 @@ const SettingsPage = () => {
         <h2 className="md-title-large mb-2">Appearance & Themes</h2>
         <p className="md-body-medium mb-4">Customize your reading experience with unlockable themes. Earn points to unlock new color palettes!</p>
         <ThemeSwitcher />
+      </section>
+
+      <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
+        <h2 className="md-title-large mb-2">Help & Support</h2>
+        <p className="md-body-medium mb-4">Get answers to common questions or send us feedback.</p>
+        <div className="flex items-center gap-3 flex-wrap">
+          <button className="md3-button md3-button--outlined" onClick={() => navigate('/help')}>
+            <span className="material-symbols-outlined mr-2">help</span>
+            Help & FAQ
+          </button>
+          <button className="md3-button md3-button--outlined" onClick={() => navigate('/feedback')}>
+            <span className="material-symbols-outlined mr-2">feedback</span>
+            Send Feedback
+          </button>
+        </div>
       </section>
 
       <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">

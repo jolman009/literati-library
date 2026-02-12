@@ -48,6 +48,9 @@ const PremiumNavigation = ({
     { to: '/achievements', label: 'Achievements', icon: 'military_tech' },
     { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
     { to: '/onboarding', label: 'Onboarding', icon: 'flag' },
+    { to: '/settings', label: 'Settings', icon: 'settings' },
+    { to: '/help', label: 'Help & FAQ', icon: 'help' },
+    { to: '/feedback', label: 'Send Feedback', icon: 'feedback' },
     { to: null, label: 'Logout', icon: 'logout', isLogout: true },
   ];
 
