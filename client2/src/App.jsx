@@ -80,6 +80,7 @@ const MockLibraryPage = lazy(() => import('./pages/MockLibraryPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
+const HelpFAQPage = lazy(() => import('./pages/HelpFAQPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const DataExport = lazy(() => import('./components/DataExport'));
 const PremiumPage = lazy(() =>
@@ -240,10 +241,24 @@ const AppRoutes = () => {
             </Suspense>
           </UploadErrorBoundary>
         } />
+        <Route path="/help" element={
+          <ErrorBoundary fallbackComponent="dashboard" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading help..." />}>
+              <HelpFAQPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
         <Route path="/help/viewer" element={
           <ErrorBoundary fallbackComponent="dashboard" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading help..." />}>
               <HelpViewer />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/feedback" element={
+          <ErrorBoundary fallbackComponent="contact" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading feedback form..." />}>
+              <ContactDialog />
             </Suspense>
           </ErrorBoundary>
         } />
