@@ -2,6 +2,9 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 24px 16px 100px;
+  background-color: var(--md-sys-color-surface, #F6F8FF);
+  color: var(--md-sys-color-on-surface, #1A1C28);
+  min-height: 100vh;
 }
 
 .help-faq-header {
@@ -19,19 +22,19 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: var(--surface-container, #f0f0f0);
-  color: var(--on-surface, #1c1b1f);
+  background: var(--md-sys-color-surface-container, #F1F2FF);
+  color: var(--md-sys-color-on-surface, #1A1C28);
   cursor: pointer;
   transition: background 0.2s;
   flex-shrink: 0;
 }
 
 .help-faq-back-button:hover {
-  background: var(--surface-container-high, #e6e6e6);
+  background: var(--md-sys-color-surface-container-high, #EBEBFF);
 }
 
 .help-faq-subtitle {
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
   margin-bottom: 24px;
 }
 
@@ -44,9 +47,9 @@
   width: 100%;
   padding: 12px 16px 12px 48px;
   border-radius: 28px;
-  border: 1px solid var(--outline-variant, #cac4d0);
-  background: var(--surface-container, #f0f0f0);
-  color: var(--on-surface, #1c1b1f);
+  border: 1px solid var(--md-sys-color-outline-variant, #C3C7CF);
+  background: var(--md-sys-color-surface-container, #F1F2FF);
+  color: var(--md-sys-color-on-surface, #1A1C28);
   font-size: 16px;
   outline: none;
   transition: border-color 0.2s;
@@ -54,11 +57,11 @@
 }
 
 .help-faq-search input:focus {
-  border-color: var(--primary, #6750a4);
+  border-color: var(--md-sys-color-primary, #6750a4);
 }
 
 .help-faq-search input::placeholder {
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
 }
 
 .help-faq-search-icon {
@@ -66,7 +69,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
   font-size: 22px;
   pointer-events: none;
 }
@@ -91,25 +94,25 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--primary-container, #eaddff);
-  color: var(--on-primary-container, #21005e);
+  background: var(--md-sys-color-primary-container, #CDE6FF);
+  color: var(--md-sys-color-on-primary-container, #001D35);
   flex-shrink: 0;
 }
 
 .faq-category-title {
   font-size: 18px;
   font-weight: 600;
-  color: var(--on-surface, #1c1b1f);
+  color: var(--md-sys-color-on-surface, #1A1C28);
   margin: 0;
 }
 
 /* FAQ item (expandable) */
 .faq-item {
-  border: 1px solid var(--outline-variant, #cac4d0);
+  border: 1px solid var(--md-sys-color-outline-variant, #C3C7CF);
   border-radius: 12px;
   margin-bottom: 8px;
   overflow: hidden;
-  background: var(--surface, #fffbfe);
+  background: var(--md-sys-color-surface, #F6F8FF);
   transition: box-shadow 0.2s;
 }
 
@@ -129,17 +132,17 @@
   text-align: left;
   font-size: 15px;
   font-weight: 500;
-  color: var(--on-surface, #1c1b1f);
+  color: var(--md-sys-color-on-surface, #1A1C28);
   gap: 12px;
 }
 
 .faq-item-question:hover {
-  background: var(--surface-container-low, #f7f2fa);
+  background: var(--md-sys-color-surface-container-low, #F1F2FF);
 }
 
 .faq-item-expand-icon {
   font-size: 20px;
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
   transition: transform 0.25s ease;
   flex-shrink: 0;
 }
@@ -152,7 +155,7 @@
   padding: 0 16px 16px;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
   animation: faqSlideDown 0.2s ease-out;
 }
 
@@ -172,28 +175,28 @@
   margin-top: 32px;
   padding: 24px;
   border-radius: 16px;
-  background: var(--surface-container, #f0f0f0);
-  border: 1px solid var(--outline-variant, #cac4d0);
+  background: var(--md-sys-color-surface-container, #F1F2FF);
+  border: 1px solid var(--md-sys-color-outline-variant, #C3C7CF);
   text-align: center;
 }
 
 .help-faq-contact h2 {
   font-size: 18px;
   font-weight: 600;
-  color: var(--on-surface, #1c1b1f);
+  color: var(--md-sys-color-on-surface, #1A1C28);
   margin: 0 0 8px;
 }
 
 .help-faq-contact p {
   font-size: 14px;
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
   margin: 0 0 16px;
 }
 
 .help-faq-no-results {
   text-align: center;
   padding: 48px 16px;
-  color: var(--on-surface-variant, #49454f);
+  color: var(--md-sys-color-on-surface-variant, #434752);
 }
 
 .help-faq-no-results .material-symbols-outlined {
