@@ -1,0 +1,282 @@
+# ShelfQuest Feature Integration Phase Timeline
+
+> Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
+> Generated: 2026-02-15 | Status: Proposal
+
+---
+
+## Current State Summary
+
+| Feedback Item                        | Status           | Notes                                                  |
+|--------------------------------------|------------------|--------------------------------------------------------|
+| Dynamic Walkthrough / Onboarding     | DONE             | OnboardingGuide, GamificationOnboarding, Driver.js     |
+| Google Sign-In                       | DONE             | OAuth2 + account linking implemented                   |
+| Dark Mode                            | DONE             | Full light/dark/system + 6 unlockable gamified themes  |
+| User Feedback Mechanism              | DONE             | ContactDialog, ContactPage, in-app feedback forms      |
+| Help Center / FAQ                    | DONE             | HelpFAQPage with categorized FAQ + HelpViewer          |
+| Performance Monitoring               | PARTIAL          | Sentry + Prometheus metrics; no user-facing perf dash  |
+| Accessibility (WCAG)                 | PARTIAL          | AA styles exist; needs audit for full compliance       |
+| Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
+| Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
+| Browser Extension                    | NOT STARTED      | No extension code exists; PWA + native apps only       |
+
+---
+
+## Phase 1 — Polish & Quick Wins (Weeks 1-3)
+
+**Goal**: Close remaining tester feedback gaps and harden what exists.
+
+### 1.1 Play Store & App Store Screenshot Overhaul
+- **Source**: Feedback PDF, item 3
+- **Scope**: Marketing / design (no code changes)
+- **Tasks**:
+  - Create feature-highlight screenshots with captions
+  - Include user testimonials / ratings overlay
+  - A/B test listing with new visuals
+- **Effort**: ~3 days (design)
+
+### 1.2 Accessibility Audit & Remediation
+- **Source**: Feedback PDF, additional recommendations
+- **Scope**: Client2 frontend
+- **Tasks**:
+  - Run axe-core / Lighthouse audit across all routes
+  - Fix contrast ratios in all 6 themes (light + dark variants)
+  - Verify screen reader flow on onboarding, reader, and notes pages
+  - Add `aria-live` regions for dynamic content (notifications, toast)
+- **Effort**: ~5 days
+
+### 1.3 Additional Social Login Options
+- **Source**: Feedback PDF, item 2
+- **Scope**: Server2 auth routes + Client2 login UI
+- **Tasks**:
+  - Add Apple Sign-In (critical for iOS App Store compliance)
+  - Evaluate Facebook / X (Twitter) sign-in ROI
+  - Extend account-linking logic to support multiple providers
+- **Effort**: ~4 days (Apple), ~2 days per additional provider
+
+### 1.4 Onboarding Refinements
+- **Source**: Feedback PDF, item 1 (already built, polish pass)
+- **Scope**: Client2
+- **Tasks**:
+  - Add skip/dismiss persistence so returning users aren't re-prompted
+  - Track onboarding completion analytics via Sentry/custom events
+  - Add contextual tooltips for newly released features (per phase)
+- **Effort**: ~2 days
+
+---
+
+## Phase 2 — Edge Extension Foundation (Weeks 4-8)
+
+**Goal**: Ship the first ShelfQuest Edge/Chrome extension with core reading features.
+
+### 2.1 Extension Scaffold & Infrastructure
+- **Source**: edge-extension-ideas.md (all items depend on this)
+- **Scope**: New `extension/` directory in monorepo
+- **Tasks**:
+  - Create Manifest V3 extension scaffold (React + TypeScript)
+  - Set up shared types/constants between extension and client2
+  - Implement Supabase auth bridge (share session with web app)
+  - Build popup shell and sidebar panel skeleton
+  - CI/CD pipeline for extension builds (.crx / .xpi packaging)
+- **Effort**: ~8 days
+- **Dependencies**: None
+
+### 2.2 "Send to ShelfQuest" Web Clipper
+- **Source**: edge-extension-ideas.md, AI & Reading Helpers
+- **Scope**: Extension (context menu + popup + Supabase edge function)
+- **Tasks**:
+  - Context menu action: "Save to ShelfQuest"
+  - Capture selected text, page title, URL, and metadata
+  - Convert clipped content to markdown
+  - Supabase edge function to ingest clipped items into library
+  - Popup confirmation with save status indicator
+- **Effort**: ~6 days
+- **Dependencies**: 2.1
+
+### 2.3 Citation & Notes Collector
+- **Source**: edge-extension-ideas.md, AI & Reading Helpers
+- **Scope**: Extension content script + popup
+- **Tasks**:
+  - Content script: highlight text on any webpage
+  - Popup aggregates highlights with source URLs
+  - Sync highlights to ShelfQuest notes system (reuse existing notes API)
+  - LLM generates summary bullets and study questions (via ai-service)
+- **Effort**: ~7 days
+- **Dependencies**: 2.1, ai-service endpoints
+
+---
+
+## Phase 3 — Smart Reading & AI Features (Weeks 9-14)
+
+**Goal**: Leverage AI to differentiate the extension and deepen engagement.
+
+### 3.1 Smart Reading Queue Overlay
+- **Source**: edge-extension-ideas.md, AI & Reading Helpers
+- **Scope**: Extension sidebar + Supabase queries
+- **Tasks**:
+  - Sidebar panel listing ShelfQuest library items
+  - AI-prioritized "next read" suggestions based on current tab context
+  - Topic extraction from active page via LLM
+  - Quick-open in mini reader overlay (content script)
+  - Browsing context → reading recommendations pipeline
+- **Effort**: ~8 days
+- **Dependencies**: 2.1, ai-service
+
+### 3.2 AI-Powered Ebook Translator / Explainer
+- **Source**: edge-extension-ideas.md, AI & Reading Helpers
+- **Scope**: Extension content script + ai-service
+- **Tasks**:
+  - Detect in-browser PDF/ePub viewing
+  - Floating action button for translate/simplify selection
+  - LLM passage translation and simplification
+  - Sync annotated notes back to ShelfQuest
+  - Language selection UI in popup
+- **Effort**: ~10 days
+- **Dependencies**: 2.1, ai-service, existing reader infrastructure
+
+### 3.3 Task-from-Page Quick Capture
+- **Source**: edge-extension-ideas.md, Productivity Helpers
+- **Scope**: Extension context menu + popup
+- **Tasks**:
+  - Context menu: "Create Task from Selection"
+  - AI auto-tags and categorizes (meeting, doc, PR, reading)
+  - Push to ShelfQuest reading goals or external task system
+  - Quick-capture popup with editable fields
+- **Effort**: ~5 days
+- **Dependencies**: 2.1
+
+---
+
+## Phase 4 — Productivity & Workflow Integration (Weeks 15-20)
+
+**Goal**: Extend the extension into daily workflows beyond reading.
+
+### 4.1 Context-Aware Tab Pairing
+- **Source**: edge-extension-ideas.md, Productivity Helpers
+- **Scope**: Extension popup + Supabase storage
+- **Tasks**:
+  - Popup groups current tab with ShelfQuest reader or GitHub tab
+  - Quick-switch buttons between paired tabs
+  - Store/recall tab pairs in Supabase
+  - Keyboard shortcuts for pair switching
+- **Effort**: ~5 days
+
+### 4.2 Meeting Prep Assistant
+- **Source**: edge-extension-ideas.md, Productivity Helpers
+- **Scope**: Extension sidebar + Supabase + ai-service
+- **Tasks**:
+  - Detect calendar/video-call domains (Google Meet, Zoom, Teams)
+  - Sidebar fetches relevant ShelfQuest notes and recent activity
+  - AI suggests talking points and questions from context
+  - One-click copy of prep notes
+- **Effort**: ~7 days
+
+### 4.3 Adaptive Sidebar for Active Workflows
+- **Source**: edge-extension-ideas.md, AI-Browser Futures
+- **Scope**: Extension sidebar architecture
+- **Tasks**:
+  - Domain/tab signal detection system
+  - Swap sidebar modules based on context:
+    - Reader mode for doc/article sites
+    - Notes mode for research sites
+    - Dev tools mode for GitHub (Phase 5)
+  - User-configurable domain → module mappings
+  - Persist preferences in Supabase
+- **Effort**: ~8 days
+- **Dependencies**: 4.1, 4.2 (integrates previous sidebar work)
+
+---
+
+## Phase 5 — Developer Tools & Agent Platform (Weeks 21-26)
+
+**Goal**: Build power-user and developer-facing features; establish agent framework.
+
+### 5.1 Personal Agent Launcher
+- **Source**: edge-extension-ideas.md, AI-Browser Futures
+- **Scope**: Extension popup + Supabase + ai-service
+- **Tasks**:
+  - Popup to trigger custom agents (reading summarizer, PR reviewer, plan generator)
+  - Per-domain agent presets
+  - Store agent runs/outputs in Supabase for history
+  - Agent output viewer in sidebar
+  - Rate limiting and AI quota management
+- **Effort**: ~10 days
+
+### 5.2 Supabase Query Profiler (DevTools Panel)
+- **Source**: edge-extension-ideas.md, Developer Helpers
+- **Scope**: Extension DevTools panel
+- **Tasks**:
+  - DevTools panel logging network calls to Supabase domains
+  - Annotate latency and row counts per query
+  - One-click explain/optimize suggestions via OpenAI
+  - Query history and performance trends
+- **Effort**: ~8 days
+
+### 5.3 AI-Powered Dev Context Side Panel
+- **Source**: edge-extension-ideas.md, Developer Helpers
+- **Scope**: Extension sidebar (GitHub domain)
+- **Tasks**:
+  - Sidebar reads active GitHub PR diff
+  - Summarizes TODOs, code smells, missing tests via LLM
+  - Quick actions to insert review comments via GitHub API
+  - Configurable review rules/checklists
+- **Effort**: ~10 days
+
+### 5.4 Env/Secret Sniffer for Local Dev
+- **Source**: edge-extension-ideas.md, Developer Helpers
+- **Scope**: Extension context menu + Supabase
+- **Tasks**:
+  - Context menu extracts env var names from visible code/docs
+  - Maps to local template (e.g., `env.template.js`)
+  - Store findings in Supabase for cross-project reconciliation
+  - Warning indicators for exposed secrets
+- **Effort**: ~5 days
+
+---
+
+## Monetization Touchpoints (Cross-Phase)
+
+| Phase | Monetization Opportunity                                           |
+|-------|--------------------------------------------------------------------|
+| 2-3   | **Premium AI Quota** — Free tier with N clips/summaries per month  |
+| 3     | **Pro Reading Features** — Unlimited translations, smart queue     |
+| 4     | **Team Sharing** — Shared tab pairs, meeting prep for teams        |
+| 5     | **Developer Pro** — Query profiler, PR reviewer, agent platform    |
+
+---
+
+## Risk & Dependency Map
+
+```
+Phase 1 (no blockers)
+  |
+Phase 2.1 (extension scaffold) ──► Phase 2.2, 2.3
+  |
+Phase 3.1, 3.2, 3.3 (depend on 2.1 + ai-service)
+  |
+Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
+  |
+Phase 5.1, 5.2, 5.3, 5.4 (depend on 2.1; can partially parallelize with Phase 4)
+```
+
+**Key Risks**:
+- **Manifest V3 limitations**: Background service worker restrictions may affect real-time features
+- **Cross-browser compatibility**: Edge vs Chrome vs Firefox manifest differences
+- **AI cost scaling**: LLM calls in Phases 3-5 need quota/rate limiting from day one
+- **Auth session sharing**: Extension ↔ web app token bridging needs careful security review
+
+---
+
+## Estimated Timeline Summary
+
+| Phase | Focus                            | Duration  | Cumulative |
+|-------|----------------------------------|-----------|------------|
+| 1     | Polish & Quick Wins              | 3 weeks   | Week 3     |
+| 2     | Extension Foundation             | 5 weeks   | Week 8     |
+| 3     | Smart Reading & AI               | 6 weeks   | Week 14    |
+| 4     | Productivity & Workflow          | 6 weeks   | Week 20    |
+| 5     | Developer Tools & Agent Platform | 6 weeks   | Week 26    |
+
+**Total estimated timeline: ~26 weeks (6.5 months) for full feature set.**
+
+> Phases 4 and 5 can be partially parallelized if team capacity allows, reducing total to ~23 weeks.
