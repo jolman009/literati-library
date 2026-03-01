@@ -1,5 +1,5 @@
 // src/components/OnboardingSpotlight.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MD3Card, MD3Button, MD3Checkbox } from './Material3';
 
@@ -40,8 +40,20 @@ const footerRow = {
 const OnboardingSpotlight = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [autoDismissed, setAutoDismissed] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('onboarding_spotlight_dismissed') === 'true') {
+        setAutoDismissed(true);
+        onClose?.();
+      }
+    } catch {
+      // Silently ignore localStorage errors
+    }
+  }, [onClose]);
+
+  if (!isOpen || autoDismissed) return null;
 
   const handleClose = () => {
     if (dontShowAgain) {

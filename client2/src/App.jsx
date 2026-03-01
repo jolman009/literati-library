@@ -54,7 +54,7 @@ import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Materi
 
 import AppLayout from './components/AppLayout';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
-import GamificationOnboarding from './components/gamification/GamificationOnboarding';
+import GamificationOnboardingWrapper from './components/gamification/GamificationOnboardingWrapper';
 
 // Smart conditional provider loading
 import ConditionalProviders from './components/providers/ConditionalProviders';
@@ -401,7 +401,7 @@ const App = () => {
                 {/* Temporarily disabled dev monitors */}
                 {/* <PerformanceMonitor /> */}
                 {/* <CacheMonitor /> */}
-                <GamificationOnboarding />
+                <GamificationOnboardingWrapper />
                 <CookieConsent />
                 <PremiumModal />
 
