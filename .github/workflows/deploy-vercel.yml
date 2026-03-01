@@ -5,10 +5,7 @@ name: Deploy to Vercel (Disabled)
 # and uncomment the push trigger
 
 on:
-  # push:
-  #   branches: [ main ]
-  #   paths: [ 'client2/**' ]
-  workflow_dispatch_disabled:  # Renamed to disable manual trigger
+  workflow_dispatch:  # Manual trigger only — push-based deploy handled by ci-cd-integrated.yml
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
