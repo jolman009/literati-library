@@ -19,7 +19,7 @@ const SENTRY_CONFIG = {
 
 export const initializeSentry = () => {
   const environment = process.env.NODE_ENV || 'development';
-  const config = SENTRY_CONFIG[environment];
+  const config = SENTRY_CONFIG[environment] || SENTRY_CONFIG.development;
 
   if (!config.enabled || !config.dsn) {
     console.log('[Sentry] Disabled for environment:', environment);
