@@ -195,8 +195,9 @@ describe('Secure Auth Routes', () => {
 
       expectSuccessResponse(response)
       expect(response.body).toHaveProperty('user')
-      expect(response.body).not.toHaveProperty('accessToken')
-      expect(response.body).not.toHaveProperty('refreshToken')
+      expect(response.body).toHaveProperty('token') // accessToken fallback for cookie-restricted browsers
+      expect(response.body).toHaveProperty('refreshToken') // refreshToken fallback
+      expect(response.body).toHaveProperty('cookieAuth', true)
       expect(response.body.user.email).toBe(validRegistrationData.email)
       expect(response.body.user).not.toHaveProperty('password')
     })
@@ -314,8 +315,9 @@ describe('Secure Auth Routes', () => {
 
       expectSuccessResponse(response)
       expect(response.body).toHaveProperty('user')
-      expect(response.body).not.toHaveProperty('accessToken')
-      expect(response.body).not.toHaveProperty('refreshToken')
+      expect(response.body).toHaveProperty('token') // accessToken fallback for cookie-restricted browsers
+      expect(response.body).toHaveProperty('refreshToken') // refreshToken fallback
+      expect(response.body).toHaveProperty('cookieAuth', true)
       expect(response.body.user.email).toBe(validLoginData.email)
     })
 
