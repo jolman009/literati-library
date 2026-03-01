@@ -35,7 +35,13 @@
       "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" status)",
       "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" push)",
       "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" add client2/src/styles/mobile-fixes.css)",
-      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" commit -m \"$\\(cat <<''EOF''\nfix\\(ui\\): exclude signup-card from mobile-fixes max-width override\n\nmobile-fixes.css forced max-width: 100% !important on all elements\nwith \"card\" in their class name. It excluded .login-card but not\n.signup-card, causing the signup form to stretch to full width while\nlogin stayed at 440px.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git -C \"C:/Users/Jolma/Vibe-Code/my-library-app-2\" commit -m \"$\\(cat <<''EOF''\nfix\\(ui\\): exclude signup-card from mobile-fixes max-width override\n\nmobile-fixes.css forced max-width: 100% !important on all elements\nwith \"card\" in their class name. It excluded .login-card but not\n.signup-card, causing the signup form to stretch to full width while\nlogin stayed at 440px.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(head:*)",
+      "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run view 22546932525 2>&1)",
+      "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run view 22546932429 2>&1)",
+      "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 15 2>&1)",
+      "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 20 --status failure 2>&1)",
+      "Bash(sleep 120 && cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 8 --commit 6090f86 2>&1)"
     ],
     "deny": [],
     "ask": []
