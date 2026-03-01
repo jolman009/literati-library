@@ -48,13 +48,18 @@ const GoogleSignInButton = ({ onSuccess, onError, text = 'signin_with' }) => {
       });
 
       if (buttonRef.current) {
+        // GSI only accepts integer pixel widths, not CSS percentages.
+        // Measure the container and clamp to the 200–400 px range GSI supports.
+        const containerWidth = buttonRef.current.offsetWidth || 300;
+        const buttonWidth = Math.max(200, Math.min(400, containerWidth));
+
         window.google.accounts.id.renderButton(buttonRef.current, {
           type: 'standard',
           theme: 'outline',
           size: 'large',
           text,
           shape: 'rectangular',
-          width: '100%'
+          width: buttonWidth
         });
       }
     };
