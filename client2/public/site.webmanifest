@@ -30,7 +30,7 @@
   "start_url": "https://www.literati.pro/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"],
-  "theme_color": "#3B82F6",
+  "theme_color": "#24A8E0",
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
   "categories": ["books", "education", "productivity"],
