@@ -245,10 +245,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # Security Scanning
+  # Security Scanning (non-blocking — dedicated security-scan-enhanced.yml handles this)
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [client-ci, server-ci, ai-service-ci]
 
     steps:
