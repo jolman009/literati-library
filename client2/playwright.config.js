@@ -98,13 +98,13 @@ export default defineConfig({
       command: 'pnpm run dev',
       port: 5173, // Vite's default port (port 3000 blocked by Windows)
       timeout: 120 * 1000,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
     },
     {
       command: 'cd ../server2 && pnpm run dev',
       port: 5000,
       timeout: 120 * 1000,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: true,
     }
   ],
 
