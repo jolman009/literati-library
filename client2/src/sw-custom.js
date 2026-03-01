@@ -18,7 +18,13 @@ cleanupOutdatedCaches();
 
 // ─── Runtime caching rules (replicated from vite.config.mjs) ───
 
-const API_HOST = 'library-server-m6gr.onrender.com';
+const API_HOST = (() => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    if (apiUrl) return new URL(apiUrl).hostname;
+  } catch (e) { /* fall through */ }
+  return self.location.hostname;
+})();
 
 // 1. Auth/cookie-protected backend calls must never be cached.
 // This avoids serving stale auth responses via SW and preserves cookie-based flows.

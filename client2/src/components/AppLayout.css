@@ -442,7 +442,7 @@
 .user-name {
   font-size: 14px;
   font-weight: 600;
-  color: rgba(245, 40, 145, 0.8);
+  color: var(--md-sys-color-primary);
   line-height: 1.2;
 }
 
@@ -481,7 +481,7 @@
 .user-name-full {
   font-size: 16px;
   font-weight: 600;
-  color: rgba(245, 40, 145, 0.8);
+  color: var(--md-sys-color-primary);
 }
 
 .user-email {
@@ -942,7 +942,7 @@
 /* Enhanced user status */
 .user-status {
   font-size: 12px;
-  color: rgba(245, 40, 145, 0.8);
+  color: var(--md-sys-color-primary);
   font-weight: 600;
   font-style: italic;
 }
@@ -980,7 +980,7 @@
 
 .brand-tagline {
   font-size: 12px;
-  color: rgba(245, 40, 145, 0.8);
+  color: var(--md-sys-color-on-surface-variant);
   font-weight: 500;
   margin: 0;
   line-height: 1;
@@ -1050,7 +1050,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: rgba(245, 40, 145, 0.8);
+  background: var(--md-sys-color-primary);
 }
 
 .loading-spinner {
