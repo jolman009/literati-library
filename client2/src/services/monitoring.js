@@ -1,4 +1,5 @@
 // src/services/monitoring.js - Unified Monitoring Service
+import React from 'react';
 import analyticsService from './analytics.js';
 import crashReporting from './crashReporting.js';
 import environmentConfig from '../config/environment.js';
@@ -294,7 +295,6 @@ class MonitoringService {
    * Create React Error Boundary component
    */
   createErrorBoundary() {
-    /* global React */
     const ErrorBoundary = this.crashReporting.createErrorBoundary?.();
 
     if (!ErrorBoundary) {
@@ -319,14 +319,12 @@ class MonitoringService {
 
           render() {
             if (this.state.hasError) {
-              return fallback || (
-                <div style={{ padding: '20px', textAlign: 'center' }}>
-                  <h2>Something went wrong</h2>
-                  <p>We've been notified of this error and are working to fix it.</p>
-                  <button onClick={() => window.location.reload()}>
-                    Reload Page
-                  </button>
-                </div>
+              return fallback || React.createElement(
+                'div',
+                { style: { padding: '20px', textAlign: 'center' } },
+                React.createElement('h2', null, 'Something went wrong'),
+                React.createElement('p', null, "We've been notified of this error and are working to fix it."),
+                React.createElement('button', { onClick: () => window.location.reload() }, 'Reload Page')
               );
             }
 
