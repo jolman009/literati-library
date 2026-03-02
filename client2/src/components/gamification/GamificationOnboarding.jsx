@@ -4,15 +4,21 @@
  * Fixes white-on-white text visibility issues
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MD3Card, MD3Button } from '../Material3';
-
+import monitoring from '../../services/monitoring';
 
 // CRITICAL: Import the CSS file
 import './GamificationOnboarding.css';
 
 const GamificationOnboarding = ({ isOpen, onClose, canSkip = true }) => {
   const [currentStep, setCurrentStep] = useState(0);
+
+  useEffect(() => {
+    if (isOpen) {
+      monitoring.trackFeature('gamification_onboarding', 'step_viewed', { step: currentStep });
+    }
+  }, [currentStep, isOpen]);
 
   if (!isOpen) return null;
 
@@ -51,7 +57,7 @@ const GamificationOnboarding = ({ isOpen, onClose, canSkip = true }) => {
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      onClose();
+      onClose(true);
     }
   };
 
@@ -62,7 +68,8 @@ const GamificationOnboarding = ({ isOpen, onClose, canSkip = true }) => {
   };
 
   const handleSkip = () => {
-    onClose();
+    monitoring.trackFeature('gamification_onboarding', 'skipped', { skipped_at_step: currentStep });
+    onClose(false);
   };
 
   return (

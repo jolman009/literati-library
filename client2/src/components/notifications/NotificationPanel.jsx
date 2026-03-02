@@ -64,7 +64,7 @@ export default function NotificationPanel({ onClose }) {
   };
 
   return (
-    <div className="notification-panel" ref={panelRef}>
+    <div className="notification-panel" ref={panelRef} role="region" aria-label="Notifications">
       <div className="notification-panel-header">
         <h3>Notifications</h3>
         {unreadCount > 0 && (
@@ -74,9 +74,9 @@ export default function NotificationPanel({ onClose }) {
         )}
       </div>
 
-      <div className="notification-panel-list">
+      <div className="notification-panel-list" aria-live="polite">
         {loading && notifications.length === 0 && (
-          <div className="notification-empty">Loading...</div>
+          <div className="notification-empty" role="status">Loading...</div>
         )}
 
         {!loading && notifications.length === 0 && (

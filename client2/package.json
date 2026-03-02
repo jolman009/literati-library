@@ -117,6 +117,7 @@
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0",
     "webpack-bundle-analyzer": "^4.10.2",
     "workbox-window": "^7.4.0"
   },

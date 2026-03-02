@@ -1,5 +1,5 @@
 // src/components/Material3/MD3TextField.jsx
-import React, { memo, forwardRef, useState } from 'react';
+import React, { memo, forwardRef, useState, useId } from 'react';
 import './MD3TextField.css';
 
 const MD3TextField = memo(forwardRef(({
@@ -17,10 +17,15 @@ const MD3TextField = memo(forwardRef(({
   multiline = false,
   rows = 3,
   className = '',
+  id: externalId,
   onFocus,
   onBlur,
   ...props
 }, ref) => {
+  const reactId = useId();
+  const inputId = externalId || reactId;
+  const supportingTextId = `${inputId}-supporting`;
+  const errorTextId = `${inputId}-error`;
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(Boolean(value || defaultValue));
 
@@ -59,6 +64,7 @@ const MD3TextField = memo(forwardRef(({
           {multiline ? (
             <textarea
               ref={ref}
+              id={inputId}
               className="md3-text-field__input"
               value={value}
               defaultValue={defaultValue}
@@ -66,6 +72,8 @@ const MD3TextField = memo(forwardRef(({
               required={required}
               rows={rows}
               placeholder=" "
+              aria-invalid={error || undefined}
+              aria-describedby={error && errorText ? errorTextId : supportingText ? supportingTextId : undefined}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onChange={(e) => {
@@ -77,12 +85,15 @@ const MD3TextField = memo(forwardRef(({
           ) : (
             <input
               ref={ref}
+              id={inputId}
               className="md3-text-field__input"
               value={value}
               defaultValue={defaultValue}
               disabled={disabled}
               required={required}
               placeholder=" "
+              aria-invalid={error || undefined}
+              aria-describedby={error && errorText ? errorTextId : supportingText ? supportingTextId : undefined}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onChange={(e) => {
@@ -92,12 +103,12 @@ const MD3TextField = memo(forwardRef(({
               {...props}
             />
           )}
-          
+
           {label && (
-            <span className="md3-text-field__label">
+            <label htmlFor={inputId} className="md3-text-field__label">
               {label}
               {required && <span className="md3-text-field__asterisk"> *</span>}
-            </span>
+            </label>
           )}
         </div>
         
@@ -109,7 +120,11 @@ const MD3TextField = memo(forwardRef(({
       </div>
       
       {(supportingText || errorText) && (
-        <div className="md3-text-field__supporting-text">
+        <div
+          id={error && errorText ? errorTextId : supportingTextId}
+          className="md3-text-field__supporting-text"
+          role={error && errorText ? 'alert' : undefined}
+        >
           {error ? errorText : supportingText}
         </div>
       )}

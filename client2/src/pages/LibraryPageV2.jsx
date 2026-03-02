@@ -281,7 +281,7 @@ const LibraryPageV2 = () => {
   if (error) {
     return (
       <div className={`library-v2 ${actualTheme}`}>
-        <div className="error-state">{error}</div>
+        <div className="error-state" role="alert">{error}</div>
       </div>
     );
   }

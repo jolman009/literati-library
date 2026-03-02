@@ -170,6 +170,27 @@ const sessionStorageMock = {
 }
 global.sessionStorage = sessionStorageMock
 
+// Mock monitoring service (contains JSX in a .js file that breaks Vite transform)
+vi.mock('./services/monitoring', () => ({
+  default: {
+    trackEvent: vi.fn(),
+    trackFeature: vi.fn(),
+    trackReading: vi.fn(),
+    trackGamification: vi.fn(),
+    trackPageView: vi.fn(),
+    trackPerformance: vi.fn(),
+    trackEngagement: vi.fn(),
+    handleError: vi.fn(),
+    handleReadingError: vi.fn(),
+    handleAIError: vi.fn(),
+    setUser: vi.fn(),
+    startTimer: vi.fn(() => Date.now()),
+    endTimer: vi.fn(() => 0),
+    getStatus: vi.fn(() => ({ initialized: false })),
+    flush: vi.fn(),
+  }
+}))
+
 // Mock axios
 vi.mock('axios', () => ({
   default: {

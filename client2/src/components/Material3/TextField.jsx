@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import './MD3TextField.css';
 
 const TextField = ({
@@ -11,8 +11,12 @@ const TextField = ({
   leadingIcon,
   trailingIcon,
   className = '',
+  id: externalId,
   ...props
 }) => {
+  const reactId = useId();
+  const inputId = externalId || reactId;
+  const helperTextId = `${inputId}-helper`;
   const [focused, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const hasValue = value && value.length > 0;
@@ -65,6 +69,7 @@ const TextField = ({
 
         <div className="md3-text-field__input-container">
           <input
+            id={inputId}
             type={inputType}
             value={value}
             onChange={onChange}
@@ -72,10 +77,12 @@ const TextField = ({
             onBlur={() => setFocused(false)}
             className="md3-text-field__input"
             placeholder=" "
+            aria-invalid={error || undefined}
+            aria-describedby={helperText ? helperTextId : undefined}
             {...props}
           />
 
-          <label className="md3-text-field__label">
+          <label htmlFor={inputId} className="md3-text-field__label">
             {label}
           </label>
         </div>
@@ -88,9 +95,13 @@ const TextField = ({
       </div>
 
       {helperText && (
-        <p className={`md3-text-field__supporting-text ${
-          error ? 'md3-text-field__supporting-text--error' : ''
-        }`}>
+        <p
+          id={helperTextId}
+          className={`md3-text-field__supporting-text ${
+            error ? 'md3-text-field__supporting-text--error' : ''
+          }`}
+          role={error ? 'alert' : undefined}
+        >
           {helperText}
         </p>
       )}

@@ -164,10 +164,11 @@ const NavigationFAB = ({ quickStats = {} }) => {
 
       {/* FAB Menu Actions */}
       {isOpen && (
-        <div style={actionsContainerStyle}>
+        <div style={actionsContainerStyle} role="menu">
           {fabActions.map((action) => (
             <button
               key={action.to}
+              role="menuitem"
               onClick={() => handleActionClick(action.to)}
               style={actionButtonStyle}
               onMouseEnter={(e) => {
@@ -190,10 +191,11 @@ const NavigationFAB = ({ quickStats = {} }) => {
           ))}
 
           {/* Divider */}
-          <div style={{ height: '1px', backgroundColor: 'rgb(var(--md-sys-color-outline-variant, 201 197 208))', margin: '4px 0' }} />
+          <div style={{ height: '1px', backgroundColor: 'var(--md-sys-color-outline-variant, #c9c5d0)', margin: '4px 0' }} role="separator" />
 
           {/* Logout Action */}
           <button
+            role="menuitem"
             onClick={handleLogout}
             style={logoutButtonStyle}
             onMouseEnter={(e) => {
@@ -218,6 +220,8 @@ const NavigationFAB = ({ quickStats = {} }) => {
         onClick={() => setIsOpen(!isOpen)}
         style={fabMainStyle}
         aria-label={isOpen ? 'Close menu' : 'Open navigation menu'}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         onMouseEnter={(e) => {
           if (!isOpen) {
             e.currentTarget.style.transform = 'scale(1.05)';

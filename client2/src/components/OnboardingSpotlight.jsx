@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MD3Card, MD3Button, MD3Checkbox } from './Material3';
+import monitoring from '../services/monitoring';
 
 const overlayStyle = {
   position: 'fixed',
@@ -47,15 +48,20 @@ const OnboardingSpotlight = ({ isOpen, onClose }) => {
       if (localStorage.getItem('onboarding_spotlight_dismissed') === 'true') {
         setAutoDismissed(true);
         onClose?.();
+        return;
       }
     } catch {
       // Silently ignore localStorage errors
     }
-  }, [onClose]);
+    if (isOpen) {
+      monitoring.trackFeature('onboarding_spotlight', 'shown');
+    }
+  }, [onClose, isOpen]);
 
   if (!isOpen || autoDismissed) return null;
 
   const handleClose = () => {
+    monitoring.trackFeature('onboarding_spotlight', 'dismissed');
     if (dontShowAgain) {
       try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {
         // Silently ignore localStorage errors
@@ -65,6 +71,7 @@ const OnboardingSpotlight = ({ isOpen, onClose }) => {
   };
 
   const go = (path) => {
+    monitoring.trackFeature('onboarding_spotlight', 'action_clicked', { path });
     try { localStorage.setItem('onboarding_spotlight_dismissed', 'true'); } catch {
       // Silently ignore localStorage errors
     }
