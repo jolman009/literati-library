@@ -358,7 +358,7 @@ class CrashReportingService {
 
           render() {
             if (this.state.hasError) {
-              return fallback || <div>Something went wrong.</div>;
+              return fallback || React.createElement('div', null, 'Something went wrong.');
             }
             return this.props.children;
           }
