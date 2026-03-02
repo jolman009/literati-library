@@ -190,7 +190,7 @@ const MD3NavigationItem = memo(({
       className={itemClasses}
       onClick={handleClick}
       disabled={disabled}
-      aria-selected={selected}
+      aria-current={selected ? 'page' : undefined}
     >
       <span className="md3-navigation-item__ripple" />
       

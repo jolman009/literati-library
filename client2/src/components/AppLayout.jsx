@@ -30,6 +30,7 @@ const AppLayout = () => {
 
   return (
     <div className={layoutClasses}>
+      <a href="#main" className="skip-link">Skip to main content</a>
       {!inReader && (
         <aside className="navigation-pane" data-collapsed={navCollapsed}>
           <PremiumNavigation

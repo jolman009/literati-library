@@ -58,13 +58,15 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
-      // Accessibility rules
-      'jsx-a11y/alt-text': 'warn',
-      'jsx-a11y/aria-props': 'warn',
-      'jsx-a11y/aria-proptypes': 'warn',
-      'jsx-a11y/aria-unsupported-elements': 'warn',
-      'jsx-a11y/role-has-required-aria-props': 'warn',
-      'jsx-a11y/role-supports-aria-props': 'warn',
+      // Accessibility rules — full recommended set
+      ...jsxA11y.flatConfigs.recommended.rules,
+      // Downgrade noisy rules to warnings (pre-existing patterns)
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/label-has-associated-control': 'warn',
+      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/interactive-supports-focus': 'warn',
 
       // General rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],

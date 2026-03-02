@@ -121,7 +121,7 @@ const SignUpV2 = () => {
 
           <MD3Checkbox checked={acceptedTos} onChange={e => setAcceptedTos(e.target.checked)} label="I agree to the Terms and Privacy Policy" />
 
-          {error && <div style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }} data-testid="signup-error">{error}</div>}
+          {error && <div role="alert" style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }} data-testid="signup-error">{error}</div>}
 
           <MD3Button type="submit" variant="primary" disabled={loading || !isFormValid} data-testid="register-button">
             {loading ? 'Creating Account...' : 'Sign Up'}

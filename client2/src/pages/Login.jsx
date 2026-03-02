@@ -135,7 +135,7 @@ const Login = () => {
               
               {/* Error Message */}
               {error && (
-                <div className="error-message">
+                <div className="error-message" role="alert">
                   <p className="error-text">{error}</p>
                 </div>
               )}
