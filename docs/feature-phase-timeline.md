@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Status: Proposal
+> Generated: 2026-02-15 | Updated: 2026-03-01 | Status: Phase 1 In Progress
 
 ---
 
@@ -15,7 +15,7 @@
 | User Feedback Mechanism              | DONE             | ContactDialog, ContactPage, in-app feedback forms      |
 | Help Center / FAQ                    | DONE             | HelpFAQPage with categorized FAQ + HelpViewer          |
 | Performance Monitoring               | PARTIAL          | Sentry + Prometheus metrics; no user-facing perf dash  |
-| Accessibility (WCAG)                 | PARTIAL          | AA styles exist; needs audit for full compliance       |
+| Accessibility (WCAG)                 | MOSTLY DONE      | Form a11y, ARIA roles, skip link, axe tests, ESLint   |
 | Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
 | Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
 | Browser Extension                    | NOT STARTED      | No extension code exists; PWA + native apps only       |
@@ -25,43 +25,55 @@
 ## Phase 1 — Polish & Quick Wins (Weeks 1-3)
 
 **Goal**: Close remaining tester feedback gaps and harden what exists.
+**Status**: 🟡 In Progress — Accessibility & Onboarding complete, Screenshots & Social Login pending.
 
 ### 1.1 Play Store & App Store Screenshot Overhaul
 - **Source**: Feedback PDF, item 3
 - **Scope**: Marketing / design (no code changes)
 - **Tasks**:
-  - Create feature-highlight screenshots with captions
-  - Include user testimonials / ratings overlay
-  - A/B test listing with new visuals
+  - [ ] Create feature-highlight screenshots with captions
+  - [ ] Include user testimonials / ratings overlay
+  - [ ] A/B test listing with new visuals
 - **Effort**: ~3 days (design)
 
-### 1.2 Accessibility Audit & Remediation
+### 1.2 Accessibility Audit & Remediation ✅
 - **Source**: Feedback PDF, additional recommendations
 - **Scope**: Client2 frontend
+- **Completed**: 2026-03-01 | Commit: `543fe9c`, `6db2c50`, `72fb4cd`
 - **Tasks**:
-  - Run axe-core / Lighthouse audit across all routes
-  - Fix contrast ratios in all 6 themes (light + dark variants)
-  - Verify screen reader flow on onboarding, reader, and notes pages
-  - Add `aria-live` regions for dynamic content (notifications, toast)
-- **Effort**: ~5 days
+  - [x] Fix MD3TextField — `useId()`, `<label htmlFor>`, `aria-invalid`, `aria-describedby`, `role="alert"` on error
+  - [x] Fix TextField — same label/ARIA pattern
+  - [x] Add skip-to-content link in AppLayout (CSS already existed in accessibility.css)
+  - [x] Add `role="alert"` to error messages in Login, SignUpV2, LibraryPageV2
+  - [x] NotificationPanel — `role="region"`, `aria-label`, `aria-live="polite"`, `role="status"`
+  - [x] NavigationFAB — `aria-expanded`, `aria-haspopup`, `role="menu"`/`role="menuitem"`, fix invalid `rgb(var(...))` CSS
+  - [x] Fix MD3Navigation `aria-selected` (invalid on button) → `aria-current="page"`
+  - [x] Expand ESLint jsx-a11y to full recommended ruleset (~30 rules)
+  - [x] Add vitest-axe automated a11y tests (9 tests: axe-core + label/ARIA assertions)
+  - [x] Fix JSX-in-.js files (monitoring.js, crashReporting.js) → `React.createElement`
+  - [ ] Fix contrast ratios in all 6 themes (light + dark variants)
+  - [ ] Full Lighthouse audit across all routes
+- **Effort**: ~5 days (estimated) → ~1 day (actual for code tasks)
 
 ### 1.3 Additional Social Login Options
 - **Source**: Feedback PDF, item 2
 - **Scope**: Server2 auth routes + Client2 login UI
 - **Tasks**:
-  - Add Apple Sign-In (critical for iOS App Store compliance)
-  - Evaluate Facebook / X (Twitter) sign-in ROI
-  - Extend account-linking logic to support multiple providers
+  - [ ] Add Apple Sign-In (critical for iOS App Store compliance)
+  - [ ] Evaluate Facebook / X (Twitter) sign-in ROI
+  - [ ] Extend account-linking logic to support multiple providers
 - **Effort**: ~4 days (Apple), ~2 days per additional provider
 
-### 1.4 Onboarding Refinements
+### 1.4 Onboarding Refinements ✅
 - **Source**: Feedback PDF, item 1 (already built, polish pass)
 - **Scope**: Client2
+- **Completed**: 2026-03-01 | Commit: `543fe9c`
 - **Tasks**:
-  - Add skip/dismiss persistence so returning users aren't re-prompted
-  - Track onboarding completion analytics via Sentry/custom events
-  - Add contextual tooltips for newly released features (per phase)
-- **Effort**: ~2 days
+  - [x] Skip/dismiss persistence (already existed via localStorage)
+  - [x] Track GamificationOnboarding analytics — `shown`, `step_viewed`, `completed`, `skipped`
+  - [x] Track OnboardingSpotlight analytics — `shown`, `action_clicked`, `dismissed`
+  - [x] Create `useFeatureTooltip` hook — reusable driver.js one-time tooltips with localStorage + monitoring
+- **Effort**: ~2 days (estimated) → ~0.5 day (actual)
 
 ---
 
