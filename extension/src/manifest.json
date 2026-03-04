@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "ShelfQuest",
+  "description": "Your digital library companion — save, organize, and track your reading from any page.",
+  "version": "0.1.0",
+  "icons": {
+    "16": "src/assets/icon-16.png",
+    "48": "src/assets/icon-48.png",
+    "128": "src/assets/icon-128.png"
+  },
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "src/assets/icon-16.png",
+      "48": "src/assets/icon-48.png",
+      "128": "src/assets/icon-128.png"
+    },
+    "default_title": "ShelfQuest"
+  },
+  "background": {
+    "service_worker": "src/background/worker.js",
+    "type": "module"
+  },
+  "options_page": "src/options/index.html",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab",
+    "alarms"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/main.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

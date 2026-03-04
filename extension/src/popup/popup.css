@@ -1,0 +1,139 @@
+/* ShelfQuest extension popup — 360px wide, max 500px tall */
+
+:root {
+  --sq-primary: #023e8a;
+  --sq-theme: #24A8E0;
+  --sq-bg: #F5F8FF;
+  --sq-surface: #ffffff;
+  --sq-text: #1a1a2e;
+  --sq-text-secondary: #555770;
+  --sq-border: #dde2f0;
+  --sq-error: #d32f2f;
+  --sq-radius: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  max-height: 500px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: var(--sq-text);
+  background: var(--sq-bg);
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.popup-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--sq-text-secondary);
+}
+
+/* Header */
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--sq-primary);
+  color: #fff;
+}
+
+.popup-logo {
+  flex-shrink: 0;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Body */
+
+.popup-body {
+  flex: 1;
+  padding: 16px;
+}
+
+.popup-authenticated {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup-greeting {
+  font-size: 15px;
+  color: var(--sq-text);
+}
+
+/* Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--sq-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, opacity 0.15s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background: var(--sq-theme);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--sq-text-secondary);
+  border: 1px solid var(--sq-border);
+}
+
+.btn-secondary:hover {
+  background: var(--sq-bg);
+}
+
+/* Footer */
+
+.popup-footer {
+  padding: 10px 16px;
+  text-align: center;
+  border-top: 1px solid var(--sq-border);
+}
+
+.popup-footer a {
+  color: var(--sq-theme);
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.popup-footer a:hover {
+  text-decoration: underline;
+}

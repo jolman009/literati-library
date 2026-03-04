@@ -194,6 +194,16 @@ bundle-analyzer-report.html
 # MD cleanup backup folder
 .md-cleanup-backup/
 
+# Extension
+extension/node_modules/
+extension/dist/
+extension/.env
+extension/.env.*
+!extension/.env.test
+!extension/.env.example
+!extension/.env.development
+extension/artifacts/
+
 # Android - NEVER COMMIT THESE
 android/.gradle/
 android/build/

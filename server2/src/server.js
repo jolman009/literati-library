@@ -176,6 +176,12 @@ app.use(cors({
       return callback(null, true);
     }
 
+    // Allow browser extension origins (Chrome & Firefox)
+    if (origin && (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://'))) {
+      console.log(`✅ CORS allowed for extension: ${origin}`);
+      return callback(null, true);
+    }
+
     // Allow production domains from environment variable
     const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
@@ -205,7 +211,8 @@ app.use(cors({
     'X-Requested-With',
     'X-Environment',  // Custom header for environment tracking
     'X-Client-Version',  // Additional custom header support
-    'X-App-Version'  // Application version tracking
+    'X-App-Version',  // Application version tracking
+    'X-Client-Type'  // Distinguish extension vs web client
   ]
 }));
 
