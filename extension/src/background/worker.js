@@ -1,21 +1,60 @@
 // MV3 background service worker.
-// Handles: context menu registration, periodic token refresh, and message passing.
+// Handles: context menu registration, periodic token refresh, message passing,
+// and the "Save to ShelfQuest" clip flow (Phase 2.2).
 
 import { get, set, remove, KEYS } from '../config/storage.js';
 
 // --- Install / Update ---
 
 chrome.runtime.onInstalled.addListener(() => {
-  // Register context menu — disabled until Phase 2.2 (clipper)
+  // Register context menu — enabled for Phase 2.2 clipper
   chrome.contextMenus.create({
     id: 'save-to-shelfquest',
     title: 'Save to ShelfQuest',
     contexts: ['page', 'selection', 'link'],
-    enabled: false,
+    enabled: true,
   });
 
   // Set up periodic token refresh (every 14 minutes — tokens expire at 15)
   chrome.alarms.create('token-refresh', { periodInMinutes: 14 });
+});
+
+// --- Context menu click handler ---
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  if (info.menuItemId !== 'save-to-shelfquest') return;
+
+  // Check auth
+  const token = await get(KEYS.ACCESS_TOKEN);
+  if (!token) {
+    await set(KEYS.CLIP_STATUS, { state: 'unauthenticated', ts: Date.now() });
+    return;
+  }
+
+  // Set pending status
+  await set(KEYS.CLIP_STATUS, { state: 'pending', ts: Date.now() });
+
+  try {
+    // Ask content script to capture page data
+    const response = await chrome.tabs.sendMessage(tab.id, { type: 'CAPTURE_PAGE_DATA' });
+
+    if (!response?.success) {
+      throw new Error(response?.error || 'Content script capture failed');
+    }
+
+    // POST to API
+    const { default: API } = await import('../config/api.js');
+    await API.post('/api/clippings', response.data);
+
+    await set(KEYS.CLIP_STATUS, { state: 'saved', ts: Date.now() });
+  } catch (err) {
+    console.error('[ShelfQuest] Clip failed:', err.message);
+    await set(KEYS.CLIP_STATUS, {
+      state: 'error',
+      message: err.message || 'Failed to save clipping',
+      ts: Date.now(),
+    });
+  }
 });
 
 // --- Alarm handler: token refresh ---

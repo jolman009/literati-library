@@ -18,6 +18,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
     { icon: 'settings', label: 'Settings', path: '/settings' },
     { icon: 'help', label: 'Help & FAQ', path: '/help' },
     { icon: 'feedback', label: 'Send Feedback', path: '/feedback' },
+    { icon: 'content_cut', label: 'Clippings', path: '/clippings' },
   ];
 
   const overlayStyle = {

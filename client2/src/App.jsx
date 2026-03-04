@@ -104,6 +104,13 @@ const NotesPageWrapper = lazy(() =>
   })
 );
 
+const ClippingsPageWrapper = lazy(() =>
+  import('./components/wrappers/ClippingsPageWrapper').catch(err => {
+    console.error('Failed to load ClippingsPageWrapper:', err);
+    return { default: () => <div>Error loading Clippings. Please refresh.</div> };
+  })
+);
+
 const ReadBookWrapper = lazy(() =>
   import('./components/wrappers/ReadBookWrapper').catch(err => {
     console.error('Failed to load ReadBookWrapper:', err);
@@ -268,6 +275,13 @@ const AppRoutes = () => {
               <NotesPageWrapper />
             </Suspense>
           </NotesErrorBoundary>
+        } />
+        <Route path="/clippings" element={
+          <ErrorBoundary fallbackComponent="clippings" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your clippings..." />}>
+              <ClippingsPageWrapper />
+            </Suspense>
+          </ErrorBoundary>
         } />
         <Route path="/gamification" element={
           <ErrorBoundary fallbackComponent="gamification" variant="full">

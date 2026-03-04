@@ -56,5 +56,16 @@ globalThis.chrome = {
   tabs: {
     create: () => Promise.resolve(),
     query: () => Promise.resolve([]),
+    sendMessage: () => Promise.resolve(),
   },
 };
+
+// window.getSelection stub for clipper tests
+if (!window.getSelection) {
+  window.getSelection = () => ({
+    toString: () => '',
+    rangeCount: 0,
+    isCollapsed: true,
+    getRangeAt: () => null,
+  });
+}

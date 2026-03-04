@@ -41,6 +41,7 @@ const PremiumNavigation = ({
     { to: '/progress', label: 'Progress & Journey', icon: 'trending_up' },
     { to: '/library', label: 'Library', icon: 'menu_book' },
     { to: '/notes', label: 'Notes', icon: 'edit_note', badge: unreadNotesCount },
+    { to: '/clippings', label: 'Clippings', icon: 'content_cut' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
     { to: '/collections', label: 'Collections', icon: 'collections_bookmark' },
     { to: '/mentor', label: 'Mentor AI', icon: 'psychology' },
