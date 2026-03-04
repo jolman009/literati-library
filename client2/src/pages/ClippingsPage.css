@@ -1,0 +1,235 @@
+/* ClippingsPage — uses MD3 theme tokens */
+
+.clippings-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Header card */
+.clippings-header {
+  background: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.clippings-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px;
+}
+
+.clippings-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.clippings-stat {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clippings-stat strong {
+  color: var(--md-sys-color-primary);
+}
+
+.clippings-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 28px;
+  padding: 8px 16px;
+  max-width: 400px;
+}
+
+.clippings-search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface);
+}
+
+.clippings-search input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clippings-search-icon {
+  color: var(--md-sys-color-on-surface-variant);
+  flex-shrink: 0;
+}
+
+/* Grid */
+.clippings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.clipping-card {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.15s;
+}
+
+.clipping-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.clipping-card--unread {
+  border-left: 3px solid var(--md-sys-color-primary);
+}
+
+/* Card header (favicon + site name) */
+.clipping-card-source {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clipping-card-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  object-fit: contain;
+}
+
+.clipping-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.clipping-card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.clipping-card-title a:hover {
+  text-decoration: underline;
+}
+
+/* Blockquote for selected text */
+.clipping-card-quote {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  border-left: 3px solid var(--md-sys-color-outline-variant);
+  padding-left: 12px;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-style: italic;
+}
+
+/* Tags */
+.clipping-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.clipping-tag {
+  font-size: 0.7rem;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Actions row */
+.clipping-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.clipping-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.clipping-action-btn:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.clipping-action-btn--danger:hover {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+/* Book link chip */
+.clipping-book-link {
+  font-size: 0.75rem;
+  color: var(--md-sys-color-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Empty state */
+.clippings-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.clippings-empty h2 {
+  font-size: 1.25rem;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px;
+}
+
+.clippings-empty p {
+  font-size: 0.875rem;
+  max-width: 400px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Loading */
+.clippings-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 16px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Date label */
+.clipping-card-date {
+  font-size: 0.7rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-left: auto;
+}

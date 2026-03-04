@@ -77,6 +77,7 @@ import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
 import { notificationsRouter } from './routes/notifications.js';
+import { clippingsRouter } from './routes/clippings.js';
 import { sendNotification } from './services/notificationService.js';
 import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
 import { monitor } from './services/monitoring.js';
@@ -231,6 +232,9 @@ app.use('/api/leaderboard', rateLimitSuite.gamification, leaderboardRouter(authe
 
 // Notification inbox + web push management
 app.use('/api/notifications', rateLimitSuite.api, notificationsRouter(authenticateTokenEnhanced));
+
+// Web clippings (browser extension clipper)
+app.use('/api/clippings', rateLimitSuite.api, clippingsRouter(authenticateTokenEnhanced));
 
 // In-app Guide Assistant (rate limited like general API)
 app.use('/api/guide', rateLimitSuite.api, slowDownSuite.general, guideRouter(authenticateTokenEnhanced));

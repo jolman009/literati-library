@@ -6,6 +6,7 @@ export const KEYS = {
   REFRESH_TOKEN: 'shelfquest_refresh_token',
   USER: 'shelfquest_user',
   SETTINGS: 'shelfquest_settings',
+  CLIP_STATUS: 'shelfquest_clip_status',
 };
 
 export async function get(key) {
