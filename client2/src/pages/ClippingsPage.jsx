@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useClippings } from '../hooks/useClippings';
-import { Scissors, Search, ExternalLink, Trash2, CheckCircle2, BookOpen } from 'lucide-react';
+import { Scissors, Search, ExternalLink, Trash2, CheckCircle2, BookOpen, Pencil, X } from 'lucide-react';
 import './ClippingsPage.css';
 
 function formatDate(iso) {
@@ -16,7 +16,76 @@ function formatDate(iso) {
   }
 }
 
-function ClippingCard({ clipping, onMarkRead, onDelete }) {
+function EditClippingModal({ clipping, onSave, onClose }) {
+  const [title, setTitle] = useState(clipping.title);
+  const [content, setContent] = useState(clipping.content || '');
+  const [tagsInput, setTagsInput] = useState((clipping.tags || []).join(', '));
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    const tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+    await onSave(clipping.id, { title, content: content || null, tags });
+    setSaving(false);
+    onClose();
+  };
+
+  return (
+    <div className="edit-modal-overlay" onClick={onClose}>
+      <div className="edit-modal" onClick={e => e.stopPropagation()}>
+        <div className="edit-modal-header">
+          <h2>Edit Clipping</h2>
+          <button className="clipping-action-btn" onClick={onClose} aria-label="Close">
+            <X size={20} />
+          </button>
+        </div>
+        <form onSubmit={handleSave}>
+          <div className="edit-modal-field">
+            <label htmlFor="edit-title">Title</label>
+            <input
+              id="edit-title"
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              required
+            />
+          </div>
+          <div className="edit-modal-field">
+            <label htmlFor="edit-content">Notes / Content</label>
+            <textarea
+              id="edit-content"
+              value={content}
+              onChange={e => setContent(e.target.value)}
+              rows={6}
+              placeholder="Add your notes..."
+            />
+          </div>
+          <div className="edit-modal-field">
+            <label htmlFor="edit-tags">Tags (comma-separated)</label>
+            <input
+              id="edit-tags"
+              type="text"
+              value={tagsInput}
+              onChange={e => setTagsInput(e.target.value)}
+              placeholder="e.g. javascript, react, tutorial"
+            />
+          </div>
+          <div className="edit-modal-actions">
+            <button type="button" className="edit-modal-btn edit-modal-btn--cancel" onClick={onClose}>
+              Cancel
+            </button>
+            <button type="submit" className="edit-modal-btn edit-modal-btn--save" disabled={saving}>
+              {saving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ClippingCard({ clipping, onMarkRead, onEdit, onDelete }) {
   return (
     <article className={`clipping-card${clipping.is_read ? '' : ' clipping-card--unread'}`}>
       {/* Source row */}
@@ -75,6 +144,14 @@ function ClippingCard({ clipping, onMarkRead, onDelete }) {
             <CheckCircle2 size={18} />
           </button>
         )}
+        <button
+          className="clipping-action-btn"
+          onClick={() => onEdit(clipping)}
+          title="Edit"
+          aria-label="Edit clipping"
+        >
+          <Pencil size={18} />
+        </button>
         <a
           href={clipping.url}
           target="_blank"
@@ -100,8 +177,9 @@ function ClippingCard({ clipping, onMarkRead, onDelete }) {
 }
 
 export default function ClippingsPage() {
-  const { clippings, loading, error, stats, markRead, deleteClipping } = useClippings();
+  const { clippings, loading, error, stats, markRead, updateClipping, deleteClipping } = useClippings();
   const [search, setSearch] = useState('');
+  const [editing, setEditing] = useState(null);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return clippings;
@@ -157,6 +235,7 @@ export default function ClippingsPage() {
               key={c.id}
               clipping={c}
               onMarkRead={markRead}
+              onEdit={setEditing}
               onDelete={deleteClipping}
             />
           ))}
@@ -170,6 +249,14 @@ export default function ClippingsPage() {
             and select &quot;Save to ShelfQuest&quot; to start collecting clippings.
           </p>
         </div>
+      )}
+
+      {editing && (
+        <EditClippingModal
+          clipping={editing}
+          onSave={updateClipping}
+          onClose={() => setEditing(null)}
+        />
       )}
     </div>
   );

@@ -1,12 +1,12 @@
 // Content script — "Send to ShelfQuest" web clipper (Phase 2.2).
 // Listens for CAPTURE_PAGE_DATA messages from the background worker,
-// captures page data via clipper.js, and responds with the payload.
-//
-// NOTE: turndown (HTML→markdown) removed to isolate "document is not
-// defined" bug. Plain text is stored as content instead. Turndown can
-// be re-added once the root cause is confirmed fixed.
+// captures page data via clipper.js, and converts HTML selections to
+// markdown using turndown before responding.
 
 import { capturePageData } from './clipper.js';
+import TurndownService from 'turndown';
+
+const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type !== 'CAPTURE_PAGE_DATA') return false;
@@ -14,10 +14,18 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   try {
     const data = capturePageData();
 
-    // Store plain text as content (turndown conversion removed for debugging)
-    data.content = data.selected_text || null;
+    // Convert HTML selection to markdown for cleaner storage
+    if (data.selection_html) {
+      try {
+        data.content = turndown.turndown(data.selection_html);
+      } catch {
+        data.content = data.selected_text || null;
+      }
+    } else {
+      data.content = data.selected_text || null;
+    }
 
-    // Drop raw HTML — not needed without turndown
+    // Drop raw HTML — only markdown content goes forward
     delete data.selection_html;
 
     sendResponse({ success: true, data });
