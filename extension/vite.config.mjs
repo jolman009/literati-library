@@ -29,6 +29,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Force browser build — the default ESM entry (turndown.es.js) pulls in
+      // @mixmark-io/domino (Node-only) which crashes in extension content scripts.
+      'turndown': path.resolve(__dirname, 'node_modules/turndown/lib/turndown.browser.es.js'),
     },
   },
   build: {
