@@ -68,7 +68,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   try {
     // Dynamic import so environment.js is only loaded when needed
     const { default: API } = await import('../config/api.js');
-    const response = await API.post('/api/auth/refresh', { refreshToken });
+    const response = await API.post('/auth/secure/refresh', { refreshToken });
     const { token, refreshToken: newRefresh } = response.data;
 
     await set(KEYS.ACCESS_TOKEN, token);

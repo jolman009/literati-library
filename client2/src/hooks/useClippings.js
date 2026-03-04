@@ -1,23 +1,12 @@
 // src/hooks/useClippings.js
-// Data-fetching hook for web clippings. Follows useBookLibrary pattern.
+// Data-fetching hook for web clippings.
+// Uses makeAuthenticatedApiCall from AuthContext for proper token handling.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import environmentConfig from '../config/environment.js';
-
-async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${environmentConfig.apiUrl}${endpoint}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options,
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Request failed: ${res.status}`);
-  }
-  return res.json();
-}
+import { useAuth } from '../contexts/AuthContext';
 
 export function useClippings() {
+  const { makeAuthenticatedApiCall } = useAuth();
   const [clippings, setClippings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,14 +15,14 @@ export function useClippings() {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiFetch('/api/clippings');
+      const data = await makeAuthenticatedApiCall('/api/clippings');
       setClippings(data);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [makeAuthenticatedApiCall]);
 
   useEffect(() => {
     loadClippings();
@@ -41,7 +30,7 @@ export function useClippings() {
 
   const markRead = useCallback(async (id) => {
     try {
-      const updated = await apiFetch(`/api/clippings/${id}`, {
+      const updated = await makeAuthenticatedApiCall(`/api/clippings/${id}`, {
         method: 'PATCH',
         body: JSON.stringify({ is_read: true }),
       });
@@ -49,16 +38,16 @@ export function useClippings() {
     } catch (err) {
       setError(err.message);
     }
-  }, []);
+  }, [makeAuthenticatedApiCall]);
 
   const deleteClipping = useCallback(async (id) => {
     try {
-      await apiFetch(`/api/clippings/${id}`, { method: 'DELETE' });
+      await makeAuthenticatedApiCall(`/api/clippings/${id}`, { method: 'DELETE' });
       setClippings(prev => prev.filter(c => c.id !== id));
     } catch (err) {
       setError(err.message);
     }
-  }, []);
+  }, [makeAuthenticatedApiCall]);
 
   const stats = useMemo(() => ({
     total: clippings.length,
