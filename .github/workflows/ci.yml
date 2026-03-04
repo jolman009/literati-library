@@ -202,11 +202,72 @@ jobs:
           flags: ai-service
           name: ai-service-coverage
 
+  # Extension CI
+  extension-ci:
+    name: Extension Tests & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./extension
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Load Extension Test Env
+        run: cp .env.test .env
+        working-directory: extension
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm-corepack
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint Code
+        run: pnpm run lint
+
+      - name: Run Tests
+        run: pnpm run test:coverage
+        env:
+          CI: true
+
+      - name: Build Extension
+        run: pnpm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5000' }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder_key' }}
+          VITE_ENVIRONMENT: production
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-build
+          path: extension/dist/
+          retention-days: 30
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v3
+        with:
+          directory: extension/coverage
+          flags: extension
+          name: extension-coverage
+
   # Docker Build Test
   docker-build:
     name: Docker Build Test
     runs-on: ubuntu-latest
-    needs: [client-ci, server-ci, ai-service-ci]
+    needs: [client-ci, server-ci, ai-service-ci, extension-ci]
 
     steps:
       - name: Checkout Code
@@ -250,7 +311,7 @@ jobs:
     name: Security Scanning
     runs-on: ubuntu-latest
     continue-on-error: true
-    needs: [client-ci, server-ci, ai-service-ci]
+    needs: [client-ci, server-ci, ai-service-ci, extension-ci]
 
     steps:
       - name: Checkout Code
@@ -283,7 +344,7 @@ jobs:
   quality-gates:
     name: Quality Gates
     runs-on: ubuntu-latest
-    needs: [client-ci, server-ci, ai-service-ci, docker-build, security-scan]
+    needs: [client-ci, server-ci, ai-service-ci, extension-ci, docker-build, security-scan]
     if: always()
 
     steps:
@@ -292,12 +353,14 @@ jobs:
           echo "Client CI: ${{ needs.client-ci.result }}"
           echo "Server CI: ${{ needs.server-ci.result }}"
           echo "AI Service CI: ${{ needs.ai-service-ci.result }}"
+          echo "Extension CI: ${{ needs.extension-ci.result }}"
           echo "Docker Build: ${{ needs.docker-build.result }}"
           echo "Security Scan: ${{ needs.security-scan.result }}"
 
           if [[ "${{ needs.client-ci.result }}" != "success" ]] || \
              [[ "${{ needs.server-ci.result }}" != "success" ]] || \
              [[ "${{ needs.ai-service-ci.result }}" != "success" ]] || \
+             [[ "${{ needs.extension-ci.result }}" != "success" ]] || \
              [[ "${{ needs.docker-build.result }}" != "success" ]]; then
             echo "❌ Quality gates failed - blocking deployment"
             exit 1
@@ -313,6 +376,7 @@ jobs:
             const status = '${{ needs.client-ci.result }}' === 'success' &&
                           '${{ needs.server-ci.result }}' === 'success' &&
                           '${{ needs.ai-service-ci.result }}' === 'success' &&
+                          '${{ needs.extension-ci.result }}' === 'success' &&
                           '${{ needs.docker-build.result }}' === 'success' ? '✅' : '❌';
 
             github.rest.issues.createComment({
@@ -323,6 +387,7 @@ jobs:
                     `- Client Build: ${{ needs.client-ci.result }}\n` +
                     `- Server Build: ${{ needs.server-ci.result }}\n` +
                     `- AI Service Build: ${{ needs.ai-service-ci.result }}\n` +
+                    `- Extension Build: ${{ needs.extension-ci.result }}\n` +
                     `- Docker Build: ${{ needs.docker-build.result }}\n` +
                     `- Security Scan: ${{ needs.security-scan.result }}`
             });
