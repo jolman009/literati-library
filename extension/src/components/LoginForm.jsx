@@ -15,7 +15,7 @@ export default function LoginForm({ onSuccess }) {
     setLoading(true);
 
     try {
-      const response = await API.post('/api/auth/login', { email, password });
+      const response = await API.post('/auth/secure/login', { email, password });
       const { token, refreshToken, user } = response.data;
 
       await set(KEYS.ACCESS_TOKEN, token);
