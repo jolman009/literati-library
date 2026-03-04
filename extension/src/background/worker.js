@@ -3,6 +3,7 @@
 // and the "Save to ShelfQuest" clip flow (Phase 2.2).
 
 import { get, set, remove, KEYS } from '../config/storage.js';
+import API from '../config/api.js';
 
 // --- Install / Update ---
 
@@ -35,15 +36,25 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   await set(KEYS.CLIP_STATUS, { state: 'pending', ts: Date.now() });
 
   try {
-    // Ask content script to capture page data
-    const response = await chrome.tabs.sendMessage(tab.id, { type: 'CAPTURE_PAGE_DATA' });
+    // Try messaging content script — may not be present on pre-existing tabs
+    let response;
+    try {
+      response = await chrome.tabs.sendMessage(tab.id, { type: 'CAPTURE_PAGE_DATA' });
+    } catch {
+      // Content script not loaded — inject on-demand and retry
+      const contentFile = chrome.runtime.getManifest().content_scripts[0].js[0];
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: [contentFile],
+      });
+      response = await chrome.tabs.sendMessage(tab.id, { type: 'CAPTURE_PAGE_DATA' });
+    }
 
     if (!response?.success) {
       throw new Error(response?.error || 'Content script capture failed');
     }
 
     // POST to API
-    const { default: API } = await import('../config/api.js');
     await API.post('/api/clippings', response.data);
 
     await set(KEYS.CLIP_STATUS, { state: 'saved', ts: Date.now() });
@@ -66,8 +77,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (!refreshToken) return;
 
   try {
-    // Dynamic import so environment.js is only loaded when needed
-    const { default: API } = await import('../config/api.js');
     const response = await API.post('/auth/secure/refresh', { refreshToken });
     const { token, refreshToken: newRefresh } = response.data;
 

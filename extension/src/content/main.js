@@ -1,50 +1,29 @@
 // Content script — "Send to ShelfQuest" web clipper (Phase 2.2).
 // Listens for CAPTURE_PAGE_DATA messages from the background worker,
-// captures page data via clipper.js, and converts HTML selections to
-// markdown using turndown before responding.
+// captures page data via clipper.js, and responds with the payload.
 //
-// IMPORTANT: turndown is lazy-imported inside the handler because its
-// browser build evaluates document.implementation at module scope,
-// which can crash in CRXJS content script IIFE wrappers.
+// NOTE: turndown (HTML→markdown) removed to isolate "document is not
+// defined" bug. Plain text is stored as content instead. Turndown can
+// be re-added once the root cause is confirmed fixed.
 
 import { capturePageData } from './clipper.js';
-
-let turndown = null;
-
-async function getTurndown() {
-  if (!turndown) {
-    const { default: TurndownService } = await import('turndown');
-    turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
-  }
-  return turndown;
-}
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type !== 'CAPTURE_PAGE_DATA') return false;
 
-  (async () => {
-    try {
-      const data = capturePageData();
+  try {
+    const data = capturePageData();
 
-      // Convert HTML selection to markdown for cleaner storage
-      if (data.selection_html) {
-        try {
-          const td = await getTurndown();
-          data.content = td.turndown(data.selection_html);
-        } catch {
-          // Fall back to plain text if turndown fails
-          data.content = data.selected_text || null;
-        }
-      }
+    // Store plain text as content (turndown conversion removed for debugging)
+    data.content = data.selected_text || null;
 
-      // Drop raw HTML — we only need the markdown content going forward
-      delete data.selection_html;
+    // Drop raw HTML — not needed without turndown
+    delete data.selection_html;
 
-      sendResponse({ success: true, data });
-    } catch (err) {
-      sendResponse({ success: false, error: err.message });
-    }
-  })();
+    sendResponse({ success: true, data });
+  } catch (err) {
+    sendResponse({ success: false, error: err.message });
+  }
 
   return true; // keep channel open for async response
 });
