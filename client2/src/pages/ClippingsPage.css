@@ -233,3 +233,114 @@
   color: var(--md-sys-color-on-surface-variant);
   margin-left: auto;
 }
+
+/* Edit modal */
+.edit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.edit-modal {
+  background: var(--md-sys-color-surface);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.edit-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.edit-modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.edit-modal-field {
+  margin-bottom: 16px;
+}
+
+.edit-modal-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 6px;
+}
+
+.edit-modal-field input,
+.edit-modal-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.edit-modal-field input:focus,
+.edit-modal-field textarea:focus {
+  border-color: var(--md-sys-color-primary);
+}
+
+.edit-modal-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.edit-modal-btn {
+  padding: 8px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.edit-modal-btn--cancel {
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.edit-modal-btn--cancel:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.edit-modal-btn--save {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+.edit-modal-btn--save:hover {
+  opacity: 0.9;
+}
+
+.edit-modal-btn--save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

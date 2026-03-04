@@ -40,6 +40,19 @@ export function useClippings() {
     }
   }, [makeAuthenticatedApiCall]);
 
+  const updateClipping = useCallback(async (id, fields) => {
+    try {
+      const updated = await makeAuthenticatedApiCall(`/api/clippings/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(fields),
+      });
+      setClippings(prev => prev.map(c => (c.id === id ? updated : c)));
+      return updated;
+    } catch (err) {
+      setError(err.message);
+    }
+  }, [makeAuthenticatedApiCall]);
+
   const deleteClipping = useCallback(async (id) => {
     try {
       await makeAuthenticatedApiCall(`/api/clippings/${id}`, { method: 'DELETE' });
@@ -55,5 +68,5 @@ export function useClippings() {
     withBook: clippings.filter(c => c.book_id).length,
   }), [clippings]);
 
-  return { clippings, loading, error, stats, loadClippings, markRead, deleteClipping };
+  return { clippings, loading, error, stats, loadClippings, markRead, updateClipping, deleteClipping };
 }
