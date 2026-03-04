@@ -2,11 +2,10 @@
 // Data-fetching hook for web clippings. Follows useBookLibrary pattern.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+import environmentConfig from '../config/environment.js';
 
 async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const res = await fetch(`${environmentConfig.apiUrl}${endpoint}`, {
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
