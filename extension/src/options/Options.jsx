@@ -39,6 +39,15 @@ export default function Options() {
             shelfquest.org
           </a>
         </p>
+        <p className="options-legal">
+          <a href="https://shelfquest.org/legal/privacy-policy" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+          {' · '}
+          <a href="https://shelfquest.org/legal/terms-of-service" target="_blank" rel="noopener noreferrer">
+            Terms of Service
+          </a>
+        </p>
       </section>
     </div>
   );

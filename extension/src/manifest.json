@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "ShelfQuest",
   "description": "Your digital library companion — save, organize, and track your reading from any page.",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "homepage_url": "https://shelfquest.org",
   "icons": {
     "16": "src/assets/icon-16.png",
     "48": "src/assets/icon-48.png",
