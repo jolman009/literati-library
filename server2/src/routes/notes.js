@@ -119,7 +119,10 @@ export const notesRouter = (authenticateToken) => {
   // POST /api/notes → create a general note (used by NotesPage and FloatingNotepad)
   router.post('/', async (req, res) => {
     try {
-      const { title, content, book_id, tags, page_number, epub_location } = req.body;
+      const {
+        title, content, book_id, tags, page_number, epub_location,
+        source_url, source_title, source_favicon,
+      } = req.body;
       if (!content?.trim()) return res.status(400).json({ error: 'Note content is required' });
 
       const noteData = {
@@ -130,6 +133,9 @@ export const notesRouter = (authenticateToken) => {
         type: 'note',
         tags: Array.isArray(tags) ? tags : [],
         created_at: new Date().toISOString(),
+        source_url: source_url?.trim() || null,
+        source_title: source_title?.trim() || null,
+        source_favicon: source_favicon?.trim() || null,
       };
 
       // Add page for PDF notes if provided (database uses 'page', not 'page_number')
@@ -278,7 +284,7 @@ export const notesRouter = (authenticateToken) => {
   router.put('/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { content, type, page, position, color, tags } = req.body;
+      const { content, type, page, position, color, tags, source_url, source_title, source_favicon } = req.body;
 
       if (!content?.trim()) return res.status(400).json({ error: 'Note content is required' });
 
@@ -291,6 +297,11 @@ export const notesRouter = (authenticateToken) => {
         tags: Array.isArray(tags) ? tags : [],
         updated_at: new Date().toISOString(),
       };
+
+      // Preserve source fields if provided
+      if (source_url !== undefined) updateData.source_url = source_url?.trim() || null;
+      if (source_title !== undefined) updateData.source_title = source_title?.trim() || null;
+      if (source_favicon !== undefined) updateData.source_favicon = source_favicon?.trim() || null;
 
       const { data: note, error } = await supabase
         .from('notes')

@@ -7,6 +7,7 @@ export const KEYS = {
   USER: 'shelfquest_user',
   SETTINGS: 'shelfquest_settings',
   CLIP_STATUS: 'shelfquest_clip_status',
+  NOTE_STATUS: 'shelfquest_note_status',
 };
 
 export async function get(key) {
