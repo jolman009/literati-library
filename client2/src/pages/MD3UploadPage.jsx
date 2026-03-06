@@ -8,6 +8,7 @@ import {
   MD3Card,
   MD3Button,
   MD3TextField,
+  MD3Chip,
   MD3Progress,
   MD3Surface,
   useSnackbar
@@ -35,8 +36,11 @@ const MD3UploadPage = () => {
     title: '',
     author: '',
     genre: '',
+    language: '',
     description: ''
   });
+
+  const LANGUAGE_OPTIONS = ['En', 'Sp', 'Other'];
 
   // Handle local file selection
   const handleFileSelect = (file) => {
@@ -141,6 +145,9 @@ const MD3UploadPage = () => {
       uploadData.append('title', formData.title.trim());
       uploadData.append('author', formData.author.trim());
       uploadData.append('genre', formData.genre.trim());
+      if (formData.language.trim()) {
+        uploadData.append('language', formData.language.trim());
+      }
       if (formData.description.trim()) {
         uploadData.append('description', formData.description.trim());
       }
@@ -224,7 +231,7 @@ const MD3UploadPage = () => {
     setUploadStep('select');
     setUploadProgress(0);
     setIsUploading(false);
-    setFormData({ title: '', author: '', genre: '', description: '' });
+    setFormData({ title: '', author: '', genre: '', language: '', description: '' });
   };
 
   // Helper to display file size nicely
@@ -401,6 +408,22 @@ const MD3UploadPage = () => {
                     <option value="Music">Music</option>
                     <option value="Sports">Sports</option>
                     <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div className="md3-select-field">
+                  <label className="md3-select-label">Language</label>
+                  <select
+                    value={formData.language}
+                    onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
+                    className="md3-select"
+                  >
+                    <option value="">Select language</option>
+                    {LANGUAGE_OPTIONS.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 

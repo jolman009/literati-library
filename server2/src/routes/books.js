@@ -287,7 +287,7 @@ export function booksRouter(authenticateToken) {
   // Upload a new book
   router.post("/upload", authenticateToken, upload.single('book'), async (req, res) => {
     try {
-      const { title, author, genre, description } = req.body;
+      const { title, author, genre, description, language } = req.body;
       const file = req.file;
 
       // Validate required fields
@@ -332,6 +332,7 @@ export function booksRouter(authenticateToken) {
         title: title.trim(),
         author: author.trim(),
         genre: genre?.trim() || null,
+        language: language?.trim() || null,
         description: description?.trim() || null,
         file_url: urlData.publicUrl,
         file_path: filePath,
@@ -393,7 +394,18 @@ export function booksRouter(authenticateToken) {
   // Import book from Google Drive
   router.post("/import/googledrive", authenticateToken, async (req, res) => {
     try {
-      const { fileId, fileName, mimeType, sizeBytes, accessToken } = req.body;
+      const {
+        fileId,
+        fileName,
+        mimeType,
+        sizeBytes,
+        accessToken,
+        title,
+        author,
+        genre,
+        language,
+        description
+      } = req.body;
 
       // Validate required fields
       if (!fileId || !fileName || !accessToken) {
@@ -467,10 +479,11 @@ export function booksRouter(authenticateToken) {
       // Create book record in database
       const bookData = {
         user_id: req.user.id,
-        title: titleGuess, // Auto-extracted from filename
-        author: 'Unknown', // User can edit later
-        genre: null,
-        description: `Imported from Google Drive`,
+        title: title?.trim() || titleGuess,
+        author: author?.trim() || 'Unknown',
+        genre: genre?.trim() || null,
+        language: language?.trim() || null,
+        description: description?.trim() || 'Imported from Google Drive',
         file_url: urlData.publicUrl,
         file_path: storagePath,
         file_size: fileBuffer.length,
@@ -543,7 +556,7 @@ export function booksRouter(authenticateToken) {
       };
       
       // Valid columns that exist in the database (add/remove as needed)
-      const validColumns = ['title', 'author', 'genre', 'description', 'is_reading', 'progress', 'last_opened', 'completed', 'completed_date'];
+      const validColumns = ['title', 'author', 'genre', 'language', 'description', 'is_reading', 'progress', 'last_opened', 'completed', 'completed_date'];
       
       const cleanUpdates = Object.keys(updates).reduce((acc, key) => {
         if (updates[key] !== undefined && updates[key] !== null) {

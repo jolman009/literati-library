@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
@@ -13,12 +13,43 @@ import './MockLibraryPage.css';
  */
 const BOOKS_PER_PAGE = 20;
 
+const getNormalizedLanguage = (book) => {
+  const rawLanguage = typeof book?.language === 'string' ? book.language.trim() : '';
+  if (!rawLanguage) {
+    return { key: 'unknown', label: 'Unknown' };
+  }
+
+  const compactLanguage = rawLanguage.replace(/\s+/g, ' ');
+  return {
+    key: compactLanguage.toLowerCase(),
+    label: compactLanguage
+  };
+};
+
+const getNormalizedFileType = (book) => {
+  const rawFormat = typeof book?.format === 'string' ? book.format.trim().toLowerCase() : '';
+  if (rawFormat) {
+    if (rawFormat.includes('epub')) return { key: 'epub', label: 'EPUB' };
+    if (rawFormat.includes('pdf')) return { key: 'pdf', label: 'PDF' };
+    return { key: rawFormat, label: rawFormat.toUpperCase() };
+  }
+
+  const mimeType = typeof book?.file_type === 'string' ? book.file_type.toLowerCase() : '';
+  if (mimeType.includes('epub')) return { key: 'epub', label: 'EPUB' };
+  if (mimeType.includes('pdf')) return { key: 'pdf', label: 'PDF' };
+
+  const filename = typeof book?.filename === 'string' ? book.filename.toLowerCase() : '';
+  if (filename.endsWith('.epub')) return { key: 'epub', label: 'EPUB' };
+  if (filename.endsWith('.pdf')) return { key: 'pdf', label: 'PDF' };
+
+  return { key: 'unknown', label: 'Unknown' };
+};
+
 const MockLibraryPage = () => {
   const { actualTheme } = useMaterial3Theme();
   const { user, makeAuthenticatedApiCall } = useAuth();
   const navigate = useNavigate();
 
-  // Reading session context
   const {
     activeSession,
     isPaused,
@@ -28,32 +59,30 @@ const MockLibraryPage = () => {
     stopReadingSession
   } = useReadingSession();
 
-  // Gamification for completion tracking
   const { trackAction } = useGamification();
 
   const [sortBy, setSortBy] = useState('date_added');
   const [sortOrder, setSortOrder] = useState('desc');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedFileTypes, setSelectedFileTypes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
-  // Real book data from API
   const [books, setBooks] = useState([]);
   const [notesCount, setNotesCount] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch books from API
   useEffect(() => {
     if (user) {
       fetchBooks();
       fetchNotesCount();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => setOpenMenuId(null);
     if (openMenuId) {
@@ -91,10 +120,6 @@ const MockLibraryPage = () => {
       console.error('Failed to fetch notes:', err);
     }
   };
-
-  // ========================================
-  // SESSION & STATUS HANDLERS
-  // ========================================
 
   const handleStartSession = async (book) => {
     try {
@@ -182,10 +207,6 @@ const MockLibraryPage = () => {
     }
   };
 
-  // ========================================
-  // HELPERS
-  // ========================================
-
   const getBookStatus = (book) => {
     if (book.completed) return 'completed';
     if (book.is_reading) return 'reading';
@@ -204,8 +225,56 @@ const MockLibraryPage = () => {
 
   const isActiveSessionBook = (bookId) => activeSession?.book?.id === bookId;
 
-  // Filter books by status
-  const filteredBooks = useMemo(() => {
+  const toggleLanguageFilter = (languageKey) => {
+    setSelectedLanguages(prev =>
+      prev.includes(languageKey)
+        ? prev.filter(key => key !== languageKey)
+        : [...prev, languageKey]
+    );
+  };
+
+  const toggleFileTypeFilter = (fileTypeKey) => {
+    setSelectedFileTypes(prev =>
+      prev.includes(fileTypeKey)
+        ? prev.filter(key => key !== fileTypeKey)
+        : [...prev, fileTypeKey]
+    );
+  };
+
+  const clearAllMetadataFilters = () => {
+    setSelectedLanguages([]);
+    setSelectedFileTypes([]);
+  };
+
+  const availableLanguages = useMemo(() => {
+    const languageMap = new Map();
+
+    books.forEach(book => {
+      const language = getNormalizedLanguage(book);
+      if (!languageMap.has(language.key)) {
+        languageMap.set(language.key, { ...language, count: 0 });
+      }
+      languageMap.get(language.key).count += 1;
+    });
+
+    return Array.from(languageMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+  }, [books]);
+
+  const availableFileTypes = useMemo(() => {
+    const typeMap = new Map();
+
+    books.forEach(book => {
+      const fileType = getNormalizedFileType(book);
+      if (!typeMap.has(fileType.key)) {
+        typeMap.set(fileType.key, { ...fileType, count: 0 });
+      }
+      typeMap.get(fileType.key).count += 1;
+    });
+
+    return Array.from(typeMap.values()).sort((a, b) => a.label.localeCompare(b.label));
+  }, [books]);
+
+  const statusFilteredBooks = useMemo(() => {
     if (statusFilter === 'all') return books;
     return books.filter(book => {
       const status = getBookStatus(book);
@@ -213,10 +282,23 @@ const MockLibraryPage = () => {
     });
   }, [books, statusFilter]);
 
-  // Sort filtered books
+  const filteredBooks = useMemo(() => {
+    return statusFilteredBooks.filter(book => {
+      const language = getNormalizedLanguage(book);
+      const fileType = getNormalizedFileType(book);
+
+      const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(language.key);
+      const fileTypeMatch = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType.key);
+
+      return languageMatch && fileTypeMatch;
+    });
+  }, [statusFilteredBooks, selectedLanguages, selectedFileTypes]);
+
   const sortedBooks = useMemo(() => {
     return [...filteredBooks].sort((a, b) => {
-      let aVal, bVal;
+      let aVal;
+      let bVal;
+
       switch (sortBy) {
         case 'title':
           aVal = (a.title || '').toLowerCase();
@@ -238,24 +320,35 @@ const MockLibraryPage = () => {
           aVal = notesCount[a.id] || 0;
           bVal = notesCount[b.id] || 0;
           break;
+        case 'language':
+          aVal = getNormalizedLanguage(a).key;
+          bVal = getNormalizedLanguage(b).key;
+          break;
+        case 'file_type':
+          aVal = getNormalizedFileType(a).key;
+          bVal = getNormalizedFileType(b).key;
+          break;
         default:
           return 0;
       }
+
       if (aVal < bVal) return sortOrder === 'asc' ? -1 : 1;
       if (aVal > bVal) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
   }, [filteredBooks, sortBy, sortOrder, notesCount]);
 
-  // Pagination
   const totalPages = Math.ceil(sortedBooks.length / BOOKS_PER_PAGE);
   const startIndex = (currentPage - 1) * BOOKS_PER_PAGE;
   const paginatedBooks = sortedBooks.slice(startIndex, startIndex + BOOKS_PER_PAGE);
+  const hasResults = sortedBooks.length > 0;
+  const showingStart = hasResults ? startIndex + 1 : 0;
+  const showingEnd = hasResults ? Math.min(startIndex + BOOKS_PER_PAGE, sortedBooks.length) : 0;
+  const hasMetadataFilters = selectedLanguages.length > 0 || selectedFileTypes.length > 0;
 
-  // Reset to page 1 when filter or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, sortBy, sortOrder]);
+  }, [statusFilter, selectedLanguages, selectedFileTypes, sortBy, sortOrder]);
 
   const handleSort = (column) => {
     if (sortBy === column) {
@@ -278,7 +371,6 @@ const MockLibraryPage = () => {
     'to-read': books.filter(b => !b.is_reading && !b.completed).length,
   }), [books]);
 
-  // Loading state
   if (loading) {
     return (
       <div className={`mock-library-page ${actualTheme}`}>
@@ -287,7 +379,6 @@ const MockLibraryPage = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className={`mock-library-page ${actualTheme}`}>
@@ -302,10 +393,9 @@ const MockLibraryPage = () => {
         <h1>My Library</h1>
       </header>
 
-      {/* Active Session Banner */}
       {activeSession && (
         <div className="active-session-banner">
-          <span className="session-icon">📖</span>
+          <span className="session-icon">Reading</span>
           <span className="session-text">
             Reading: <strong>{activeSession.book.title}</strong>
             {isPaused && <span className="paused-badge">PAUSED</span>}
@@ -313,21 +403,20 @@ const MockLibraryPage = () => {
           <div className="session-actions">
             {isPaused ? (
               <button className="session-btn resume" onClick={handleResumeSession}>
-                ▶ Resume
+                Resume
               </button>
             ) : (
               <button className="session-btn pause" onClick={handlePauseSession}>
-                ⏸ Pause
+                Pause
               </button>
             )}
             <button className="session-btn end" onClick={handleEndSession}>
-              ⏹ End Session
+              End Session
             </button>
           </div>
         </div>
       )}
 
-      {/* Filter tabs */}
       <div className="mock-filter-bar">
         <div className="filter-tabs">
           {[
@@ -346,7 +435,6 @@ const MockLibraryPage = () => {
           ))}
         </div>
 
-        {/* Sort controls */}
         <div className="sort-controls">
           <span className="sort-label">Sort:</span>
           <button
@@ -361,15 +449,74 @@ const MockLibraryPage = () => {
           >
             Author {sortBy === 'author' && (sortOrder === 'asc' ? '↑' : '↓')}
           </button>
+          <button
+            className={`sort-btn ${sortBy === 'language' ? 'active' : ''}`}
+            onClick={() => handleSort('language')}
+          >
+            Language {sortBy === 'language' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
+          <button
+            className={`sort-btn ${sortBy === 'file_type' ? 'active' : ''}`}
+            onClick={() => handleSort('file_type')}
+          >
+            File Type {sortBy === 'file_type' && (sortOrder === 'asc' ? '↑' : '↓')}
+          </button>
         </div>
       </div>
 
-      <div className="showing-count-row">
-        Showing {startIndex + 1}–{Math.min(startIndex + BOOKS_PER_PAGE, sortedBooks.length)} of {sortedBooks.length} books
-        {statusFilter !== 'all' && ` (filtered from ${books.length})`}
+      <div className="metadata-filter-panel">
+        <div className="metadata-filter-group">
+          <span className="metadata-filter-label">Language:</span>
+          <div className="metadata-filter-chips">
+            {availableLanguages.map(language => (
+              <button
+                key={language.key}
+                className={`metadata-filter-chip ${selectedLanguages.includes(language.key) ? 'active' : ''}`}
+                onClick={() => toggleLanguageFilter(language.key)}
+              >
+                {language.label} ({language.count})
+              </button>
+            ))}
+          </div>
+          {selectedLanguages.length > 0 && (
+            <button className="metadata-clear-btn" onClick={() => setSelectedLanguages([])}>
+              Clear languages
+            </button>
+          )}
+        </div>
+
+        <div className="metadata-filter-group">
+          <span className="metadata-filter-label">File Type:</span>
+          <div className="metadata-filter-chips">
+            {availableFileTypes.map(fileType => (
+              <button
+                key={fileType.key}
+                className={`metadata-filter-chip ${selectedFileTypes.includes(fileType.key) ? 'active' : ''}`}
+                onClick={() => toggleFileTypeFilter(fileType.key)}
+              >
+                {fileType.label} ({fileType.count})
+              </button>
+            ))}
+          </div>
+          {selectedFileTypes.length > 0 && (
+            <button className="metadata-clear-btn" onClick={() => setSelectedFileTypes([])}>
+              Clear file types
+            </button>
+          )}
+        </div>
+
+        {hasMetadataFilters && (
+          <button className="metadata-clear-all-btn" onClick={clearAllMetadataFilters}>
+            Clear all filters
+          </button>
+        )}
       </div>
 
-      {/* Table with 8 columns */}
+      <div className="showing-count-row">
+        Showing {showingStart}-{showingEnd} of {sortedBooks.length} books
+        {(statusFilter !== 'all' || hasMetadataFilters) && ` (filtered from ${books.length})`}
+      </div>
+
       <div className="mock-table-container">
         <table className="mock-books-table">
           <thead>
@@ -437,13 +584,13 @@ const MockLibraryPage = () => {
                             const rect = e.currentTarget.getBoundingClientRect();
                             setMenuPosition({
                               top: rect.bottom + 4,
-                              left: rect.right - 200 // Menu width is 200px
+                              left: rect.right - 200
                             });
                             setOpenMenuId(book.id);
                           }
                         }}
                       >
-                        ⋮
+                        ...
                       </button>
 
                       {openMenuId === book.id && (
@@ -459,7 +606,7 @@ const MockLibraryPage = () => {
                               navigate(`/read/${book.id}`);
                             }}
                           >
-                            📖 Open Book
+                            Open Book
                           </button>
 
                           <div className="menu-divider" />
@@ -468,15 +615,15 @@ const MockLibraryPage = () => {
                             <>
                               {isPaused ? (
                                 <button className="menu-item" onClick={handleResumeSession}>
-                                  ▶️ Resume Timer
+                                  Resume Timer
                                 </button>
                               ) : (
                                 <button className="menu-item" onClick={handlePauseSession}>
-                                  ⏸️ Pause Timer
+                                  Pause Timer
                                 </button>
                               )}
                               <button className="menu-item" onClick={handleEndSession}>
-                                ⏹️ Stop Timer
+                                Stop Timer
                               </button>
                               <div className="menu-divider" />
                             </>
@@ -487,7 +634,7 @@ const MockLibraryPage = () => {
                               className="menu-item primary"
                               onClick={() => handleStartSession(book)}
                             >
-                              ▶️ Start Reading Session
+                              Start Reading Session
                             </button>
                           )}
 
@@ -497,13 +644,13 @@ const MockLibraryPage = () => {
                                 className="menu-item"
                                 onClick={() => handleMarkToRead(book)}
                               >
-                                ⏹️ End Session (Stop Reading)
+                                End Session (Stop Reading)
                               </button>
                               <button
                                 className="menu-item success"
                                 onClick={() => handleMarkCompleted(book)}
                               >
-                                ✅ Mark as Completed
+                                Mark as Completed
                               </button>
                             </>
                           )}
@@ -513,7 +660,7 @@ const MockLibraryPage = () => {
                               className="menu-item"
                               onClick={() => handleMarkToRead(book)}
                             >
-                              📚 Mark as To Read
+                              Mark as To Read
                             </button>
                           )}
 
@@ -522,7 +669,7 @@ const MockLibraryPage = () => {
                               className="menu-item success"
                               onClick={() => handleMarkCompleted(book)}
                             >
-                              ✅ Mark as Completed
+                              Mark as Completed
                             </button>
                           )}
                         </div>
@@ -536,7 +683,6 @@ const MockLibraryPage = () => {
         </table>
       </div>
 
-      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="pagination-controls">
           <button
@@ -544,7 +690,7 @@ const MockLibraryPage = () => {
             onClick={() => setCurrentPage(prev => prev - 1)}
             disabled={currentPage === 1}
           >
-            ← Back
+            Back
           </button>
           <span className="pagination-info">
             Page {currentPage} of {totalPages}
@@ -554,14 +700,16 @@ const MockLibraryPage = () => {
             onClick={() => setCurrentPage(prev => prev + 1)}
             disabled={currentPage === totalPages}
           >
-            Next →
+            Next
           </button>
         </div>
       )}
 
       {paginatedBooks.length === 0 && (
         <div className="mock-empty-state">
-          No books match the selected filter.
+          {statusFilter !== 'all' || hasMetadataFilters
+            ? 'No books match the selected filters.'
+            : 'No books in your library yet.'}
         </div>
       )}
     </div>
