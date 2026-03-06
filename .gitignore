@@ -203,6 +203,7 @@ extension/.env.*
 !extension/.env.example
 !extension/.env.development
 extension/artifacts/
+extension/*.zip
 
 # Android - NEVER COMMIT THESE
 android/.gradle/
