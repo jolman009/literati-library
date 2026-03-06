@@ -67,3 +67,8 @@ body {
 .options-section a:hover {
   text-decoration: underline;
 }
+
+.options-legal {
+  margin-top: 8px;
+  font-size: 13px;
+}
