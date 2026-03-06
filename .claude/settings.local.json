@@ -41,7 +41,9 @@
       "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run view 22546932429 2>&1)",
       "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 15 2>&1)",
       "Bash(cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 20 --status failure 2>&1)",
-      "Bash(sleep 120 && cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 8 --commit 6090f86 2>&1)"
+      "Bash(sleep 120 && cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 8 --commit 6090f86 2>&1)",
+      "Bash(tail:*)",
+      "Bash(grep FAIL:*)"
     ],
     "deny": [],
     "ask": []
