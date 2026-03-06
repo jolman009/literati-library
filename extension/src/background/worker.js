@@ -120,10 +120,11 @@ async function handleSaveAsNote(tab) {
 
     await set(KEYS.NOTE_STATUS, { state: 'saved', ts: Date.now() });
   } catch (err) {
-    console.error('[ShelfQuest] Note save failed:', err.message);
+    const detail = err.response?.data?.details || err.response?.data?.error || err.message;
+    console.error('[ShelfQuest] Note save failed:', detail, err.response?.data);
     await set(KEYS.NOTE_STATUS, {
       state: 'error',
-      message: err.message || 'Failed to save note',
+      message: detail || 'Failed to save note',
       ts: Date.now(),
     });
   }

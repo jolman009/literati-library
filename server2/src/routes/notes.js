@@ -127,7 +127,6 @@ export const notesRouter = (authenticateToken) => {
 
       const noteData = {
         user_id: req.user.id,
-        book_id: book_id || null,
         content: content.trim(),
         title: title?.trim() || null,
         type: 'note',
@@ -137,6 +136,11 @@ export const notesRouter = (authenticateToken) => {
         source_title: source_title?.trim() || null,
         source_favicon: source_favicon?.trim() || null,
       };
+
+      // Only include book_id if provided (column has NOT NULL constraint)
+      if (book_id) {
+        noteData.book_id = book_id;
+      }
 
       // Add page for PDF notes if provided (database uses 'page', not 'page_number')
       if (page_number != null) {
