@@ -38,7 +38,8 @@ import {
   X,
   ChevronDown,
   CheckSquare,
-  Square
+  Square,
+  Globe
 } from 'lucide-react';
 import './EnhancedNotesPage.css';
 
@@ -942,7 +943,27 @@ const EnhancedNotesPage = () => {
             </span>
           </div>
         )}
-        
+
+        {/* Web Source Citation */}
+        {note.source_url && (
+          <a
+            href={note.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="md3-note-source"
+            title={note.source_url}
+          >
+            {note.source_favicon ? (
+              <img src={note.source_favicon} alt="" className="md3-note-source-favicon" onError={e => { e.currentTarget.style.display = 'none'; }} />
+            ) : (
+              <Globe size={12} className="md3-note-source-icon" />
+            )}
+            <span className="md3-note-source-text">
+              {note.source_title || new URL(note.source_url).hostname}
+            </span>
+          </a>
+        )}
+
         {/* Creation Date */}
         <p className="md3-note-date">
           <Clock size={14} style={{

@@ -169,6 +169,38 @@ div.md3-text-field.md3-notes-search {
   color: var(--md-sys-color-primary);
 }
 
+.md3-note-source {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: var(--md-sys-color-tertiary);
+  text-decoration: none;
+}
+
+.md3-note-source:hover {
+  text-decoration: underline;
+}
+
+.md3-note-source-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  object-fit: contain;
+}
+
+.md3-note-source-icon {
+  flex-shrink: 0;
+}
+
+.md3-note-source-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
 .md3-note-date {
   margin: 0;
   font-size: 0.75rem;

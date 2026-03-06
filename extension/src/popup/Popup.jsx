@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { get, remove, onChanged, KEYS } from '../config/storage.js';
 import LoginForm from '../components/LoginForm.jsx';
-import { BookOpen, LogOut, ExternalLink, Loader, CheckCircle, AlertCircle, LogIn } from 'lucide-react';
+import QuickNote from './QuickNote.jsx';
+import { BookOpen, LogOut, ExternalLink, Loader, CheckCircle, AlertCircle, LogIn, StickyNote } from 'lucide-react';
 import './popup.css';
 
 const STATUS_AUTO_CLEAR_MS = 4000;
@@ -10,18 +11,22 @@ export default function Popup() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [clipStatus, setClipStatus] = useState(null);
+  const [noteStatus, setNoteStatus] = useState(null);
 
-  // Clear clip status after timeout
-  const scheduleClear = useCallback((status) => {
+  // Clear a status after timeout
+  const scheduleStatusClear = useCallback((key, setter) => (status) => {
     if (status && (status.state === 'saved' || status.state === 'error')) {
       setTimeout(async () => {
-        await remove(KEYS.CLIP_STATUS);
-        setClipStatus(null);
+        await remove(key);
+        setter(null);
       }, STATUS_AUTO_CLEAR_MS);
     }
   }, []);
 
-  // Load auth state + clip status on mount
+  const scheduleClearClip = useCallback(scheduleStatusClear(KEYS.CLIP_STATUS, setClipStatus), [scheduleStatusClear]);
+  const scheduleClearNote = useCallback(scheduleStatusClear(KEYS.NOTE_STATUS, setNoteStatus), [scheduleStatusClear]);
+
+  // Load auth state + statuses on mount
   useEffect(() => {
     (async () => {
       const token = await get(KEYS.ACCESS_TOKEN);
@@ -29,14 +34,13 @@ export default function Popup() {
       if (token && storedUser) {
         setUser(storedUser);
       }
-      const status = await get(KEYS.CLIP_STATUS);
-      if (status) {
-        setClipStatus(status);
-        scheduleClear(status);
-      }
+      const cs = await get(KEYS.CLIP_STATUS);
+      if (cs) { setClipStatus(cs); scheduleClearClip(cs); }
+      const ns = await get(KEYS.NOTE_STATUS);
+      if (ns) { setNoteStatus(ns); scheduleClearNote(ns); }
       setLoading(false);
     })();
-  }, [scheduleClear]);
+  }, [scheduleClearClip, scheduleClearNote]);
 
   // Listen for storage changes
   useEffect(() => {
@@ -48,12 +52,17 @@ export default function Popup() {
         setUser(null);
       }
       if (changes[KEYS.CLIP_STATUS]) {
-        const newStatus = changes[KEYS.CLIP_STATUS].newValue ?? null;
-        setClipStatus(newStatus);
-        scheduleClear(newStatus);
+        const s = changes[KEYS.CLIP_STATUS].newValue ?? null;
+        setClipStatus(s);
+        scheduleClearClip(s);
+      }
+      if (changes[KEYS.NOTE_STATUS]) {
+        const s = changes[KEYS.NOTE_STATUS].newValue ?? null;
+        setNoteStatus(s);
+        scheduleClearNote(s);
       }
     });
-  }, [scheduleClear]);
+  }, [scheduleClearClip, scheduleClearNote]);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -64,8 +73,10 @@ export default function Popup() {
     await remove(KEYS.REFRESH_TOKEN);
     await remove(KEYS.USER);
     await remove(KEYS.CLIP_STATUS);
+    await remove(KEYS.NOTE_STATUS);
     setUser(null);
     setClipStatus(null);
+    setNoteStatus(null);
   };
 
   const openShelfQuest = () => {
@@ -126,12 +137,48 @@ export default function Popup() {
         </div>
       )}
 
+      {noteStatus && (
+        <div
+          className={`clip-status clip-status--${noteStatus.state}`}
+          onClick={async () => { await remove(KEYS.NOTE_STATUS); setNoteStatus(null); }}
+          role="status"
+          aria-live="polite"
+        >
+          {noteStatus.state === 'pending' && (
+            <>
+              <Loader size={16} className="clip-status-icon spin" />
+              <span>Saving note...</span>
+            </>
+          )}
+          {noteStatus.state === 'saved' && (
+            <>
+              <StickyNote size={16} className="clip-status-icon" />
+              <span>Note saved!</span>
+            </>
+          )}
+          {noteStatus.state === 'error' && (
+            <>
+              <AlertCircle size={16} className="clip-status-icon" />
+              <span>{noteStatus.message || 'Failed to save note'}</span>
+            </>
+          )}
+          {noteStatus.state === 'unauthenticated' && (
+            <>
+              <LogIn size={16} className="clip-status-icon" />
+              <span>Sign in to save notes</span>
+            </>
+          )}
+        </div>
+      )}
+
       <main className="popup-body">
         {user ? (
           <div className="popup-authenticated">
             <p className="popup-greeting">
               Hello, <strong>{user.name || user.email}</strong>
             </p>
+
+            <QuickNote />
 
             <button className="btn btn-primary" onClick={openShelfQuest}>
               <ExternalLink size={16} />

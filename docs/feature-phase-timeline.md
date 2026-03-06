@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Updated: 2026-03-01 | Status: Phase 1 In Progress
+> Generated: 2026-02-15 | Updated: 2026-03-05 | Status: Phase 2 In Progress (2.1 & 2.2 Complete)
 
 ---
 
@@ -18,7 +18,7 @@
 | Accessibility (WCAG)                 | MOSTLY DONE      | Form a11y, ARIA roles, skip link, axe tests, ESLint   |
 | Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
 | Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
-| Browser Extension                    | NOT STARTED      | No extension code exists; PWA + native apps only       |
+| Browser Extension                    | IN PROGRESS      | 2.1 scaffold + 2.2 web clipper complete; 2.3 next      |
 
 ---
 
@@ -81,28 +81,36 @@
 
 **Goal**: Ship the first ShelfQuest Edge/Chrome extension with core reading features.
 
-### 2.1 Extension Scaffold & Infrastructure
+### 2.1 Extension Scaffold & Infrastructure ✅
 - **Source**: edge-extension-ideas.md (all items depend on this)
 - **Scope**: New `extension/` directory in monorepo
+- **Completed**: 2026-03-03
 - **Tasks**:
-  - Create Manifest V3 extension scaffold (React + TypeScript)
-  - Set up shared types/constants between extension and client2
-  - Implement Supabase auth bridge (share session with web app)
-  - Build popup shell and sidebar panel skeleton
-  - CI/CD pipeline for extension builds (.crx / .xpi packaging)
-- **Effort**: ~8 days
+  - [x] Create Manifest V3 extension scaffold (React + Vite + CRXJS)
+  - [x] Config layer: storage.js, environment.js, api.js (axios, Bearer-only auth)
+  - [x] Implement auth bridge (chrome.storage.local tokens, 14-min alarm refresh)
+  - [x] Build popup shell (login/authenticated states) and options page
+  - [x] Background service worker with context menu, token refresh alarm, message handler
+  - [x] CI/CD: `extension-ci` job in ci.yml, quality-gates updated
+  - [x] Tests: 9 passing (popup render + storage wrapper), vitest + jsdom
+- **Effort**: ~8 days (estimated) → ~1 day (actual)
 - **Dependencies**: None
 
-### 2.2 "Send to ShelfQuest" Web Clipper
+### 2.2 "Send to ShelfQuest" Web Clipper ✅
 - **Source**: edge-extension-ideas.md, AI & Reading Helpers
-- **Scope**: Extension (context menu + popup + Supabase edge function)
+- **Scope**: Extension (context menu + content script + Express route + client page)
+- **Completed**: 2026-03-05
 - **Tasks**:
-  - Context menu action: "Save to ShelfQuest"
-  - Capture selected text, page title, URL, and metadata
-  - Convert clipped content to markdown
-  - Supabase edge function to ingest clipped items into library
-  - Popup confirmation with save status indicator
-- **Effort**: ~6 days
+  - [x] Context menu action: "Save to ShelfQuest"
+  - [x] Content script captures selected text, page title, URL, OG metadata, favicon
+  - [x] Turndown converts HTML selections to markdown
+  - [x] `clippings` table with RLS, indexes, trigger (012_clippings.sql)
+  - [x] Express CRUD route at `/api/clippings` (GET/POST/PATCH/DELETE)
+  - [x] Popup status banner (pending/saved/error/unauthenticated)
+  - [x] Client `/clippings` page with card grid, search, stats, edit modal
+  - [x] On-demand content script injection via `chrome.scripting.executeScript`
+  - [x] Tests: 16 extension (7 clipper + 9 existing), 4 server API
+- **Effort**: ~6 days (estimated) → ~2 days (actual)
 - **Dependencies**: 2.1
 
 ### 2.3 Citation & Notes Collector
