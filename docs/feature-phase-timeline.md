@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Updated: 2026-03-06 | Status: Phase 2 Complete (2.1, 2.2 & 2.3 Done)
+> Generated: 2026-02-15 | Updated: 2026-03-07 | Status: Phase 2 Complete, Phase 1.2 Complete, Phase 3 Pre-Phase Done
 
 ---
 
@@ -15,17 +15,17 @@
 | User Feedback Mechanism              | DONE             | ContactDialog, ContactPage, in-app feedback forms      |
 | Help Center / FAQ                    | DONE             | HelpFAQPage with categorized FAQ + HelpViewer          |
 | Performance Monitoring               | PARTIAL          | Sentry + Prometheus metrics; no user-facing perf dash  |
-| Accessibility (WCAG)                 | MOSTLY DONE      | Form a11y, ARIA roles, skip link, axe tests, ESLint   |
+| Accessibility (WCAG)                 | DONE             | Contrast audit, Lighthouse audit, theme migration, a11y tests |
 | Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
 | Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
-| Browser Extension                    | DONE             | 2.1 scaffold + 2.2 clipper + 2.3 notes; Chrome Web Store ready |
+| Browser Extension                    | DONE + Phase 3   | 2.1-2.4 complete; Phase 3 pre-phase (sidebar + AI rate limit) done |
 
 ---
 
 ## Phase 1 — Polish & Quick Wins (Weeks 1-3)
 
 **Goal**: Close remaining tester feedback gaps and harden what exists.
-**Status**: 🟡 In Progress — Accessibility & Onboarding complete, Screenshots & Social Login pending.
+**Status**: 🟡 In Progress — Accessibility, Onboarding & Lighthouse complete. Screenshots & Social Login pending.
 
 ### 1.1 Play Store & App Store Screenshot Overhaul
 - **Source**: Feedback PDF, item 3
@@ -51,8 +51,9 @@
   - [x] Expand ESLint jsx-a11y to full recommended ruleset (~30 rules)
   - [x] Add vitest-axe automated a11y tests (9 tests: axe-core + label/ARIA assertions)
   - [x] Fix JSX-in-.js files (monitoring.js, crashReporting.js) → `React.createElement`
-  - [ ] Fix contrast ratios in all 6 themes (light + dark variants)
-  - [ ] Full Lighthouse audit across all routes
+  - [x] Fix contrast ratios in all 6 themes — WCAG AA pass across 168 color pairs (`scripts/contrast-audit.mjs`)
+  - [x] Full Lighthouse audit — /login: Perf 55, A11y 95, BP 96, SEO 100
+  - [x] Replace ~550 hardcoded colors (`#24A8E0`, `rgb(var(...))`, `rgba(36,168,224,...)`) with theme-aware CSS vars across 55 files
 - **Effort**: ~5 days (estimated) → ~1 day (actual for code tasks)
 
 ### 1.3 Additional Social Login Options
@@ -146,18 +147,29 @@
 ## Phase 3 — Smart Reading & AI Features (Weeks 9-14)
 
 **Goal**: Leverage AI to differentiate the extension and deepen engagement.
+**Status**: 🟡 In Progress — Pre-phase infrastructure complete.
+
+### 3.0 Pre-Phase Infrastructure ✅
+- **Scope**: Server rate limiting + Extension sidebar scaffold + messaging
+- **Completed**: 2026-03-07 | Commit: `f2712da`
+- **Tasks**:
+  - [x] AI rate limiter (50 req/user/hour) in `rateLimitConfig.js`, mounted on `/ai` routes
+  - [x] Chrome Side Panel scaffold (`sidebar/index.html`, `Sidebar.jsx`, `sidebar.css`)
+  - [x] `sidePanel` permission + `side_panel` config in extension manifest
+  - [x] `GET_READING_QUEUE` message handler in background worker
+  - [x] "Open Reading Queue" context menu item with `chrome.sidePanel.open()`
+  - [x] `SIDEBAR_STATE` and `READING_QUEUE` storage keys
 
 ### 3.1 Smart Reading Queue Overlay
 - **Source**: edge-extension-ideas.md, AI & Reading Helpers
 - **Scope**: Extension sidebar + Supabase queries
 - **Tasks**:
-  - Sidebar panel listing ShelfQuest library items
-  - AI-prioritized "next read" suggestions based on current tab context
-  - Topic extraction from active page via LLM
-  - Quick-open in mini reader overlay (content script)
-  - Browsing context → reading recommendations pipeline
+  - [ ] AI-prioritized "next read" suggestions based on current tab context
+  - [ ] Topic extraction from active page via LLM
+  - [ ] Quick-open in mini reader overlay (content script)
+  - [ ] Browsing context → reading recommendations pipeline
 - **Effort**: ~8 days
-- **Dependencies**: 2.1, ai-service
+- **Dependencies**: 3.0, ai-service
 
 ### 3.2 AI-Powered Ebook Translator / Explainer
 - **Source**: edge-extension-ideas.md, AI & Reading Helpers
@@ -289,7 +301,9 @@ Phase 1 (mostly done — screenshots & social login pending)
   |
 Phase 2.1 ✅ ──► 2.2 ✅ ──► 2.3 ✅ ──► 2.4 ✅ (Chrome Web Store)
   |
-Phase 3.1, 3.2, 3.3 (depend on 2.1 + ai-service) ◄── NEXT
+Phase 3.0 ✅ (AI rate limiter + sidebar scaffold)
+  |
+Phase 3.3, 3.1, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
   |
 Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
   |
