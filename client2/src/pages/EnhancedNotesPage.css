@@ -31,7 +31,7 @@
   background: rgba(96, 132, 224, 0.5) !important;
   color: var(--md-sys-color-on-primary);
   border-radius: 16px !important;
-  box-shadow: 0 8px 16px rgba(36, 168, 224, 0.9) !important;
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent) !important;
 }
 
 .md3-notes-header-content {
@@ -344,7 +344,7 @@ div.md3-text-field.md3-notes-search {
 .md3-select:focus {
   outline: none;
   border-color: var(--md-sys-color-primary);
-  box-shadow: 0 0 0 2px rgba(36, 168, 224, 0.1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
 }
 
 .md3-select option {
@@ -430,7 +430,7 @@ div.md3-text-field.md3-notes-search {
 
 .word-cloud-word:hover {
   transform: scale(1.1);
-  background: rgba(36, 168, 224, 0.1);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
 }
 
 /* Statistics Cards */

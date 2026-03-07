@@ -19,7 +19,7 @@
   min-width: 344px;
   max-width: 672px;
   min-height: 48px;
-  background-color: rgb(var(--_container-color));
+  background-color: var(--_container-color);
   border-radius: var(--_container-shape);
   box-shadow: var(--_container-elevation);
   pointer-events: auto;
@@ -37,7 +37,7 @@
 
 .md3-snackbar__message {
   font: var(--md-sys-typescale-body-medium-font);
-  color: rgb(var(--_supporting-text-color));
+  color: var(--_supporting-text-color);
   line-height: var(--md-sys-typescale-body-medium-line-height);
   flex: 1;
   min-width: 0;
@@ -60,8 +60,8 @@
   font: var(--md-sys-typescale-label-large-font);
   line-height: var(--md-sys-typescale-label-large-line-height);
   cursor: pointer;
-  background-color: rgb(var(--md-sys-color-inverse-primary));
-  color: rgb(var(--md-sys-color-inverse-on-surface));
+  background-color: var(--md-sys-color-inverse-primary);
+  color: var(--md-sys-color-inverse-on-surface);
   transition: transform 120ms ease, filter 120ms ease, background-color 120ms ease;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .md3-snackbar__action-button:focus-visible {
-  outline: 2px solid rgba(var(--md-sys-color-inverse-on-surface), 0.9);
+  outline: 2px solid color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 90%, transparent);
   outline-offset: 2px;
 }
 
@@ -96,17 +96,17 @@
   background: transparent;
   border-radius: 50%;
   cursor: pointer;
-  color: rgb(var(--_supporting-text-color));
+  color: var(--_supporting-text-color);
   transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
   flex-shrink: 0;
 }
 
 .md3-snackbar__close-button:hover {
-  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.08);
+  background-color: color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 8%, transparent);
 }
 
 .md3-snackbar__close-button:active {
-  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.12);
+  background-color: color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 12%, transparent);
 }
 
 .md3-snackbar__close-icon {
@@ -310,7 +310,7 @@
 
 .md3-progress-snackbar__message {
   font: var(--md-sys-typescale-body-medium-font);
-  color: rgb(var(--_supporting-text-color));
+  color: var(--_supporting-text-color);
   line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
@@ -318,7 +318,7 @@
   position: relative;
   width: 100%;
   height: 4px;
-  background-color: rgb(var(--md-sys-color-inverse-on-surface) / 0.24);
+  background-color: color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 24%, transparent);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -328,14 +328,14 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-color: rgb(var(--_action-label-text-color));
+  background-color: var(--_action-label-text-color);
   border-radius: inherit;
   transition: width var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
 
 .md3-progress-snackbar__percentage {
   font: var(--md-sys-typescale-label-small-font);
-  color: rgb(var(--_supporting-text-color));
+  color: var(--_supporting-text-color);
   line-height: var(--md-sys-typescale-label-small-line-height);
   text-align: right;
   opacity: 0.8;
@@ -432,11 +432,11 @@
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   .md3-snackbar {
-    border: 2px solid rgb(var(--md-sys-color-outline));
+    border: 2px solid var(--md-sys-color-outline);
   }
   
   .md3-snackbar__close-button:focus-visible {
-    outline: 2px solid rgb(var(--_supporting-text-color));
+    outline: 2px solid var(--_supporting-text-color);
     outline-offset: 2px;
   }
 }

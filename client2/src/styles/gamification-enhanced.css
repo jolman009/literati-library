@@ -974,7 +974,7 @@
 
 .gamification-tip-card {
   padding: 24px;
-  background: linear-gradient(135deg, rgba(var(--md-sys-color-tertiary-rgb), 0.1) 0%, rgba(var(--md-sys-color-primary-rgb), 0.1) 100%) !important;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-tertiary) 10%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 100%) !important;
   border: 1px solid var(--md-sys-color-outline-variant) !important;
 }
 
@@ -1010,7 +1010,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--md-sys-color-primary) !important;
-  background: rgba(var(--md-sys-color-primary-rgb), 0.1) !important;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) !important;
   padding: 4px 8px;
   border-radius: 12px;
   display: inline-block;

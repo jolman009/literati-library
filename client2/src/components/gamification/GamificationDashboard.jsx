@@ -14,7 +14,7 @@ const AchievementNotification = ({ achievement, onDismiss }) => {
         position: 'fixed',
         top: '20px',
         right: '20px',
-        background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
+        background: 'linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
         color: 'white',
         padding: '20px',
         borderRadius: '12px',
@@ -84,7 +84,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
         <div style={{ 
           fontSize: '48px', 
           fontWeight: 'bold', 
-          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
+          background: 'linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           marginBottom: '8px'
@@ -92,7 +92,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
           Level {currentLevel}
         </div>
         <div style={{ 
-          color: 'rgb(var(--md-sys-color-on-surface-variant))', 
+          color: 'var(--md-sys-color-on-surface-variant)', 
           fontSize: '16px',
           fontWeight: '500'
         }}>
@@ -106,7 +106,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
           justifyContent: 'space-between', 
           marginBottom: '8px',
           fontSize: '14px',
-          color: 'rgb(var(--md-sys-color-on-surface-variant))'
+          color: 'var(--md-sys-color-on-surface-variant)'
         }}>
           <span>{stats.totalPoints} points</span>
           {nextThreshold && <span>{nextThreshold.points} points</span>}
@@ -115,14 +115,14 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
         <div style={{
           width: '100%',
           height: '8px',
-          background: 'rgb(var(--md-sys-color-outline-variant))',
+          background: 'var(--md-sys-color-outline-variant)',
           borderRadius: '4px',
           overflow: 'hidden'
         }}>
           <div style={{
             width: `${Math.min(progressPercentage, 100)}%`,
             height: '100%',
-            background: 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
+            background: 'linear-gradient(90deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
             transition: 'width 0.5s ease'
           }} />
         </div>
@@ -131,7 +131,7 @@ const LevelProgress = ({ stats, calculateLevel, LEVEL_THRESHOLDS }) => {
       {nextThreshold && (
         <div style={{ 
           fontSize: '12px', 
-          color: 'rgb(var(--md-sys-color-on-surface-variant))',
+          color: 'var(--md-sys-color-on-surface-variant)',
           textAlign: 'center'
         }}>
           {nextThreshold.points - stats.totalPoints} points to next level
@@ -148,19 +148,19 @@ const StatsGrid = ({ stats }) => {
       label: 'Books Read', 
       value: stats.booksRead || 0, 
       icon: '📚',
-      color: 'rgb(var(--md-sys-color-primary))'
+      color: 'var(--md-sys-color-primary)'
     },
     { 
       label: 'Pages Read', 
       value: stats.pagesRead || 0, 
       icon: '📄',
-      color: 'rgb(var(--md-sys-color-success))'
+      color: 'var(--md-sys-color-success)'
     },
     { 
       label: 'Reading Time', 
       value: `${Math.floor((stats.totalReadingTime || 0) / 60)}h`, 
       icon: '⏱️',
-      color: 'rgb(var(--md-sys-color-warning))'
+      color: 'var(--md-sys-color-warning)'
     },
     { 
       label: 'Reading Streak', 
@@ -184,7 +184,7 @@ const StatsGrid = ({ stats }) => {
       label: 'Books Completed', 
       value: stats.booksCompleted || 0, 
       icon: '✅',
-      color: 'rgb(var(--md-sys-color-success))'
+      color: 'var(--md-sys-color-success)'
     },
     { 
       label: 'Current Level', 
@@ -214,7 +214,7 @@ const StatsGrid = ({ stats }) => {
             </div>
             <div style={{
               fontSize: '12px',
-              color: 'rgb(var(--md-sys-color-on-surface-variant))',
+              color: 'var(--md-sys-color-on-surface-variant)',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
               fontWeight: '500'
@@ -235,8 +235,8 @@ const GoalsSection = ({ goals }) => {
       <MD3Card>
         <div style={{ textAlign: 'center', padding: '32px 16px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}>🎯</div>
-          <h3 style={{ margin: '0 0 8px 0', color: 'rgb(var(--md-sys-color-on-surface))' }}>No Goals Set</h3>
-          <p style={{ margin: '0', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <h3 style={{ margin: '0 0 8px 0', color: 'var(--md-sys-color-on-surface)' }}>No Goals Set</h3>
+          <p style={{ margin: '0', color: 'var(--md-sys-color-on-surface-variant)' }}>
             Goals will be automatically created based on your reading progress
           </p>
         </div>
@@ -262,7 +262,7 @@ const GoalsSection = ({ goals }) => {
                   margin: 0, 
                   fontSize: '16px', 
                   fontWeight: '600',
-                  color: 'rgb(var(--md-sys-color-on-surface))'
+                  color: 'var(--md-sys-color-on-surface)'
                 }}>
                   {goal.title}
                 </h4>
@@ -271,7 +271,7 @@ const GoalsSection = ({ goals }) => {
               <p style={{ 
                 margin: '0 0 12px 0', 
                 fontSize: '14px',
-                color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                color: 'var(--md-sys-color-on-surface-variant)'
               }}>
                 {goal.description}
               </p>
@@ -285,10 +285,10 @@ const GoalsSection = ({ goals }) => {
                 fontSize: '14px',
                 fontWeight: '500'
               }}>
-                <span style={{ color: 'rgb(var(--md-sys-color-on-surface))' }}>
+                <span style={{ color: 'var(--md-sys-color-on-surface)' }}>
                   {goal.current} / {goal.target}
                 </span>
-                <span style={{ color: isCompleted ? 'rgb(var(--md-sys-color-success))' : 'rgb(var(--md-sys-color-primary))' }}>
+                <span style={{ color: isCompleted ? 'var(--md-sys-color-success)' : 'var(--md-sys-color-primary)' }}>
                   {Math.round(progress)}%
                 </span>
               </div>
@@ -296,7 +296,7 @@ const GoalsSection = ({ goals }) => {
               <div style={{
                 width: '100%',
                 height: '6px',
-                background: 'rgb(var(--md-sys-color-outline-variant))',
+                background: 'var(--md-sys-color-outline-variant)',
                 borderRadius: '3px',
                 overflow: 'hidden'
               }}>
@@ -304,8 +304,8 @@ const GoalsSection = ({ goals }) => {
                   width: `${progress}%`,
                   height: '100%',
                   background: isCompleted 
-                    ? 'rgb(var(--md-sys-color-success))' 
-                    : 'linear-gradient(90deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
+                    ? 'var(--md-sys-color-success)' 
+                    : 'linear-gradient(90deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
                   transition: 'width 0.5s ease'
                 }} />
               </div>
@@ -314,7 +314,7 @@ const GoalsSection = ({ goals }) => {
             {goal.deadline && (
               <div style={{ 
                 fontSize: '12px', 
-                color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                color: 'var(--md-sys-color-on-surface-variant)'
               }}>
                 Due: {new Date(goal.deadline).toLocaleDateString()}
               </div>
@@ -325,7 +325,7 @@ const GoalsSection = ({ goals }) => {
                 marginTop: '12px',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: 'rgb(var(--md-sys-color-primary))'
+                color: 'var(--md-sys-color-primary)'
               }}>
                 Reward: {goal.points} points
               </div>
@@ -358,7 +358,7 @@ const AchievementsSection = ({ achievements, ACHIEVEMENTS }) => {
           fontSize: '24px', 
           fontWeight: 'bold', 
           margin: 0,
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Achievements ({achievements.length}/{allAchievements.length})
         </h2>
@@ -385,9 +385,9 @@ const AchievementsSection = ({ achievements, ACHIEVEMENTS }) => {
               style={{
                 opacity: isUnlocked ? 1 : 0.6,
                 background: isUnlocked 
-                  ? 'linear-gradient(135deg, rgba(var(--md-sys-color-primary), 0.1) 0%, rgba(var(--md-sys-color-secondary), 0.1) 100%)'
-                  : 'rgb(var(--md-sys-color-surface-container))',
-                border: isUnlocked ? '2px solid rgb(var(--md-sys-color-primary))' : '1px solid rgb(var(--md-sys-color-outline-variant))'
+                  ? 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 10%, transparent) 100%)'
+                  : 'var(--md-sys-color-surface-container)',
+                border: isUnlocked ? '2px solid var(--md-sys-color-primary)' : '1px solid var(--md-sys-color-outline-variant)'
               }}
             >
               <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
@@ -403,7 +403,7 @@ const AchievementsSection = ({ achievements, ACHIEVEMENTS }) => {
                       margin: 0, 
                       fontSize: '16px', 
                       fontWeight: '600',
-                      color: 'rgb(var(--md-sys-color-on-surface))'
+                      color: 'var(--md-sys-color-on-surface)'
                     }}>
                       {achievement.title}
                     </h4>
@@ -412,14 +412,14 @@ const AchievementsSection = ({ achievements, ACHIEVEMENTS }) => {
                   <p style={{ 
                     margin: '0 0 12px 0', 
                     fontSize: '14px',
-                    color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                    color: 'var(--md-sys-color-on-surface-variant)'
                   }}>
                     {achievement.description}
                   </p>
                   <div style={{ 
                     fontSize: '12px', 
                     fontWeight: '600',
-                    color: isUnlocked ? 'rgb(var(--md-sys-color-primary))' : 'rgb(var(--md-sys-color-on-surface-variant))'
+                    color: isUnlocked ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-on-surface-variant)'
                   }}>
                     {achievement.points} points
                   </div>
@@ -476,14 +476,14 @@ const QuickActions = ({ trackAction }) => {
             onClick={action.action}
             style={{
               padding: '16px 12px',
-              border: action.type === 'outlined' ? '1px solid rgb(var(--md-sys-color-outline))' : 'none',
+              border: action.type === 'outlined' ? '1px solid var(--md-sys-color-outline)' : 'none',
               borderRadius: '12px',
-              background: action.type === 'primary' ? 'rgb(var(--md-sys-color-primary))' :
-                         action.type === 'secondary' ? 'rgb(var(--md-sys-color-secondary))' :
-                         action.type === 'tertiary' ? 'rgb(var(--md-sys-color-tertiary))' :
+              background: action.type === 'primary' ? 'var(--md-sys-color-primary)' :
+                         action.type === 'secondary' ? 'var(--md-sys-color-secondary)' :
+                         action.type === 'tertiary' ? 'var(--md-sys-color-tertiary)' :
                          'transparent',
-              color: action.type === 'outlined' ? 'rgb(var(--md-sys-color-on-surface))' :
-                     'rgb(var(--md-sys-color-on-primary))',
+              color: action.type === 'outlined' ? 'var(--md-sys-color-on-surface)' :
+                     'var(--md-sys-color-on-primary)',
               cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
@@ -519,7 +519,7 @@ const ReadingTips = () => {
   return (
     <MD3Card style={{ 
       padding: '24px',
-      background: 'linear-gradient(135deg, rgba(var(--md-sys-color-primary), 0.05) 0%, rgba(var(--md-sys-color-secondary), 0.05) 100%)'
+      background: 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 5%, transparent) 100%)'
     }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
         <div style={{ fontSize: '32px' }}>💡</div>
@@ -528,14 +528,14 @@ const ReadingTips = () => {
             margin: '0 0 8px 0', 
             fontSize: '18px', 
             fontWeight: '600',
-            color: 'rgb(var(--md-sys-color-primary))'
+            color: 'var(--md-sys-color-primary)'
           }}>
             Reading Tip
           </h3>
           <p style={{ 
             margin: 0, 
             fontSize: '14px',
-            color: 'rgb(var(--md-sys-color-on-surface))',
+            color: 'var(--md-sys-color-on-surface)',
             lineHeight: 1.5
           }}>
             {currentTip}
@@ -573,7 +573,7 @@ const GamificationDashboard = () => {
       }}>
         <CircularProgress size="large" />
         <p style={{ 
-          color: 'rgb(var(--md-sys-color-on-surface-variant))',
+          color: 'var(--md-sys-color-on-surface-variant)',
           fontSize: '16px'
         }}>
           Loading your reading progress...
@@ -605,7 +605,7 @@ const GamificationDashboard = () => {
           fontSize: '24px', 
           fontWeight: 'bold', 
           marginBottom: '24px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Your Reading Stats
         </h2>
@@ -618,7 +618,7 @@ const GamificationDashboard = () => {
           fontSize: '24px', 
           fontWeight: 'bold', 
           marginBottom: '24px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Active Goals
         </h2>
@@ -686,8 +686,8 @@ const GamificationDashboard = () => {
           }
           
           .level-progress-card {
-            background: linear-gradient(135deg, rgba(var(--md-sys-color-primary), 0.05) 0%, rgba(var(--md-sys-color-secondary), 0.05) 100%);
-            border: 2px solid rgba(var(--md-sys-color-primary), 0.2);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 5%, transparent) 100%);
+            border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent);
           }
         `}
       </style>

@@ -31,7 +31,7 @@ export default React.forwardRef(function MD3Progress(
         <circle cx={dim/2} cy={dim/2} r={r} stroke="#e7e0ec" strokeWidth={stroke} fill="none" />
         <circle
           cx={dim/2} cy={dim/2} r={r}
-          stroke="#24A8E0" strokeWidth={stroke} fill="none"
+          stroke="var(--md-sys-color-primary)" strokeWidth={stroke} fill="none"
           strokeDasharray={c}
           strokeDashoffset={value != null ? dash : 0}
           style={{
@@ -67,7 +67,7 @@ export default React.forwardRef(function MD3Progress(
       <div
         style={{
           height: '100%',
-          background: '#24A8E0',
+          background: 'var(--md-sys-color-primary)',
           width: bar,
           animation: value == null || indeterminate ? 'md3-indet 2s linear infinite' : undefined,
           transition: value != null ? 'width .3s ease' : undefined

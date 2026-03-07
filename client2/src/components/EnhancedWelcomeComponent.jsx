@@ -123,7 +123,7 @@ const EnhancedWelcomeComponent = ({
       {/* Hero Section */}
       <div 
         style={{
-          background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, #24A8E0 100%)',
+          background: 'linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
           borderRadius: '16px',
           padding: '32px',
           color: 'white',
@@ -296,7 +296,7 @@ const EnhancedWelcomeComponent = ({
           fontSize: '24px', 
           fontWeight: '600', 
           marginBottom: '20px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Quick Actions
         </h2>
@@ -319,9 +319,9 @@ const EnhancedWelcomeComponent = ({
                 cursor: action.disabled ? 'not-allowed' : 'pointer',
                 opacity: action.disabled ? 0.6 : 1,
                 background: action.primary 
-                  ? 'linear-gradient(135deg, rgba(var(--md-sys-color-primary), 0.1) 0%, rgba(var(--md-sys-color-secondary), 0.1) 100%)'
-                  : 'rgb(var(--md-sys-color-surface-container))',
-                border: action.primary ? '2px solid rgba(var(--md-sys-color-primary), 0.3)' : undefined
+                  ? 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 10%, transparent) 100%)'
+                  : 'var(--md-sys-color-surface-container)',
+                border: action.primary ? '2px solid color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent)' : undefined
               }}
               className="quick-action-card"
             >
@@ -332,14 +332,14 @@ const EnhancedWelcomeComponent = ({
                 fontSize: '18px', 
                 fontWeight: '600', 
                 margin: '0 0 8px 0',
-                color: 'rgb(var(--md-sys-color-on-surface))'
+                color: 'var(--md-sys-color-on-surface)'
               }}>
                 {action.title}
                 {action.count !== null && action.count !== undefined && (
                   <span style={{
                     marginLeft: '8px',
-                    background: 'rgb(var(--md-sys-color-primary))',
-                    color: 'rgb(var(--md-sys-color-on-primary))',
+                    background: 'var(--md-sys-color-primary)',
+                    color: 'var(--md-sys-color-on-primary)',
                     padding: '2px 8px',
                     borderRadius: '12px',
                     fontSize: '12px',
@@ -352,7 +352,7 @@ const EnhancedWelcomeComponent = ({
               <p style={{ 
                 fontSize: '14px', 
                 margin: '0',
-                color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                color: 'var(--md-sys-color-on-surface-variant)'
               }}>
                 {action.description}
               </p>
@@ -368,7 +368,7 @@ const EnhancedWelcomeComponent = ({
             fontSize: '24px', 
             fontWeight: '600', 
             marginBottom: '20px',
-            color: 'rgb(var(--md-sys-color-on-surface))'
+            color: 'var(--md-sys-color-on-surface)'
           }}>
             This Month's Progress
           </h2>
@@ -380,26 +380,26 @@ const EnhancedWelcomeComponent = ({
               textAlign: 'center'
             }}>
               <div>
-                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'rgb(var(--md-sys-color-primary))' }}>
+                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--md-sys-color-primary)' }}>
                   {enhancedAnalytics.booksThisMonth}
                 </div>
-                <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+                <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
                   Books Added
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'rgb(var(--md-sys-color-success))' }}>
+                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--md-sys-color-success)' }}>
                   {enhancedAnalytics.readingBooks}
                 </div>
-                <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+                <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
                   Currently Reading
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'rgb(var(--md-sys-color-warning))' }}>
+                <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--md-sys-color-warning)' }}>
                   {Math.floor((enhancedAnalytics.totalReadingTime || 0) / 60)}h
                 </div>
-                <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+                <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
                   Reading Time
                 </div>
               </div>
@@ -408,7 +408,7 @@ const EnhancedWelcomeComponent = ({
                   <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#fdcb6e' }}>
                     {enhancedAnalytics.totalPoints}
                   </div>
-                  <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+                  <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
                     Points Earned
                   </div>
                 </div>
@@ -424,13 +424,13 @@ const EnhancedWelcomeComponent = ({
           fontSize: '24px', 
           fontWeight: '600', 
           marginBottom: '20px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Reading Inspiration
         </h2>
         <MD3Card style={{ 
           padding: '24px',
-          background: 'linear-gradient(135deg, rgba(var(--md-sys-color-tertiary), 0.1) 0%, rgba(var(--md-sys-color-primary), 0.05) 100%)'
+          background: 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-tertiary) 10%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 100%)'
         }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <div style={{ fontSize: '48px' }}>📚</div>
@@ -439,14 +439,14 @@ const EnhancedWelcomeComponent = ({
                 margin: '0 0 8px 0', 
                 fontSize: '20px', 
                 fontWeight: '600',
-                color: 'rgb(var(--md-sys-color-on-surface))'
+                color: 'var(--md-sys-color-on-surface)'
               }}>
                 "A reader lives a thousand lives before he dies."
               </h3>
               <p style={{ 
                 margin: '0', 
                 fontSize: '14px',
-                color: 'rgb(var(--md-sys-color-on-surface-variant))',
+                color: 'var(--md-sys-color-on-surface-variant)',
                 fontStyle: 'italic'
               }}>
                 — George R.R. Martin

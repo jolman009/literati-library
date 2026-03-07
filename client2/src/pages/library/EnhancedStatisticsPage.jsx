@@ -384,14 +384,14 @@ const EnhancedStatisticsPage = ({ books = [], user: _user }) => {
     datasets: [{
       label: 'Books Completed',
       data: Object.values(statistics.booksByMonth),
-      backgroundColor: 'rgba(36, 168, 224, 0.5)',
-      borderColor: 'rgb(36, 168, 224)',
+      backgroundColor: 'color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent)',
+      borderColor: 'var(--md-sys-color-primary)',
       borderWidth: 2
     }]
   };
 
   // Mini chart component (simplified visualization)
-  const MiniChart = ({ data, label, color = '#24A8E0' }) => {
+  const MiniChart = ({ data, label, color = 'var(--md-sys-color-primary)' }) => {
     const max = Math.max(...data, 1);
     return (
       <div className="mini-chart">

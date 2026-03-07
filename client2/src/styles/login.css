@@ -154,8 +154,8 @@
 .logo-container:hover {
   transform: scale(1.05) rotate(2deg);
   background: linear-gradient(135deg,
-    rgba(36, 168, 224, 0.2) 0%,
-    rgba(36, 168, 224, 0.1) 100%
+    color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 100%
   );
 }
 

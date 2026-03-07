@@ -12,7 +12,7 @@ export const THEMES = [
     requiredPoints: 0,
     tier: 'novice',
     preview: {
-      primary: '#24A8E0',
+      primary: '#0D74A0',
       secondary: '#7c5dc7',
       surface: '#fcfcff',
     },

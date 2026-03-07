@@ -66,12 +66,12 @@
 
 /* Primary FAB (Default) */
 .fab.primary {
-  background: rgb(var(--md-sys-color-primary-container, 209, 221, 255));
-  color: rgb(var(--md-sys-color-on-primary-container, 0, 24, 72));
+  background: var(--md-sys-color-primary-container, #d1ddff);
+  color: var(--md-sys-color-on-primary-container, #001848);
 }
 
 .fab.primary:hover:not(:disabled) {
-  background: rgba(var(--md-sys-color-primary-container, 209, 221, 255), 0.92);
+  background: color-mix(in srgb, var(--md-sys-color-primary-container, #d1ddff) 92%, transparent);
   box-shadow:
     0px 4px 4px rgba(0, 0, 0, 0.3),
     0px 8px 12px 6px rgba(0, 0, 0, 0.15);
@@ -80,12 +80,12 @@
 
 /* Secondary FAB */
 .fab.secondary {
-  background: rgb(var(--md-sys-color-secondary-container, 213, 234, 216));
-  color: rgb(var(--md-sys-color-on-secondary-container, 13, 31, 18));
+  background: var(--md-sys-color-secondary-container, #d5ead8);
+  color: var(--md-sys-color-on-secondary-container, #0d1f12);
 }
 
 .fab.secondary:hover:not(:disabled) {
-  background: rgba(var(--md-sys-color-secondary-container, 213, 234, 216), 0.92);
+  background: color-mix(in srgb, var(--md-sys-color-secondary-container, #d5ead8) 92%, transparent);
   box-shadow:
     0px 4px 4px rgba(0, 0, 0, 0.3),
     0px 8px 12px 6px rgba(0, 0, 0, 0.15);
@@ -94,12 +94,12 @@
 
 /* Tertiary FAB */
 .fab.tertiary {
-  background: rgb(var(--md-sys-color-tertiary-container, 255, 221, 179));
-  color: rgb(var(--md-sys-color-on-tertiary-container, 45, 22, 0));
+  background: var(--md-sys-color-tertiary-container, #ffddb3);
+  color: var(--md-sys-color-on-tertiary-container, #2d1600);
 }
 
 .fab.tertiary:hover:not(:disabled) {
-  background: rgba(var(--md-sys-color-tertiary-container, 255, 221, 179), 0.92);
+  background: color-mix(in srgb, var(--md-sys-color-tertiary-container, #ffddb3) 92%, transparent);
   box-shadow:
     0px 4px 4px rgba(0, 0, 0, 0.3),
     0px 8px 12px 6px rgba(0, 0, 0, 0.15);
@@ -116,8 +116,8 @@
 
 .fab:disabled,
 .fab.disabled {
-  background: rgba(var(--md-sys-color-on-surface, 26, 26, 28), 0.12);
-  color: rgba(var(--md-sys-color-on-surface, 26, 26, 28), 0.38);
+  background: color-mix(in srgb, var(--md-sys-color-on-surface, #1a1a1c) 12%, transparent);
+  color: color-mix(in srgb, var(--md-sys-color-on-surface, #1a1a1c) 38%, transparent);
   cursor: not-allowed;
   opacity: 0.5;
   box-shadow: none;
@@ -186,7 +186,7 @@
 
 /* Focus visible for keyboard navigation */
 .fab:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary, 0, 92, 186));
+  outline: 2px solid var(--md-sys-color-primary, #005cba);
   outline-offset: 2px;
 }
 

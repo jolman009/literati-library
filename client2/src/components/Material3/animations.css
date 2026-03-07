@@ -476,9 +476,9 @@
 .md3-loading-shimmer {
   background: linear-gradient(
     90deg,
-    rgb(var(--md-sys-color-surface-variant) / 0.1) 25%,
-    rgb(var(--md-sys-color-surface-variant) / 0.3) 50%,
-    rgb(var(--md-sys-color-surface-variant) / 0.1) 75%
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 10%, transparent) 25%,
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 30%, transparent) 50%,
+    color-mix(in srgb, var(--md-sys-color-surface-variant) 10%, transparent) 75%
   );
   background-size: 200% 100%;
   animation: md3-shimmer 1.5s ease-in-out infinite;

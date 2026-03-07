@@ -10,7 +10,7 @@ const PointsLegend = () => {
     {
       title: 'Reading Activities',
       icon: 'book',
-      color: 'rgb(var(--md-sys-color-primary))',
+      color: 'var(--md-sys-color-primary)',
       actions: [
         { action: 'Start Reading Session', points: 5, icon: 'rocket', description: 'Begin a new reading session' },
         { action: 'Complete Reading Session', points: 10, icon: 'check_circle', description: 'Finish a reading session' },
@@ -22,7 +22,7 @@ const PointsLegend = () => {
     {
       title: 'Library Management',
       icon: 'books',
-      color: 'rgb(var(--md-sys-color-secondary))',
+      color: 'var(--md-sys-color-secondary)',
       actions: [
         { action: 'Upload Book', points: 25, icon: 'upload', description: 'Add a new book to your library' },
         { action: 'Daily Login', points: 10, icon: 'login', description: 'Sign in to your account daily' },
@@ -32,7 +32,7 @@ const PointsLegend = () => {
     {
       title: 'Note-Taking & Study',
       icon: 'note',
-      color: 'rgb(var(--md-sys-color-tertiary))',
+      color: 'var(--md-sys-color-tertiary)',
       actions: [
         { action: 'Create Note', points: 15, icon: 'note', description: 'Write a note about your reading' },
         { action: 'Create Highlight', points: 10, icon: 'highlight', description: 'Highlight important text passages' },
@@ -100,8 +100,8 @@ const PointsLegend = () => {
     return (
       <MD3Card style={{
         padding: '20px',
-        background: 'linear-gradient(135deg, rgba(var(--md-sys-color-primary), 0.05) 0%, rgba(var(--md-sys-color-secondary), 0.05) 100%)',
-        border: '1px solid rgba(var(--md-sys-color-primary), 0.2)'
+        background: 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-secondary) 5%, transparent) 100%)',
+        border: '1px solid color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -111,14 +111,14 @@ const PointsLegend = () => {
                 margin: 0,
                 fontSize: '18px',
                 fontWeight: '600',
-                color: 'rgb(var(--md-sys-color-on-surface))'
+                color: 'var(--md-sys-color-on-surface)'
               }}>
                 Points & Rewards Guide
               </h3>
               <p style={{
                 margin: '4px 0 0 0',
                 fontSize: '14px',
-                color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                color: 'var(--md-sys-color-on-surface-variant)'
               }}>
                 Learn how to earn points and unlock achievements
               </p>
@@ -141,7 +141,7 @@ const PointsLegend = () => {
       {/* Header */}
       <MD3Card style={{
         padding: '24px',
-        background: 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, rgb(var(--md-sys-color-secondary)) 100%)',
+        background: 'linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)',
         color: 'white'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -173,7 +173,7 @@ const PointsLegend = () => {
           fontSize: '22px',
           fontWeight: 'bold',
           marginBottom: '16px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           How to Earn Points
         </h3>
@@ -203,9 +203,9 @@ const PointsLegend = () => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       padding: '12px 16px',
-                      background: 'rgb(var(--md-sys-color-surface-container))',
+                      background: 'var(--md-sys-color-surface-container)',
                       borderRadius: '12px',
-                      border: '1px solid rgb(var(--md-sys-color-outline-variant))'
+                      border: '1px solid var(--md-sys-color-outline-variant)'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -214,13 +214,13 @@ const PointsLegend = () => {
                         <div style={{
                           fontSize: '16px',
                           fontWeight: '500',
-                          color: 'rgb(var(--md-sys-color-on-surface))'
+                          color: 'var(--md-sys-color-on-surface)'
                         }}>
                           {action.action}
                         </div>
                         <div style={{
                           fontSize: '14px',
-                          color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                          color: 'var(--md-sys-color-on-surface-variant)'
                         }}>
                           {action.description}
                         </div>
@@ -230,7 +230,7 @@ const PointsLegend = () => {
                       fontSize: '16px',
                       fontWeight: 'bold',
                       color: category.color,
-                      background: `rgba(${category.color.slice(4, -1)}, 0.1)`,
+                      background: `color-mix(in srgb, ${category.color} 10%, transparent)`,
                       padding: '6px 12px',
                       borderRadius: '20px'
                     }}>
@@ -250,7 +250,7 @@ const PointsLegend = () => {
           fontSize: '22px',
           fontWeight: 'bold',
           marginBottom: '16px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Level System
         </h3>
@@ -268,11 +268,11 @@ const PointsLegend = () => {
                   alignItems: 'center',
                   gap: '12px',
                   padding: '16px',
-                  background: index === 0 ? 'rgb(var(--md-sys-color-primary-container))' :
+                  background: index === 0 ? 'var(--md-sys-color-primary-container)' :
                              index === levelThresholds.length - 1 ? 'linear-gradient(135deg, #ffd700, #ffed4e)' :
-                             'rgb(var(--md-sys-color-surface-container))',
+                             'var(--md-sys-color-surface-container)',
                   borderRadius: '12px',
-                  border: '1px solid rgb(var(--md-sys-color-outline-variant))'
+                  border: '1px solid var(--md-sys-color-outline-variant)'
                 }}
               >
                 <Icon name={level.icon} size={22} />
@@ -280,13 +280,13 @@ const PointsLegend = () => {
                   <div style={{
                     fontSize: '16px',
                     fontWeight: '600',
-                    color: 'rgb(var(--md-sys-color-on-surface))'
+                    color: 'var(--md-sys-color-on-surface)'
                   }}>
                     Level {level.level}
                   </div>
                   <div style={{
                     fontSize: '14px',
-                    color: 'rgb(var(--md-sys-color-on-surface-variant))',
+                    color: 'var(--md-sys-color-on-surface-variant)',
                     marginBottom: '2px'
                   }}>
                     {level.title}
@@ -294,7 +294,7 @@ const PointsLegend = () => {
                   <div style={{
                     fontSize: '12px',
                     fontWeight: '500',
-                    color: 'rgb(var(--md-sys-color-primary))'
+                    color: 'var(--md-sys-color-primary)'
                   }}>
                     {level.points.toLocaleString()} points
                   </div>
@@ -311,7 +311,7 @@ const PointsLegend = () => {
           fontSize: '22px',
           fontWeight: 'bold',
           marginBottom: '16px',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           Achievement Rewards
         </h3>
@@ -322,7 +322,7 @@ const PointsLegend = () => {
                 margin: '0 0 16px 0',
                 fontSize: '18px',
                 fontWeight: '600',
-                color: 'rgb(var(--md-sys-color-primary))'
+                color: 'var(--md-sys-color-primary)'
               }}>
                 {category.title}
               </h4>
@@ -335,7 +335,7 @@ const PointsLegend = () => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       padding: '10px 16px',
-                      background: 'rgb(var(--md-sys-color-surface-variant))',
+                      background: 'var(--md-sys-color-surface-variant)',
                       borderRadius: '8px'
                     }}
                   >
@@ -343,13 +343,13 @@ const PointsLegend = () => {
                       <div style={{
                         fontSize: '15px',
                         fontWeight: '500',
-                        color: 'rgb(var(--md-sys-color-on-surface))'
+                        color: 'var(--md-sys-color-on-surface)'
                       }}>
                         {achievement.title || achievement.name}
                       </div>
                       <div style={{
                         fontSize: '13px',
-                        color: 'rgb(var(--md-sys-color-on-surface-variant))'
+                        color: 'var(--md-sys-color-on-surface-variant)'
                       }}>
                         {achievement.requirement}
                       </div>
@@ -357,7 +357,7 @@ const PointsLegend = () => {
                     <div style={{
                       fontSize: '14px',
                       fontWeight: 'bold',
-                      color: 'rgb(var(--md-sys-color-primary))'
+                      color: 'var(--md-sys-color-primary)'
                     }}>
                       +{achievement.points} pts
                     </div>
@@ -372,7 +372,7 @@ const PointsLegend = () => {
       {/* Tips Section */}
       <MD3Card style={{
         padding: '24px',
-        background: 'linear-gradient(135deg, rgba(var(--md-sys-color-tertiary), 0.1) 0%, rgba(var(--md-sys-color-primary), 0.1) 100%)'
+        background: 'linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-tertiary) 10%, transparent) 0%, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent) 100%)'
       }}>
         <h4 style={{
           display: 'flex',
@@ -381,25 +381,25 @@ const PointsLegend = () => {
           margin: '0 0 16px 0',
           fontSize: '18px',
           fontWeight: '600',
-          color: 'rgb(var(--md-sys-color-on-surface))'
+          color: 'var(--md-sys-color-on-surface)'
         }}>
           <Icon name="tips" size={22} />
           Pro Tips for Maximum Points
         </h4>
         <div style={{ display: 'grid', gap: '12px' }}>
-          <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             • <strong>Daily consistency:</strong> Log in and check in daily for steady point accumulation
           </div>
-          <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             • <strong>Active reading:</strong> Take notes and create highlights while reading for bonus points
           </div>
-          <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             • <strong>Reading streaks:</strong> Read consecutive days to unlock high-value streak achievements
           </div>
-          <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             • <strong>Complete books:</strong> Finishing books gives substantial point bonuses
           </div>
-          <div style={{ fontSize: '14px', color: 'rgb(var(--md-sys-color-on-surface-variant))' }}>
+          <div style={{ fontSize: '14px', color: 'var(--md-sys-color-on-surface-variant)' }}>
             • <strong>Build your library:</strong> Upload books regularly to unlock collection achievements
           </div>
         </div>

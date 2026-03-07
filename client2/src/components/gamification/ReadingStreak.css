@@ -13,7 +13,7 @@
 }
 
 .streak-header h3 {
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
   margin: 0;
 }
 
@@ -41,18 +41,18 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 1rem;
-  background: rgb(var(--md-sys-color-surface-variant), 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-surface-variant) 30%, transparent);
   border-radius: 12px;
 }
 
 .streak-number {
   font-size: 2rem;
   font-weight: 600;
-  color: rgb(var(--md-sys-color-primary));
+  color: var(--md-sys-color-primary);
 }
 
 .streak-label {
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Weekly Progress */
@@ -61,7 +61,7 @@
 }
 
 .weekly-progress > p {
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
   margin-bottom: 0.75rem;
 }
 
@@ -85,24 +85,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(var(--md-sys-color-surface-variant));
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  background: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.3s ease;
 }
 
 .day-indicator.active {
-  background: rgb(var(--md-sys-color-tertiary));
-  color: rgb(var(--md-sys-color-on-tertiary));
+  background: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
 }
 
 .day-indicator.today {
-  border: 2px solid rgb(var(--md-sys-color-primary));
+  border: 2px solid var(--md-sys-color-primary);
 }
 
 .day-name {
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Streak Actions */
@@ -114,12 +114,12 @@
 .streak-message {
   text-align: center;
   padding-top: 1rem;
-  border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .streak-message p {
   margin: 0;
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Responsive Design */

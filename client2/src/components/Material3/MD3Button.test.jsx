@@ -56,7 +56,7 @@ describe('MD3Button', () => {
       const button = screen.getByRole('button')
       // Check for filled variant default styles
       expect(button).toHaveStyle({
-        backgroundColor: '#24A8E0',
+        backgroundColor: 'var(--md-sys-color-primary)',
         color: '#ffffff'
       })
     })
@@ -212,7 +212,7 @@ describe('MD3Button', () => {
       expect(focusRing).toBeInTheDocument()
       expect(focusRing).toHaveStyle({
         position: 'absolute',
-        boxShadow: '0 0 0 2px rgba(36, 168, 224, .35)'
+        boxShadow: '0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent)'
       })
     })
 
