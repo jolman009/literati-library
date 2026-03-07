@@ -407,6 +407,13 @@
   color: var(--md-sys-color-error);
 }
 
+/* Desktop: hide header logo (nav panel already shows ShelfQuest branding) */
+@media (min-width: 769px) {
+  .premium-header-logo-btn {
+    display: none;
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .premium-header-search {

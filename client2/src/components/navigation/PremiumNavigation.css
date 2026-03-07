@@ -20,14 +20,16 @@
   padding: 16px 12px;
 }
 
-/* Header section */
+/* Header section — height must match .premium-header in PremiumHeader.css */
 .md3-rail-header {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 0.75rem 1rem;
   gap: 16px;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  min-height: 64px;
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  min-height: 0;
+  height: auto;
+  box-sizing: border-box;
   background: var(--md-sys-color-surface-container-low);
   transition: background-color 0.3s ease;
 }
@@ -380,16 +382,26 @@
 }
 
 /* Light mode specific override for navigation visibility */
-:root:not([data-theme="dark"]) .md3-navigation-rail {
+.md3-navigation-rail:not(.dark) {
   background: #d1d5db;
   border-right: 1px solid #9ca3af;
 }
 
 /* Ensure text is dark and readable in light mode */
-:root:not([data-theme="dark"]) .md3-rail-destination,
-:root:not([data-theme="dark"]) .md3-rail-destination-label,
-:root:not([data-theme="dark"]) .md3-rail-title {
+.md3-navigation-rail:not(.dark) .md3-rail-destination,
+.md3-navigation-rail:not(.dark) .md3-rail-destination-label,
+.md3-navigation-rail:not(.dark) .md3-rail-title {
   color: #1f2937;
+}
+
+/* Dark mode: ensure text is readable on dark surface */
+.md3-navigation-rail.dark .md3-rail-title {
+  color: var(--md-sys-color-primary);
+}
+
+.md3-navigation-rail.dark .md3-rail-destination,
+.md3-navigation-rail.dark .md3-rail-destination-label {
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Scrollbar styling */
