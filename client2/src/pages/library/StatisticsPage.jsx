@@ -216,7 +216,7 @@ const StatisticsPage = ({ books = [], readingSessions = [], user: _user }) => {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
         <div style={{
           fontSize: '32px',
-          background: color || '#24A8E0',
+          background: color || 'var(--md-sys-color-primary)',
           width: '56px',
           height: '56px',
           borderRadius: '12px',
@@ -282,7 +282,7 @@ const StatisticsPage = ({ books = [], readingSessions = [], user: _user }) => {
           label="Total Books"
           value={stats.totalBooks}
           subValue={`${stats.currentlyReading} currently reading`}
-          color="#24A8E0"
+          color="var(--md-sys-color-primary)"
         />
         
         <StatCard
@@ -401,7 +401,7 @@ const StatisticsPage = ({ books = [], readingSessions = [], user: _user }) => {
                 <div style={{
                   fontSize: '20px',
                   fontWeight: 'bold',
-                  color: '#24A8E0'
+                  color: 'var(--md-sys-color-primary)'
                 }}>
                   {count}
                 </div>

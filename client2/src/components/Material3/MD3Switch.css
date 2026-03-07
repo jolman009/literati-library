@@ -61,8 +61,8 @@
 .md3-switch__track-background {
   position: absolute;
   inset: 0;
-  background-color: rgb(var(--_track-color-unselected));
-  border: 2px solid rgb(var(--_track-outline-color));
+  background-color: var(--_track-color-unselected);
+  border: 2px solid var(--_track-outline-color);
   border-radius: inherit;
   transition: 
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
@@ -93,7 +93,7 @@
 .md3-switch__handle-background {
   position: absolute;
   inset: 0;
-  background-color: rgb(var(--_handle-color));
+  background-color: var(--_handle-color);
   border-radius: inherit;
   transition: 
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
@@ -104,7 +104,7 @@
   position: relative;
   width: 16px;
   height: 16px;
-  color: rgb(var(--_icon-color));
+  color: var(--_icon-color);
   z-index: 1;
   transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
@@ -119,7 +119,7 @@
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  background-color: rgb(var(--md-sys-color-on-surface) / 0.12);
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
   opacity: 0;
   transform: scale(0);
   transition: 
@@ -138,20 +138,20 @@
 
 .md3-switch__label {
   font: var(--md-sys-typescale-body-large-font);
-  color: rgb(var(--_label-text-color));
+  color: var(--_label-text-color);
   line-height: var(--md-sys-typescale-body-large-line-height);
   user-select: none;
 }
 
 .md3-switch__supporting-text {
   font: var(--md-sys-typescale-body-medium-font);
-  color: rgb(var(--_supporting-text-color));
+  color: var(--_supporting-text-color);
   line-height: var(--md-sys-typescale-body-medium-line-height);
 }
 
 /* Selected State */
 .md3-switch__input:checked + .md3-switch__track .md3-switch__track-background {
-  background-color: rgb(var(--_track-color-selected));
+  background-color: var(--_track-color-selected);
   border-color: transparent;
 }
 
@@ -160,11 +160,11 @@
 }
 
 .md3-switch__input:checked + .md3-switch__track .md3-switch__handle-background {
-  background-color: rgb(var(--_handle-color-selected));
+  background-color: var(--_handle-color-selected);
 }
 
 .md3-switch--with-icons .md3-switch__input:checked + .md3-switch__track .md3-switch__icon {
-  color: rgb(var(--_icon-color-selected));
+  color: var(--_icon-color-selected);
 }
 
 /* Interactive States */
@@ -178,7 +178,7 @@
 }
 
 .md3-switch__input:focus-visible + .md3-switch__track {
-  outline: 2px solid rgb(var(--md-sys-color-primary));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
@@ -212,7 +212,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 16px;
-  background-color: rgb(var(--md-sys-color-surface-container-low));
+  background-color: var(--md-sys-color-surface-container-low);
   border-radius: var(--md-sys-shape-corner-large);
 }
 
@@ -221,19 +221,19 @@
   flex-direction: column;
   gap: 4px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .md3-settings-group__title {
   font: var(--md-sys-typescale-title-medium-font);
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
   line-height: var(--md-sys-typescale-title-medium-line-height);
   margin: 0;
 }
 
 .md3-settings-group__description {
   font: var(--md-sys-typescale-body-medium-font);
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
   line-height: var(--md-sys-typescale-body-medium-line-height);
   margin: 0;
 }
@@ -247,18 +247,18 @@
 /* Specialized Settings Components */
 .md3-reading-settings .md3-switch {
   padding: 12px;
-  background-color: rgb(var(--md-sys-color-surface));
+  background-color: var(--md-sys-color-surface);
   border-radius: var(--md-sys-shape-corner-medium);
   transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
 
 .md3-reading-settings .md3-switch:hover {
-  background-color: rgb(var(--md-sys-color-surface-container));
+  background-color: var(--md-sys-color-surface-container);
 }
 
 .md3-privacy-settings .md3-switch {
   padding: 8px 0;
-  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant) / 0.5);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 50%, transparent);
 }
 
 .md3-privacy-settings .md3-switch:last-child {
@@ -342,25 +342,25 @@
   }
   
   .md3-settings-group {
-    border: 2px solid rgb(var(--md-sys-color-outline));
+    border: 2px solid var(--md-sys-color-outline);
   }
   
   .md3-reading-settings .md3-switch {
-    border: 1px solid rgb(var(--md-sys-color-outline-variant));
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
 }
 
 /* Dark Theme Adjustments */
 @media (prefers-color-scheme: dark) {
   .md3-settings-group {
-    background-color: rgb(var(--md-sys-color-surface-container));
+    background-color: var(--md-sys-color-surface-container);
   }
   
   .md3-reading-settings .md3-switch {
-    background-color: rgb(var(--md-sys-color-surface-container-low));
+    background-color: var(--md-sys-color-surface-container-low);
   }
   
   .md3-reading-settings .md3-switch:hover {
-    background-color: rgb(var(--md-sys-color-surface-container-high));
+    background-color: var(--md-sys-color-surface-container-high);
   }
 }

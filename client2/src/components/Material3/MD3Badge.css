@@ -22,9 +22,9 @@
   min-width: var(--_container-height);
   height: var(--_container-height);
   padding: 0 4px;
-  background-color: rgb(var(--_container-color));
+  background-color: var(--_container-color);
   border-radius: var(--_container-shape);
-  border: 2px solid rgb(var(--md-sys-color-surface));
+  border: 2px solid var(--md-sys-color-surface);
   transform: scale(1);
   transform-origin: center;
   transition: 
@@ -34,7 +34,7 @@
 
 .md3-badge__content {
   font: var(--_label-text-font);
-  color: rgb(var(--_label-text-color));
+  color: var(--_label-text-color);
   line-height: var(--md-sys-typescale-label-small-line-height);
   font-weight: 500;
   white-space: nowrap;
@@ -92,8 +92,8 @@
 .md3-badge--outline {
   --_container-color: transparent;
   --_label-text-color: var(--md-sys-color-outline);
-  border: 2px solid rgb(var(--md-sys-color-outline));
-  background-color: rgb(var(--md-sys-color-surface));
+  border: 2px solid var(--md-sys-color-outline);
+  background-color: var(--md-sys-color-surface);
 }
 
 /* Badge Positions */
@@ -282,14 +282,14 @@
   }
   
   .md3-badge--surface {
-    border: 3px solid rgb(var(--md-sys-color-outline));
+    border: 3px solid var(--md-sys-color-outline);
   }
 }
 
 /* Dark Theme Adjustments */
 @media (prefers-color-scheme: dark) {
   .md3-badge {
-    border-color: rgb(var(--md-sys-color-surface-container));
+    border-color: var(--md-sys-color-surface-container);
   }
   
   .md3-badge--surface {

@@ -14,7 +14,7 @@ const GamificationRulesPage = () => {
     {
       title: 'Reading Activities',
       icon: '📖',
-      color: 'rgb(var(--md-sys-color-primary))',
+      color: 'var(--md-sys-color-primary)',
       actions: [
         { action: 'Start Reading Session', points: 5, icon: '🚀', description: 'Begin a new reading session' },
         { action: 'Complete Reading Session', points: 10, icon: '✅', description: 'Finish a reading session' },
@@ -26,7 +26,7 @@ const GamificationRulesPage = () => {
     {
       title: 'Library Management',
       icon: '📚',
-      color: 'rgb(var(--md-sys-color-secondary))',
+      color: 'var(--md-sys-color-secondary)',
       actions: [
         { action: 'Upload Book', points: 25, icon: '📤', description: 'Add a new book to your library' },
         { action: 'Daily Login', points: 10, icon: '🌅', description: 'Sign in to your account daily' },
@@ -36,7 +36,7 @@ const GamificationRulesPage = () => {
     {
       title: 'Note-Taking & Study',
       icon: '📝',
-      color: 'rgb(var(--md-sys-color-tertiary))',
+      color: 'var(--md-sys-color-tertiary)',
       actions: [
         { action: 'Create Note', points: 15, icon: '📋', description: 'Write a note about your reading' },
         { action: 'Create Highlight', points: 10, icon: '✏️', description: 'Highlight important text passages' },
@@ -201,7 +201,7 @@ const GamificationRulesPage = () => {
                 </div>
                 <div className="gamification-point-badge" style={{
                   color: category.color,
-                  background: `rgba(${category.color.slice(4, -1)}, 0.1)`
+                  background: `color-mix(in srgb, ${category.color} 10%, transparent)`
                 }}>
                   +{action.points} pts
                 </div>
@@ -233,12 +233,12 @@ const GamificationRulesPage = () => {
               style={{
                 padding: '20px',
                 background: isCurrentLevel
-                  ? 'linear-gradient(135deg, rgb(var(--md-sys-color-primary)) 0%, rgb(var(--md-sys-color-secondary)) 100%)'
+                  ? 'linear-gradient(135deg, var(--md-sys-color-primary) 0%, var(--md-sys-color-secondary) 100%)'
                   : isCompleted
-                  ? 'rgb(var(--md-sys-color-primary-container))'
-                  : 'rgb(var(--md-sys-color-surface-container))',
-                color: isCurrentLevel ? 'white' : 'rgb(var(--md-sys-color-on-surface))',
-                border: isCurrentLevel ? '2px solid transparent' : '1px solid rgb(var(--md-sys-color-outline-variant))',
+                  ? 'var(--md-sys-color-primary-container)'
+                  : 'var(--md-sys-color-surface-container)',
+                color: isCurrentLevel ? 'white' : 'var(--md-sys-color-on-surface)',
+                border: isCurrentLevel ? '2px solid transparent' : '1px solid var(--md-sys-color-outline-variant)',
                 position: 'relative'
               }}
             >

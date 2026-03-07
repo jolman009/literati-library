@@ -182,16 +182,16 @@
 .md3-recent-book-card.highlighted {
   animation: bookHighlight 2s ease-in-out;
   transform: scale(1.02);
-  box-shadow: 0 8px 24px rgba(36, 168, 224, 0.3);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
 }
 
 @keyframes bookHighlight {
-  0%, 100% { 
+  0%, 100% {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
   }
-  50% { 
-    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.4);
+  50% {
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
     transform: translateY(-4px) scale(1.02);
   }
 }
@@ -575,18 +575,18 @@
   animation: mainBookHighlight 2s ease-in-out;
   background: var(--md-sys-color-primary-container) !important;
   transform: scale(1.02);
-  box-shadow: 0 8px 24px rgba(36, 168, 224, 0.3);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
 }
 
 @keyframes mainBookHighlight {
-  0%, 100% { 
+  0%, 100% {
     background: var(--md-sys-color-surface);
     box-shadow: 0 4px 12px rgba(160, 85, 15, 0.9);
     transform: translateY(0);
   }
-  90% { 
+  90% {
     background: var(--md-sys-color-primary-container);
-    box-shadow: 0 12px 32px rgba(36, 168, 224, 0.9);
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--md-sys-color-primary) 90%, transparent);
     transform: translateY(-4px) scale(1.02);
   }
 }

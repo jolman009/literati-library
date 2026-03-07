@@ -1,10 +1,10 @@
 import React from 'react';
 
 const VARIANTS = {
-  assist:  { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
-  filter:  { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
-  input:   { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
-  suggest: { bg:'rgb(var(--md-sys-color-surface-container-low))', fg:'rgb(var(--md-sys-color-on-surface))', selBg:'rgb(var(--md-sys-color-primary))', selFg:'rgb(var(--md-sys-color-on-primary))' },
+  assist:  { bg:'var(--md-sys-color-surface-container-low)', fg:'var(--md-sys-color-on-surface)', selBg:'var(--md-sys-color-primary)', selFg:'var(--md-sys-color-on-primary)' },
+  filter:  { bg:'var(--md-sys-color-surface-container-low)', fg:'var(--md-sys-color-on-surface)', selBg:'var(--md-sys-color-primary)', selFg:'var(--md-sys-color-on-primary)' },
+  input:   { bg:'var(--md-sys-color-surface-container-low)', fg:'var(--md-sys-color-on-surface)', selBg:'var(--md-sys-color-primary)', selFg:'var(--md-sys-color-on-primary)' },
+  suggest: { bg:'var(--md-sys-color-surface-container-low)', fg:'var(--md-sys-color-on-surface)', selBg:'var(--md-sys-color-primary)', selFg:'var(--md-sys-color-on-primary)' },
 };
 
 export default React.forwardRef(function MD3Chip(
@@ -38,7 +38,7 @@ export default React.forwardRef(function MD3Chip(
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 8,
         padding: pad, borderRadius: radius,
-        border: selected ? 'none' : '1px solid rgb(var(--md-sys-color-outline-variant))',
+        border: selected ? 'none' : '1px solid var(--md-sys-color-outline-variant)',
         background: selected ? v.selBg : v.bg,
         color: selected ? v.selFg : v.fg,
         cursor: disabled ? 'not-allowed' : 'pointer',

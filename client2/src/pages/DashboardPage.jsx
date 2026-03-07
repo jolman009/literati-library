@@ -643,7 +643,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Reading Activities',
       icon: '📖',
-      color: '#24A8E0',
+      color: 'var(--md-sys-color-primary)',
       actions: [
         { action: 'Start Reading Session', points: 5, icon: '🚀' },
         { action: 'Complete Reading Session', points: 10, icon: '✅' },
@@ -655,7 +655,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Library Management',
       icon: '📚',
-      color: '#24A8E0',
+      color: 'var(--md-sys-color-primary)',
       actions: [
         { action: 'Upload Book', points: 25, icon: '📤' },
         { action: 'Daily Login', points: 10, icon: '🌅' },
@@ -665,7 +665,7 @@ const PointCategoriesSection = () => {
     {
       title: 'Note-Taking & Study',
       icon: '📝',
-      color: '#24A8E0',
+      color: 'var(--md-sys-color-primary)',
       actions: [
         { action: 'Create Note', points: 15, icon: '📋' },
         { action: 'Create Highlight', points: 10, icon: '✏️' },

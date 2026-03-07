@@ -123,15 +123,15 @@
 }
 
 .heatmap-day.level-1 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.25);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
 }
 
 .heatmap-day.level-2 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.5);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
 }
 
 .heatmap-day.level-3 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.75);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 75%, transparent);
 }
 
 .heatmap-day.level-4 {
@@ -144,15 +144,15 @@
 }
 
 [data-actual-theme="dark"] .heatmap-day.level-1 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
 }
 
 [data-actual-theme="dark"] .heatmap-day.level-2 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.5);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
 }
 
 [data-actual-theme="dark"] .heatmap-day.level-3 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.7);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 70%, transparent);
 }
 
 [data-actual-theme="dark"] .heatmap-day.level-4 {
@@ -233,15 +233,15 @@
 }
 
 .legend-box.level-1 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.25);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
 }
 
 .legend-box.level-2 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.5);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
 }
 
 .legend-box.level-3 {
-  background: rgba(var(--md-sys-color-primary-rgb, 36, 168, 224), 0.75);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 75%, transparent);
 }
 
 .legend-box.level-4 {

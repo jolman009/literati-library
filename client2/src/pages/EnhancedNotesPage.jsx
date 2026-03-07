@@ -81,7 +81,7 @@ const WordCloud = ({ notes }) => {
       {wordFrequency.map(({ word, count }) => {
         const fontSize = 14 + (count / maxCount) * 28;
         const opacity = 0.5 + (count / maxCount) * 0.5;
-        const colors = ['#24A8E0', '#24A8E0', '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50'];
+        const colors = ['var(--md-sys-color-primary)', 'var(--md-sys-color-primary)', '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
         return (
@@ -157,7 +157,7 @@ const TimelineView = ({ notes, onNoteClick }) => {
               width: '12px',
               height: '12px',
               borderRadius: '50%',
-              backgroundColor: '#24A8E0',
+              backgroundColor: 'var(--md-sys-color-primary)',
               marginRight: '16px',
               position: 'relative',
               zIndex: 2
@@ -1087,7 +1087,7 @@ const EnhancedNotesPage = () => {
                   alignItems: 'center',
                   gap: '8px',
                   backgroundColor: 'white',
-                  color: '#24A8E0',
+                  color: 'var(--md-sys-color-primary)',
                   fontWeight: '600',
                   padding: '12px 24px',
                   border: 'none',
@@ -1609,7 +1609,7 @@ const EnhancedNotesPage = () => {
             position: 'fixed',
             bottom: '24px',
             right: '24px',
-            backgroundColor: '#24A8E0'
+            backgroundColor: 'var(--md-sys-color-primary)'
           }}
         />
         

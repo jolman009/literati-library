@@ -8,11 +8,11 @@ import React, { useRef } from 'react';
  * Features: leading/trailing icons, loading, disabled, fullWidth, href (link), ripple, a11y focus ring
  */
 const VARIANT_TOKENS = {
-  filled:   { bg:'#24A8E0',  fg:'#ffffff',  border:'none',     container:'#24A8E0' },
-  elevated: { bg:'#ffffff',  fg:'#24A8E0',  border:'none',     shadow:'0 2px 6px rgba(0,0,0,.18)' },
-  tonal:    { bg:'#eaddff',  fg:'#21005d',  border:'none' },
-  outlined: { bg:'transparent', fg:'#24A8E0', border:'1px solid #79747e' },
-  text:     { bg:'transparent', fg:'#24A8E0', border:'none' },
+  filled:   { bg:'var(--md-sys-color-primary)',  fg:'var(--md-sys-color-on-primary)',  border:'none' },
+  elevated: { bg:'var(--md-sys-color-surface-container-low)',  fg:'var(--md-sys-color-primary)',  border:'none',     shadow:'0 2px 6px rgba(0,0,0,.18)' },
+  tonal:    { bg:'var(--md-sys-color-secondary-container, #eaddff)',  fg:'var(--md-sys-color-on-secondary-container, #21005d)',  border:'none' },
+  outlined: { bg:'transparent', fg:'var(--md-sys-color-primary)', border:'1px solid var(--md-sys-color-outline, #79747e)' },
+  text:     { bg:'transparent', fg:'var(--md-sys-color-primary)', border:'none' },
 };
 
 const SIZE_TOKENS = {
@@ -107,7 +107,7 @@ const MD3Button = React.forwardRef(({
 
   const focusRing = {
     position:'absolute', inset:-2, borderRadius:s.radius+2,
-    boxShadow:'0 0 0 2px rgba(36, 168, 224, .35)',
+    boxShadow:'0 0 0 2px color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent)',
     pointerEvents:'none', opacity:0, transition:'opacity .15s ease'
   };
 

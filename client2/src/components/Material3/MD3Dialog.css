@@ -3,7 +3,7 @@
 .md3-dialog__scrim {
   position: fixed;
   inset: 0;
-  background-color: rgb(var(--md-sys-color-scrim) / 0.32);
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +18,7 @@
   --_container-elevation: var(--md-sys-elevation-level3);
 
   position: relative;
-  background-color: rgb(var(--_container-color));
+  background-color: var(--_container-color);
   border-radius: var(--_container-shape);
   box-shadow: var(--_container-elevation);
   max-height: calc(100vh - 32px);
@@ -34,12 +34,12 @@
   /* Use plain surface in light mode for higher contrast */
   --_container-color: var(--md-sys-color-surface);
   --_container-elevation: var(--md-sys-elevation-level2);
-  border: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* Ensure dialog content text uses on-surface in light mode */
 .md3-dialog__scrim:not(.dark) .md3-dialog__content {
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
 }
 
 .md3-dialog__container {
@@ -56,7 +56,7 @@
 
 .md3-dialog__title {
   font: var(--md-sys-typescale-headline-small-font);
-  color: rgb(var(--md-sys-color-on-surface));
+  color: var(--md-sys-color-on-surface);
   margin: 0;
   line-height: var(--md-sys-typescale-headline-small-line-height);
 }
@@ -66,7 +66,7 @@
   padding: 0 24px;
   flex: 1;
   overflow-y: auto;
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-body-medium-font);
   line-height: var(--md-sys-typescale-body-medium-line-height);
 }
@@ -124,11 +124,11 @@
 
 /* Dividers */
 .md3-dialog--dividers .md3-dialog__header {
-  border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
 }
 
 .md3-dialog--dividers .md3-dialog__actions {
-  border-top: 1px solid rgb(var(--md-sys-color-outline-variant));
+  border-top: 1px solid var(--md-sys-color-outline-variant);
 }
 
 /* Dialog Actions Component */
@@ -142,39 +142,39 @@
    Ensures strong contrast regardless of global clamps
    ============================================================= */
 .md3-dialog.contact-dialog {
-  background-color: rgb(var(--md-sys-color-surface)) !important;
-  color: rgb(var(--md-sys-color-on-surface)) !important;
-  border: 1px solid rgb(var(--md-sys-color-outline-variant)) !important;
+  background-color: var(--md-sys-color-surface) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
   box-shadow: var(--md-sys-elevation-level2) !important;
   width: auto !important;
   max-width: 768px !important; /* standard md dialog */
 }
 
 .md3-dialog.contact-dialog .md3-dialog__content {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 .md3-dialog.contact-dialog .contact-grid .md3-text-field__input {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 .md3-dialog.contact-dialog .contact-grid .md3-text-field__label,
 .md3-dialog.contact-dialog .contact-grid .md3-select-label {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 .md3-dialog.contact-dialog .contact-grid .md3-select {
-  background: rgb(var(--md-sys-color-surface)) !important;
-  color: rgb(var(--md-sys-color-on-surface)) !important;
-  border-color: rgb(var(--md-sys-color-outline)) !important;
+  background: var(--md-sys-color-surface) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  border-color: var(--md-sys-color-outline) !important;
 }
 
 .md3-dialog.contact-dialog .contact-checkbox {
-  color: rgb(var(--md-sys-color-on-surface)) !important;
+  color: var(--md-sys-color-on-surface) !important;
 }
 
 .md3-dialog.contact-dialog .contact-message-field .md3-text-field__container {
-  border-color: rgb(var(--md-sys-color-outline)) !important;
+  border-color: var(--md-sys-color-outline) !important;
   box-shadow: var(--md-sys-elevation-level1, 0 1px 2px rgba(0,0,0,0.06)) !important;
 }
 
@@ -203,7 +203,7 @@
 .md3-dialog__message {
   margin: 0;
   padding: 16px 0;
-  color: rgb(var(--md-sys-color-on-surface-variant));
+  color: var(--md-sys-color-on-surface-variant);
   font: var(--md-sys-typescale-body-medium-font);
   line-height: var(--md-sys-typescale-body-medium-line-height);
 }
@@ -324,7 +324,7 @@
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   .md3-dialog {
-    border: 2px solid rgb(var(--md-sys-color-outline));
+    border: 2px solid var(--md-sys-color-outline);
   }
   
   .md3-dialog--dividers .md3-dialog__header,
@@ -336,6 +336,6 @@
 /* Dark Theme Adjustments */
 @media (prefers-color-scheme: dark) {
   .md3-dialog__scrim {
-    background-color: rgb(var(--md-sys-color-scrim) / 0.48);
+    background-color: color-mix(in srgb, var(--md-sys-color-scrim) 48%, transparent);
   }
 }

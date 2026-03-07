@@ -82,13 +82,13 @@
   font-size: var(--text-3xl, 1.875rem);
   font-weight: 700;
   margin: 0 0 var(--spacing-sm, 8px) 0;
-  color: rgb(var(--md-sys-color-on-surface, 28, 28, 28));
+  color: var(--md-sys-color-on-surface, #1c1c1c);
 }
 
 .collections-header-section p {
   font-size: var(--text-base, 1rem);
   margin: 0 0 0 0;
-  color: rgb(var(--md-sys-color-on-surface-variant, 115, 115, 115));
+  color: var(--md-sys-color-on-surface-variant, #737373);
   opacity: 0.8;
 }
 
@@ -142,7 +142,7 @@
 
 .collection-card {
   /* Dynamic collection color set via CSS custom properties */
-  --collection-color: #24A8E0; /* Default fallback */
+  --collection-color: var(--md-sys-color-primary); /* Default fallback */
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--collection-color) 8%, transparent),
     color-mix(in srgb, var(--collection-color) 3%, transparent)
@@ -308,9 +308,9 @@
 
 .collection-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 
-    0 8px 24px rgba(36, 168, 224, 0.15),
-    0 4px 8px rgba(36, 168, 224, 0.1);
+  box-shadow:
+    0 8px 24px color-mix(in srgb, var(--md-sys-color-primary) 15%, transparent),
+    0 4px 8px color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
 }
 
 .collection-card:active {
@@ -349,10 +349,10 @@
 /* Drag and Drop States */
 .collection-card.drag-over {
   transform: scale(1.05);
-  box-shadow: 
-    0 12px 32px rgba(36, 168, 224, 0.25),
-    0 0 0 3px rgba(36, 168, 224, 0.3);
-  background: linear-gradient(135deg, rgba(36, 168, 224, 0.1), rgba(124, 77, 255, 0.05));
+  box-shadow:
+    0 12px 32px color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent), rgba(124, 77, 255, 0.05));
 }
 
 .book-dragging {
@@ -509,8 +509,8 @@
 
 /* Batch Mode Styles */
 .batch-mode-active {
-  background: linear-gradient(135deg, rgba(36, 168, 224, 0.1), rgba(124, 77, 255, 0.05));
-  border: 2px dashed rgba(36, 168, 224, 0.3);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent), rgba(124, 77, 255, 0.05));
+  border: 2px dashed color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent);
 }
 
 .batch-mode-active .collection-card {
@@ -524,14 +524,14 @@
   right: 8px;
   width: 24px;
   height: 24px;
-  border: 2px solid #24A8E0;
+  border: 2px solid var(--md-sys-color-primary);
   border-radius: 50%;
   background: white;
   z-index: 10;
 }
 
 .batch-mode-active .collection-card.selected::after {
-  background: #24A8E0;
+  background: var(--md-sys-color-primary);
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>');
 }
 
@@ -693,13 +693,13 @@
 }
 
 .collection-card-batch-button {
-  background-color: #24A8E0 !important;
+  background-color: var(--md-sys-color-primary) !important;
   color: white !important;
   font-size: 12px !important;
 }
 
 .collection-card-edit-button {
-  color: #24A8E0 !important;
+  color: var(--md-sys-color-primary) !important;
 }
 
 .collection-card-stats {
@@ -717,13 +717,13 @@
 /* Collection Book Preview */
 .collection-book-preview-area {
   padding: 16px;
-  background: rgb(var(--md-sys-color-surface-container-lowest, 255, 255, 255));
+  background: var(--md-sys-color-surface-container-lowest, #ffffff);
 }
 
 /* Dark mode support for preview area */
 [data-theme="dark"] .collection-book-preview-area,
 .dark .collection-book-preview-area {
-  background: rgb(var(--md-sys-color-surface-container-low, 28, 27, 31));
+  background: var(--md-sys-color-surface-container-low, #1c1b1f);
 }
 
 .collection-book-grid {
@@ -778,13 +778,13 @@
 .collection-empty-state {
   text-align: center;
   padding: 32px 16px;
-  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
 }
 
 /* Dark mode support for empty state */
 [data-theme="dark"] .collection-empty-state,
 .dark .collection-empty-state {
-  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
+  color: var(--md-sys-color-on-surface-variant, #cac4d0);
 }
 
 .collection-empty-icon {
@@ -923,7 +923,7 @@
 .draggable-book-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #24A8E0;
+  background-color: var(--md-sys-color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1012,7 +1012,7 @@
 }
 
 .batch-mode-book.selected {
-  border-color: #24A8E0;
+  border-color: var(--md-sys-color-primary);
   transform: scale(1.05);
 }
 
@@ -1025,7 +1025,7 @@
 .batch-mode-book-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #24A8E0;
+  background-color: var(--md-sys-color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1042,7 +1042,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #24A8E0;
+  background-color: var(--md-sys-color-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -1070,11 +1070,11 @@
 }
 
 .batch-mode-bottom-panel.loading {
-  background-color: rgba(36, 168, 224, 0.8);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 80%, transparent);
 }
 
 .batch-mode-bottom-panel.normal {
-  background-color: #24A8E0;
+  background-color: var(--md-sys-color-primary);
 }
 
 .batch-mode-loading-content {
@@ -1133,7 +1133,7 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background-color: #24A8E0 !important;
+  background-color: var(--md-sys-color-primary) !important;
 }
 
 /* Dialog Content Styles */
@@ -1260,7 +1260,7 @@
 }
 
 .dialog-edit-button {
-  color: #24A8E0 !important;
+  color: var(--md-sys-color-primary) !important;
 }
 
 /* Create/Edit Collection Form */
@@ -1302,8 +1302,8 @@
 }
 
 .icon-picker-item.selected {
-  border-color: #24A8E0;
-  background-color: #24A8E020;
+  border-color: var(--md-sys-color-primary);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
 }
 
 .color-picker-grid {
@@ -1371,7 +1371,7 @@
 
 /* Accessibility Improvements */
 .collection-card[aria-selected="true"] {
-  background: rgba(36, 168, 224, 0.1);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
   border-color: var(--md-sys-color-primary);
 }
 

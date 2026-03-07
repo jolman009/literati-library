@@ -11,8 +11,8 @@
   display: block;
   
   /* Material Design 3 Surface Fundamentals */
-  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
   
   /* Shape */
   border-radius: var(--md-sys-shape-corner-medium, 12px);
@@ -30,96 +30,96 @@
 
 /* Surface (Base level) */
 .md3-surface--surface {
-  background-color: rgb(var(--md-sys-color-surface, 255 255 255));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Surface Dim (Slightly darker background) */
 .md3-surface--surface-dim {
-  background-color: rgb(var(--md-sys-color-surface-dim, 222 216 225));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-dim);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Surface Bright (Slightly brighter background) */
 .md3-surface--surface-bright {
-  background-color: rgb(var(--md-sys-color-surface-bright, 255 251 255));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-bright);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Surface Container Levels */
 .md3-surface--surface-container-lowest {
-  background-color: rgb(var(--md-sys-color-surface-container-lowest, 255 255 255));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
 }
 
 .md3-surface--surface-container-low {
-  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
 }
 
 .md3-surface--surface-container {
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
 }
 
 .md3-surface--surface-container-high {
-  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
 }
 
 .md3-surface--surface-container-highest {
-  background-color: rgb(var(--md-sys-color-surface-container-highest, 230 224 233));
-  color: rgb(var(--md-sys-color-on-surface, 28 27 31));
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
 }
 
 /* Surface Variant */
 .md3-surface--surface-variant {
-  background-color: rgb(var(--md-sys-color-surface-variant, 231 224 236));
-  color: rgb(var(--md-sys-color-on-surface-variant, 73 69 79));
+  background-color: var(--md-sys-color-surface-variant);
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 /* Primary Surface */
 .md3-surface--primary {
-  background-color: rgb(var(--md-sys-color-primary, 103 80 164));
-  color: rgb(var(--md-sys-color-on-primary, 255 255 255));
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
 }
 
 .md3-surface--primary-container {
-  background-color: rgb(var(--md-sys-color-primary-container, 234 221 255));
-  color: rgb(var(--md-sys-color-on-primary-container, 33 0 93));
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* Secondary Surface */
 .md3-surface--secondary {
-  background-color: rgb(var(--md-sys-color-secondary, 98 91 113));
-  color: rgb(var(--md-sys-color-on-secondary, 255 255 255));
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
 }
 
 .md3-surface--secondary-container {
-  background-color: rgb(var(--md-sys-color-secondary-container, 232 222 248));
-  color: rgb(var(--md-sys-color-on-secondary-container, 29 25 43));
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
 }
 
 /* Tertiary Surface */
 .md3-surface--tertiary {
-  background-color: rgb(var(--md-sys-color-tertiary, 125 82 96));
-  color: rgb(var(--md-sys-color-on-tertiary, 255 255 255));
+  background-color: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
 }
 
 .md3-surface--tertiary-container {
-  background-color: rgb(var(--md-sys-color-tertiary-container, 255 216 228));
-  color: rgb(var(--md-sys-color-on-tertiary-container, 55 11 30));
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
 }
 
 /* Error Surface */
 .md3-surface--error {
-  background-color: rgb(var(--md-sys-color-error, 186 26 26));
-  color: rgb(var(--md-sys-color-on-error, 255 255 255));
+  background-color: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
 }
 
 .md3-surface--error-container {
-  background-color: rgb(var(--md-sys-color-error-container, 249 222 220));
-  color: rgb(var(--md-sys-color-on-error-container, 65 14 11));
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
 }
 
 /* ===============================================
@@ -203,14 +203,14 @@
 
 /* Book Card Surface */
 .md3-surface--book-card {
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  background-color: var(--md-sys-color-surface-container);
   border-radius: var(--md-sys-shape-corner-large, 16px);
   padding: var(--md-sys-spacing-4, 16px);
   transition: all var(--md-sys-motion-duration-short4, 200ms) var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
 }
 
 .md3-surface--book-card:hover {
-  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  background-color: var(--md-sys-color-surface-container-high);
   box-shadow: var(--md-sys-elevation-level2, 
     0px 1px 2px rgba(0, 0, 0, 0.3), 
     0px 2px 6px 2px rgba(0, 0, 0, 0.15)
@@ -219,13 +219,13 @@
 
 /* Navigation Surface */
 .md3-surface--navigation {
-  background-color: rgb(var(--md-sys-color-surface-container, 243 237 247));
+  background-color: var(--md-sys-color-surface-container);
   border-radius: 0;
 }
 
 /* Dialog Surface */
 .md3-surface--dialog {
-  background-color: rgb(var(--md-sys-color-surface-container-high, 236 230 240));
+  background-color: var(--md-sys-color-surface-container-high);
   border-radius: var(--md-sys-shape-corner-extra-large, 24px);
   box-shadow: var(--md-sys-elevation-level5, 
     0px 4px 4px rgba(0, 0, 0, 0.3), 
@@ -235,7 +235,7 @@
 
 /* Floating Surface */
 .md3-surface--floating {
-  background-color: rgb(var(--md-sys-color-surface-container-low, 247 243 249));
+  background-color: var(--md-sys-color-surface-container-low);
   border-radius: var(--md-sys-shape-corner-medium, 12px);
   box-shadow: var(--md-sys-elevation-level3, 
     0px 1px 3px rgba(0, 0, 0, 0.3), 
@@ -260,7 +260,7 @@
 }
 
 .md3-surface--interactive:focus-visible {
-  outline: 2px solid rgb(var(--md-sys-color-primary, 103 80 164));
+  outline: 2px solid var(--md-sys-color-primary);
   outline-offset: 2px;
 }
 
@@ -277,16 +277,16 @@
 
 @media (prefers-color-scheme: dark) {
   .md3-surface {
-    background-color: rgb(var(--md-sys-color-surface, 28 27 31));
-    color: rgb(var(--md-sys-color-on-surface, 230 225 229));
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
   }
   
   .md3-surface--surface-dim {
-    background-color: rgb(var(--md-sys-color-surface-dim, 17 16 20));
+    background-color: var(--md-sys-color-surface-dim);
   }
   
   .md3-surface--surface-bright {
-    background-color: rgb(var(--md-sys-color-surface-bright, 67 66 70));
+    background-color: var(--md-sys-color-surface-bright);
   }
 }
 
@@ -296,7 +296,7 @@
 
 @media (prefers-contrast: high) {
   .md3-surface {
-    border: 1px solid rgb(var(--md-sys-color-outline, 121 116 126));
+    border: 1px solid var(--md-sys-color-outline);
   }
   
   .md3-surface--interactive:focus-visible {

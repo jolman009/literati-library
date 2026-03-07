@@ -3,7 +3,7 @@
 .book-carousel-container {
   position: relative;
   padding: 20px;
-  background: rgb(var(--md-sys-color-surface-container-lowest, 255, 255, 255));
+  background: var(--md-sys-color-surface-container-lowest, #ffffff);
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -15,7 +15,7 @@
 /* Dark mode support */
 [data-theme="dark"] .book-carousel-container,
 .dark .book-carousel-container {
-  background: rgb(var(--md-sys-color-surface-container-low, 28, 27, 31));
+  background: var(--md-sys-color-surface-container-low, #1c1b1f);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -23,13 +23,13 @@
 .book-carousel-header {
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant, 202, 196, 208), 0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant, #cac4d0) 30%, transparent);
   flex-shrink: 0;
 }
 
 [data-theme="dark"] .book-carousel-header,
 .dark .book-carousel-header {
-  border-bottom: 1px solid rgba(var(--md-sys-color-outline-variant, 73, 69, 79), 0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant, #49454f) 30%, transparent);
 }
 
 .book-carousel-title {
@@ -39,23 +39,23 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgb(var(--md-sys-color-on-surface, 28, 27, 31));
+  color: var(--md-sys-color-on-surface, #1c1b1f);
 }
 
 [data-theme="dark"] .book-carousel-title,
 .dark .book-carousel-title {
-  color: rgb(var(--md-sys-color-on-surface, 230, 225, 229));
+  color: var(--md-sys-color-on-surface, #e6e1e5);
 }
 
 .book-carousel-subtitle {
   margin: 4px 0 0 0;
   font-size: 0.875rem;
-  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
 }
 
 [data-theme="dark"] .book-carousel-subtitle,
 .dark .book-carousel-subtitle {
-  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
+  color: var(--md-sys-color-on-surface-variant, #cac4d0);
 }
 
 /* Scrollable Grid Container */
@@ -76,24 +76,24 @@
 }
 
 .book-grid-scrollable::-webkit-scrollbar-track {
-  background: rgba(var(--md-sys-color-surface-variant, 231, 224, 236), 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-surface-variant, #e7e0ec) 30%, transparent);
   border-radius: 4px;
 }
 
 .book-grid-scrollable::-webkit-scrollbar-thumb {
-  background: rgba(36, 168, 224, 0.5);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent);
   border-radius: 4px;
   transition: background 0.3s;
 }
 
 .book-grid-scrollable::-webkit-scrollbar-thumb:hover {
-  background: rgba(36, 168, 224, 0.8);
+  background: color-mix(in srgb, var(--md-sys-color-primary) 80%, transparent);
 }
 
 /* Dark mode scrollbar */
 [data-theme="dark"] .book-grid-scrollable::-webkit-scrollbar-track,
 .dark .book-grid-scrollable::-webkit-scrollbar-track {
-  background: rgba(var(--md-sys-color-surface-variant, 73, 69, 79), 0.3);
+  background: color-mix(in srgb, var(--md-sys-color-surface-variant, #49454f) 30%, transparent);
 }
 
 /* Book Grid Item */
@@ -106,19 +106,19 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   border: 2px solid transparent;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgb(var(--md-sys-color-surface-container, 243, 237, 247));
+  background: var(--md-sys-color-surface-container, #f3edf7);
 }
 
 [data-theme="dark"] .book-grid-item,
 .dark .book-grid-item {
-  background: rgb(var(--md-sys-color-surface-container, 46, 43, 50));
+  background: var(--md-sys-color-surface-container, #2e2b32);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .book-grid-item:hover {
   transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 8px 16px rgba(36, 168, 224, 0.25);
-  border-color: rgba(36, 168, 224, 0.4);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--md-sys-color-primary) 25%, transparent);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
   z-index: 10;
 }
 
@@ -204,12 +204,12 @@
 .book-carousel-empty {
   text-align: center;
   padding: 48px 16px;
-  color: rgb(var(--md-sys-color-on-surface-variant, 73, 69, 79));
+  color: var(--md-sys-color-on-surface-variant, #49454f);
 }
 
 [data-theme="dark"] .book-carousel-empty,
 .dark .book-carousel-empty {
-  color: rgb(var(--md-sys-color-on-surface-variant, 202, 196, 208));
+  color: var(--md-sys-color-on-surface-variant, #cac4d0);
 }
 
 .book-carousel-empty-icon {
@@ -292,9 +292,9 @@
 
 /* Focus Management */
 .book-grid-item:focus-visible {
-  outline: 2px solid rgba(36, 168, 224, 0.8);
+  outline: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 80%, transparent);
   outline-offset: 2px;
-  border-color: rgba(36, 168, 224, 0.6);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent);
 }
 
 

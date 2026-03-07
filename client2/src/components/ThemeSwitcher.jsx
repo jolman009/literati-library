@@ -237,7 +237,7 @@ const ThemeSwitcher = () => {
               style={{
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 0.3}s`,
-                backgroundColor: ['#24A8E0', '#7c5dc7', '#2d6b3f', '#996300'][
+                backgroundColor: ['#0D74A0', '#7c5dc7', '#2d6b3f', '#996300'][
                   Math.floor(Math.random() * 4)
                 ],
               }}

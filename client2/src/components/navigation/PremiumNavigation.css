@@ -246,7 +246,7 @@
 }
 
 .md3-rail-destination-logout:hover {
-  background: rgba(var(--md-sys-color-error-rgb, 179, 38, 30), 0.08);
+  background: color-mix(in srgb, var(--md-sys-color-error) 8%, transparent);
   color: var(--md-sys-color-error);
 }
 

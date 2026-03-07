@@ -79,8 +79,8 @@ const FillingArc = ({
             {/* Gradient definition */}
             <defs>
               <linearGradient id="gradient-simple" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
-                <stop offset="100%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="0%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
+                <stop offset="100%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
               </linearGradient>
             </defs>
           </g>
@@ -95,7 +95,7 @@ const FillingArc = ({
               cy={center}
               r={radius + 4}
               fill="none"
-              stroke="rgba(var(--md-sys-color-primary), 0.1)"
+              stroke="color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent)"
               strokeWidth={2}
               className="arc-outer-glow"
             />
@@ -154,14 +154,14 @@ const FillingArc = ({
             {/* Gradient and filter definitions */}
             <defs>
               <linearGradient id="gradient-detailed" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
-                <stop offset="50%" stopColor="#24A8E0" stopOpacity="1" />
-                <stop offset="100%" stopColor="#24A8E0" stopOpacity="1" />
+                <stop offset="0%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
+                <stop offset="50%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
+                <stop offset="100%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
               </linearGradient>
 
               <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feFlood floodColor="#24A8E0" floodOpacity="0.6" result="glowColor"/>
+                <feFlood floodColor="var(--md-sys-color-primary)" floodOpacity="0.6" result="glowColor"/>
                 <feComposite in="glowColor" in2="coloredBlur" operator="in" result="coloredGlow"/>
                 <feMerge>
                   <feMergeNode in="coloredGlow"/>
@@ -182,7 +182,7 @@ const FillingArc = ({
               cy={center}
               r={radius + 6}
               fill="none"
-              stroke="rgba(var(--md-sys-color-primary), 0.05)"
+              stroke="color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent)"
               strokeWidth={1}
               className="arc-outer-ring"
             />
@@ -192,7 +192,7 @@ const FillingArc = ({
               cy={center}
               r={radius + 3}
               fill="none"
-              stroke="rgba(var(--md-sys-color-secondary), 0.08)"
+              stroke="color-mix(in srgb, var(--md-sys-color-secondary) 8%, transparent)"
               strokeWidth={1}
               strokeDasharray="2 2"
               className="arc-mid-ring arc-rotate-slow"
@@ -204,7 +204,7 @@ const FillingArc = ({
               cy={center}
               r={radius}
               fill="none"
-              stroke="rgba(var(--md-sys-color-outline-variant), 0.3)"
+              stroke="color-mix(in srgb, var(--md-sys-color-outline-variant) 30%, transparent)"
               strokeWidth={strokeWidth + 2}
               className="arc-background"
             />
@@ -215,7 +215,7 @@ const FillingArc = ({
               cy={center}
               r={radius - strokeWidth / 2 - 2}
               fill="none"
-              stroke="rgba(var(--md-sys-color-primary), 0.1)"
+              stroke="color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent)"
               strokeWidth={1}
               strokeDasharray="8 4"
               className="arc-inner-decoration arc-rotate"
@@ -227,7 +227,7 @@ const FillingArc = ({
               cy={center}
               r={radius}
               fill="none"
-              stroke="rgba(var(--md-sys-color-primary), 0.3)"
+              stroke="color-mix(in srgb, var(--md-sys-color-primary) 30%, transparent)"
               strokeWidth={strokeWidth + 4}
               className="arc-underglow arc-pulse-slow"
             />
@@ -290,21 +290,21 @@ const FillingArc = ({
             {/* Gradient and filter definitions */}
             <defs>
               <linearGradient id="gradient-intricate" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#24A8E0" stopOpacity="1" />
-                <stop offset="33%" stopColor="#24A8E0" stopOpacity="0.95" />
+                <stop offset="0%" stopColor="var(--md-sys-color-primary)" stopOpacity="1" />
+                <stop offset="33%" stopColor="var(--md-sys-color-primary)" stopOpacity="0.95" />
                 <stop offset="66%" stopColor="#f093fb" stopOpacity="0.9" />
                 <stop offset="100%" stopColor="#4facfe" stopOpacity="1" />
               </linearGradient>
 
               <linearGradient id="gradient-trail" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#24A8E0" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="var(--md-sys-color-primary)" stopOpacity="0.3" />
                 <stop offset="100%" stopColor="#4facfe" stopOpacity="0.1" />
               </linearGradient>
 
               <radialGradient id="radial-cap">
                 <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                <stop offset="50%" stopColor="rgb(var(--md-sys-color-primary))" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="rgb(var(--md-sys-color-tertiary))" stopOpacity="1" />
+                <stop offset="50%" stopColor="var(--md-sys-color-primary)" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="var(--md-sys-color-tertiary)" stopOpacity="1" />
               </radialGradient>
 
               <filter id="glow-filter-intense" x="-100%" y="-100%" width="300%" height="300%">
@@ -330,7 +330,7 @@ const FillingArc = ({
                 cy={center}
                 r={radius + (5 - i) * 4}
                 fill="none"
-                stroke={`rgba(var(--md-sys-color-primary), ${0.02 * (i + 1)})`}
+                stroke={`color-mix(in srgb, var(--md-sys-color-primary) ${Math.round(0.02 * (i + 1) * 100)}%, transparent)`}
                 strokeWidth={1}
                 className={`arc-cosmic-layer arc-pulse-delay-${i}`}
               />
@@ -347,7 +347,7 @@ const FillingArc = ({
                     cx={center + starRadius * Math.cos(angle)}
                     cy={center + starRadius * Math.sin(angle)}
                     r={0.5}
-                    fill="rgba(var(--md-sys-color-primary), 0.5)"
+                    fill="color-mix(in srgb, var(--md-sys-color-primary) 50%, transparent)"
                     className="arc-star arc-twinkle"
                     style={{ animationDelay: `${i * 0.1}s` }}
                   />
