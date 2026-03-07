@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Updated: 2026-03-05 | Status: Phase 2 In Progress (2.1 & 2.2 Complete)
+> Generated: 2026-02-15 | Updated: 2026-03-06 | Status: Phase 2 Complete (2.1, 2.2 & 2.3 Done)
 
 ---
 
@@ -18,7 +18,7 @@
 | Accessibility (WCAG)                 | MOSTLY DONE      | Form a11y, ARIA roles, skip link, axe tests, ESLint   |
 | Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
 | Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
-| Browser Extension                    | IN PROGRESS      | 2.1 scaffold + 2.2 web clipper complete; 2.3 next      |
+| Browser Extension                    | DONE             | 2.1 scaffold + 2.2 clipper + 2.3 notes; Chrome Web Store ready |
 
 ---
 
@@ -80,6 +80,7 @@
 ## Phase 2 — Edge Extension Foundation (Weeks 4-8)
 
 **Goal**: Ship the first ShelfQuest Edge/Chrome extension with core reading features.
+**Status**: Complete — Extension v1.0.0 ready for Chrome Web Store submission.
 
 ### 2.1 Extension Scaffold & Infrastructure ✅
 - **Source**: edge-extension-ideas.md (all items depend on this)
@@ -113,16 +114,32 @@
 - **Effort**: ~6 days (estimated) → ~2 days (actual)
 - **Dependencies**: 2.1
 
-### 2.3 Citation & Notes Collector
+### 2.3 Citation & Notes Collector ✅
 - **Source**: edge-extension-ideas.md, AI & Reading Helpers
-- **Scope**: Extension content script + popup
+- **Scope**: Extension content script + popup + server + client + DB migration
+- **Completed**: 2026-03-06
 - **Tasks**:
-  - Content script: highlight text on any webpage
-  - Popup aggregates highlights with source URLs
-  - Sync highlights to ShelfQuest notes system (reuse existing notes API)
-  - LLM generates summary bullets and study questions (via ai-service)
-- **Effort**: ~7 days
-- **Dependencies**: 2.1, ai-service endpoints
+  - [x] Context menu "Save as Note" — captures selected text + page metadata
+  - [x] QuickNote popup panel — textarea + tags + Ctrl+Enter shortcut
+  - [x] Content script `CAPTURE_FOR_NOTE` message type with turndown markdown
+  - [x] DB migration: `source_url`, `source_title`, `source_favicon` on notes, drop NOT NULL on `book_id`
+  - [x] Server accepts source fields in POST/PUT, omits book_id when null
+  - [x] Client shows source citation (favicon + hostname link) on web-captured notes
+  - [x] Parent context menu "ShelfQuest" with children "Save as Clipping" / "Save as Note"
+  - [ ] LLM summary bullets and study questions (deferred to Phase 3)
+- **Effort**: ~7 days (estimated) → ~1 day (actual, excluding LLM features)
+- **Dependencies**: 2.1, 2.2
+
+### 2.4 Chrome Web Store Submission ✅
+- **Scope**: Store listing, screenshots, privacy policy, ZIP packaging
+- **Completed**: 2026-03-06
+- **Tasks**:
+  - [x] Extension version bumped to 1.0.0
+  - [x] Store listing document (`extension/STORE_LISTING.md`)
+  - [x] 5 screenshots resized to 1280×800 (popup, context menu, clippings, quicknote, notes)
+  - [x] Permission justifications for store review
+  - [x] Privacy policy live at shelfquest.org/legal/privacy-policy
+  - [x] ZIP built and ready for upload (115 KB)
 
 ---
 
@@ -268,11 +285,11 @@
 ## Risk & Dependency Map
 
 ```
-Phase 1 (no blockers)
+Phase 1 (mostly done — screenshots & social login pending)
   |
-Phase 2.1 (extension scaffold) ──► Phase 2.2, 2.3
+Phase 2.1 ✅ ──► 2.2 ✅ ──► 2.3 ✅ ──► 2.4 ✅ (Chrome Web Store)
   |
-Phase 3.1, 3.2, 3.3 (depend on 2.1 + ai-service)
+Phase 3.1, 3.2, 3.3 (depend on 2.1 + ai-service) ◄── NEXT
   |
 Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
   |
