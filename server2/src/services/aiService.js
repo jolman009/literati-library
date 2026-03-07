@@ -371,6 +371,109 @@ class AIService {
   }
 
   /**
+   * Auto-tag a task from web-selected text (Phase 3.3)
+   */
+  async autoTagTask(text, sourceContext = {}) {
+    const cacheKey = `task_${this.hashText(text)}`;
+
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      return this.autoTagTaskFallback(text, sourceContext);
+    }
+
+    try {
+      const userPrompt = `Selected text: "${text.substring(0, 1000)}"
+Source URL: ${sourceContext.url || 'Unknown'}
+Source Title: ${sourceContext.title || 'Unknown'}
+
+Categorize this into a reading task and return JSON.`;
+
+      const completion = await this.openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are a task categorization assistant. Analyze the selected text and page context to categorize this into a reading task. Return JSON with: category (one of: reading, research, review, meeting, documentation, learning), suggested_title (short actionable title), suggested_tags (array of 1-3 tags), goal_type (one of: pages, time, books, streak), suggested_target (integer target value), priority (low/medium/high)."
+          },
+          {
+            role: "user",
+            content: userPrompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 400,
+        response_format: { type: "json_object" }
+      });
+
+      const result = JSON.parse(completion.choices[0].message.content);
+
+      // Cache the result
+      this.requestCache.set(cacheKey, result);
+
+      return {
+        ...result,
+        aiGenerated: true,
+        timestamp: Date.now()
+      };
+
+    } catch (error) {
+      console.error('AI auto-tag task failed:', error);
+      serverCrashReporting.reportAIError?.(error, 'auto_tag_task', { text_length: text.length });
+
+      // Fall back to keyword-based categorization
+      return this.autoTagTaskFallback(text, sourceContext);
+    }
+  }
+
+  /**
+   * Fallback task categorization using keyword matching
+   */
+  async autoTagTaskFallback(text, sourceContext = {}) {
+    const lower = text.toLowerCase();
+
+    let category = 'reading';
+    if (/\breview\b/.test(lower)) category = 'review';
+    else if (/\bmeet(ing)?\b/.test(lower)) category = 'meeting';
+    else if (/\bresearch\b/.test(lower)) category = 'research';
+    else if (/\bdoc(ument)?\b/.test(lower)) category = 'documentation';
+    else if (/\blearn(ing)?\b|\bstudy\b|\bcourse\b/.test(lower)) category = 'learning';
+    else if (/\bread\b/.test(lower)) category = 'reading';
+
+    // Extract a short title from the text
+    const firstSentence = text.split(/[.!?\n]/).filter(s => s.trim().length > 0)[0] || text;
+    const suggested_title = firstSentence.trim().substring(0, 80);
+
+    // Simple tag extraction from common keywords
+    const tagCandidates = ['book', 'article', 'chapter', 'paper', 'report', 'notes', 'summary', 'project'];
+    const suggested_tags = tagCandidates.filter(tag => lower.includes(tag)).slice(0, 3);
+    if (suggested_tags.length === 0) suggested_tags.push(category);
+
+    const goalTypeMap = {
+      reading: 'pages',
+      research: 'time',
+      review: 'books',
+      meeting: 'time',
+      documentation: 'pages',
+      learning: 'time'
+    };
+
+    return {
+      category,
+      suggested_title,
+      suggested_tags,
+      goal_type: goalTypeMap[category] || 'pages',
+      suggested_target: category === 'time' ? 30 : 10,
+      priority: 'medium',
+      aiGenerated: false,
+      fallbackUsed: true,
+      timestamp: Date.now()
+    };
+  }
+
+  /**
    * Build prompts for different AI operations
    */
   buildTextAnalysisPrompt(text, context) {

@@ -9,7 +9,7 @@ import TurndownService from 'turndown';
 const turndown = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type !== 'CAPTURE_PAGE_DATA' && message.type !== 'CAPTURE_FOR_NOTE') return false;
+  if (message.type !== 'CAPTURE_PAGE_DATA' && message.type !== 'CAPTURE_FOR_NOTE' && message.type !== 'CAPTURE_FOR_TASK') return false;
 
   try {
     const data = capturePageData();

@@ -553,6 +553,53 @@ export const gamificationRouter = (authenticateToken) => {
     }
   });
 
+  // POST /api/gamification/goals/from-task - Create goal from web-captured task (Phase 3.3)
+  router.post('/goals/from-task', async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { title, description, type, goal_type, target, source_url, source_title, source_favicon, ai_category, ai_tags } = req.body;
+
+      if (!title) return res.status(400).json({ error: 'Title is required' });
+
+      const goalData = {
+        user_id: userId,
+        title,
+        description: description || '',
+        type: type || 'custom',
+        goal_type: goal_type || 'pages',
+        target: target || 1,
+        target_value: target || 1,
+        current: 0,
+        current_value: 0,
+        points: Math.max(50, Math.floor((target || 1) * 10)),
+        period: 'custom',
+        is_active: true,
+        is_completed: false,
+        source_url: source_url || null,
+        source_title: source_title || null,
+        source_favicon: source_favicon || null,
+        ai_category: ai_category || null,
+        ai_tags: ai_tags || [],
+      };
+
+      const { data, error } = await supabase
+        .from('user_goals')
+        .insert([goalData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Record activity
+      await recordDailyActivity(userId, 'general');
+
+      res.status(201).json(data);
+    } catch (e) {
+      console.error('Error creating goal from task:', e);
+      res.status(500).json({ error: 'Failed to create goal' });
+    }
+  });
+
   // GET /api/gamification/actions/breakdown - Get points broken down by action type
   router.get('/actions/breakdown', async (req, res) => {
     try {
