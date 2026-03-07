@@ -8,14 +8,14 @@
    THEME 1: CLASSIC (Default - 0 points)
    ============================================== */
 [data-theme="classic"][data-actual-theme="light"] {
-  /* Primary - Blue */
-  --md-sys-color-primary: #24A8E0;
+  /* Primary - Blue (darkened from #24A8E0 for WCAG AA 5.2:1 on white) */
+  --md-sys-color-primary: #0D74A0;
   --md-sys-color-on-primary: #ffffff;
   --md-sys-color-primary-container: #d4e9f7;
   --md-sys-color-on-primary-container: #001f2a;
 
-  /* Secondary - Cyan/Teal (complementary to primary blue) */
-  --md-sys-color-secondary: #0891b2;
+  /* Secondary - Cyan/Teal (darkened from #0891b2 for WCAG AA 4.76:1) */
+  --md-sys-color-secondary: #077d9a;
   --md-sys-color-on-secondary: #ffffff;
   --md-sys-color-secondary-container: #cffafe;
   --md-sys-color-on-secondary-container: #083344;
@@ -40,8 +40,8 @@
   --md-sys-color-surface-variant: #dde3ea;
   --md-sys-color-on-surface-variant: #41484d;
 
-  /* Outline */
-  --md-sys-color-outline: #71787e;
+  /* Outline (darkened from #71787e for WCAG AA 5.1:1) */
+  --md-sys-color-outline: #666d73;
   --md-sys-color-outline-variant: #c1c7ce;
 
   /* Additional surface tones */
@@ -107,8 +107,8 @@
   --md-sys-color-primary-container: #ffedb8;
   --md-sys-color-on-primary-container: #2b1f00;
 
-  /* Secondary - Soft Orange */
-  --md-sys-color-secondary: #cc7a30;
+  /* Secondary - Soft Orange (darkened from #cc7a30 for WCAG AA 5.2:1) */
+  --md-sys-color-secondary: #9d5d1c;
   --md-sys-color-on-secondary: #ffffff;
   --md-sys-color-secondary-container: #ffdcc3;
   --md-sys-color-on-secondary-container: #301400;
@@ -133,8 +133,8 @@
   --md-sys-color-surface-variant: #ede1cf;
   --md-sys-color-on-surface-variant: #4c4639;
 
-  /* Outline */
-  --md-sys-color-outline: #7d7667;
+  /* Outline (darkened from #7d7667 for WCAG AA 5.4:1) */
+  --md-sys-color-outline: #6e6758;
   --md-sys-color-outline-variant: #d0c5b4;
 
   /* Additional surface tones */
@@ -226,8 +226,8 @@
   --md-sys-color-surface-variant: #dde3ea;
   --md-sys-color-on-surface-variant: #41484d;
 
-  /* Outline */
-  --md-sys-color-outline: #71787e;
+  /* Outline (darkened from #71787e for WCAG AA 5.0:1) */
+  --md-sys-color-outline: #666d73;
   --md-sys-color-outline-variant: #c1c7ce;
 
   /* Additional surface tones */
@@ -319,8 +319,8 @@
   --md-sys-color-surface-variant: #dee5d9;
   --md-sys-color-on-surface-variant: #424940;
 
-  /* Outline */
-  --md-sys-color-outline: #727970;
+  /* Outline (darkened from #727970 for WCAG AA 5.0:1) */
+  --md-sys-color-outline: #676e65;
   --md-sys-color-outline-variant: #c2c9bd;
 
   /* Additional surface tones */
@@ -412,8 +412,8 @@
   --md-sys-color-surface-variant: #e7e0eb;
   --md-sys-color-on-surface-variant: #49454e;
 
-  /* Outline */
-  --md-sys-color-outline: #7a757f;
+  /* Outline (darkened from #7a757f for WCAG AA 5.0:1) */
+  --md-sys-color-outline: #6f6a74;
   --md-sys-color-outline-variant: #cac4cf;
 
   /* Additional surface tones */
@@ -505,8 +505,8 @@
   --md-sys-color-surface-variant: #ede1d0;
   --md-sys-color-on-surface-variant: #4d4639;
 
-  /* Outline */
-  --md-sys-color-outline: #7f7667;
+  /* Outline (darkened from #7f7667 for WCAG AA 5.2:1) */
+  --md-sys-color-outline: #74695b;
   --md-sys-color-outline-variant: #d0c5b4;
 
   /* Additional surface tones */
