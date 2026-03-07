@@ -1,0 +1,252 @@
+/* Sidebar — Chrome Side Panel UI */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #fafafa;
+  color: #1a1c1e;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.sidebar-logo {
+  color: #0D74A0;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1c1e;
+  flex: 1;
+}
+
+.sidebar-refresh {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-refresh:hover:not(:disabled) {
+  background: #f0f0f0;
+  color: #0D74A0;
+}
+
+.sidebar-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Active tab context bar */
+.sidebar-context {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 11px;
+  color: #666;
+  overflow: hidden;
+}
+
+.sidebar-context-favicon {
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sidebar-context-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Body */
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Unauthenticated / empty states */
+.sidebar-unauthenticated,
+.sidebar-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+  gap: 12px;
+}
+
+.sidebar-empty-icon {
+  color: #999;
+}
+
+.sidebar-empty-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.sidebar-empty-hint {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+}
+
+/* Reading Queue */
+.sidebar-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  flex-wrap: wrap;
+}
+
+.queue-item:hover {
+  border-color: #0D74A0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.queue-item-cover {
+  width: 40px;
+  height: 56px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+
+.queue-item-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.queue-item-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
+.queue-item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.queue-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1c1e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-item-author {
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-item-progress {
+  height: 3px;
+  background: #e8e8e8;
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.queue-item-progress-bar {
+  height: 100%;
+  background: #0D74A0;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.queue-item-reason {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #0D74A0;
+  padding-top: 4px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Footer */
+.sidebar-footer {
+  padding: 10px 16px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 12px;
+}
+
+.sidebar-footer a {
+  color: #0D74A0;
+  text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Spinner animation */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Login form override for sidebar context */
+.sidebar-unauthenticated .login-form {
+  width: 100%;
+}

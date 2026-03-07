@@ -141,6 +141,32 @@ export const apiRateLimit = rateLimit({
 });
 
 /**
+ * AI endpoints rate limiter
+ * Controls LLM call quota per user to manage costs
+ */
+export const aiRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 50, // 50 AI calls per IP per hour
+  message: {
+    error: 'AI usage limit reached. Please try again later.',
+    code: 'AI_RATE_LIMIT_EXCEEDED',
+    retryAfter: '1 hour'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: isLocalhostDev,
+  handler: (req, res) => {
+    console.warn(`AI rate limit exceeded for IP: ${req.ip}, Path: ${req.path}`);
+    res.status(429).json({
+      error: 'You have reached your AI usage limit. Please try again in an hour.',
+      code: 'AI_RATE_LIMIT_EXCEEDED',
+      retryAfter: '1 hour',
+      currentLimit: '50 AI calls per hour'
+    });
+  }
+});
+
+/**
  * Gamification endpoints rate limiter
  * Prevents farming/exploitation of points system
  */
@@ -207,6 +233,7 @@ export const rateLimitSuite = {
   auth: authRateLimit,
   upload: uploadRateLimit,
   api: apiRateLimit,
+  ai: aiRateLimit,
   gamification: gamificationRateLimit
 };
 

@@ -55,6 +55,14 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ['selection'],
   });
 
+  // Open Reading Queue sidebar (Phase 3)
+  chrome.contextMenus.create({
+    id: 'open-sidebar',
+    parentId: 'shelfquest-parent',
+    title: 'Open Reading Queue',
+    contexts: ['page', 'selection', 'link'],
+  });
+
   // Set up periodic token refresh (every 14 minutes — tokens expire at 15)
   chrome.alarms.create('token-refresh', { periodInMinutes: 14 });
 });
@@ -66,6 +74,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await handleSaveClipping(tab);
   } else if (info.menuItemId === 'save-as-note') {
     await handleSaveAsNote(tab);
+  } else if (info.menuItemId === 'open-sidebar') {
+    await chrome.sidePanel.open({ windowId: tab.windowId });
   }
 });
 
@@ -151,6 +161,35 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       await remove(KEYS.REFRESH_TOKEN);
       await remove(KEYS.USER);
       sendResponse({ success: true });
+    })();
+    return true;
+  }
+
+  // Phase 3 — Reading queue for sidebar
+  if (message.type === 'GET_READING_QUEUE') {
+    (async () => {
+      try {
+        const token = await get(KEYS.ACCESS_TOKEN);
+        if (!token) {
+          sendResponse({ success: false, error: 'Not authenticated' });
+          return;
+        }
+        const params = {};
+        if (message.payload?.url) params.context_url = message.payload.url;
+        if (message.payload?.title) params.context_title = message.payload.title;
+
+        const res = await API.get('/api/books', { params: { limit: 20, sort: 'updated' } });
+        const books = (res.data?.books || res.data || []).map((b) => ({
+          id: b.id,
+          title: b.title,
+          author: b.author,
+          cover_url: b.cover_url || b.thumbnail,
+          progress: b.progress ?? null,
+        }));
+        sendResponse({ success: true, data: books });
+      } catch (err) {
+        sendResponse({ success: false, error: err.message });
+      }
     })();
     return true;
   }

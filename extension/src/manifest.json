@@ -23,12 +23,16 @@
     "type": "module"
   },
   "options_page": "src/options/index.html",
+  "side_panel": {
+    "default_path": "src/sidebar/index.html"
+  },
   "permissions": [
     "storage",
     "contextMenus",
     "activeTab",
     "scripting",
-    "alarms"
+    "alarms",
+    "sidePanel"
   ],
   "content_scripts": [
     {
