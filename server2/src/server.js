@@ -302,7 +302,7 @@ app.use('/api/cloud-storage', cloudStorageRouter(authenticateTokenEnhanced));
 app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
 app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));
-app.use('/ai', aiRouter(authenticateTokenEnhanced));
+app.use('/ai', rateLimitSuite.ai, aiRouter(authenticateTokenEnhanced));
 app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
 
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
