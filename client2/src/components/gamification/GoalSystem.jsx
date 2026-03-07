@@ -95,15 +95,15 @@ const GoalItem = ({ goal, onComplete }) => {
         </div>
       </div>
 
-      {/* Goal Type Indicator */}
-      <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
+      {/* Goal Type Indicator + Source Citation */}
+      <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
         <span style={{
           display: 'inline-block',
           padding: '4px 8px',
           borderRadius: '4px',
           fontSize: '12px',
           fontWeight: '500',
-          backgroundColor: 
+          backgroundColor:
             goal.type === 'pages' ? '#dbeafe' :
             goal.type === 'time' ? '#f3e8ff' :
             goal.type === 'streak' ? '#fed7aa' :
@@ -122,6 +122,47 @@ const GoalItem = ({ goal, onComplete }) => {
            goal.type === 'level' ? '⭐ Level' :
            '🎯 Goal'}
         </span>
+
+        {goal.ai_category && (
+          <span style={{
+            display: 'inline-block',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: '500',
+            backgroundColor: '#e0f2fe',
+            color: '#0369a1',
+          }}>
+            AI: {goal.ai_category}
+          </span>
+        )}
+
+        {goal.source_url && (
+          <a
+            href={goal.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '11px',
+              color: 'var(--md-sys-color-on-surface-variant)',
+              textDecoration: 'none',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              background: 'var(--md-sys-color-surface-container, #f3f4f6)',
+            }}
+            title={goal.source_title || goal.source_url}
+          >
+            {goal.source_favicon && (
+              <img src={goal.source_favicon} alt="" width="12" height="12" style={{ borderRadius: '2px' }} />
+            )}
+            <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {(() => { try { return new URL(goal.source_url).hostname; } catch { return 'web'; } })()}
+            </span>
+          </a>
+        )}
       </div>
     </MD3Card>
   );

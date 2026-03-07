@@ -55,6 +55,14 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ['selection'],
   });
 
+  // Create Task from Selection (Phase 3.3)
+  chrome.contextMenus.create({
+    id: 'create-task',
+    parentId: 'shelfquest-parent',
+    title: 'Create Task from Selection',
+    contexts: ['selection'],
+  });
+
   // Open Reading Queue sidebar (Phase 3)
   chrome.contextMenus.create({
     id: 'open-sidebar',
@@ -74,6 +82,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await handleSaveClipping(tab);
   } else if (info.menuItemId === 'save-as-note') {
     await handleSaveAsNote(tab);
+  } else if (info.menuItemId === 'create-task') {
+    await handleCreateTask(tab);
   } else if (info.menuItemId === 'open-sidebar') {
     await chrome.sidePanel.open({ windowId: tab.windowId });
   }
@@ -135,6 +145,61 @@ async function handleSaveAsNote(tab) {
     await set(KEYS.NOTE_STATUS, {
       state: 'error',
       message: detail || 'Failed to save note',
+      ts: Date.now(),
+    });
+  }
+}
+
+// Phase 3.3 — Create Task from Selection
+async function handleCreateTask(tab) {
+  if (!(await requireAuth(KEYS.TASK_STATUS))) return;
+
+  await set(KEYS.TASK_STATUS, { state: 'pending', ts: Date.now() });
+
+  try {
+    const response = await ensureContentScript(tab.id, 'CAPTURE_FOR_TASK');
+
+    if (!response?.success) {
+      throw new Error(response?.error || 'Content script capture failed');
+    }
+
+    const { data } = response;
+    const text = data.content || data.selected_text || '';
+
+    // Get AI categorization
+    let aiResult = {};
+    try {
+      const aiRes = await API.post('/ai/auto-tag-task', {
+        text,
+        source_url: data.url,
+        source_title: data.title,
+      });
+      aiResult = aiRes.data || {};
+    } catch {
+      // AI tagging is optional — continue without it
+      aiResult = { suggested_title: data.title || 'Web Task', category: 'reading', suggested_tags: [] };
+    }
+
+    await API.post('/api/gamification/goals/from-task', {
+      title: aiResult.suggested_title || data.title || 'Web Task',
+      description: text.slice(0, 500),
+      type: aiResult.category || 'custom',
+      goal_type: aiResult.goal_type || 'pages',
+      target: aiResult.suggested_target || 1,
+      source_url: data.url,
+      source_title: data.title,
+      source_favicon: data.favicon_url,
+      ai_category: aiResult.category,
+      ai_tags: aiResult.suggested_tags || [],
+    });
+
+    await set(KEYS.TASK_STATUS, { state: 'saved', ts: Date.now() });
+  } catch (err) {
+    const detail = err.response?.data?.details || err.response?.data?.error || err.message;
+    console.error('[ShelfQuest] Task creation failed:', detail);
+    await set(KEYS.TASK_STATUS, {
+      state: 'error',
+      message: detail || 'Failed to create task',
       ts: Date.now(),
     });
   }

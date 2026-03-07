@@ -8,6 +8,7 @@ export const KEYS = {
   SETTINGS: 'shelfquest_settings',
   CLIP_STATUS: 'shelfquest_clip_status',
   NOTE_STATUS: 'shelfquest_note_status',
+  TASK_STATUS: 'shelfquest_task_status',
   SIDEBAR_STATE: 'shelfquest_sidebar_state',
   READING_QUEUE: 'shelfquest_reading_queue',
 };

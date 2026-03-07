@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { get, remove, onChanged, KEYS } from '../config/storage.js';
 import LoginForm from '../components/LoginForm.jsx';
 import QuickNote from './QuickNote.jsx';
-import { BookOpen, LogOut, ExternalLink, Loader, CheckCircle, AlertCircle, LogIn, StickyNote } from 'lucide-react';
+import { BookOpen, LogOut, ExternalLink, Loader, CheckCircle, AlertCircle, LogIn, StickyNote, ListTodo } from 'lucide-react';
 import './popup.css';
 
 const STATUS_AUTO_CLEAR_MS = 4000;
@@ -12,6 +12,7 @@ export default function Popup() {
   const [loading, setLoading] = useState(true);
   const [clipStatus, setClipStatus] = useState(null);
   const [noteStatus, setNoteStatus] = useState(null);
+  const [taskStatus, setTaskStatus] = useState(null);
 
   // Clear a status after timeout
   const scheduleStatusClear = useCallback((key, setter) => (status) => {
@@ -25,6 +26,7 @@ export default function Popup() {
 
   const scheduleClearClip = useCallback(scheduleStatusClear(KEYS.CLIP_STATUS, setClipStatus), [scheduleStatusClear]);
   const scheduleClearNote = useCallback(scheduleStatusClear(KEYS.NOTE_STATUS, setNoteStatus), [scheduleStatusClear]);
+  const scheduleClearTask = useCallback(scheduleStatusClear(KEYS.TASK_STATUS, setTaskStatus), [scheduleStatusClear]);
 
   // Load auth state + statuses on mount
   useEffect(() => {
@@ -38,9 +40,11 @@ export default function Popup() {
       if (cs) { setClipStatus(cs); scheduleClearClip(cs); }
       const ns = await get(KEYS.NOTE_STATUS);
       if (ns) { setNoteStatus(ns); scheduleClearNote(ns); }
+      const ts = await get(KEYS.TASK_STATUS);
+      if (ts) { setTaskStatus(ts); scheduleClearTask(ts); }
       setLoading(false);
     })();
-  }, [scheduleClearClip, scheduleClearNote]);
+  }, [scheduleClearClip, scheduleClearNote, scheduleClearTask]);
 
   // Listen for storage changes
   useEffect(() => {
@@ -61,8 +65,13 @@ export default function Popup() {
         setNoteStatus(s);
         scheduleClearNote(s);
       }
+      if (changes[KEYS.TASK_STATUS]) {
+        const s = changes[KEYS.TASK_STATUS].newValue ?? null;
+        setTaskStatus(s);
+        scheduleClearTask(s);
+      }
     });
-  }, [scheduleClearClip, scheduleClearNote]);
+  }, [scheduleClearClip, scheduleClearNote, scheduleClearTask]);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -74,9 +83,11 @@ export default function Popup() {
     await remove(KEYS.USER);
     await remove(KEYS.CLIP_STATUS);
     await remove(KEYS.NOTE_STATUS);
+    await remove(KEYS.TASK_STATUS);
     setUser(null);
     setClipStatus(null);
     setNoteStatus(null);
+    setTaskStatus(null);
   };
 
   const openShelfQuest = () => {
@@ -166,6 +177,40 @@ export default function Popup() {
             <>
               <LogIn size={16} className="clip-status-icon" />
               <span>Sign in to save notes</span>
+            </>
+          )}
+        </div>
+      )}
+
+      {taskStatus && (
+        <div
+          className={`clip-status clip-status--${taskStatus.state}`}
+          onClick={async () => { await remove(KEYS.TASK_STATUS); setTaskStatus(null); }}
+          role="status"
+          aria-live="polite"
+        >
+          {taskStatus.state === 'pending' && (
+            <>
+              <Loader size={16} className="clip-status-icon spin" />
+              <span>Creating task...</span>
+            </>
+          )}
+          {taskStatus.state === 'saved' && (
+            <>
+              <ListTodo size={16} className="clip-status-icon" />
+              <span>Task created!</span>
+            </>
+          )}
+          {taskStatus.state === 'error' && (
+            <>
+              <AlertCircle size={16} className="clip-status-icon" />
+              <span>{taskStatus.message || 'Failed to create task'}</span>
+            </>
+          )}
+          {taskStatus.state === 'unauthenticated' && (
+            <>
+              <LogIn size={16} className="clip-status-icon" />
+              <span>Sign in to create tasks</span>
             </>
           )}
         </div>

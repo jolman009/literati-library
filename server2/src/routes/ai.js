@@ -222,6 +222,21 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // AI auto-tag task from web selection (Phase 3.3)
+  router.post('/auto-tag-task', authenticateToken, async (req, res) => {
+    try {
+      const { text, source_url, source_title } = req.body;
+      if (!text || text.length < 5) {
+        return res.status(400).json({ error: 'Text too short for task categorization' });
+      }
+      const result = await aiService.autoTagTask(text, { url: source_url, title: source_title });
+      res.json(result);
+    } catch (error) {
+      console.error('Auto-tag task error:', error);
+      res.status(500).json({ error: 'Task categorization failed' });
+    }
+  });
+
   // AI service health check and status
   router.get('/status', authenticateToken, async (req, res) => {
     try {
