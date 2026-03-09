@@ -230,7 +230,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
-  // Phase 3 — Reading queue for sidebar
+  // Phase 3.1 — Smart reading queue for sidebar (AI-prioritized)
   if (message.type === 'GET_READING_QUEUE') {
     (async () => {
       try {
@@ -239,19 +239,68 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
           sendResponse({ success: false, error: 'Not authenticated' });
           return;
         }
-        const params = {};
-        if (message.payload?.url) params.context_url = message.payload.url;
-        if (message.payload?.title) params.context_title = message.payload.title;
 
-        const res = await API.get('/api/books', { params: { limit: 20, sort: 'updated' } });
-        const books = (res.data?.books || res.data || []).map((b) => ({
-          id: b.id,
-          title: b.title,
-          author: b.author,
-          cover_url: b.cover_url || b.thumbnail,
-          progress: b.progress ?? null,
-        }));
-        sendResponse({ success: true, data: books });
+        const tabContext = message.payload;
+        let suggested = [];
+        let recent = [];
+        let topicsResult = null;
+
+        // Try AI-powered smart queue if we have tab context
+        if (tabContext?.url && tabContext?.title) {
+          try {
+            // Try to get rich page metadata from content script
+            let richContext = { url: tabContext.url, title: tabContext.title };
+            try {
+              const tabId = tabContext.tabId;
+              if (tabId) {
+                const pageData = await ensureContentScript(tabId, 'CAPTURE_PAGE_CONTEXT');
+                if (pageData?.success && pageData.data) {
+                  richContext = {
+                    url: pageData.data.url || tabContext.url,
+                    title: pageData.data.title || tabContext.title,
+                    description: pageData.data.description,
+                    tags: pageData.data.tags,
+                    site_name: pageData.data.site_name,
+                  };
+                }
+              }
+            } catch {
+              // Content script injection may fail on chrome:// pages — use basic context
+            }
+
+            // Extract topics via AI
+            const topicsRes = await API.post('/ai/extract-topics', richContext);
+            topicsResult = topicsRes.data;
+
+            // Get smart queue
+            const queueRes = await API.post('/api/books/smart-queue', {
+              topics: topicsResult.topics || [],
+              themes: topicsResult.themes || [],
+              suggestedGenres: topicsResult.suggestedGenres || [],
+              limit: 15,
+            });
+
+            suggested = queueRes.data?.suggested || [];
+            recent = queueRes.data?.recent || [];
+          } catch (err) {
+            console.warn('[ShelfQuest] Smart queue failed, falling back:', err.message);
+          }
+        }
+
+        // Fallback: if smart queue didn't produce results, fetch recent books
+        if (suggested.length === 0 && recent.length === 0) {
+          const res = await API.get('/api/books', { params: { limit: 20, sort: 'updated' } });
+          const books = (res.data?.books || res.data || []).map((b) => ({
+            id: b.id,
+            title: b.title,
+            author: b.author,
+            cover_url: b.cover_url || b.thumbnail,
+            progress: b.progress ?? null,
+          }));
+          recent = books;
+        }
+
+        sendResponse({ success: true, data: { suggested, recent, topics: topicsResult } });
       } catch (err) {
         sendResponse({ success: false, error: err.message });
       }

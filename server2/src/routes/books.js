@@ -165,7 +165,7 @@ export function booksRouter(authenticateToken) {
 
       // Return book immediately without waiting for cover
       res.json(book);
-      
+
       // Fetch cover in background if missing (non-blocking)
       if (!book.cover_url) {
         setTimeout(async () => {
@@ -262,7 +262,7 @@ export function booksRouter(authenticateToken) {
           books: books || []
         });
       }
-      
+
       // Optionally fetch covers in background (non-blocking)
       // This won't affect the response but will cache covers for future use
       if (books && books.length > 0) {
@@ -304,7 +304,7 @@ export function booksRouter(authenticateToken) {
         .replace(/[\u0300-\u036f]/g, '')  // Remove accent marks
         .replace(/[^a-zA-Z0-9._-]/g, '_')  // Replace invalid characters with underscore
         .replace(/_{2,}/g, '_');  // Replace multiple underscores with single
-      
+
       const fileName = `${Date.now()}-${sanitizedFilename}`;
       const filePath = `books/${req.user.id}/${fileName}`;
 
@@ -366,7 +366,7 @@ export function booksRouter(authenticateToken) {
         });
         // Try to clean up uploaded file
         await supabase.storage.from('book-files').remove([filePath]);
-        return res.status(500).json({ 
+        return res.status(500).json({
           error: "Failed to save book to database",
           details: dbError.message || dbError.details || "Unknown database error"
         });
@@ -554,15 +554,15 @@ export function booksRouter(authenticateToken) {
         'isReading': 'is_reading', // Map camelCase to snake_case if needed
         // Add more mappings as needed
       };
-      
+
       // Valid columns that exist in the database (add/remove as needed)
       const validColumns = ['title', 'author', 'genre', 'language', 'description', 'is_reading', 'progress', 'last_opened', 'completed', 'completed_date'];
-      
+
       const cleanUpdates = Object.keys(updates).reduce((acc, key) => {
         if (updates[key] !== undefined && updates[key] !== null) {
           // Map field name if needed
           const dbColumnName = fieldMapping[key] || key;
-          
+
           // Only include if it's a valid column
           if (validColumns.includes(dbColumnName)) {
             acc[dbColumnName] = updates[key];
@@ -600,13 +600,117 @@ export function booksRouter(authenticateToken) {
     }
   });
 
+  // Smart reading queue — AI-prioritized books based on page context (Phase 3.1)
+  router.post('/smart-queue', authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { topics = [], themes = [], suggestedGenres = [], limit = 10 } = req.body;
+
+      // Fetch user's library
+      const { data: books, error } = await supabase
+        .from('books')
+        .select('id, title, author, genre, description, cover_url, thumbnail, progress, status, is_reading, last_accessed')
+        .eq('user_id', userId)
+        .order('last_accessed', { ascending: false, nullsFirst: false });
+
+      if (error) throw error;
+      if (!books || books.length === 0) {
+        return res.json({ items: [], total: 0 });
+      }
+
+      // Score each book against extracted topics
+      const scored = books.map(book => {
+        let score = 0;
+        const reasons = [];
+        const bookText = `${book.title} ${book.author} ${book.genre || ''} ${book.description || ''}`.toLowerCase();
+
+        // Genre match (high weight)
+        const bookGenre = (book.genre || '').toLowerCase();
+        for (const g of suggestedGenres) {
+          if (bookGenre.includes(g.toLowerCase()) || g.toLowerCase().includes(bookGenre)) {
+            score += 30;
+            reasons.push(`Matches genre "${book.genre}"`);
+            break;
+          }
+        }
+
+        // Theme match (medium weight)
+        for (const theme of themes) {
+          if (bookText.includes(theme.toLowerCase())) {
+            score += 20;
+            reasons.push(`Related to ${theme}`);
+            break;
+          }
+        }
+
+        // Topic keyword match (medium weight, accumulates)
+        let topicMatches = 0;
+        for (const topic of topics) {
+          if (bookText.includes(topic.toLowerCase())) {
+            score += 10;
+            topicMatches++;
+            if (topicMatches === 1) {
+              reasons.push(`Covers "${topic}"`);
+            }
+          }
+        }
+        if (topicMatches > 1) {
+          score += topicMatches * 5; // bonus for multiple topic hits
+        }
+
+        // Currently reading boost
+        if (book.is_reading || (book.progress > 0 && book.progress < 100)) {
+          score += 15;
+          if (reasons.length > 0) reasons.push('Currently reading');
+        }
+
+        // Recently accessed boost (within 7 days)
+        if (book.last_accessed) {
+          const daysSince = (Date.now() - new Date(book.last_accessed).getTime()) / (1000 * 60 * 60 * 24);
+          if (daysSince < 7) {
+            score += 5;
+          }
+        }
+
+        return {
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          cover_url: book.cover_url || book.thumbnail,
+          progress: book.progress ?? null,
+          genre: book.genre,
+          status: book.status,
+          score,
+          ai_reason: reasons.length > 0 ? reasons[0] : null,
+        };
+      });
+
+      // Sort by score descending, then by last_accessed
+      scored.sort((a, b) => b.score - a.score);
+
+      // Split into AI-suggested (score > 0) and recent
+      const suggested = scored.filter(b => b.score > 0).slice(0, Math.min(limit, 10));
+      const recent = scored.filter(b => b.score === 0).slice(0, Math.max(5, limit - suggested.length));
+
+      res.json({
+        suggested,
+        recent,
+        total: books.length,
+        topicsUsed: topics,
+      });
+    } catch (e) {
+      console.error('Smart queue error:', e);
+      res.status(500).json({ error: 'Failed to build smart queue' });
+    }
+  });
+
   // Database performance monitoring endpoint (development only)
   if (process.env.NODE_ENV === 'development') {
     router.get('/debug/performance', authenticateToken, async (req, res) => {
       try {
         const metrics = dbOptimizer.getPerformanceMetrics();
         const health = await dbOptimizer.healthCheck();
-        
+
         res.json({
           performanceMetrics: metrics,
           healthCheck: health,

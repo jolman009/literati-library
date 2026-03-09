@@ -429,6 +429,131 @@ Categorize this into a reading task and return JSON.`;
   }
 
   /**
+   * Extract topics from page context for smart reading queue (Phase 3.1)
+   */
+  async extractPageTopics(pageContext = {}) {
+    const { url, title, description, tags, site_name } = pageContext;
+    const contextStr = [title, description, (tags || []).join(', ')].filter(Boolean).join(' | ');
+
+    if (!contextStr || contextStr.length < 5) {
+      return this.extractPageTopicsFallback(pageContext);
+    }
+
+    const cacheKey = `topics_${this.hashText(contextStr)}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      const fb = this.extractPageTopicsFallback(pageContext);
+      this.requestCache.set(cacheKey, fb);
+      return fb;
+    }
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a topic extraction assistant. Analyze the web page context and extract reading-relevant topics. Return strict JSON only.'
+          },
+          {
+            role: 'user',
+            content: `Extract reading-relevant topics from this web page:\n\nTitle: ${title || 'Unknown'}\nURL: ${url || ''}\nSite: ${site_name || ''}\nDescription: ${(description || '').slice(0, 500)}\nKeywords: ${(tags || []).join(', ')}\n\nReturn JSON with:\n- topics: array of 3-5 specific topic keywords (e.g., "machine learning", "leadership", "climate science")\n- themes: array of 2-3 broad thematic categories (e.g., "technology", "self-improvement", "science")\n- suggestedGenres: array of 1-3 book genres that relate to this content (e.g., "non-fiction", "science fiction", "business")\n- readingIntent: one of "learn", "research", "entertainment", "reference"`
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 300,
+        response_format: { type: 'json_object' }
+      });
+
+      const result = JSON.parse(completion.choices[0].message.content);
+      const enriched = {
+        topics: result.topics || [],
+        themes: result.themes || [],
+        suggestedGenres: result.suggestedGenres || [],
+        readingIntent: result.readingIntent || 'learn',
+        aiGenerated: true,
+        timestamp: Date.now()
+      };
+
+      this.requestCache.set(cacheKey, enriched);
+      return enriched;
+    } catch (error) {
+      console.error('AI topic extraction failed:', error);
+      serverCrashReporting.reportAIError?.('topic_extraction', error, { url });
+      return this.extractPageTopicsFallback(pageContext);
+    }
+  }
+
+  /**
+   * Fallback topic extraction using keyword matching and domain hints
+   */
+  extractPageTopicsFallback(pageContext = {}) {
+    const { url = '', title = '', description = '', tags = [] } = pageContext;
+    const text = `${title} ${description} ${tags.join(' ')}`.toLowerCase();
+
+    // Domain-based genre hints
+    const domainGenres = {
+      'github.com': ['technology', 'programming'],
+      'medium.com': ['non-fiction', 'technology'],
+      'arxiv.org': ['science', 'research'],
+      'wikipedia.org': ['reference', 'non-fiction'],
+      'nytimes.com': ['non-fiction', 'journalism'],
+      'amazon.com': ['shopping', 'books'],
+    };
+
+    let suggestedGenres = [];
+    try {
+      const hostname = new URL(url).hostname.replace('www.', '');
+      for (const [domain, genres] of Object.entries(domainGenres)) {
+        if (hostname.includes(domain)) {
+          suggestedGenres = genres;
+          break;
+        }
+      }
+    } catch { /* invalid URL */ }
+
+    // Keyword-based topic extraction
+    const topicKeywords = {
+      technology: ['software', 'code', 'programming', 'developer', 'api', 'tech', 'digital', 'computer', 'data'],
+      science: ['research', 'study', 'experiment', 'theory', 'biology', 'physics', 'chemistry', 'climate'],
+      business: ['company', 'startup', 'market', 'finance', 'invest', 'revenue', 'strategy', 'management'],
+      philosophy: ['ethics', 'moral', 'philosophy', 'meaning', 'consciousness', 'existence', 'truth'],
+      health: ['health', 'fitness', 'nutrition', 'mental', 'wellness', 'exercise', 'diet', 'medical'],
+      history: ['history', 'ancient', 'war', 'civilization', 'century', 'empire', 'revolution'],
+      literature: ['novel', 'fiction', 'story', 'author', 'book', 'literary', 'writing', 'poetry'],
+      psychology: ['psychology', 'behavior', 'cognitive', 'emotion', 'brain', 'mind', 'therapy'],
+    };
+
+    const topics = [];
+    const themes = [];
+    for (const [theme, keywords] of Object.entries(topicKeywords)) {
+      if (keywords.some(kw => text.includes(kw))) {
+        themes.push(theme);
+        // Add the matching keyword as a topic
+        const matched = keywords.filter(kw => text.includes(kw));
+        topics.push(...matched.slice(0, 2));
+      }
+    }
+
+    // Also extract words from tags
+    if (tags.length > 0) {
+      topics.push(...tags.slice(0, 3));
+    }
+
+    return {
+      topics: [...new Set(topics)].slice(0, 5),
+      themes: themes.slice(0, 3),
+      suggestedGenres: suggestedGenres.length > 0 ? suggestedGenres : (themes.length > 0 ? [themes[0]] : ['general']),
+      readingIntent: 'learn',
+      aiGenerated: false,
+      timestamp: Date.now()
+    };
+  }
+
+  /**
    * Fallback task categorization using keyword matching
    */
   async autoTagTaskFallback(text, sourceContext = {}) {
