@@ -245,22 +245,10 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 
-      - name: Build client
-        run: pnpm run build
-
-      - name: Start client preview
-        run: pnpm run preview -- --host --port 3000 &
-
-      - name: Start services in background
-        run: |
-          cd ../server2 && pnpm run start &
-          cd ../ai-service && python -m uvicorn main:app --port 8000 &
-          sleep 10  # Wait for services to start
-
       - name: Run E2E tests
         run: pnpm run test:e2e
         env:
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
+          NODE_ENV: test
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
