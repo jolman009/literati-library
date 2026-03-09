@@ -56,8 +56,8 @@ describe('MD3Button', () => {
       const button = screen.getByRole('button')
       // Check for filled variant default styles
       expect(button).toHaveStyle({
-        backgroundColor: 'var(--md-sys-color-primary)',
-        color: '#ffffff'
+        background: 'var(--md-sys-color-primary)',
+        color: 'var(--md-sys-color-on-primary)'
       })
     })
   })

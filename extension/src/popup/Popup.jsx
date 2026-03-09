@@ -24,9 +24,9 @@ export default function Popup() {
     }
   }, []);
 
-  const scheduleClearClip = useCallback(scheduleStatusClear(KEYS.CLIP_STATUS, setClipStatus), [scheduleStatusClear]);
-  const scheduleClearNote = useCallback(scheduleStatusClear(KEYS.NOTE_STATUS, setNoteStatus), [scheduleStatusClear]);
-  const scheduleClearTask = useCallback(scheduleStatusClear(KEYS.TASK_STATUS, setTaskStatus), [scheduleStatusClear]);
+  const scheduleClearClip = useCallback((status) => scheduleStatusClear(KEYS.CLIP_STATUS, setClipStatus)(status), [scheduleStatusClear]);
+  const scheduleClearNote = useCallback((status) => scheduleStatusClear(KEYS.NOTE_STATUS, setNoteStatus)(status), [scheduleStatusClear]);
+  const scheduleClearTask = useCallback((status) => scheduleStatusClear(KEYS.TASK_STATUS, setTaskStatus)(status), [scheduleStatusClear]);
 
   // Load auth state + statuses on mount
   useEffect(() => {
