@@ -44,6 +44,7 @@ const PremiumNavigation = ({
     { to: '/clippings', label: 'Clippings', icon: 'content_cut' },
     { to: '/upload', label: 'Upload Books', icon: 'upload', badge: pendingUploads },
     { to: '/collections', label: 'Collections', icon: 'collections_bookmark' },
+    { to: '/recommendations', label: 'Recommendations', icon: 'auto_awesome' },
     { to: '/mentor', label: 'Mentor AI', icon: 'psychology' },
     { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
     { to: '/achievements', label: 'Achievements', icon: 'military_tech' },

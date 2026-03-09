@@ -111,6 +111,13 @@ const ClippingsPageWrapper = lazy(() =>
   })
 );
 
+const RecommendationsPageWrapper = lazy(() =>
+  import('./components/wrappers/RecommendationsPageWrapper').catch(err => {
+    console.error('Failed to load RecommendationsPageWrapper:', err);
+    return { default: () => <div>Error loading Recommendations. Please refresh.</div> };
+  })
+);
+
 const ReadBookWrapper = lazy(() =>
   import('./components/wrappers/ReadBookWrapper').catch(err => {
     console.error('Failed to load ReadBookWrapper:', err);
@@ -280,6 +287,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="clippings" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your clippings..." />}>
               <ClippingsPageWrapper />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/recommendations" element={
+          <ErrorBoundary fallbackComponent="recommendations" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Finding books for you..." />}>
+              <RecommendationsPageWrapper />
             </Suspense>
           </ErrorBoundary>
         } />
