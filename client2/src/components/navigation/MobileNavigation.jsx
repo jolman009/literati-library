@@ -9,17 +9,24 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
   if (!isOpen) return null;
 
   const menuItems = [
+    // Main
     { icon: 'upload', label: 'Upload Book', path: '/upload' },
+    { icon: 'content_cut', label: 'Clippings', path: '/clippings' },
+    { icon: 'collections_bookmark', label: 'Collections', path: '/collections' },
+    // AI & Discovery
+    { isSectionLabel: true, label: 'AI & Discovery' },
+    { icon: 'auto_awesome', label: 'Recommendations', path: '/recommendations' },
+    // Progress
+    { isSectionLabel: true, label: 'Progress' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
+    { icon: 'military_tech', label: 'Achievements', path: '/achievements' },
     { icon: 'leaderboard', label: 'Leaderboard', path: '/leaderboard' },
-    { icon: 'emoji_events', label: 'Achievements', path: '/achievements' },
-    { icon: 'account_circle', label: 'Profile', path: '/profile' },
-    { icon: 'bar_chart', label: 'Analytics', path: '/analytics' },
+    { icon: 'emoji_events', label: 'Rewards', path: '/gamification' },
+    // System
+    { isSectionLabel: true, label: 'System' },
     { icon: 'settings', label: 'Settings', path: '/settings' },
     { icon: 'help', label: 'Help & FAQ', path: '/help' },
     { icon: 'feedback', label: 'Send Feedback', path: '/feedback' },
-    { icon: 'content_cut', label: 'Clippings', path: '/clippings' },
-    { icon: 'auto_awesome', label: 'Recommendations', path: '/recommendations' },
   ];
 
   const overlayStyle = {
@@ -99,24 +106,44 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
           backgroundColor: isDark ? '#444' : '#e5e7eb',
           margin: '4px 16px',
         }} />
-        {menuItems.map((item) => (
-          <button
-            key={item.path}
-            style={menuItemStyle}
-            onClick={() => handleNavigate(item.path)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = isDark ? '#4a4a4a' : '#f3f4f6';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
-              {item.icon}
-            </span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {menuItems.map((item, index) => {
+          if (item.isSectionLabel) {
+            return (
+              <div
+                key={`section-${item.label}`}
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.8px',
+                  color: isDark ? '#9ca3af' : '#6b7280',
+                  padding: '12px 16px 4px',
+                  marginTop: '4px',
+                }}
+              >
+                {item.label}
+              </div>
+            );
+          }
+          return (
+            <button
+              key={item.path || `item-${index}`}
+              style={menuItemStyle}
+              onClick={() => handleNavigate(item.path)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = isDark ? '#4a4a4a' : '#f3f4f6';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+                {item.icon}
+              </span>
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
         <button
           style={{ ...menuItemStyle, marginTop: '16px', color: '#ef4444', justifyContent: 'center' }}
           onClick={onClose}
