@@ -3,10 +3,46 @@ import { get, set, onChanged, KEYS } from '../config/storage.js';
 import LoginForm from '../components/LoginForm.jsx';
 import { BookOpen, RefreshCw, LogIn, Library, Sparkles } from 'lucide-react';
 
+function QueueItem({ item }) {
+  return (
+    <div className="queue-item">
+      <div className="queue-item-cover">
+        {item.cover_url ? (
+          <img src={item.cover_url} alt="" className="queue-item-cover-img" />
+        ) : (
+          <div className="queue-item-cover-placeholder">
+            <BookOpen size={16} />
+          </div>
+        )}
+      </div>
+      <div className="queue-item-info">
+        <span className="queue-item-title">{item.title}</span>
+        <span className="queue-item-author">{item.author}</span>
+        {item.progress != null && (
+          <div className="queue-item-progress">
+            <div
+              className="queue-item-progress-bar"
+              style={{ width: `${item.progress}%` }}
+            />
+          </div>
+        )}
+      </div>
+      {item.ai_reason && (
+        <div className="queue-item-reason">
+          <Sparkles size={12} />
+          <span>{item.ai_reason}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Sidebar() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [queue, setQueue] = useState([]);
+  const [suggested, setSuggested] = useState([]);
+  const [recent, setRecent] = useState([]);
+  const [topics, setTopics] = useState(null);
   const [queueLoading, setQueueLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(null);
 
@@ -20,9 +56,11 @@ export default function Sidebar() {
       }
       // Load cached reading queue
       const cached = await get(KEYS.READING_QUEUE);
-      if (cached?.items) {
-        setQueue(cached.items);
-      }
+      if (cached?.suggested) setSuggested(cached.suggested);
+      if (cached?.recent) setRecent(cached.recent);
+      if (cached?.topics) setTopics(cached.topics);
+      // Legacy flat array support
+      if (cached?.items && !cached?.suggested) setRecent(cached.items);
       setLoading(false);
     })();
   }, []);
@@ -35,22 +73,28 @@ export default function Sidebar() {
       }
       if (changes[KEYS.ACCESS_TOKEN] && !changes[KEYS.ACCESS_TOKEN].newValue) {
         setUser(null);
-        setQueue([]);
+        setSuggested([]);
+        setRecent([]);
+        setTopics(null);
       }
       if (changes[KEYS.READING_QUEUE]) {
         const rq = changes[KEYS.READING_QUEUE].newValue;
-        if (rq?.items) setQueue(rq.items);
+        if (rq?.suggested) setSuggested(rq.suggested);
+        if (rq?.recent) setRecent(rq.recent);
+        if (rq?.topics) setTopics(rq.topics);
+        if (rq?.items && !rq?.suggested) setRecent(rq.items);
       }
     });
   }, []);
 
-  // Get current tab context
+  // Get current tab context (including tabId for content script injection)
   const captureTabContext = useCallback(async () => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab) {
-        setActiveTab({ url: tab.url, title: tab.title, favIconUrl: tab.favIconUrl });
-        return { url: tab.url, title: tab.title };
+        const ctx = { url: tab.url, title: tab.title, favIconUrl: tab.favIconUrl, tabId: tab.id };
+        setActiveTab(ctx);
+        return ctx;
       }
     } catch {
       // Tab query may fail in some contexts
@@ -68,8 +112,22 @@ export default function Sidebar() {
         payload: tabContext,
       });
       if (response?.success && response.data) {
-        setQueue(response.data);
-        await set(KEYS.READING_QUEUE, { items: response.data, ts: Date.now() });
+        // Handle both new shape { suggested, recent, topics } and legacy flat array
+        if (Array.isArray(response.data)) {
+          setRecent(response.data);
+          setSuggested([]);
+        } else {
+          const { suggested: s = [], recent: r = [], topics: t = null } = response.data;
+          setSuggested(s);
+          setRecent(r);
+          if (t) setTopics(t);
+        }
+        await set(KEYS.READING_QUEUE, {
+          suggested: Array.isArray(response.data) ? [] : (response.data.suggested || []),
+          recent: Array.isArray(response.data) ? response.data : (response.data.recent || []),
+          topics: Array.isArray(response.data) ? null : (response.data.topics || null),
+          ts: Date.now(),
+        });
       }
     } catch (err) {
       console.error('[Sidebar] Failed to refresh queue:', err.message);
@@ -80,14 +138,26 @@ export default function Sidebar() {
 
   // Auto-refresh on mount when authenticated
   useEffect(() => {
-    if (user && queue.length === 0) {
+    if (user && suggested.length === 0 && recent.length === 0) {
       refreshQueue();
     }
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Auto-refresh when user switches tabs
+  useEffect(() => {
+    if (!user) return;
+    const listener = () => {
+      setTimeout(() => refreshQueue(), 500);
+    };
+    chrome.tabs.onActivated.addListener(listener);
+    return () => chrome.tabs.onActivated.removeListener(listener);
+  }, [user, refreshQueue]);
+
   const handleLoginSuccess = (userData) => {
     setUser(userData);
   };
+
+  const totalBooks = suggested.length + recent.length;
 
   if (loading) {
     return (
@@ -121,6 +191,14 @@ export default function Sidebar() {
         </div>
       )}
 
+      {topics && topics.topics && topics.topics.length > 0 && (
+        <div className="sidebar-topics">
+          {topics.topics.slice(0, 4).map((topic, i) => (
+            <span key={i} className="sidebar-topic-pill">{topic}</span>
+          ))}
+        </div>
+      )}
+
       <main className="sidebar-body">
         {!user ? (
           <div className="sidebar-unauthenticated">
@@ -128,11 +206,11 @@ export default function Sidebar() {
             <p>Sign in to see your reading queue</p>
             <LoginForm onSuccess={handleLoginSuccess} />
           </div>
-        ) : queue.length === 0 ? (
+        ) : totalBooks === 0 ? (
           <div className="sidebar-empty">
             <Library size={32} className="sidebar-empty-icon" />
             <p className="sidebar-empty-text">
-              {queueLoading ? 'Loading your library...' : 'Your reading queue is empty'}
+              {queueLoading ? 'Analyzing page & loading library...' : 'Your reading queue is empty'}
             </p>
             {!queueLoading && (
               <p className="sidebar-empty-hint">
@@ -142,37 +220,29 @@ export default function Sidebar() {
           </div>
         ) : (
           <div className="sidebar-queue">
-            {queue.map((item, i) => (
-              <div key={item.id || i} className="queue-item">
-                <div className="queue-item-cover">
-                  {item.cover_url ? (
-                    <img src={item.cover_url} alt="" className="queue-item-cover-img" />
-                  ) : (
-                    <div className="queue-item-cover-placeholder">
-                      <BookOpen size={16} />
-                    </div>
-                  )}
+            {suggested.length > 0 && (
+              <>
+                <div className="sidebar-section-header">
+                  <Sparkles size={14} className="sidebar-section-icon" />
+                  <span>Suggested for this page</span>
                 </div>
-                <div className="queue-item-info">
-                  <span className="queue-item-title">{item.title}</span>
-                  <span className="queue-item-author">{item.author}</span>
-                  {item.progress != null && (
-                    <div className="queue-item-progress">
-                      <div
-                        className="queue-item-progress-bar"
-                        style={{ width: `${item.progress}%` }}
-                      />
-                    </div>
-                  )}
+                {suggested.map((item, i) => (
+                  <QueueItem key={item.id || `s-${i}`} item={item} />
+                ))}
+              </>
+            )}
+
+            {recent.length > 0 && (
+              <>
+                <div className="sidebar-section-header">
+                  <Library size={14} className="sidebar-section-icon" />
+                  <span>{suggested.length > 0 ? 'Recent' : 'Your Library'}</span>
                 </div>
-                {item.ai_reason && (
-                  <div className="queue-item-reason">
-                    <Sparkles size={12} />
-                    <span>{item.ai_reason}</span>
-                  </div>
-                )}
-              </div>
-            ))}
+                {recent.map((item, i) => (
+                  <QueueItem key={item.id || `r-${i}`} item={item} />
+                ))}
+              </>
+            )}
           </div>
         )}
       </main>

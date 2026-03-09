@@ -147,7 +147,7 @@
 ## Phase 3 — Smart Reading & AI Features (Weeks 9-14)
 
 **Goal**: Leverage AI to differentiate the extension and deepen engagement.
-**Status**: 🟡 In Progress — Pre-phase infrastructure complete.
+**Status**: 🟡 In Progress — Pre-phase infrastructure + Task Capture complete. Smart Queue in progress.
 
 ### 3.0 Pre-Phase Infrastructure ✅
 - **Scope**: Server rate limiting + Extension sidebar scaffold + messaging
@@ -183,16 +183,18 @@
 - **Effort**: ~10 days
 - **Dependencies**: 2.1, ai-service, existing reader infrastructure
 
-### 3.3 Task-from-Page Quick Capture
+### 3.3 Task-from-Page Quick Capture ✅
 - **Source**: edge-extension-ideas.md, Productivity Helpers
-- **Scope**: Extension context menu + popup
+- **Scope**: Extension context menu + popup + server + DB + client
+- **Completed**: 2026-03-08 | Commit: `7075f67`
 - **Tasks**:
-  - Context menu: "Create Task from Selection"
-  - AI auto-tags and categorizes (meeting, doc, PR, reading)
-  - Push to ShelfQuest reading goals or external task system
-  - Quick-capture popup with editable fields
-- **Effort**: ~5 days
-- **Dependencies**: 2.1
+  - [x] Context menu: "Create Task from Selection"
+  - [x] AI auto-tags and categorizes via `POST /ai/auto-tag-task` (GPT-3.5-turbo + keyword fallback)
+  - [x] Push to ShelfQuest reading goals via `POST /api/gamification/goals/from-task`
+  - [x] DB migration 014: `source_url`, `source_title`, `source_favicon`, `ai_category`, `ai_tags` on `user_goals`
+  - [x] Task status banner in popup (pending/saved/error/unauthenticated)
+  - [x] GoalSystem.jsx: source citation link + AI category badge on web-captured goals
+- **Effort**: ~5 days (estimated) → ~0.5 day (actual)
 
 ---
 
@@ -303,7 +305,7 @@ Phase 2.1 ✅ ──► 2.2 ✅ ──► 2.3 ✅ ──► 2.4 ✅ (Chrome Web 
   |
 Phase 3.0 ✅ (AI rate limiter + sidebar scaffold)
   |
-Phase 3.3, 3.1, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
+Phase 3.3 ✅, 3.1 🟡, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
   |
 Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
   |
