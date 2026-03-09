@@ -8,11 +8,8 @@ import {
   Target,
   Sparkles,
   ChevronRight,
-  Clock,
-  TrendingUp,
   Users,
   Lightbulb,
-  Award,
   HelpCircle
 } from 'lucide-react';
 import LiteraryMentor from '../services/LiteraryMentor';
@@ -25,10 +22,9 @@ import './LiteraryMentorUI.css';
 const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => {
   const { user } = useAuth();
   const { actualTheme } = useMaterial3Theme();
-  const { trackAction } = useGamification();
+  const { trackAction, stats: gamificationStats } = useGamification();
   
   // State management
-  const [mentorData, setMentorData] = useState(null);
   const [activeTab, setActiveTab] = useState('insights');
   const [isLoading, setIsLoading] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -44,9 +40,8 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
   // Ref to maintain focus on textarea
   const textareaRef = useRef(null);
 
-  // Initialize mentor on component mount
+  // Load books on mount
   useEffect(() => {
-    initializeMentor();
     loadUserBooks();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -61,74 +56,21 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
 
   const loadUserBooks = async () => {
     try {
-      // Check if user is authenticated
       if (!user) {
-        console.warn('No user logged in, cannot load books');
         setUserBooks([]);
         return;
       }
 
-      console.warn('Loading books from API for Literary Mentor...');
-      
-      // Fetch books from the API (same as library page) with pagination params
       const response = await API.get('/books', { params: { limit: 200, offset: 0 } });
-      
-      let booksData = [];
       const { items = [] } = response.data || {};
-      booksData = items;
-      
-      console.warn(`Loaded ${booksData.length} books from API`);
-      setUserBooks(booksData);
-      
-      // Set first book as selected if none selected
-      if (!selectedBookId && booksData.length > 0) {
-        setSelectedBookId(booksData[0].id);
+      setUserBooks(items);
+
+      if (!selectedBookId && items.length > 0) {
+        setSelectedBookId(items[0].id);
       }
     } catch (error) {
-      console.error('Failed to load books from API:', error);
-      
-      // Fallback: Try to get from IndexedDB cache
-      try {
-        const request = indexedDB.open('shelfquest-books', 2);
-        
-        request.onsuccess = function(event) {
-          const db = event.target.result;
-          
-          if (db.objectStoreNames.contains('books')) {
-            const transaction = db.transaction(['books'], 'readonly');
-            const objectStore = transaction.objectStore('books');
-            const getAllRequest = objectStore.getAll();
-            
-            getAllRequest.onsuccess = function(event) {
-              const books = event.target.result;
-              if (books && books.length > 0) {
-                console.warn('Loaded cached books from IndexedDB:', books.length);
-                setUserBooks(books);
-                if (!selectedBookId && books.length > 0) {
-                  setSelectedBookId(books[0].id);
-                }
-              } else {
-                setUserBooks([]);
-              }
-            };
-          }
-        };
-      } catch (dbError) {
-        console.error('Failed to load from cache:', dbError);
-        setUserBooks([]);
-      }
-    }
-  };
-
-  const initializeMentor = async () => {
-    if (!user) return;
-
-    setIsLoading(true);
-    try {
-      const data = await LiteraryMentor.initializeMentor(user.id);
-      setMentorData(data);
-    } catch (error) {
-      console.error('Failed to initialize mentor:', error);
+      console.error('Failed to load books:', error);
+      setUserBooks([]);
     } finally {
       setIsLoading(false);
     }
@@ -290,59 +232,45 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
         <h4>Your Reading Profile</h4>
         <div className="stats-grid">
           <div className="stat-item">
-            <Clock size={20} />
+            <Trophy size={20} />
             <div>
-              <span className="stat-label">Optimal Time</span>
+              <span className="stat-label">Level</span>
               <span className="stat-value">
-                {mentorData?.userProfile?.habits?.preferredTime || 'Evening'}
+                {gamificationStats?.level || 1}
               </span>
             </div>
           </div>
-          
+
           <div className="stat-item">
-            <TrendingUp size={20} />
+            <BookOpen size={20} />
             <div>
-              <span className="stat-label">Consistency</span>
+              <span className="stat-label">Books Read</span>
               <span className="stat-value">
-                {Math.round((mentorData?.userProfile?.habits?.consistencyScore || 0.7) * 100)}%
+                {gamificationStats?.booksRead || 0}
               </span>
             </div>
           </div>
-          
+
           <div className="stat-item">
-            <Brain size={20} />
+            <Target size={20} />
             <div>
-              <span className="stat-label">Comprehension</span>
+              <span className="stat-label">Streak</span>
               <span className="stat-value">
-                {mentorData?.userProfile?.comprehensionProfile?.level || 'Good'}
+                {gamificationStats?.readingStreak || 0} days
               </span>
             </div>
           </div>
-          
+
           <div className="stat-item">
-            <Award size={20} />
+            <Sparkles size={20} />
             <div>
-              <span className="stat-label">Engagement</span>
+              <span className="stat-label">Points</span>
               <span className="stat-value">
-                {Math.round((mentorData?.userProfile?.engagementLevel || 0.8) * 100)}%
+                {gamificationStats?.totalPoints || 0}
               </span>
             </div>
           </div>
         </div>
-      </div>
-      
-      <div className="suggested-actions">
-        <h4>Recommended Next Steps</h4>
-        {mentorData?.suggestedActions?.map((action, index) => (
-          <button 
-            key={index} 
-            className="action-button"
-            onClick={() => handleActionClick(action)}
-          >
-            <Target size={16} />
-            {action}
-          </button>
-        ))}
       </div>
     </div>
   );
@@ -658,7 +586,7 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
             genre: bookForQuiz.genre,
             description: bookForQuiz.description,
           },
-          userLevel: mentorData?.userProfile?.comprehensionProfile?.level || 'intermediate',
+          userLevel: 'intermediate',
         });
 
         setQuiz(response.data);
@@ -830,7 +758,7 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
     <div className={`literary-mentor-ui theme-${actualTheme}`}>
       <div className="mentor-header">
         <div className="mentor-greeting">
-          <h2>{mentorData?.greeting || 'Welcome, Reader!'}</h2>
+          <h2>Welcome, Reader!</h2>
           <p className="mentor-subtitle">Your Personal Literary Mentor</p>
         </div>
         
