@@ -1,10 +1,10 @@
 // LiteraryMentorUI.jsx - Interactive Literary Mentor Interface
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  BookOpen, 
-  MessageCircle, 
-  Trophy, 
-  Brain, 
+import {
+  BookOpen,
+  MessageCircle,
+  Trophy,
+  Brain,
   Target,
   Sparkles,
   ChevronRight,
@@ -13,11 +13,9 @@ import {
   Users,
   Lightbulb,
   Award,
-  HelpCircle,
-  AlertTriangle
+  HelpCircle
 } from 'lucide-react';
 import LiteraryMentor from '../services/LiteraryMentor';
-import APIKeyConfiguration from './APIKeyConfiguration';
 import API from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
@@ -33,14 +31,11 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
   const [mentorData, setMentorData] = useState(null);
   const [activeTab, setActiveTab] = useState('insights');
   const [isLoading, setIsLoading] = useState(true);
-  const [discussionMode] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [userResponse, setUserResponse] = useState('');
   const [discussionHistory, setDiscussionHistory] = useState([]);
   const [quiz, setQuiz] = useState(null);
   const [quizAnswers, setQuizAnswers] = useState({});
-  const [showApiConfig, setShowApiConfig] = useState(false);
-  const [hasApiKeys, setHasApiKeys] = useState(false);
   const [userBooks, setUserBooks] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [smartInsights, setSmartInsights] = useState([]);
@@ -51,30 +46,18 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
 
   // Initialize mentor on component mount
   useEffect(() => {
-    checkApiKeys();
     initializeMentor();
     loadUserBooks();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // Load smart insights when books or API keys change
+  // Load smart insights when books change
   useEffect(() => {
     if (userBooks.length > 0) {
       loadSmartInsights();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userBooks, hasApiKeys]);
-
-  const checkApiKeys = () => {
-    // Check for optional user-provided keys (server AI is always available)
-    const anthropicKey = localStorage.getItem('ai_key_anthropic');
-    const openaiKey = localStorage.getItem('ai_key_openai');
-    const geminiKey = localStorage.getItem('ai_key_gemini');
-    const perplexityKey = localStorage.getItem('ai_key_perplexity');
-
-    const hasKeys = !!(anthropicKey || openaiKey || geminiKey || perplexityKey);
-    setHasApiKeys(hasKeys);
-  };
+  }, [userBooks]);
 
   const loadUserBooks = async () => {
     try {
@@ -144,12 +127,6 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
     try {
       const data = await LiteraryMentor.initializeMentor(user.id);
       setMentorData(data);
-
-      // Set initial discussion question if in discussion mode
-      if (currentBook && discussionMode) {
-        const discussion = await LiteraryMentor.startBookClubDiscussion(currentBook.id);
-        setCurrentQuestion(discussion.prompts.opening);
-      }
     } catch (error) {
       console.error('Failed to initialize mentor:', error);
     } finally {
@@ -221,9 +198,6 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
         break;
       case 'take a comprehension quiz':
         setActiveTab('quiz');
-        break;
-      case 'configure api keys':
-        setShowApiConfig(true);
         break;
       case 'browse book recommendations':
       case 'explore recommendations':
@@ -693,19 +667,6 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
         setQuizScore(null);
       } catch (error) {
         console.error('Quiz generation failed:', error);
-        // Fallback to LiteraryMentor if server fails
-        try {
-          const generatedQuiz = await LiteraryMentor.createPersonalizedQuiz(
-            bookForQuiz.id,
-            []
-          );
-          setQuiz(generatedQuiz);
-          setCurrentQuestionIndex(0);
-          setQuizAnswers({});
-          setQuizScore(null);
-        } catch {
-          console.error('Fallback quiz also failed');
-        }
       }
     };
     
@@ -865,58 +826,12 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
     );
   }
   
-  // Handle API configuration modal
-  if (showApiConfig) {
-    return (
-      <div className={`api-config-modal theme-${actualTheme}`}>
-        <div className="modal-overlay" onClick={() => setShowApiConfig(false)} />
-        <div className="modal-content">
-          <div className="modal-header">
-            <h2>Configure AI Provider</h2>
-            <button 
-              className="close-button"
-              onClick={() => setShowApiConfig(false)}
-            >
-              ×
-            </button>
-          </div>
-          <APIKeyConfiguration
-            onKeysUpdated={() => {
-              checkApiKeys();
-              // Note: onKeysUpdated is intentionally optional - only called if parent provides it
-            }}
-            showTitle={false}
-          />
-          <div style={{ padding: '20px', textAlign: 'center' }}>
-            <button
-              onClick={() => setShowApiConfig(false)}
-              className="close-modal-button"
-              style={{
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                background: 'var(--md-sys-color-surface-container)',
-                color: 'var(--md-sys-color-on-surface)',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
   return (
     <div className={`literary-mentor-ui theme-${actualTheme}`}>
       <div className="mentor-header">
         <div className="mentor-greeting">
           <h2>{mentorData?.greeting || 'Welcome, Reader!'}</h2>
           <p className="mentor-subtitle">Your Personal Literary Mentor</p>
-          {/* API key configuration available as optional upgrade */}
         </div>
         
         <div className="mentor-tabs">
