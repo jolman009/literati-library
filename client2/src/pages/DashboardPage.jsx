@@ -16,7 +16,7 @@ import API from '../config/api';
 import '../styles/dashboard-page.css';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
-// Removed legacy onboarding overlay
+import { useFeatureTooltip } from '../hooks/useFeatureTooltip';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
@@ -1280,6 +1280,43 @@ const ContinueReadingCard = ({ activeSession, getSessionHistory, navigate }) => 
   );
 };
 
+// Getting Started CTA — shown when user has no books
+const GettingStartedCard = ({ navigate }) => (
+  <div className="getting-started-card">
+    <div className="getting-started-header">
+      <span className="material-symbols-outlined getting-started-icon" aria-hidden>rocket_launch</span>
+      <h2>Welcome to ShelfQuest!</h2>
+      <p>Get started in 3 easy steps to unlock AI-powered reading features.</p>
+    </div>
+    <div className="getting-started-steps">
+      <button className="getting-started-step" onClick={() => navigate('/upload')}>
+        <span className="getting-started-step-number">1</span>
+        <div className="getting-started-step-content">
+          <strong>Upload a book</strong>
+          <span>PDF or EPUB — drag and drop</span>
+        </div>
+        <span className="material-symbols-outlined" aria-hidden>upload</span>
+      </button>
+      <button className="getting-started-step" onClick={() => navigate('/library')}>
+        <span className="getting-started-step-number">2</span>
+        <div className="getting-started-step-content">
+          <strong>Start reading</strong>
+          <span>Open your book and take notes</span>
+        </div>
+        <span className="material-symbols-outlined" aria-hidden>auto_stories</span>
+      </button>
+      <button className="getting-started-step" onClick={() => navigate('/recommendations')}>
+        <span className="getting-started-step-number">3</span>
+        <div className="getting-started-step-content">
+          <strong>Discover AI features</strong>
+          <span>Recommendations, Mentor AI, note enhancement</span>
+        </div>
+        <span className="material-symbols-outlined" aria-hidden>auto_awesome</span>
+      </button>
+    </div>
+  </div>
+);
+
 // Main Dashboard Component
 const DashboardPage = () => {
   console.warn('🔄 DashboardPage: Rendering');
@@ -1292,6 +1329,29 @@ const DashboardPage = () => {
   const { activeSession, getSessionHistory } = useReadingSession();
   const [books, setBooks] = useState([]);
   const [showRewardBurst, setShowRewardBurst] = useState(false);
+  const hasBooks = books.length > 0;
+
+  // AI feature discovery tooltip — fires once after user has books
+  useFeatureTooltip('ai_features_discovery', [
+    {
+      element: 'nav a[href="/recommendations"]',
+      popover: {
+        title: 'AI Book Recommendations',
+        description: 'Get personalized book picks based on your library. Powered by AI!',
+        side: 'right',
+        align: 'center',
+      },
+    },
+    {
+      element: 'nav a[href="/mentor"]',
+      popover: {
+        title: 'Mentor AI',
+        description: 'Have Socratic discussions about your books and take comprehension quizzes.',
+        side: 'right',
+        align: 'center',
+      },
+    },
+  ], { delay: 2000, enabled: hasBooks });
 
   // Driver.js tour for onboarding key actions
   const startDashboardTour = useCallback(() => {
@@ -1445,6 +1505,9 @@ const DashboardPage = () => {
       <PullToRefreshIndicator {...pullToRefresh} />
 
       <div className="dashboard-content">
+        {/* Getting Started CTA — shown when library is empty */}
+        {!hasBooks && <GettingStartedCard navigate={navigate} />}
+
         {/* Mobile-Only: Hero Reading Card */}
         <MobileHeroReadingCard activeSession={activeSession} navigate={navigate} />
 
