@@ -2852,3 +2852,129 @@
   content: '🎉';
   margin-left: 6px;
 }
+
+/* ─── Getting Started Card (empty library onboarding) ─── */
+
+.getting-started-card {
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 10%, var(--md-sys-color-surface-container)) 0%,
+    color-mix(in srgb, var(--md-sys-color-tertiary) 8%, var(--md-sys-color-surface-container-high)) 100%
+  );
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.getting-started-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.getting-started-icon {
+  font-size: 48px;
+  color: var(--md-sys-color-primary);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.getting-started-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px;
+}
+
+.getting-started-header p {
+  font-size: 14px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.getting-started-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.getting-started-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  color: var(--md-sys-color-on-surface);
+}
+
+.getting-started-step:hover {
+  background: var(--md-sys-color-surface-container-high);
+  border-color: var(--md-sys-color-primary);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.getting-started-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.getting-started-step-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.getting-started-step-content strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.getting-started-step-content span {
+  font-size: 13px;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.getting-started-step > .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--md-sys-color-on-surface-variant);
+  transition: color 0.2s ease;
+}
+
+.getting-started-step:hover > .material-symbols-outlined {
+  color: var(--md-sys-color-primary);
+}
+
+@media (max-width: 767px) {
+  .getting-started-card {
+    padding: 24px 16px;
+    margin-bottom: 24px;
+  }
+
+  .getting-started-header h2 {
+    font-size: 20px;
+  }
+
+  .getting-started-step {
+    padding: 14px 16px;
+  }
+}
