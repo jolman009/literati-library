@@ -235,6 +235,148 @@
   justify-content: center;
 }
 
+/* ── Collapsible section groups ── */
+
+.md3-rail-section {
+  margin-top: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.md3-rail-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  border-left: 3px solid transparent;
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 60%, transparent);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+/* ── Per-section tint (Option A) + left border accent (Option B) ── */
+
+/* AI & Discovery — primary tint */
+.md3-rail-section[data-section="ai"] .md3-rail-section-header {
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 35%, var(--md-sys-color-surface-container-low));
+  border-left-color: var(--md-sys-color-primary);
+}
+
+.md3-rail-section[data-section="ai"] .md3-rail-section-header:hover {
+  background: color-mix(in srgb, var(--md-sys-color-primary-container) 55%, var(--md-sys-color-surface-container-low));
+}
+
+.md3-rail-section[data-section="ai"] .md3-rail-section-icon {
+  color: var(--md-sys-color-primary);
+}
+
+/* Progress — tertiary tint */
+.md3-rail-section[data-section="progress"] .md3-rail-section-header {
+  background: color-mix(in srgb, var(--md-sys-color-tertiary-container) 35%, var(--md-sys-color-surface-container-low));
+  border-left-color: var(--md-sys-color-tertiary);
+}
+
+.md3-rail-section[data-section="progress"] .md3-rail-section-header:hover {
+  background: color-mix(in srgb, var(--md-sys-color-tertiary-container) 55%, var(--md-sys-color-surface-container-low));
+}
+
+.md3-rail-section[data-section="progress"] .md3-rail-section-icon {
+  color: var(--md-sys-color-tertiary);
+}
+
+/* System — neutral with subtle outline accent */
+.md3-rail-section[data-section="system"] .md3-rail-section-header {
+  background: color-mix(in srgb, var(--md-sys-color-surface-container-high) 50%, transparent);
+  border-left-color: var(--md-sys-color-outline);
+}
+
+.md3-rail-section[data-section="system"] .md3-rail-section-header:hover {
+  background: var(--md-sys-color-surface-container-high);
+}
+
+.md3-rail-section[data-section="system"] .md3-rail-section-icon {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* General hover and active states */
+.md3-rail-section-header:hover {
+  color: var(--md-sys-color-on-surface);
+}
+
+.md3-rail-section-header.has-active {
+  color: var(--md-sys-color-primary);
+}
+
+.md3-rail-section-header:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.md3-rail-section-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.md3-rail-section-label {
+  flex: 1;
+  text-align: left;
+}
+
+.md3-rail-section-chevron {
+  font-size: 18px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.md3-rail-section-chevron.open {
+  transform: rotate(180deg);
+}
+
+.md3-rail-section-items {
+  padding-left: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  animation: sectionExpand 0.2s ease-out;
+}
+
+.md3-rail-section-items .md3-rail-destination {
+  height: 48px;
+  font-size: 13px;
+}
+
+@keyframes sectionExpand {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+  }
+}
+
+/* Section toggle in collapsed rail */
+.md3-rail-section-toggle {
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+.md3-rail-section-toggle.active {
+  opacity: 1;
+}
+
 /* Logout button with distinctive styling */
 .md3-rail-destination-logout {
   margin-top: 8px;
