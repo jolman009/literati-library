@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.6",
     "lucide-react": "^0.525.0",
-    "turndown": "^7.2.0",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react-dom": "^19.2.1",
+    "turndown": "^7.2.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.3.0",

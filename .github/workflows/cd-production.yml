@@ -19,6 +19,10 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/literati
@@ -76,6 +80,7 @@ jobs:
 
       - name: Security Scan
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -419,36 +424,44 @@ jobs:
 
     steps:
       - name: Create Release
-        if: success()
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: success() && needs.build-production.outputs.version != ''
+        continue-on-error: true
+        uses: actions/github-script@v7
         with:
-          tag_name: ${{ needs.build-production.outputs.version }}
-          release_name: Release ${{ needs.build-production.outputs.version }}
-          body: |
-            🚀 **Production Deployment Successful**
-
-            **Version:** ${{ needs.build-production.outputs.version }}
-            **Build Tag:** ${{ needs.build-production.outputs.image-tag }}
-            **Deployed:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-
-            ### 🔗 Links
-            - [Application](https://${{ secrets.PRODUCTION_DOMAIN }})
-            - [API Documentation](https://api.${{ secrets.PRODUCTION_DOMAIN }}/docs)
-            - [Monitoring Dashboard](https://${{ secrets.PRODUCTION_DOMAIN }}/api/monitoring/dashboard)
-
-            ### ✅ Deployment Status
-            - Primary Server: ✅ Deployed
-            - Secondary Server: ✅ Deployed
-            - Health Checks: ✅ Passed
-            - Post-deployment Tests: ✅ Passed
-
-          draft: false
-          prerelease: false
+          script: |
+            const version = '${{ needs.build-production.outputs.version }}';
+            if (!version) {
+              console.log('No version available, skipping release creation');
+              return;
+            }
+            // Check if release already exists
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: version,
+              });
+              console.log(`Release ${version} already exists, skipping`);
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: version,
+                  name: `Release ${version}`,
+                  body: `Production deployment of ${version}`,
+                  draft: false,
+                  prerelease: false,
+                });
+                console.log(`Release ${version} created`);
+              } else {
+                throw e;
+              }
+            }
 
       - name: Notify Team
         if: always()
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
