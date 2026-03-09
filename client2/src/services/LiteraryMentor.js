@@ -24,21 +24,7 @@ class LiteraryMentor {
    */
   async initializeMentor(userId) {
     try {
-      // Check if any AI provider is configured
-      if (!AIKeyManager.hasAnyProvider()) {
-        return {
-          greeting: 'Welcome, Reader!',
-          currentInsights: [{
-            type: 'setup',
-            icon: '🔑',
-            message: 'Configure your AI API keys to unlock personalized literary mentoring features.',
-            action: 'Configure API Keys'
-          }],
-          suggestedActions: ['Configure API Keys', 'Start a reading session']
-        };
-      }
-
-      // Load user's complete reading history
+      // Load user's complete reading history (server AI is always available)
       const [profile, habits, annotations, progress] = await Promise.all([
         this.loadUserProfile(userId),
         this.analyzeReadingHabits(userId),
@@ -1023,15 +1009,6 @@ class LiteraryMentor {
    */
   async generateBookSummary(bookId, currentProgress) {
     try {
-      if (!AIKeyManager.hasAnyProvider()) {
-        return {
-          summary: `You're ${currentProgress}% through this book. Keep reading to unlock AI-powered insights!`,
-          type: 'progress'
-        };
-      }
-
-      const LLMProvider = await this.getLLMProvider();
-
       // Fetch book details and user's highlights
       const bookResponse = await API.get(`/books/${bookId}`);
       const book = bookResponse.data;
@@ -1045,33 +1022,30 @@ class LiteraryMentor {
         console.warn('No highlights found for book');
       }
 
-      // Construct privacy-preserving AI prompt (no book metadata sent)
-      const prompt = `You are a literary mentor analyzing a reader's progress through their current book.
+      // Use server AI via mentor-discuss endpoint
+      const highlightSample = highlights.slice(0, 5).map(h =>
+        (h.content || h.text || '').substring(0, 100)
+      ).filter(Boolean);
 
-The reader is ${currentProgress}% through their current read.
+      const userMessage = highlights.length > 0
+        ? `I'm ${currentProgress}% through "${book.title}". I've highlighted ${highlights.length} passages including: ${highlightSample.map(t => `"${t}"`).join(', ')}. Give me a brief insight about my reading progress and highlight themes.`
+        : `I'm ${currentProgress}% through "${book.title}". Give me a brief, encouraging insight about my reading progress.`;
 
-${highlights.length > 0 ? `
-They have made ${highlights.length} highlights. Here are some examples:
-${highlights.slice(0, 5).map(h => `- "${h.content?.substring(0, 100) || h.text?.substring(0, 100)}"`).join('\n')}
-` : 'They haven\'t made any highlights yet.'}
-
-Generate a brief, insightful observation (2-3 sentences) that:
-1. Acknowledges their reading progress
-2. ${highlights.length > 0 ? 'Identifies themes or patterns in their highlighted passages' : 'Encourages active reading with highlights'}
-3. Suggests a next step for deeper engagement
-
-Keep it conversational and encouraging. Do NOT mention specific book titles or authors.`;
-
-      const aiResponse = await LLMProvider.generateCompletion(prompt, {
-        taskType: 'creative',
-        maxTokens: 150,
-        temperature: 0.7
+      const response = await API.post('/ai/mentor-discuss', {
+        bookContext: {
+          title: book.title,
+          author: book.author,
+          genre: book.genre,
+          description: book.description,
+        },
+        userMessage,
+        history: [],
       });
 
       return {
-        summary: aiResponse,
+        summary: response.data.message,
         type: 'ai-generated',
-        bookTitle: book.title, // Kept locally for display, NOT sent to AI
+        bookTitle: book.title,
         progress: currentProgress,
         highlightCount: highlights.length
       };
@@ -1090,12 +1064,6 @@ Keep it conversational and encouraging. Do NOT mention specific book titles or a
    */
   async analyzeHighlights(bookId) {
     try {
-      if (!AIKeyManager.hasAnyProvider()) {
-        return null;
-      }
-
-      const LLMProvider = await this.getLLMProvider();
-
       // Fetch highlights
       const notesResponse = await API.get(`/notes?bookId=${bookId}`);
       const highlights = Array.isArray(notesResponse.data) ? notesResponse.data : notesResponse.data.notes || [];
@@ -1107,23 +1075,26 @@ Keep it conversational and encouraging. Do NOT mention specific book titles or a
         };
       }
 
-      // Analyze highlights with AI
+      // Fetch book details for context
+      const bookResponse = await API.get(`/books/${bookId}`);
+      const book = bookResponse.data;
+
+      // Analyze highlights via server AI
       const highlightTexts = highlights.map(h => h.content || h.text).filter(Boolean).slice(0, 10);
 
-      const prompt = `Analyze these passages a reader has highlighted and identify the main theme or pattern:
-
-${highlightTexts.map((text, i) => `${i + 1}. "${text.substring(0, 150)}..."`).join('\n')}
-
-In 1-2 sentences, what themes or interests do these highlighted passages reveal about the reader's focus? Focus on analyzing the content patterns, not identifying the source material.`;
-
-      const aiResponse = await LLMProvider.generateCompletion(prompt, {
-        taskType: 'analytical',
-        maxTokens: 100,
-        temperature: 0.6
+      const response = await API.post('/ai/mentor-discuss', {
+        bookContext: {
+          title: book.title,
+          author: book.author,
+          genre: book.genre,
+          description: book.description,
+        },
+        userMessage: `Analyze the themes in my highlights from this book. Here are my highlighted passages: ${highlightTexts.map((t, i) => `${i + 1}. "${t.substring(0, 150)}"`).join(' ')}. In 1-2 sentences, what themes or patterns do these reveal about my reading focus?`,
+        history: [],
       });
 
       return {
-        insight: aiResponse,
+        insight: response.data.message,
         type: 'theme-analysis',
         highlightCount: highlights.length
       };

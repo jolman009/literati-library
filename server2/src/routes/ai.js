@@ -222,6 +222,36 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // Mentor AI discussion response (Mentor Page)
+  router.post('/mentor-discuss', authenticateToken, async (req, res) => {
+    try {
+      const { bookContext, userMessage, history } = req.body;
+      if (!bookContext?.title || !userMessage) {
+        return res.status(400).json({ error: 'Book context and user message are required' });
+      }
+      const result = await aiService.mentorDiscuss(bookContext, userMessage, history || []);
+      res.json(result);
+    } catch (error) {
+      console.error('Mentor discuss error:', error);
+      res.status(500).json({ error: 'Discussion response failed' });
+    }
+  });
+
+  // Mentor AI quiz generation (Mentor Page)
+  router.post('/mentor-quiz', authenticateToken, async (req, res) => {
+    try {
+      const { bookContext, userLevel } = req.body;
+      if (!bookContext?.title) {
+        return res.status(400).json({ error: 'Book context is required' });
+      }
+      const result = await aiService.mentorQuiz(bookContext, userLevel || 'intermediate');
+      res.json(result);
+    } catch (error) {
+      console.error('Mentor quiz error:', error);
+      res.status(500).json({ error: 'Quiz generation failed' });
+    }
+  });
+
   // Extract topics from page context for smart reading queue (Phase 3.1)
   router.post('/extract-topics', authenticateToken, async (req, res) => {
     try {
