@@ -554,6 +554,159 @@ Categorize this into a reading task and return JSON.`;
   }
 
   /**
+   * Mentor AI discussion response with Socratic questioning
+   */
+  async mentorDiscuss(bookContext, userMessage, history = []) {
+    if (this.fallbackMode || !this.isInitialized) {
+      return this.mentorDiscussFallback(bookContext, userMessage);
+    }
+
+    try {
+      const messages = [
+        {
+          role: 'system',
+          content: `You are a warm, insightful literary mentor discussing "${bookContext.title}" by ${bookContext.author || 'Unknown'}. You guide readers to deeper understanding through Socratic questioning. Keep responses to 2-3 sentences. Always end with a thought-provoking follow-up question.`
+        }
+      ];
+
+      // Include recent discussion history for context (last 6 messages max)
+      for (const entry of history.slice(-6)) {
+        messages.push({
+          role: entry.type === 'user' ? 'user' : 'assistant',
+          content: entry.content
+        });
+      }
+
+      messages.push({ role: 'user', content: userMessage });
+
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages,
+        temperature: 0.8,
+        max_tokens: 250,
+      });
+
+      const text = completion.choices[0].message.content;
+
+      // Split response and follow-up question
+      const parts = text.split(/\?\s*(?=[A-Z])/);
+      let message = text;
+      let nextQuestion = null;
+
+      if (parts.length >= 2) {
+        message = parts.slice(0, -1).join('? ') + '?';
+        nextQuestion = parts[parts.length - 1].trim();
+        if (!nextQuestion.endsWith('?')) nextQuestion += '?';
+      }
+
+      return { message, nextQuestion, aiGenerated: true };
+    } catch (error) {
+      console.error('Mentor discuss failed:', error);
+      return this.mentorDiscussFallback(bookContext, userMessage);
+    }
+  }
+
+  mentorDiscussFallback(bookContext, userMessage) {
+    const responses = [
+      { message: "That's a thoughtful observation about the text. The way you're connecting ideas shows strong analytical thinking.", nextQuestion: "How do you think the author's background influenced this particular aspect of the book?" },
+      { message: "Interesting perspective! Literature often works on multiple levels, and you're tapping into something important here.", nextQuestion: "Can you think of another work that explores a similar theme in a different way?" },
+      { message: "I appreciate your insight. The best readers are those who engage with the text this deeply.", nextQuestion: "What do you think the author wanted the reader to take away from this section?" },
+      { message: "You're raising an important point. This kind of critical engagement is what transforms reading from passive to active.", nextQuestion: "How has your understanding of this book changed since you started reading it?" },
+      { message: "Great observation! The connections you're making between ideas are exactly what literary analysis is about.", nextQuestion: "If you could ask the author one question about their intent, what would it be?" },
+    ];
+    const pick = responses[Math.floor(Math.random() * responses.length)];
+    return { ...pick, aiGenerated: false };
+  }
+
+  /**
+   * Generate a comprehension quiz for a book
+   */
+  async mentorQuiz(bookContext, userLevel = 'intermediate') {
+    if (this.fallbackMode || !this.isInitialized) {
+      return this.mentorQuizFallback(bookContext);
+    }
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert educator creating reading comprehension quizzes. Generate questions that test understanding at multiple levels. Return strict JSON only.'
+          },
+          {
+            role: 'user',
+            content: `Create a comprehension quiz for "${bookContext.title}" by ${bookContext.author || 'Unknown'}.\nGenre: ${bookContext.genre || 'Unknown'}\nDescription: ${(bookContext.description || '').slice(0, 300)}\nReader level: ${userLevel}\n\nReturn JSON:\n{"questions":[{"type":"multiple_choice","level":"remember|understand|apply|analyze","question":"...","options":["a","b","c","d"],"correctAnswer":0,"explanation":"...","hint":"..."}]}\n\nGenerate exactly 5 questions progressing from recall to analysis.`
+          }
+        ],
+        temperature: 0.6,
+        max_tokens: 1200,
+        response_format: { type: 'json_object' }
+      });
+
+      const result = JSON.parse(completion.choices[0].message.content);
+      return { questions: result.questions || [], aiGenerated: true };
+    } catch (error) {
+      console.error('Mentor quiz failed:', error);
+      return this.mentorQuizFallback(bookContext);
+    }
+  }
+
+  mentorQuizFallback(bookContext) {
+    const title = bookContext.title || 'this book';
+    return {
+      questions: [
+        {
+          type: 'multiple_choice',
+          level: 'remember',
+          question: `What is the primary genre of "${title}"?`,
+          options: [bookContext.genre || 'Fiction', 'Poetry', 'Drama', 'Reference'],
+          correctAnswer: 0,
+          explanation: `"${title}" is categorized as ${bookContext.genre || 'fiction'}.`,
+          hint: 'Think about the overall style and content of the book.'
+        },
+        {
+          type: 'multiple_choice',
+          level: 'understand',
+          question: `Which best describes the main focus of "${title}"?`,
+          options: ['Character development', 'Plot-driven narrative', 'Philosophical themes', 'Historical events'],
+          correctAnswer: 0,
+          explanation: 'Consider what the book spends the most time exploring.',
+          hint: 'Think about what aspects stayed with you the most.'
+        },
+        {
+          type: 'multiple_choice',
+          level: 'apply',
+          question: `How might the themes in "${title}" relate to modern life?`,
+          options: ['They reflect universal human experiences', 'They are purely historical', 'They only apply to the setting', 'They have no modern relevance'],
+          correctAnswer: 0,
+          explanation: 'Great literature often explores timeless themes that transcend their original context.',
+          hint: 'Consider the broader messages beyond the specific plot.'
+        },
+        {
+          type: 'multiple_choice',
+          level: 'analyze',
+          question: `What literary technique is most prominent in "${title}"?`,
+          options: ['Symbolism and metaphor', 'Stream of consciousness', 'Unreliable narrator', 'Epistolary format'],
+          correctAnswer: 0,
+          explanation: 'Authors use various techniques to convey deeper meaning.',
+          hint: 'Think about how the author communicates ideas beyond the literal text.'
+        },
+        {
+          type: 'short_answer',
+          level: 'evaluate',
+          question: `In your opinion, what is the most important message in "${title}" and why?`,
+          options: [],
+          correctAnswer: null,
+          explanation: 'This is a subjective question — your personal interpretation is valid as long as it is supported by the text.',
+          hint: 'Consider what the author seemed most passionate about conveying.'
+        }
+      ],
+      aiGenerated: false
+    };
+  }
+
+  /**
    * Fallback task categorization using keyword matching
    */
   async autoTagTaskFallback(text, sourceContext = {}) {

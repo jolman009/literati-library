@@ -66,7 +66,7 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
   }, [userBooks, hasApiKeys]);
 
   const checkApiKeys = () => {
-    // Direct check of localStorage for API keys
+    // Check for optional user-provided keys (server AI is always available)
     const anthropicKey = localStorage.getItem('ai_key_anthropic');
     const openaiKey = localStorage.getItem('ai_key_openai');
     const geminiKey = localStorage.getItem('ai_key_gemini');
@@ -74,14 +74,6 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
 
     const hasKeys = !!(anthropicKey || openaiKey || geminiKey || perplexityKey);
     setHasApiKeys(hasKeys);
-
-    console.warn('API Keys check:', {
-      hasKeys,
-      anthropic: !!anthropicKey,
-      openai: !!openaiKey,
-      gemini: !!geminiKey,
-      perplexity: !!perplexityKey
-    });
   };
 
   const loadUserBooks = async () => {
@@ -167,18 +159,6 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
 
   // Load enhanced AI insights for the current reading book
   const loadSmartInsights = async () => {
-    if (!hasApiKeys) {
-      // No API keys - show fallback insights
-      setSmartInsights([
-        {
-          type: 'setup',
-          icon: '🔑',
-          message: 'Configure AI keys to unlock personalized content analysis and deep insights about your reading!',
-        }
-      ]);
-      return;
-    }
-
     setInsightsLoading(true);
     try {
       // Find the current reading book
@@ -415,34 +395,25 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
       timestamp: new Date()
     }]);
 
-    // Generate an AI-powered opening question if we have API keys
-    if (hasApiKeys) {
-      try {
-        const LLMProvider = (await import('../services/LLMProvider')).default;
-        
-        const prompt = `You are a literary mentor starting a book club discussion about "${selectedBook.title}" by ${selectedBook.author || 'Unknown Author'}.
+    // Generate an AI-powered opening question via server
+    try {
+      const response = await API.post('/ai/mentor-discuss', {
+        bookContext: {
+          title: selectedBook.title,
+          author: selectedBook.author,
+          genre: selectedBook.genre,
+          description: selectedBook.description,
+        },
+        userMessage: promptText || `I'd like to discuss "${selectedBook.title}"`,
+        history: [],
+      });
 
-The reader wants to discuss: "${promptText}"
-
-Generate an engaging, open-ended question to start the discussion. Make it thought-provoking and specific to this topic. Keep it to one clear question.`;
-
-        const aiResponse = await LLMProvider.generateCompletion(prompt, {
-          taskType: 'creative',
-          maxTokens: 100,
-          temperature: 0.8
-        });
-
-        setCurrentQuestion(aiResponse.text);
-      } catch (error) {
-        console.error('Failed to generate AI discussion starter:', error);
-        // Fallback to the prompt text
-        setCurrentQuestion(promptText || `What are your initial thoughts on "${selectedBook.title}"?`);
-      }
-    } else {
-      // No AI available, use the prompt or a default question
+      setCurrentQuestion(response.data.nextQuestion || response.data.message);
+    } catch (error) {
+      console.error('Failed to generate AI discussion starter:', error);
       setCurrentQuestion(promptText || `What are your initial thoughts on "${selectedBook.title}"?`);
     }
-  }, [selectedBookId, userBooks, hasApiKeys]);
+  }, [selectedBookId, userBooks]);
 
   const handleSubmitResponse = useCallback(async () => {
       if (!userResponse.trim()) return;
@@ -485,8 +456,7 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userResponse, discussionHistory, trackAction, selectedBookId]);
     
-  const generateMentorResponse = useCallback(async (response) => {
-      // Get the selected book
+  const generateMentorResponse = useCallback(async (userMsg) => {
       const selectedBook = userBooks.find(b => b.id === selectedBookId);
       if (!selectedBook) {
         return {
@@ -495,65 +465,31 @@ Generate an engaging, open-ended question to start the discussion. Make it thoug
         };
       }
 
-      // Check if we have API keys configured
-      if (!hasApiKeys) {
-        // Fallback responses when no AI is available
-        const fallbackResponses = [
-          "That's a thoughtful observation. Can you elaborate on that?",
-          "Interesting perspective! How does this connect to other parts of the book?",
-          "I appreciate your insight. What led you to that conclusion?",
-          "That's a great point. How do you think the author intended this to be interpreted?"
-        ];
-        return {
-          message: fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)],
-          nextQuestion: "What else stood out to you in this book?"
-        };
-      }
-
       try {
-        // Use the real AI to generate a response
-        const LLMProvider = (await import('../services/LLMProvider')).default;
-
-        const prompt = `You are a literary mentor discussing "${selectedBook.title}" with a reader.
-
-Reader's comment: "${response}"
-
-Provide a thoughtful, engaging response that:
-1. Acknowledges their perspective
-2. Asks a follow-up question to deepen the discussion
-3. Optionally connects to literary themes or techniques
-
-Keep your response concise (2-3 sentences) and conversational.`;
-
-        const aiResponse = await LLMProvider.generateCompletion(prompt, {
-          taskType: 'analysis',
-          maxTokens: 150,
-          temperature: 0.8
-        });
-
-        // Generate a follow-up question
-        const questionPrompt = `Based on this discussion about "${selectedBook.title}", generate one thoughtful follow-up question to continue the conversation. Make it open-ended and thought-provoking.`;
-        
-        const aiQuestion = await LLMProvider.generateCompletion(questionPrompt, {
-          taskType: 'analysis',
-          maxTokens: 50,
-          temperature: 0.7
+        const res = await API.post('/ai/mentor-discuss', {
+          bookContext: {
+            title: selectedBook.title,
+            author: selectedBook.author,
+            genre: selectedBook.genre,
+            description: selectedBook.description,
+          },
+          userMessage: userMsg,
+          history: discussionHistory,
         });
 
         return {
-          message: aiResponse.text,
-          nextQuestion: aiQuestion.text
+          message: res.data.message,
+          nextQuestion: res.data.nextQuestion
         };
       } catch (error) {
-        console.error('AI response generation failed:', error);
-        // Fallback to basic response
+        console.error('Mentor response failed:', error);
         return {
           message: "That's an interesting point. Let me think about that. What other themes did you notice in the book?",
           nextQuestion: "How did this book compare to others you've read?"
         };
       }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBookId, userBooks, hasApiKeys]);
+  }, [selectedBookId, userBooks, discussionHistory]);
 
   // Stable onChange handler that maintains focus
   const handleResponseChange = useCallback((e) => {
@@ -735,16 +671,42 @@ Keep your response concise (2-3 sentences) and conversational.`;
     const [quizScore, setQuizScore] = useState(null);
     
     const startQuiz = async () => {
-      if (!currentBook) return;
-      
-      const generatedQuiz = await LiteraryMentor.createPersonalizedQuiz(
-        currentBook.id,
-        [] // chapters - could be specified
-      );
-      setQuiz(generatedQuiz);
-      setCurrentQuestionIndex(0);
-      setQuizAnswers({});
-      setQuizScore(null);
+      const bookForQuiz = selectedBookId
+        ? userBooks.find(b => b.id === selectedBookId)
+        : currentBook;
+      if (!bookForQuiz) return;
+
+      try {
+        const response = await API.post('/ai/mentor-quiz', {
+          bookContext: {
+            title: bookForQuiz.title,
+            author: bookForQuiz.author,
+            genre: bookForQuiz.genre,
+            description: bookForQuiz.description,
+          },
+          userLevel: mentorData?.userProfile?.comprehensionProfile?.level || 'intermediate',
+        });
+
+        setQuiz(response.data);
+        setCurrentQuestionIndex(0);
+        setQuizAnswers({});
+        setQuizScore(null);
+      } catch (error) {
+        console.error('Quiz generation failed:', error);
+        // Fallback to LiteraryMentor if server fails
+        try {
+          const generatedQuiz = await LiteraryMentor.createPersonalizedQuiz(
+            bookForQuiz.id,
+            []
+          );
+          setQuiz(generatedQuiz);
+          setCurrentQuestionIndex(0);
+          setQuizAnswers({});
+          setQuizScore(null);
+        } catch {
+          console.error('Fallback quiz also failed');
+        }
+      }
     };
     
     const handleQuizAnswer = (answer) => {
@@ -794,15 +756,15 @@ Keep your response concise (2-3 sentences) and conversational.`;
           <h3>Comprehension Quiz</h3>
         </div>
         
-        {!currentBook ? (
+        {!selectedBookId && !currentBook ? (
           <div className="no-book-selected">
             <BookOpen size={48} />
-            <p>Select a book to take a quiz</p>
+            <p>Select a book from the Discussion tab to take a quiz</p>
           </div>
         ) : !quiz ? (
           <div className="quiz-intro">
             <h4>Test Your Understanding</h4>
-            <p>Ready to challenge yourself with a personalized quiz about "{currentBook.title}"?</p>
+            <p>Ready to challenge yourself with a personalized quiz about "{(userBooks.find(b => b.id === selectedBookId) || currentBook)?.title}"?</p>
             <ul className="quiz-benefits">
               <li>📊 Track your comprehension</li>
               <li>🎯 Identify knowledge gaps</li>
@@ -954,18 +916,7 @@ Keep your response concise (2-3 sentences) and conversational.`;
         <div className="mentor-greeting">
           <h2>{mentorData?.greeting || 'Welcome, Reader!'}</h2>
           <p className="mentor-subtitle">Your Personal Literary Mentor</p>
-          {!hasApiKeys && (
-            <div className="api-warning">
-              <AlertTriangle size={16} />
-              <span>Configure AI keys to unlock advanced features</span>
-              <button 
-                onClick={() => setShowApiConfig(true)}
-                className="config-button"
-              >
-                Configure
-              </button>
-            </div>
-          )}
+          {/* API key configuration available as optional upgrade */}
         </div>
         
         <div className="mentor-tabs">
