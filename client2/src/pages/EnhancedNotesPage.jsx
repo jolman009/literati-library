@@ -39,7 +39,8 @@ import {
   ChevronDown,
   CheckSquare,
   Square,
-  Globe
+  Globe,
+  Sparkles
 } from 'lucide-react';
 import './EnhancedNotesPage.css';
 
@@ -404,6 +405,7 @@ const EnhancedNotesPage = () => {
   const [summarizeMenuOpen, setSummarizeMenuOpen] = useState(false);
   const [summarizeAnchor, setSummarizeAnchor] = useState(null);
   const [autoSaveSummary, setAutoSaveSummary] = useState(false);
+  const [enhancingNoteId, setEnhancingNoteId] = useState(null);
   
   // View and filter state
   const [viewMode, setViewMode] = useState('grid'); // grid, timeline, cloud, stats
@@ -737,6 +739,32 @@ const EnhancedNotesPage = () => {
     }
   }, [summaryResult, summaryContext, notes, filteredNotes, showSnackbar, clearSelection, fetchNotes]);
 
+  // AI Enhance handler
+  const handleEnhanceNote = useCallback(async (note) => {
+    if (enhancingNoteId) return; // prevent double-click
+    setEnhancingNoteId(note.id);
+    try {
+      const bookContext = note.book_id
+        ? { bookId: note.book_id, bookTitle: books.find(b => b.id === note.book_id)?.title }
+        : {};
+      const result = await ReadingAssistant.enhanceNote(note.content, bookContext);
+      if (result && result.enhanced && result.enhanced !== note.content) {
+        await API.patch(`/notes/${note.id}`, { content: result.enhanced }, { timeout: 30000 });
+        showSnackbar({ message: 'Note enhanced with AI!', variant: 'success' });
+        fetchNotes();
+      } else if (result && result.suggestions?.length > 0) {
+        showSnackbar({ message: `AI suggestion: ${result.suggestions[0]}`, variant: 'info' });
+      } else {
+        showSnackbar({ message: 'Note is already well-written!', variant: 'info' });
+      }
+    } catch (error) {
+      console.error('Enhance note failed:', error);
+      showSnackbar({ message: 'Failed to enhance note', variant: 'error' });
+    } finally {
+      setEnhancingNoteId(null);
+    }
+  }, [enhancingNoteId, books, showSnackbar, fetchNotes]);
+
   // Summarization handlers
   const handleSummarizeSelection = useCallback(async () => {
     if (selectedNoteIds.length === 0) return;
@@ -976,6 +1004,14 @@ const EnhancedNotesPage = () => {
       
       {/* Actions */}
       <div className="md3-note-actions">
+        <button
+          onClick={() => handleEnhanceNote(note)}
+          title="Enhance with AI"
+          className="md3-icon-button"
+          disabled={enhancingNoteId === note.id}
+        >
+          <Sparkles className="md3-icon-small" style={enhancingNoteId === note.id ? { animation: 'spin 1s linear infinite' } : undefined} />
+        </button>
         <button
           onClick={() => handleOpenModal(note)}
           title="Edit note"
