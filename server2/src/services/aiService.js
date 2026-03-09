@@ -614,6 +614,161 @@ Categorize this into a reading task and return JSON.`;
     };
   }
 
+  // ===== BOOK RECOMMENDATIONS =====
+
+  async generateBookRecommendations(userBooks = [], options = {}) {
+    const { limit = 6 } = options;
+
+    if (!userBooks || userBooks.length === 0) {
+      return this.bookRecommendationsFallback([], options);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      return this.bookRecommendationsFallback(userBooks, options);
+    }
+
+    // Build a compact library summary to stay within token limits
+    const genreCounts = {};
+    const authors = new Set();
+    const titles = [];
+    for (const book of userBooks.slice(0, 30)) {
+      if (book.genre) genreCounts[book.genre] = (genreCounts[book.genre] || 0) + 1;
+      if (book.author) authors.add(book.author);
+      if (book.title) titles.push(book.title);
+    }
+
+    const topGenres = Object.entries(genreCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([g, c]) => `${g} (${c})`);
+
+    const cacheKey = `recs_${this.hashText(titles.sort().join(','))}_${limit}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a knowledgeable librarian who recommends books. Suggest real, published books that exist. Return strict JSON only.'
+          },
+          {
+            role: 'user',
+            content: `Based on this reader's library, recommend ${limit} books they would enjoy.
+
+Their library has ${userBooks.length} books.
+Top genres: ${topGenres.join(', ') || 'varied'}
+Authors they read: ${Array.from(authors).slice(0, 10).join(', ') || 'various'}
+Recent titles: ${titles.slice(0, 8).map(t => `"${t}"`).join(', ')}
+
+Rules:
+- Do NOT recommend books already in their library
+- Mix familiar genres with one or two stretch picks
+- Include a brief reason why each book fits this reader
+
+Return JSON:
+{
+  "recommendations": [
+    {
+      "title": "Book Title",
+      "author": "Author Name",
+      "genre": "Genre",
+      "reason": "Why this reader would enjoy it (1-2 sentences)",
+      "matchType": "similar_genre" | "same_author" | "thematic_match" | "stretch_pick"
+    }
+  ]
+}`
+          }
+        ],
+        temperature: 0.8,
+        max_tokens: 800,
+        response_format: { type: 'json_object' }
+      });
+
+      const result = JSON.parse(completion.choices[0].message.content);
+      const enriched = {
+        recommendations: (result.recommendations || []).slice(0, limit),
+        aiGenerated: true,
+        librarySize: userBooks.length,
+        topGenres: topGenres.map(g => g.replace(/ \(\d+\)/, '')),
+        timestamp: Date.now()
+      };
+
+      this.requestCache.set(cacheKey, enriched);
+      return enriched;
+    } catch (error) {
+      console.error('AI book recommendations failed:', error);
+      serverCrashReporting.reportAIError?.(error, 'book_recommendations', {
+        library_size: userBooks.length
+      });
+      return this.bookRecommendationsFallback(userBooks, options);
+    }
+  }
+
+  bookRecommendationsFallback(userBooks = [], options = {}) {
+    const { limit = 6 } = options;
+
+    // Analyze user's genres to suggest thematically appropriate classics
+    const genreCounts = {};
+    for (const book of userBooks) {
+      if (book.genre) {
+        const g = book.genre.toLowerCase();
+        genreCounts[g] = (genreCounts[g] || 0) + 1;
+      }
+    }
+
+    const topGenre = Object.entries(genreCounts)
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || 'fiction';
+
+    const genreRecommendations = {
+      fiction: [
+        { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction', reason: 'A timeless classic of American literature with rich prose.', matchType: 'similar_genre' },
+        { title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', reason: 'Explores themes of justice and empathy through compelling storytelling.', matchType: 'similar_genre' },
+        { title: 'One Hundred Years of Solitude', author: 'Gabriel García Márquez', genre: 'Fiction', reason: 'Magical realism at its finest — a multi-generational epic.', matchType: 'stretch_pick' },
+      ],
+      'science fiction': [
+        { title: 'Dune', author: 'Frank Herbert', genre: 'Science Fiction', reason: 'Epic world-building with deep political and ecological themes.', matchType: 'similar_genre' },
+        { title: 'Neuromancer', author: 'William Gibson', genre: 'Science Fiction', reason: 'The foundational cyberpunk novel that predicted our digital age.', matchType: 'similar_genre' },
+        { title: 'The Left Hand of Darkness', author: 'Ursula K. Le Guin', genre: 'Science Fiction', reason: 'Thought-provoking exploration of gender and society on an alien world.', matchType: 'thematic_match' },
+      ],
+      'non-fiction': [
+        { title: 'Sapiens', author: 'Yuval Noah Harari', genre: 'Non-Fiction', reason: 'A sweeping history of humankind that changes how you see the world.', matchType: 'similar_genre' },
+        { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', genre: 'Non-Fiction', reason: 'Fascinating insights into how our minds actually work.', matchType: 'thematic_match' },
+        { title: 'The Body', author: 'Bill Bryson', genre: 'Non-Fiction', reason: 'Witty and informative guide to the human body.', matchType: 'stretch_pick' },
+      ],
+      fantasy: [
+        { title: 'The Name of the Wind', author: 'Patrick Rothfuss', genre: 'Fantasy', reason: 'Beautifully written fantasy with a unique narrative structure.', matchType: 'similar_genre' },
+        { title: 'Piranesi', author: 'Susanna Clarke', genre: 'Fantasy', reason: 'A haunting, puzzle-like story set in an infinite house.', matchType: 'thematic_match' },
+        { title: 'The Fifth Season', author: 'N.K. Jemisin', genre: 'Fantasy', reason: 'Award-winning fantasy that pushes genre boundaries.', matchType: 'stretch_pick' },
+      ],
+    };
+
+    const defaults = [
+      { title: '1984', author: 'George Orwell', genre: 'Fiction', reason: 'A must-read dystopian classic that remains deeply relevant.', matchType: 'similar_genre' },
+      { title: 'Atomic Habits', author: 'James Clear', genre: 'Self-Help', reason: 'Practical strategies for building better habits and breaking bad ones.', matchType: 'stretch_pick' },
+      { title: 'Project Hail Mary', author: 'Andy Weir', genre: 'Science Fiction', reason: 'A gripping space adventure with great science and humor.', matchType: 'thematic_match' },
+    ];
+
+    const pool = genreRecommendations[topGenre] || defaults;
+
+    // Filter out books already in library
+    const existingTitles = new Set(userBooks.map(b => (b.title || '').toLowerCase()));
+    const filtered = [...pool, ...defaults]
+      .filter(r => !existingTitles.has(r.title.toLowerCase()))
+      .slice(0, limit);
+
+    return {
+      recommendations: filtered,
+      aiGenerated: false,
+      librarySize: userBooks.length,
+      topGenres: Object.keys(genreCounts).slice(0, 3),
+      timestamp: Date.now()
+    };
+  }
+
   // ===== UTILITIES =====
 
   hashText(text) {

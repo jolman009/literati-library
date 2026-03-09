@@ -46,6 +46,31 @@ class ReadingAssistant {
       return null;
     }
   }
+  /**
+   * Get AI book recommendations based on user's library
+   */
+  async getBookRecommendations(books = [], limit = 6) {
+    try {
+      const compactBooks = books.map(b => ({
+        title: b.title,
+        author: b.author,
+        genre: b.genre,
+      }));
+      const response = await API.post('/ai/book-recommendations', {
+        books: compactBooks,
+        limit,
+      });
+      return {
+        recommendations: response.data.recommendations || [],
+        aiGenerated: response.data.aiGenerated,
+        librarySize: response.data.librarySize,
+        topGenres: response.data.topGenres || [],
+      };
+    } catch (error) {
+      console.warn('Book recommendations failed:', error);
+      return null;
+    }
+  }
 }
 
 export default new ReadingAssistant();

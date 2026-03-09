@@ -95,6 +95,21 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // AI book recommendations based on user's library
+  router.post('/book-recommendations', authenticateToken, async (req, res) => {
+    try {
+      const { books, limit } = req.body;
+      if (!Array.isArray(books) || books.length === 0) {
+        return res.status(400).json({ error: 'books array is required' });
+      }
+      const result = await aiService.generateBookRecommendations(books, { limit: limit || 6 });
+      res.json(result);
+    } catch (error) {
+      console.error('Book recommendations error:', error);
+      res.status(500).json({ error: 'Recommendation generation failed' });
+    }
+  });
+
   // AI service health check
   router.get('/status', authenticateToken, async (req, res) => {
     try {
