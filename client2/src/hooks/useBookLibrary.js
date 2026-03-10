@@ -72,6 +72,12 @@ export const useBookLibrary = () => {
 
         let fetchedBooks = await bookStorageService.fetchBooks(forceRefresh);
 
+        // Guard: ensure fetchedBooks is always an array
+        if (!Array.isArray(fetchedBooks)) {
+          console.warn('fetchBooks returned non-array, defaulting to []:', fetchedBooks);
+          fetchedBooks = [];
+        }
+
         // Apply active reading session (resilient JSON parse)
         try {
           const savedSession = localStorage.getItem('active_reading_session');
