@@ -68,19 +68,24 @@ export default function RecommendationsPage() {
   const [aiGenerated, setAiGenerated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchRecommendations = useCallback(async () => {
     if (!books || books.length === 0) return;
     setLoading(true);
+    setError(null);
     try {
       const result = await ReadingAssistant.getBookRecommendations(books, 6);
       if (result) {
         setRecommendations(result.recommendations);
         setTopGenres(result.topGenres || []);
         setAiGenerated(result.aiGenerated);
+      } else {
+        setError('Failed to get recommendations. Please try again.');
       }
     } catch (err) {
       console.error('Failed to fetch recommendations:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
       setHasLoaded(true);
@@ -145,10 +150,16 @@ export default function RecommendationsPage() {
         </button>
       </div>
 
-      {loading && !hasLoaded ? (
+      {error && (
+        <div className="rec-error">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {loading ? (
         <div className="rec-loading">
           <Sparkles size={32} className="rec-loading__icon rec-spin" />
-          <p>Analyzing your reading tastes...</p>
+          <p>{hasLoaded ? 'Finding new picks...' : 'Analyzing your reading tastes...'}</p>
         </div>
       ) : recommendations.length > 0 ? (
         <div className="rec-grid">

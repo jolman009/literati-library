@@ -67,8 +67,8 @@ class ReadingAssistant {
         topGenres: response.data.topGenres || [],
       };
     } catch (error) {
-      console.warn('Book recommendations failed:', error);
-      return null;
+      console.error('Book recommendations failed:', error);
+      throw error;
     }
   }
 }
