@@ -851,6 +851,7 @@
   cursor: pointer;
   border-radius: 6px;
   transition: background 0.15s;
+  text-decoration: none;
 }
 
 .menu-item:hover {

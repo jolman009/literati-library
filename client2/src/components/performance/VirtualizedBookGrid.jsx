@@ -4,6 +4,7 @@ import { LazyBookCover } from './LazyImage';
 import './VirtualizedBookGrid.css';
 import '../BookMenuButton.css';
 import { getStatus as getBookStatus, applyStatus, BOOK_STATUS } from '../../utils/bookStatus';
+import { bookshopUrl, amazonUrl } from '../../utils/affiliateLinks';
 
 const VirtualizedBookGrid = ({
   books = [],
@@ -342,6 +343,30 @@ const VirtualizedBookGrid = ({
                     <span className="material-symbols-outlined book-menu-item__icon">collections_bookmark</span>
                     Add to Collection
                   </button>
+
+                  <div className="book-menu-divider" />
+                  <a
+                    href={bookshopUrl(book.title, book.author)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="book-menu-item"
+                    role="menuitem"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span className="material-symbols-outlined book-menu-item__icon">shopping_bag</span>
+                    Buy on Bookshop.org
+                  </a>
+                  <a
+                    href={amazonUrl(book.title, book.author)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="book-menu-item"
+                    role="menuitem"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span className="material-symbols-outlined book-menu-item__icon">shopping_cart</span>
+                    Buy on Amazon
+                  </a>
                 </div>
               </>
             )}
