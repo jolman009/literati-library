@@ -193,6 +193,20 @@
   opacity: 0.7;
 }
 
+/* Error state */
+.rec-error {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+.rec-error p {
+  margin: 0;
+}
+
 /* Loading state */
 .rec-loading {
   display: flex;
