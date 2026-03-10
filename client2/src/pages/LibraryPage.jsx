@@ -5,6 +5,7 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { useGamification } from '../contexts/GamificationContext';
 import API from '../config/api';
+import { bookshopUrl, amazonUrl } from '../utils/affiliateLinks';
 import './LibraryPage.css';
 
 /**
@@ -672,6 +673,26 @@ const LibraryPage = () => {
                               Mark as Completed
                             </button>
                           )}
+
+                          <div className="menu-divider" />
+                          <a
+                            href={bookshopUrl(book.title, book.author)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="menu-item"
+                            onClick={() => setOpenMenuId(null)}
+                          >
+                            Buy on Bookshop.org
+                          </a>
+                          <a
+                            href={amazonUrl(book.title, book.author)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="menu-item"
+                            onClick={() => setOpenMenuId(null)}
+                          >
+                            Buy on Amazon
+                          </a>
                         </div>
                       )}
                     </div>
