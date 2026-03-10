@@ -160,11 +160,14 @@ class BookStorageService {
 
       // Fetch from API
       console.warn('Fetching books from API...');
-      const books = await this.makeAuthenticatedRequest('/books');
-      
+      const response = await this.makeAuthenticatedRequest('/books');
+
+      // API returns { items, books, total, ... } — extract the array
+      const books = Array.isArray(response) ? response : (response.items || response.books || []);
+
       // Cache the results
       await this.storeBooksInCache(books);
-      
+
       console.warn(`Fetched ${books.length} books from API`);
       return books;
     } catch (error) {
