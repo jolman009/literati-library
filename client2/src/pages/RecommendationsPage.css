@@ -148,6 +148,7 @@
 .rec-card__actions {
   display: flex;
   justify-content: flex-end;
+  gap: 4px;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid var(--md-sys-color-outline-variant);
@@ -156,18 +157,40 @@
 .rec-card__link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
+  gap: 5px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--md-sys-color-primary);
   text-decoration: none;
-  padding: 4px 12px;
+  padding: 5px 12px;
   border-radius: 16px;
-  transition: background 0.2s;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .rec-card__link:hover {
   background: var(--md-sys-color-primary-container);
+  border-color: var(--md-sys-color-primary);
+}
+
+.rec-card__link--bookshop {
+  color: var(--md-sys-color-tertiary);
+}
+
+.rec-card__link--bookshop:hover {
+  background: var(--md-sys-color-tertiary-container);
+  border-color: var(--md-sys-color-tertiary);
+}
+
+/* Affiliate disclosure */
+.rec-affiliate-disclosure {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  opacity: 0.7;
 }
 
 /* Loading state */
