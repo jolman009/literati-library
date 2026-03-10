@@ -21,5 +21,5 @@ export function bookshopUrl(title, author) {
 export function amazonUrl(title, author) {
   const query = encodeURIComponent(`${title} ${author}`.trim());
   const tag = AMAZON_AFFILIATE_TAG ? `&tag=${AMAZON_AFFILIATE_TAG}` : '';
-  return `https://www.amazon.com/s?k=${query}${tag}`;
+  return `https://www.amazon.com/s?k=${query}&i=stripbooks${tag}`;
 }
