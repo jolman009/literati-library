@@ -689,8 +689,18 @@ Return JSON:
       });
 
       const result = JSON.parse(completion.choices[0].message.content);
+
+      // Deduplicate by title (GPT sometimes repeats recommendations)
+      const seen = new Set();
+      const uniqueRecs = (result.recommendations || []).filter(r => {
+        const key = (r.title || '').toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
       const enriched = {
-        recommendations: (result.recommendations || []).slice(0, limit),
+        recommendations: uniqueRecs.slice(0, limit),
         aiGenerated: true,
         librarySize: userBooks.length,
         topGenres: topGenres.map(g => g.replace(/ \(\d+\)/, '')),
@@ -744,21 +754,71 @@ Return JSON:
         { title: 'Piranesi', author: 'Susanna Clarke', genre: 'Fantasy', reason: 'A haunting, puzzle-like story set in an infinite house.', matchType: 'thematic_match' },
         { title: 'The Fifth Season', author: 'N.K. Jemisin', genre: 'Fantasy', reason: 'Award-winning fantasy that pushes genre boundaries.', matchType: 'stretch_pick' },
       ],
+      christian: [
+        { title: 'Mere Christianity', author: 'C.S. Lewis', genre: 'Christian', reason: 'Lewis makes a compelling, logical case for the Christian faith.', matchType: 'similar_genre' },
+        { title: 'The Screwtape Letters', author: 'C.S. Lewis', genre: 'Christian', reason: 'A clever inversion — a senior demon advises a junior tempter.', matchType: 'similar_genre' },
+        { title: 'Celebration of Discipline', author: 'Richard J. Foster', genre: 'Christian', reason: 'A practical guide to the classical spiritual disciplines.', matchType: 'thematic_match' },
+      ],
+      science: [
+        { title: 'A Short History of Nearly Everything', author: 'Bill Bryson', genre: 'Science', reason: 'Makes the history of science accessible and entertaining.', matchType: 'similar_genre' },
+        { title: 'The Selfish Gene', author: 'Richard Dawkins', genre: 'Science', reason: 'A foundational work on evolutionary biology and gene-centered theory.', matchType: 'similar_genre' },
+        { title: 'Cosmos', author: 'Carl Sagan', genre: 'Science', reason: 'A poetic exploration of the universe and our place in it.', matchType: 'thematic_match' },
+      ],
+      psychology: [
+        { title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', genre: 'Psychology', reason: 'Fascinating insights into the two systems that drive how we think.', matchType: 'similar_genre' },
+        { title: "Man's Search for Meaning", author: 'Viktor E. Frankl', genre: 'Psychology', reason: 'Profound reflections on purpose from a Holocaust survivor and psychiatrist.', matchType: 'thematic_match' },
+        { title: 'The Body Keeps the Score', author: 'Bessel van der Kolk', genre: 'Psychology', reason: 'Groundbreaking work on how trauma reshapes the body and mind.', matchType: 'similar_genre' },
+      ],
+      'self-help': [
+        { title: 'Atomic Habits', author: 'James Clear', genre: 'Self-Help', reason: 'Practical strategies for building better habits and breaking bad ones.', matchType: 'similar_genre' },
+        { title: 'Deep Work', author: 'Cal Newport', genre: 'Self-Help', reason: 'A case for focused work in an age of distraction.', matchType: 'thematic_match' },
+        { title: 'The 7 Habits of Highly Effective People', author: 'Stephen R. Covey', genre: 'Self-Help', reason: 'Timeless principles for personal and professional effectiveness.', matchType: 'stretch_pick' },
+      ],
     };
 
     const defaults = [
-      { title: '1984', author: 'George Orwell', genre: 'Fiction', reason: 'A must-read dystopian classic that remains deeply relevant.', matchType: 'similar_genre' },
-      { title: 'Atomic Habits', author: 'James Clear', genre: 'Self-Help', reason: 'Practical strategies for building better habits and breaking bad ones.', matchType: 'stretch_pick' },
-      { title: 'Project Hail Mary', author: 'Andy Weir', genre: 'Science Fiction', reason: 'A gripping space adventure with great science and humor.', matchType: 'thematic_match' },
+      { title: 'Sapiens', author: 'Yuval Noah Harari', genre: 'Non-Fiction', reason: 'A sweeping history of humankind that changes how you see the world.', matchType: 'thematic_match' },
+      { title: "Man's Search for Meaning", author: 'Viktor E. Frankl', genre: 'Psychology', reason: 'Profound reflections on purpose from a Holocaust survivor and psychiatrist.', matchType: 'stretch_pick' },
+      { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction', reason: 'A timeless classic of American literature with rich prose.', matchType: 'similar_genre' },
     ];
 
-    const pool = genreRecommendations[topGenre] || defaults;
-
-    // Filter out books already in library
+    // Collect genre-matched recommendations, then fill with defaults (no duplicates)
     const existingTitles = new Set(userBooks.map(b => (b.title || '').toLowerCase()));
-    const filtered = [...pool, ...defaults]
-      .filter(r => !existingTitles.has(r.title.toLowerCase()))
-      .slice(0, limit);
+    const seen = new Set();
+    const pool = [];
+
+    // Add genre-matched books first
+    const genrePool = genreRecommendations[topGenre] || [];
+    for (const rec of genrePool) {
+      const key = rec.title.toLowerCase();
+      if (!existingTitles.has(key) && !seen.has(key)) {
+        pool.push(rec);
+        seen.add(key);
+      }
+    }
+
+    // Fill remaining slots from other top genres and defaults
+    const otherGenres = Object.keys(genreCounts).filter(g => g !== topGenre);
+    for (const genre of otherGenres) {
+      for (const rec of (genreRecommendations[genre] || [])) {
+        const key = rec.title.toLowerCase();
+        if (!existingTitles.has(key) && !seen.has(key)) {
+          pool.push(rec);
+          seen.add(key);
+        }
+      }
+    }
+
+    // Fill any remaining slots with defaults
+    for (const rec of defaults) {
+      const key = rec.title.toLowerCase();
+      if (!existingTitles.has(key) && !seen.has(key)) {
+        pool.push(rec);
+        seen.add(key);
+      }
+    }
+
+    const filtered = pool.slice(0, limit);
 
     return {
       recommendations: filtered,
