@@ -75,7 +75,9 @@ export default function RecommendationsPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await ReadingAssistant.getBookRecommendations(books, 6, { refresh });
+      // Collect previously seen titles so the AI excludes them
+      const exclude = refresh ? recommendations.map(r => r.title) : [];
+      const result = await ReadingAssistant.getBookRecommendations(books, 6, { refresh, exclude });
       if (result) {
         setRecommendations(result.recommendations);
         setTopGenres(result.topGenres || []);
@@ -90,7 +92,7 @@ export default function RecommendationsPage() {
       setLoading(false);
       setHasLoaded(true);
     }
-  }, [books]);
+  }, [books, recommendations]);
 
   useEffect(() => {
     if (!booksLoading && books.length > 0 && !hasLoaded) {
