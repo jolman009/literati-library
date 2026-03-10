@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { render, cleanupTest } from '../test-utils';
-import MockLibraryPage from './MockLibraryPage';
+import LibraryPage from './LibraryPage';
 import { useAuth } from '../contexts/AuthContext';
 import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
@@ -109,12 +109,12 @@ const setup = async (books = defaultBooks) => {
     makeAuthenticatedApiCall
   });
 
-  render(<MockLibraryPage />);
+  render(<LibraryPage />);
   await waitFor(() => expect(screen.getByText('My Library')).toBeInTheDocument());
   await waitFor(() => expect(makeAuthenticatedApiCall).toHaveBeenCalledWith('/books?limit=200&offset=0'));
 };
 
-describe('MockLibraryPage language/file type filters and sorting', () => {
+describe('LibraryPage language/file type filters and sorting', () => {
   beforeEach(() => {
     cleanupTest();
 

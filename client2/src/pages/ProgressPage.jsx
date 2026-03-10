@@ -428,12 +428,21 @@ const ProgressPage = () => {
               </div>
             ))}
           </div>
-          <button
-            className="view-all-achievements-btn"
-            onClick={() => navigate('/achievements')}
-          >
-            View All Achievements →
-          </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              className="view-all-achievements-btn"
+              onClick={() => navigate('/achievements')}
+            >
+              View All Achievements →
+            </button>
+            <button
+              className="view-all-achievements-btn"
+              onClick={() => navigate('/gamification')}
+              style={{ opacity: 0.85 }}
+            >
+              How Points Work →
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -1,10 +1,10 @@
 /*
- * MockLibraryPage.css - ISOLATED TABLE LAYOUT
+ * LibraryPage.css - ISOLATED TABLE LAYOUT
  * Matches LibraryPageV2 structure: 8 columns per row
  * All columns shrink proportionally - none hidden
  */
 
-.mock-library-page {
+.library-page {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding: 20px;
   background: #f5f5f5;
@@ -19,14 +19,14 @@
   overflow: hidden;
 }
 
-.mock-library-page *,
-.mock-library-page *::before,
-.mock-library-page *::after {
+.library-page *,
+.library-page *::before,
+.library-page *::after {
   box-sizing: border-box;
 }
 
 /* Page header - matches LibraryPageV2 */
-.mock-library-page .library-header {
+.library-page .library-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,7 +35,7 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
-.mock-library-page .library-header h1 {
+.library-page .library-header h1 {
   font-size: 28px;
   font-weight: 600;
   margin: 0;
@@ -45,7 +45,7 @@
 /* ========================================
    TABLE CONTAINER - KEY TO RESPONSIVE
    ======================================== */
-.mock-table-container {
+.library-table-container {
   width: 100%;
   max-width: 100%; /* Critical: prevents overflow */
   min-width: 0; /* Allow shrinking below content size */
@@ -58,7 +58,7 @@
 /* ========================================
    TABLE - FIXED LAYOUT FOR PROPORTIONAL SIZING
    ======================================== */
-.mock-books-table {
+.library-books-table {
   display: table !important; /* Override mobile-fixes.css display: block */
   width: 100%;
   max-width: 100%;
@@ -68,7 +68,7 @@
 }
 
 /* Table Header */
-.mock-books-table thead {
+.library-books-table thead {
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
 }
@@ -117,17 +117,17 @@
 }
 
 /* Table Body */
-.mock-books-table tbody tr {
+.library-books-table tbody tr {
   border-bottom: 1px solid #f1f5f9;
 }
 
-.mock-books-table tbody tr:hover {
+.library-books-table tbody tr:hover {
   background: #f8fafc;
 }
 
 /* Base cell styles - both th and td */
-.mock-books-table td,
-.mock-books-table th {
+.library-books-table td,
+.library-books-table th {
   padding: 10px 8px;
   vertical-align: middle;
   overflow: hidden;
@@ -137,7 +137,7 @@
 }
 
 /* Header-specific styles */
-.mock-books-table th {
+.library-books-table th {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -242,7 +242,7 @@
 /* ========================================
    FILTER BAR
    ======================================== */
-.mock-filter-bar {
+.library-filter-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -412,13 +412,13 @@
 /* ========================================
    SORTABLE HEADERS
    ======================================== */
-.mock-books-table th.sortable {
+.library-books-table th.sortable {
   cursor: pointer;
   user-select: none;
   transition: color 0.15s;
 }
 
-.mock-books-table th.sortable:hover {
+.library-books-table th.sortable:hover {
   color: #3b82f6;
 }
 
@@ -438,7 +438,7 @@
 }
 
 /* Empty state */
-.mock-empty-state {
+.library-empty-state {
   padding: 48px 24px;
   text-align: center;
   color: #64748b;
@@ -449,7 +449,7 @@
 }
 
 /* Explanation box */
-.mock-explanation {
+.library-explanation {
   margin-top: 20px;
   padding: 16px;
   background: #e8f4fd;
@@ -459,7 +459,7 @@
   color: #1a1a1a;
 }
 
-.mock-explanation code {
+.library-explanation code {
   background: #d4e8f7;
   padding: 2px 6px;
   border-radius: 4px;
@@ -536,19 +536,19 @@
    ======================================== */
 @media (max-width: 600px) {
   /* Hide table header on mobile */
-  .mock-books-table thead {
+  .library-books-table thead {
     display: none;
   }
 
   /* Make table behave like a block container */
-  .mock-books-table,
-  .mock-books-table tbody {
+  .library-books-table,
+  .library-books-table tbody {
     display: block;
     width: 100%;
   }
 
   /* Each row becomes a horizontal card */
-  .mock-books-table tbody tr {
+  .library-books-table tbody tr {
     display: grid;
     grid-template-columns: 60px 1fr auto;
     grid-template-rows: auto auto auto;
@@ -567,7 +567,7 @@
   }
 
   /* Reset all cells */
-  .mock-books-table td {
+  .library-books-table td {
     display: block;
     padding: 0;
     border: none;
@@ -577,13 +577,13 @@
   }
 
   /* Cover - spans all rows on left */
-  .mock-books-table .col-cover {
+  .library-books-table .col-cover {
     grid-area: cover;
     align-self: start;
   }
 
   /* Title - top right */
-  .mock-books-table .col-title {
+  .library-books-table .col-title {
     grid-area: title;
     font-size: 15px;
     font-weight: 600;
@@ -592,36 +592,36 @@
   }
 
   /* Author - below title */
-  .mock-books-table .col-author {
+  .library-books-table .col-author {
     grid-area: author;
     font-size: 13px;
     color: #64748b;
   }
 
   /* Status - hidden on mobile, show in meta row */
-  .mock-books-table .col-status {
+  .library-books-table .col-status {
     display: block !important;
     grid-area: meta;
     justify-self: start;
   }
 
-  .mock-books-table .col-status .status-badge {
+  .library-books-table .col-status .status-badge {
     font-size: 11px;
     padding: 3px 8px;
   }
 
   /* Hide date columns on mobile */
-  .mock-books-table .col-date {
+  .library-books-table .col-date {
     display: none !important;
   }
 
   /* Notes - hidden on mobile card view */
-  .mock-books-table .col-notes {
+  .library-books-table .col-notes {
     display: none;
   }
 
   /* Action button - top right corner */
-  .mock-books-table .col-actions {
+  .library-books-table .col-actions {
     grid-area: action;
     justify-self: end;
     align-self: start;
@@ -645,7 +645,7 @@
   }
 
   /* Filter bar mobile adjustments */
-  .mock-filter-bar {
+  .library-filter-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
@@ -884,12 +884,12 @@
 /* ========================================
    ACTIVE SESSION ROW HIGHLIGHT
    ======================================== */
-.mock-books-table tbody tr.active-session-row {
+.library-books-table tbody tr.active-session-row {
   background: linear-gradient(90deg, #dbeafe 0%, #eff6ff 100%);
   border-left: 3px solid #3b82f6;
 }
 
-.mock-books-table tbody tr.active-session-row:hover {
+.library-books-table tbody tr.active-session-row:hover {
   background: linear-gradient(90deg, #bfdbfe 0%, #dbeafe 100%);
 }
 
@@ -909,223 +909,223 @@
 /* ========================================
    DARK MODE STYLES
    ======================================== */
-.mock-library-page.dark {
+.library-page.dark {
   background: #111827;
   color: #f3f4f6;
 }
 
-.mock-library-page.dark .library-header {
+.library-page.dark .library-header {
   border-bottom-color: #374151;
 }
 
-.mock-library-page.dark .library-header h1 {
+.library-page.dark .library-header h1 {
   color: #f3f4f6;
 }
 
-.mock-library-page.dark .mock-table-container {
+.library-page.dark .library-table-container {
   background: #1f2937;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.mock-library-page.dark .mock-books-table thead {
+.library-page.dark .library-books-table thead {
   background: #111827;
   border-bottom-color: #374151;
 }
 
-.mock-library-page.dark .mock-books-table th {
+.library-page.dark .library-books-table th {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .mock-books-table tbody tr {
+.library-page.dark .library-books-table tbody tr {
   border-bottom-color: #374151;
 }
 
-.mock-library-page.dark .mock-books-table tbody tr:hover {
+.library-page.dark .library-books-table tbody tr:hover {
   background: #374151;
 }
 
-.mock-library-page.dark .col-title {
+.library-page.dark .col-title {
   color: #f3f4f6;
 }
 
-.mock-library-page.dark .col-author,
-.mock-library-page.dark .col-date {
+.library-page.dark .col-author,
+.library-page.dark .col-date {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .book-cover-thumb {
+.library-page.dark .book-cover-thumb {
   background: #374151;
 }
 
-.mock-library-page.dark .status-badge.reading {
+.library-page.dark .status-badge.reading {
   background: #1e3a5f;
   color: #93c5fd;
 }
 
-.mock-library-page.dark .status-badge.completed {
+.library-page.dark .status-badge.completed {
   background: #14532d;
   color: #86efac;
 }
 
-.mock-library-page.dark .status-badge.to-read {
+.library-page.dark .status-badge.to-read {
   background: #374151;
   color: #9ca3af;
 }
 
-.mock-library-page.dark .notes-badge {
+.library-page.dark .notes-badge {
   background: #78350f;
   color: #fcd34d;
 }
 
-.mock-library-page.dark .filter-tab {
+.library-page.dark .filter-tab {
   background: #1f2937;
   border-color: #4b5563;
   color: #9ca3af;
 }
 
-.mock-library-page.dark .filter-tab:hover {
+.library-page.dark .filter-tab:hover {
   background: #374151;
   border-color: #6b7280;
 }
 
-.mock-library-page.dark .filter-tab.active {
+.library-page.dark .filter-tab.active {
   background: #3b82f6;
   border-color: #3b82f6;
   color: white;
 }
 
-.mock-library-page.dark .sort-btn {
+.library-page.dark .sort-btn {
   background: #1f2937;
   border-color: #4b5563;
   color: #9ca3af;
 }
 
-.mock-library-page.dark .sort-btn:hover {
+.library-page.dark .sort-btn:hover {
   background: #374151;
   border-color: #6b7280;
 }
 
-.mock-library-page.dark .sort-btn.active {
+.library-page.dark .sort-btn.active {
   background: #1e3a5f;
   border-color: #3b82f6;
   color: #93c5fd;
 }
 
-.mock-library-page.dark .sort-label,
-.mock-library-page.dark .showing-count-row {
+.library-page.dark .sort-label,
+.library-page.dark .showing-count-row {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .metadata-filter-panel {
+.library-page.dark .metadata-filter-panel {
   background: #1f2937;
   border-color: #374151;
 }
 
-.mock-library-page.dark .metadata-filter-label {
+.library-page.dark .metadata-filter-label {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .metadata-filter-chip {
+.library-page.dark .metadata-filter-chip {
   background: #111827;
   border-color: #4b5563;
   color: #d1d5db;
 }
 
-.mock-library-page.dark .metadata-filter-chip:hover {
+.library-page.dark .metadata-filter-chip:hover {
   background: #1f2937;
   border-color: #6b7280;
 }
 
-.mock-library-page.dark .metadata-filter-chip.active {
+.library-page.dark .metadata-filter-chip.active {
   background: #1e3a5f;
   border-color: #3b82f6;
   color: #93c5fd;
 }
 
-.mock-library-page.dark .metadata-clear-btn,
-.mock-library-page.dark .metadata-clear-all-btn {
+.library-page.dark .metadata-clear-btn,
+.library-page.dark .metadata-clear-all-btn {
   background: #111827;
   border-color: #4b5563;
   color: #d1d5db;
 }
 
-.mock-library-page.dark .metadata-clear-btn:hover,
-.mock-library-page.dark .metadata-clear-all-btn:hover {
+.library-page.dark .metadata-clear-btn:hover,
+.library-page.dark .metadata-clear-all-btn:hover {
   background: #1f2937;
   border-color: #6b7280;
 }
 
-.mock-library-page.dark .pagination-controls {
+.library-page.dark .pagination-controls {
   background: #1f2937;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.mock-library-page.dark .pagination-info {
+.library-page.dark .pagination-info {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .mock-empty-state {
+.library-page.dark .library-empty-state {
   background: #1f2937;
   color: #9ca3af;
 }
 
-.mock-library-page.dark .active-session-banner {
+.library-page.dark .active-session-banner {
   background: linear-gradient(135deg, #1e3a5f 0%, #312e81 100%);
   border-color: #3b82f6;
 }
 
-.mock-library-page.dark .session-text {
+.library-page.dark .session-text {
   color: #93c5fd;
 }
 
-.mock-library-page.dark .actions-trigger {
+.library-page.dark .actions-trigger {
   color: #9ca3af;
 }
 
-.mock-library-page.dark .actions-trigger:hover {
+.library-page.dark .actions-trigger:hover {
   background: #374151;
 }
 
-.mock-library-page.dark .actions-menu {
+.library-page.dark .actions-menu {
   background: #1f2937;
   border-color: #374151;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
-.mock-library-page.dark .menu-item {
+.library-page.dark .menu-item {
   color: #e5e7eb;
 }
 
-.mock-library-page.dark .menu-item:hover {
+.library-page.dark .menu-item:hover {
   background: #374151;
 }
 
-.mock-library-page.dark .menu-item.primary {
+.library-page.dark .menu-item.primary {
   color: #93c5fd;
 }
 
-.mock-library-page.dark .menu-item.primary:hover {
+.library-page.dark .menu-item.primary:hover {
   background: #1e3a5f;
 }
 
-.mock-library-page.dark .menu-item.success {
+.library-page.dark .menu-item.success {
   color: #86efac;
 }
 
-.mock-library-page.dark .menu-item.success:hover {
+.library-page.dark .menu-item.success:hover {
   background: #14532d;
 }
 
-.mock-library-page.dark .menu-divider {
+.library-page.dark .menu-divider {
   background: #374151;
 }
 
-.mock-library-page.dark .mock-books-table tbody tr.active-session-row {
+.library-page.dark .library-books-table tbody tr.active-session-row {
   background: linear-gradient(90deg, #1e3a5f 0%, #1f2937 100%);
   border-left-color: #3b82f6;
 }
 
-.mock-library-page.dark .mock-books-table tbody tr.active-session-row:hover {
+.library-page.dark .library-books-table tbody tr.active-session-row:hover {
   background: linear-gradient(90deg, #1e4080 0%, #1e3a5f 100%);
 }
 
@@ -1133,25 +1133,25 @@
    MOBILE DARK MODE OVERRIDES
    ======================================== */
 @media (max-width: 600px) {
-  .mock-library-page.dark .mock-books-table tbody tr {
+  .library-page.dark .library-books-table tbody tr {
     background: #1f2937;
     border-color: #374151;
   }
 
-  .mock-library-page.dark .mock-books-table .col-title {
+  .library-page.dark .library-books-table .col-title {
     color: #f3f4f6;
   }
 
-  .mock-library-page.dark .mock-books-table .col-author {
+  .library-page.dark .library-books-table .col-author {
     color: #9ca3af;
   }
 
-  .mock-library-page.dark .action-btn {
+  .library-page.dark .action-btn {
     background: #374151;
     color: #e5e7eb;
   }
 
-  .mock-library-page.dark .action-btn:hover {
+  .library-page.dark .action-btn:hover {
     background: #4b5563;
   }
 }

@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 /**
  * More Menu Modal Component
  */
-const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
+const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout }) => {
   if (!isOpen) return null;
 
   const menuItems = [
@@ -19,9 +20,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
     // Progress
     { isSectionLabel: true, label: 'Progress' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
-    { icon: 'military_tech', label: 'Achievements', path: '/achievements' },
     { icon: 'leaderboard', label: 'Leaderboard', path: '/leaderboard' },
-    { icon: 'emoji_events', label: 'Rewards', path: '/gamification' },
     // System
     { isSectionLabel: true, label: 'System' },
     { icon: 'settings', label: 'Settings', path: '/settings' },
@@ -144,8 +143,26 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme }) => {
             </button>
           );
         })}
+        <div style={{
+          height: '1px',
+          backgroundColor: isDark ? '#444' : '#e5e7eb',
+          margin: '12px 16px',
+        }} />
         <button
-          style={{ ...menuItemStyle, marginTop: '16px', color: '#ef4444', justifyContent: 'center' }}
+          style={{ ...menuItemStyle, color: isDark ? '#f87171' : '#dc2626' }}
+          onClick={() => { onClose(); onLogout(); }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = isDark ? '#4a4a4a' : '#f3f4f6';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>logout</span>
+          <span>Logout</span>
+        </button>
+        <button
+          style={{ ...menuItemStyle, marginTop: '8px', color: isDark ? '#9ca3af' : '#6b7280', justifyContent: 'center' }}
           onClick={onClose}
         >
           Close
@@ -174,6 +191,7 @@ const MobileNavigation = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
+  const { logout } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
@@ -314,6 +332,7 @@ const MobileNavigation = () => {
         navigate={navigate}
         isDark={actualTheme === 'dark'}
         onToggleTheme={toggleTheme}
+        onLogout={async () => { await logout(); navigate('/login', { replace: true }); }}
       />
     </>
   );

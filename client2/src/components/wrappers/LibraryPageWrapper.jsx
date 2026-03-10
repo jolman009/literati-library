@@ -1,10 +1,9 @@
 // src/components/wrappers/LibraryPageWrapper.jsx
-import MockLibraryPage from '../../pages/MockLibraryPage';
+import LibraryPage from '../../pages/LibraryPage';
 
 const LibraryPageWrapper = () => {
   // Thin wrapper to keep routing consistent
-  return <MockLibraryPage />;
+  return <LibraryPage />;
 };
 
 export default LibraryPageWrapper;
-

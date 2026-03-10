@@ -114,9 +114,7 @@ const PremiumNavigation = ({
       icon: 'trending_up',
       items: [
         { to: '/progress', label: 'Progress & Journey', icon: 'trending_up' },
-        { to: '/achievements', label: 'Achievements', icon: 'military_tech' },
         { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
-        { to: '/gamification', label: 'Rewards', icon: 'emoji_events' },
       ],
     },
     {

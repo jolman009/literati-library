@@ -5,10 +5,10 @@ import { useMaterial3Theme } from '../contexts/Material3ThemeContext';
 import { useReadingSession } from '../contexts/ReadingSessionContext';
 import { useGamification } from '../contexts/GamificationContext';
 import API from '../config/api';
-import './MockLibraryPage.css';
+import './LibraryPage.css';
 
 /**
- * MockLibraryPage - Full-featured library with pagination
+ * LibraryPage - Full-featured library with pagination
  * Matches LibraryPageV2 functionality + adds pagination
  */
 const BOOKS_PER_PAGE = 20;
@@ -45,7 +45,7 @@ const getNormalizedFileType = (book) => {
   return { key: 'unknown', label: 'Unknown' };
 };
 
-const MockLibraryPage = () => {
+const LibraryPage = () => {
   const { actualTheme } = useMaterial3Theme();
   const { user, makeAuthenticatedApiCall } = useAuth();
   const navigate = useNavigate();
@@ -373,22 +373,22 @@ const MockLibraryPage = () => {
 
   if (loading) {
     return (
-      <div className={`mock-library-page ${actualTheme}`}>
-        <div className="mock-empty-state">Loading your library...</div>
+      <div className={`library-page ${actualTheme}`}>
+        <div className="library-empty-state">Loading your library...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={`mock-library-page ${actualTheme}`}>
-        <div className="mock-empty-state" style={{ color: '#dc2626' }}>{error}</div>
+      <div className={`library-page ${actualTheme}`}>
+        <div className="library-empty-state" style={{ color: '#dc2626' }}>{error}</div>
       </div>
     );
   }
 
   return (
-    <div className={`mock-library-page ${actualTheme}`}>
+    <div className={`library-page ${actualTheme}`}>
       <header className="library-header">
         <h1>My Library</h1>
       </header>
@@ -417,7 +417,7 @@ const MockLibraryPage = () => {
         </div>
       )}
 
-      <div className="mock-filter-bar">
+      <div className="library-filter-bar">
         <div className="filter-tabs">
           {[
             { key: 'all', label: 'All' },
@@ -517,8 +517,8 @@ const MockLibraryPage = () => {
         {(statusFilter !== 'all' || hasMetadataFilters) && ` (filtered from ${books.length})`}
       </div>
 
-      <div className="mock-table-container">
-        <table className="mock-books-table">
+      <div className="library-table-container">
+        <table className="library-books-table">
           <thead>
             <tr>
               <th className="col-cover">Cover</th>
@@ -706,7 +706,7 @@ const MockLibraryPage = () => {
       )}
 
       {paginatedBooks.length === 0 && (
-        <div className="mock-empty-state">
+        <div className="library-empty-state">
           {statusFilter !== 'all' || hasMetadataFilters
             ? 'No books match the selected filters.'
             : 'No books in your library yet.'}
@@ -716,4 +716,4 @@ const MockLibraryPage = () => {
   );
 };
 
-export default MockLibraryPage;
+export default LibraryPage;
