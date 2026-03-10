@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useBookLibrary } from '../hooks/useBookLibrary';
+import { useEntitlements } from '../contexts/EntitlementsContext';
 import ReadingAssistant from '../services/ReadingAssistant';
+import UpgradePrompt, { AICreditsBadge } from '../components/UpgradePrompt';
 import { Sparkles, BookOpen, RefreshCw, ExternalLink, Star, Compass, Library, ShoppingBag, ShoppingCart } from 'lucide-react';
 import { bookshopUrl, amazonUrl } from '../utils/affiliateLinks';
 import './RecommendationsPage.css';
@@ -63,6 +65,7 @@ function RecommendationCard({ rec }) {
 
 export default function RecommendationsPage() {
   const { books, loading: booksLoading } = useBookLibrary();
+  const { canUseAI, aiUsage, aiRemaining, isPremium, refreshSubscription } = useEntitlements();
   const [recommendations, setRecommendations] = useState([]);
   const [topGenres, setTopGenres] = useState([]);
   const [aiGenerated, setAiGenerated] = useState(false);
@@ -70,10 +73,13 @@ export default function RecommendationsPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [error, setError] = useState(null);
 
+  const [showUpgrade, setShowUpgrade] = useState(false);
+
   const fetchRecommendations = useCallback(async (refresh = false) => {
     if (!books || books.length === 0) return;
     setLoading(true);
     setError(null);
+    setShowUpgrade(false);
     try {
       // Collect previously seen titles so the AI excludes them
       const exclude = refresh ? recommendations.map(r => r.title) : [];
@@ -85,14 +91,21 @@ export default function RecommendationsPage() {
       } else {
         setError('Failed to get recommendations. Please try again.');
       }
+      // Refresh subscription status (updates remaining credits)
+      refreshSubscription?.();
     } catch (err) {
       console.error('Failed to fetch recommendations:', err);
-      setError(err.message || 'Something went wrong. Please try again.');
+      // Detect 403 upgrade required
+      if (err.response?.status === 403 && err.response?.data?.upgradeRequired) {
+        setShowUpgrade(true);
+      } else {
+        setError(err.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
       setHasLoaded(true);
     }
-  }, [books, recommendations]);
+  }, [books, recommendations, refreshSubscription]);
 
   useEffect(() => {
     if (!booksLoading && books.length > 0 && !hasLoaded) {
@@ -137,6 +150,7 @@ export default function RecommendationsPage() {
           <Sparkles size={24} />
           <h1>Book Recommendations</h1>
           {aiGenerated && <span className="rec-header__ai-badge">AI-Powered</span>}
+          <AICreditsBadge used={aiUsage?.used || 0} limit={aiUsage?.limit || 5} isPremium={isPremium} />
         </div>
         <p className="rec-header__subtitle">
           Based on {books.length} books in your library
@@ -156,6 +170,15 @@ export default function RecommendationsPage() {
         <div className="rec-error">
           <p>{error}</p>
         </div>
+      )}
+
+      {showUpgrade && (
+        <UpgradePrompt
+          used={aiUsage?.used || 5}
+          limit={aiUsage?.limit || 5}
+          feature="AI calls"
+          onDismiss={() => setShowUpgrade(false)}
+        />
       )}
 
       {loading ? (

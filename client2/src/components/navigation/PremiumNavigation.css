@@ -392,6 +392,16 @@
   color: var(--md-sys-color-error);
 }
 
+/* Upgrade accent */
+.nav-upgrade-accent .md3-rail-destination-icon .material-symbols-outlined {
+  color: var(--md-sys-color-tertiary);
+}
+
+.nav-upgrade-accent .md3-rail-destination-label {
+  color: var(--md-sys-color-tertiary);
+  font-weight: 600;
+}
+
 .md3-rail-destination-logout .md3-rail-destination-label {
   color: var(--md-sys-color-error);
 }

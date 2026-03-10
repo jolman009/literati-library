@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useMemo, useEffect, useState } from 'react';
+import React, { createContext, useContext, useMemo, useEffect, useState, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
 
 /**
- * Minimal entitlements context for gating premium features without
- * requiring backend changes. Derives isPremium from user profile and
- * allows a localStorage override for testing/review.
+ * Entitlements context backed by server subscription status.
+ * Free users get 5 AI calls/month; Pro users get unlimited.
+ * Supports a localStorage override for testing/review.
  */
 const EntitlementsContext = createContext(null);
 
@@ -19,6 +20,7 @@ const OVERRIDE_KEY = 'sq_premium_override';
 export const EntitlementsProvider = ({ children }) => {
   const { user } = useAuth();
   const [override, setOverride] = useState(null);
+  const subscription = useSubscription();
 
   useEffect(() => {
     try {
@@ -31,14 +33,17 @@ export const EntitlementsProvider = ({ children }) => {
 
   const isPremium = useMemo(() => {
     if (override != null) return !!override;
+    // Server-backed: subscription status is the source of truth
+    if (!subscription.loading) return subscription.isProUser;
+    // While loading, check user profile as fallback
     const u = user || {};
     return Boolean(
+      u.subscription_tier === 'pro' ||
       u.isPremium ||
       u.plan === 'premium' ||
-      u.subscription === 'premium' ||
-      u?.entitlements?.premium === true
+      u.subscription === 'premium'
     );
-  }, [user, override]);
+  }, [user, override, subscription.isProUser, subscription.loading]);
 
   const limits = useMemo(() => ({
     aiMonthlyQuota: isPremium ? Infinity : 5,
@@ -59,20 +64,27 @@ export const EntitlementsProvider = ({ children }) => {
     }
   };
 
-  const openPremiumModal = () => {
+  const openPremiumModal = useCallback(() => {
     try {
       window.dispatchEvent(new CustomEvent('openPremiumModal'));
     } catch {
       // Silently ignore event dispatch errors
     }
-  };
+  }, []);
 
   const value = useMemo(() => ({
     isPremium,
     limits,
+    tier: subscription.tier,
+    aiUsage: subscription.aiUsage,
+    canUseAI: isPremium || subscription.canUseAI,
+    aiRemaining: isPremium ? Infinity : subscription.aiRemaining,
+    pricing: subscription.pricing,
+    subscriptionLoading: subscription.loading,
+    refreshSubscription: subscription.refresh,
     setPremiumOverride,
     openPremiumModal,
-  }), [isPremium, limits]);
+  }), [isPremium, limits, subscription, openPremiumModal]);
 
   return (
     <EntitlementsContext.Provider value={value}>
@@ -82,4 +94,3 @@ export const EntitlementsProvider = ({ children }) => {
 };
 
 export default EntitlementsContext;
-

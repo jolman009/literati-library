@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useEntitlements } from '../../contexts/EntitlementsContext';
 import './PremiumNavigation.css';
 
 const SECTION_STORAGE_KEY = 'shelfquest_nav_sections';
@@ -32,6 +33,7 @@ const PremiumNavigation = ({
   const navigate = useNavigate();
   const { actualTheme } = useMaterial3Theme();
   const { logout } = useAuth();
+  const { isPremium } = useEntitlements();
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
   const [sectionOpen, setSectionOpen] = useState(loadSectionState);
 
@@ -106,6 +108,7 @@ const PremiumNavigation = ({
       items: [
         { to: '/recommendations', label: 'Recommendations', icon: 'auto_awesome' },
         { to: '/mentor', label: 'Mentor AI', icon: 'psychology' },
+        ...(!isPremium ? [{ to: '/pricing', label: 'Upgrade to Pro', icon: 'workspace_premium', className: 'nav-upgrade-accent' }] : []),
       ],
     },
     {
@@ -136,11 +139,11 @@ const PremiumNavigation = ({
 
   const isActive = (to) => pathname === to || pathname.startsWith(to + '/');
 
-  const renderNavItem = ({ to, label, icon, badge }) => (
+  const renderNavItem = ({ to, label, icon, badge, className: extraClass }) => (
     <NavLink
       key={to}
       to={to}
-      className={`md3-rail-destination ${isActive(to) ? 'active' : ''}`}
+      className={`md3-rail-destination ${isActive(to) ? 'active' : ''} ${extraClass || ''}`}
     >
       <div className="md3-rail-destination-icon">
         <span className="material-symbols-outlined">{icon}</span>
