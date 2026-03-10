@@ -59,27 +59,46 @@ class BookStorageService {
     return this.config.apiUrl;
   }
 
-  // Make authenticated API request — cookies sent automatically via credentials:'include'
+  // Get Bearer token from localStorage (matches axios interceptor in api.js)
+  getAuthToken() {
+    try {
+      const tokenKey = this.config.security?.tokenKey || 'shelfquest_token';
+      return localStorage.getItem(tokenKey);
+    } catch {
+      return null;
+    }
+  }
+
+  // Build auth headers — cookies + Bearer fallback for cross-origin production
+  getAuthHeaders(extraHeaders = {}) {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...extraHeaders
+    };
+    const token = this.getAuthToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
+  }
+
+  // Make authenticated API request — cookies + Bearer token for cross-origin
   async makeAuthenticatedRequest(endpoint, options = {}) {
     const baseUrl = this.getApiBaseUrl();
     const url = `${baseUrl}${endpoint}`;
 
     const defaultOptions = {
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-      }
+      headers: this.getAuthHeaders(options.headers)
     };
 
-    const requestOptions = { ...defaultOptions, ...options };
+    const requestOptions = { ...defaultOptions, ...options, headers: defaultOptions.headers };
 
     try {
       const response = await fetch(url, requestOptions);
 
       if (response.status === 401) {
-        // Session expired, redirect to login
-        this.handleAuthError();
+        console.warn('⚠️ [BookStorage] 401 on', endpoint, '— letting AuthContext handle refresh');
         throw new Error('Session expired. Please log in again.');
       }
 
@@ -92,17 +111,6 @@ class BookStorageService {
     } catch (error) {
       console.error(`API request failed for ${endpoint}:`, error);
       throw error;
-    }
-  }
-
-  // Handle authentication errors
-  handleAuthError() {
-    try {
-      localStorage.removeItem('shelfquest_user');
-      // Redirect to login
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('Failed to handle auth error:', error);
     }
   }
 
@@ -197,14 +205,21 @@ class BookStorageService {
         }
       });
 
+      const uploadHeaders = {};
+      const token = this.getAuthToken();
+      if (token) {
+        uploadHeaders.Authorization = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${this.getApiBaseUrl()}/books/upload`, {
         method: 'POST',
-        credentials: 'include', // Cookies sent automatically
+        credentials: 'include',
+        headers: uploadHeaders,
         body: formData
       });
 
       if (response.status === 401) {
-        this.handleAuthError();
+        console.warn('⚠️ [BookStorage] 401 on upload — letting AuthContext handle refresh');
         throw new Error('Session expired. Please log in again.');
       }
 
