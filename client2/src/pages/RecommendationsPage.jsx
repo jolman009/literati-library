@@ -70,12 +70,12 @@ export default function RecommendationsPage() {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchRecommendations = useCallback(async () => {
+  const fetchRecommendations = useCallback(async (refresh = false) => {
     if (!books || books.length === 0) return;
     setLoading(true);
     setError(null);
     try {
-      const result = await ReadingAssistant.getBookRecommendations(books, 6);
+      const result = await ReadingAssistant.getBookRecommendations(books, 6, { refresh });
       if (result) {
         setRecommendations(result.recommendations);
         setTopGenres(result.topGenres || []);
@@ -142,7 +142,7 @@ export default function RecommendationsPage() {
         </p>
         <button
           className="rec-header__refresh"
-          onClick={fetchRecommendations}
+          onClick={() => fetchRecommendations(true)}
           disabled={loading}
         >
           <RefreshCw size={16} className={loading ? 'rec-spin' : ''} />

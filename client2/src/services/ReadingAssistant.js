@@ -49,7 +49,7 @@ class ReadingAssistant {
   /**
    * Get AI book recommendations based on user's library
    */
-  async getBookRecommendations(books = [], limit = 6) {
+  async getBookRecommendations(books = [], limit = 6, { refresh = false } = {}) {
     try {
       const compactBooks = books.map(b => ({
         title: b.title,
@@ -59,6 +59,7 @@ class ReadingAssistant {
       const response = await API.post('/ai/book-recommendations', {
         books: compactBooks,
         limit,
+        refresh,
       });
       return {
         recommendations: response.data.recommendations || [],

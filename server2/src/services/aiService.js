@@ -617,7 +617,7 @@ Categorize this into a reading task and return JSON.`;
   // ===== BOOK RECOMMENDATIONS =====
 
   async generateBookRecommendations(userBooks = [], options = {}) {
-    const { limit = 6 } = options;
+    const { limit = 6, refresh = false } = options;
 
     if (!userBooks || userBooks.length === 0) {
       return this.bookRecommendationsFallback([], options);
@@ -643,7 +643,7 @@ Categorize this into a reading task and return JSON.`;
       .map(([g, c]) => `${g} (${c})`);
 
     const cacheKey = `recs_${this.hashText(titles.sort().join(','))}_${limit}`;
-    if (this.requestCache.has(cacheKey)) {
+    if (!refresh && this.requestCache.has(cacheKey)) {
       return this.requestCache.get(cacheKey);
     }
 
