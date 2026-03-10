@@ -76,7 +76,7 @@ const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
-const MockLibraryPage = lazy(() => import('./pages/MockLibraryPage'));
+const LibraryPage = lazy(() => import('./pages/LibraryPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const OnboardingGuide = lazy(() => import('./pages/OnboardingGuide'));
 const HelpViewer = lazy(() => import('./pages/HelpViewer'));
@@ -223,7 +223,7 @@ const AppRoutes = () => {
         <Route path="/library" element={
           <LibraryErrorBoundary>
             <Suspense fallback={<AppLoadingSpinner message="Loading your library..." />}>
-              <MockLibraryPage />
+              <LibraryPage />
             </Suspense>
           </LibraryErrorBoundary>
         } />
@@ -331,11 +331,6 @@ const AppRoutes = () => {
               <CollectionsPageWrapper />
             </Suspense>
           </ErrorBoundary>
-        } />
-        <Route path="/mock-library" element={
-          <Suspense fallback={<AppLoadingSpinner message="Loading mock library..." />}>
-            <MockLibraryPage />
-          </Suspense>
         } />
       </Route>
 
