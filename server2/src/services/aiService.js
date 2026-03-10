@@ -617,7 +617,7 @@ Categorize this into a reading task and return JSON.`;
   // ===== BOOK RECOMMENDATIONS =====
 
   async generateBookRecommendations(userBooks = [], options = {}) {
-    const { limit = 6, refresh = false } = options;
+    const { limit = 6, refresh = false, exclude = [] } = options;
 
     if (!userBooks || userBooks.length === 0) {
       return this.bookRecommendationsFallback([], options);
@@ -647,27 +647,54 @@ Categorize this into a reading task and return JSON.`;
       return this.requestCache.get(cacheKey);
     }
 
+    // Randomized focus angles to force variety across requests
+    const focusAngles = [
+      'Focus on hidden gems and lesser-known books — avoid bestsellers and widely popular titles.',
+      'Focus on books published in the last 5 years that this reader might have missed.',
+      'Focus on international authors and translated works that match their tastes.',
+      'Focus on debut novels and emerging authors in genres they enjoy.',
+      'Focus on classic literature they likely haven\'t read based on their collection.',
+      'Focus on books that challenge their usual reading patterns while staying engaging.',
+      'Focus on critically acclaimed books that aren\'t mainstream bestsellers.',
+      'Focus on books recommended by independent bookstores and literary communities.',
+    ];
+    const focusAngle = focusAngles[Math.floor(Math.random() * focusAngles.length)];
+
+    // Build exclusion list: library titles + previously recommended titles
+    const excludeTitles = [
+      ...titles,
+      ...(Array.isArray(exclude) ? exclude : [])
+    ];
+
+    const excludeBlock = excludeTitles.length > 0
+      ? `\nDo NOT recommend any of these titles (already owned or previously suggested):\n${excludeTitles.map(t => `- "${t}"`).join('\n')}`
+      : '';
+
     try {
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: 'You are a knowledgeable librarian who recommends books. Suggest real, published books that exist. Return strict JSON only.'
+            content: `You are an expert independent bookseller who gives thoughtful, personalized recommendations. You go beyond bestseller lists to find books that truly match each reader's unique tastes. Never recommend obvious popular picks like "Atomic Habits", "Mere Christianity", or "The Great Gatsby" unless the reader's library strongly indicates they want exactly that niche. Recommend real, published books only. Return strict JSON.`
           },
           {
             role: 'user',
-            content: `Based on this reader's library, recommend ${limit} books they would enjoy.
+            content: `Recommend ${limit} books for this reader.
 
-Their library has ${userBooks.length} books.
+Their library (${userBooks.length} books):
 Top genres: ${topGenres.join(', ') || 'varied'}
 Authors they read: ${Array.from(authors).slice(0, 10).join(', ') || 'various'}
-Recent titles: ${titles.slice(0, 8).map(t => `"${t}"`).join(', ')}
+Sample titles: ${titles.slice(0, 12).map(t => `"${t}"`).join(', ')}
+${excludeBlock}
+
+${focusAngle}
 
 Rules:
-- Do NOT recommend books already in their library
-- Mix familiar genres with one or two stretch picks
-- Include a brief reason why each book fits this reader
+- Every recommendation must be a DIFFERENT book from the exclude list above
+- Include 4 books in genres they love, 1 thematic match, and 1 stretch pick
+- Give a specific, personal reason why THIS reader would enjoy each book — reference their library
+- Avoid generic bestseller recommendations
 
 Return JSON:
 {
@@ -676,25 +703,26 @@ Return JSON:
       "title": "Book Title",
       "author": "Author Name",
       "genre": "Genre",
-      "reason": "Why this reader would enjoy it (1-2 sentences)",
+      "reason": "Specific reason referencing their reading tastes (1-2 sentences)",
       "matchType": "similar_genre" | "same_author" | "thematic_match" | "stretch_pick"
     }
   ]
 }`
           }
         ],
-        temperature: 0.8,
-        max_tokens: 800,
+        temperature: 1.0,
+        max_tokens: 1000,
         response_format: { type: 'json_object' }
       });
 
       const result = JSON.parse(completion.choices[0].message.content);
 
-      // Deduplicate by title (GPT sometimes repeats recommendations)
+      // Deduplicate and filter out any books that snuck past the exclusion prompt
+      const excludeSet = new Set(excludeTitles.map(t => t.toLowerCase()));
       const seen = new Set();
       const uniqueRecs = (result.recommendations || []).filter(r => {
         const key = (r.title || '').toLowerCase();
-        if (seen.has(key)) return false;
+        if (seen.has(key) || excludeSet.has(key)) return false;
         seen.add(key);
         return true;
       });
