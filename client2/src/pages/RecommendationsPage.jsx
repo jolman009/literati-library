@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useBookLibrary } from '../hooks/useBookLibrary';
 import ReadingAssistant from '../services/ReadingAssistant';
-import { Sparkles, BookOpen, RefreshCw, ExternalLink, Star, Compass, Library } from 'lucide-react';
+import { Sparkles, BookOpen, RefreshCw, ExternalLink, Star, Compass, Library, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { bookshopUrl, amazonUrl } from '../utils/affiliateLinks';
 import './RecommendationsPage.css';
 
 const MATCH_LABELS = {
@@ -24,8 +25,6 @@ function RecommendationCard({ rec }) {
   const MatchIcon = MATCH_ICONS[rec.matchType] || BookOpen;
   const matchLabel = MATCH_LABELS[rec.matchType] || rec.matchType;
 
-  const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(`${rec.title} ${rec.author} book`)}`;
-
   return (
     <div className="rec-card">
       <div className="rec-card__header">
@@ -40,13 +39,22 @@ function RecommendationCard({ rec }) {
       <p className="rec-card__reason">{rec.reason}</p>
       <div className="rec-card__actions">
         <a
-          href={searchUrl}
+          href={bookshopUrl(rec.title, rec.author)}
           target="_blank"
           rel="noopener noreferrer"
-          className="rec-card__link"
+          className="rec-card__link rec-card__link--bookshop"
         >
-          <ExternalLink size={14} />
-          Find this book
+          <ShoppingBag size={14} />
+          Bookshop.org
+        </a>
+        <a
+          href={amazonUrl(rec.title, rec.author)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rec-card__link rec-card__link--amazon"
+        >
+          <ShoppingCart size={14} />
+          Amazon
         </a>
       </div>
     </div>
@@ -155,6 +163,12 @@ export default function RecommendationsPage() {
           <p>Try refreshing to get personalized picks.</p>
         </div>
       ) : null}
+
+      {recommendations.length > 0 && (
+        <p className="rec-affiliate-disclosure">
+          Book links may earn ShelfQuest a small commission at no extra cost to you. Bookshop.org purchases support independent bookstores.
+        </p>
+      )}
     </div>
   );
 }
