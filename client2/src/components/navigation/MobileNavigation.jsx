@@ -2,11 +2,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMaterial3Theme } from '../../contexts/Material3ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useEntitlements } from '../../contexts/EntitlementsContext';
 
 /**
  * More Menu Modal Component
  */
-const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout }) => {
+const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout, isPremium }) => {
   if (!isOpen) return null;
 
   const menuItems = [
@@ -17,6 +18,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout }
     // AI & Discovery
     { isSectionLabel: true, label: 'AI & Discovery' },
     { icon: 'auto_awesome', label: 'Recommendations', path: '/recommendations' },
+    ...(!isPremium ? [{ icon: 'workspace_premium', label: 'Upgrade to Pro', path: '/pricing', accent: true }] : []),
     // Progress
     { isSectionLabel: true, label: 'Progress' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
@@ -124,10 +126,11 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout }
               </div>
             );
           }
+          const accentStyle = item.accent ? { color: 'var(--md-sys-color-tertiary)', fontWeight: 600 } : {};
           return (
             <button
               key={item.path || `item-${index}`}
-              style={menuItemStyle}
+              style={{ ...menuItemStyle, ...accentStyle }}
               onClick={() => handleNavigate(item.path)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = isDark ? '#4a4a4a' : '#f3f4f6';
@@ -136,7 +139,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout }
                 e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
-              <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '24px', ...(item.accent ? { color: 'var(--md-sys-color-tertiary)' } : {}) }}>
                 {item.icon}
               </span>
               <span>{item.label}</span>
@@ -192,6 +195,7 @@ const MobileNavigation = () => {
   const navigate = useNavigate();
   const { actualTheme, toggleTheme } = useMaterial3Theme();
   const { logout } = useAuth();
+  const { isPremium } = useEntitlements();
   const [isMobile, setIsMobile] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
@@ -333,6 +337,7 @@ const MobileNavigation = () => {
         isDark={actualTheme === 'dark'}
         onToggleTheme={toggleTheme}
         onLogout={async () => { await logout(); navigate('/login', { replace: true }); }}
+        isPremium={isPremium}
       />
     </>
   );

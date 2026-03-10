@@ -78,6 +78,7 @@ import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
 import { notificationsRouter } from './routes/notifications.js';
 import { clippingsRouter } from './routes/clippings.js';
+import { subscriptionRouter } from './routes/subscription.js';
 import { sendNotification } from './services/notificationService.js';
 import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
 import { monitor } from './services/monitoring.js';
@@ -306,6 +307,7 @@ app.use('/api/performance', performanceRouter(authenticateTokenEnhanced));
 app.use('/api/monitoring', monitoringRouter(authenticateTokenEnhanced));
 app.use('/covers', coversRouter(authenticateTokenEnhanced));
 app.use('/ai', rateLimitSuite.ai, aiRouter(authenticateTokenEnhanced));
+app.use('/api/subscription', rateLimitSuite.api, subscriptionRouter(authenticateTokenEnhanced));
 app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
 
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
@@ -479,7 +481,7 @@ app.get('/auth/profile', authenticateTokenEnhanced, async (req, res) => {
   try {
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, name, avatar, created_at')
+      .select('id, email, name, avatar, created_at, subscription_tier, subscription_expires_at')
       .eq('id', req.user.id)
       .single();
     if (error) return res.status(404).json({ error: 'User not found' });

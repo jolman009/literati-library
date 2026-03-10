@@ -118,6 +118,13 @@ const RecommendationsPageWrapper = lazy(() =>
   })
 );
 
+const PricingPage = lazy(() =>
+  import('./pages/PricingPage').catch(err => {
+    console.error('Failed to load PricingPage:', err);
+    return { default: () => <div>Error loading Pricing. Please refresh.</div> };
+  })
+);
+
 const ReadBookWrapper = lazy(() =>
   import('./components/wrappers/ReadBookWrapper').catch(err => {
     console.error('Failed to load ReadBookWrapper:', err);
@@ -369,6 +376,14 @@ const AppRoutes = () => {
         <ErrorBoundary fallbackComponent="cookie-policy" variant="full">
           <Suspense fallback={<AppLoadingSpinner message="Loading Cookie Policy..." />}>
             <CookiePolicyPage />
+          </Suspense>
+        </ErrorBoundary>
+      } />
+
+      <Route path="/pricing" element={
+        <ErrorBoundary fallbackComponent="pricing" variant="full">
+          <Suspense fallback={<AppLoadingSpinner message="Loading Pricing..." />}>
+            <PricingPage />
           </Suspense>
         </ErrorBoundary>
       } />

@@ -1,12 +1,15 @@
 // src/routes/ai.js - AI Reading Companion API Routes
 import express from 'express';
 import aiService from '../services/aiService.js';
+import { subscriptionGate } from '../middlewares/subscriptionGate.js';
 
 export function aiRouter(authenticateToken) {
   const router = express.Router();
 
+  const gate = subscriptionGate();
+
   // Summarize a collection of user notes (per-book or selection)
-  router.post('/summarize-notes', authenticateToken, async (req, res) => {
+  router.post('/summarize-notes', authenticateToken, gate, async (req, res) => {
     try {
       const { notes, title, mode, tags } = req.body || {};
 
@@ -23,7 +26,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // Note enhancement
-  router.post('/enhance-note', authenticateToken, async (req, res) => {
+  router.post('/enhance-note', authenticateToken, gate, async (req, res) => {
     try {
       const { originalNote, bookContext } = req.body;
 
@@ -36,7 +39,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // Mentor AI discussion response (Mentor Page)
-  router.post('/mentor-discuss', authenticateToken, async (req, res) => {
+  router.post('/mentor-discuss', authenticateToken, gate, async (req, res) => {
     try {
       const { bookContext, userMessage, history } = req.body;
       if (!bookContext?.title || !userMessage) {
@@ -51,7 +54,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // Mentor AI quiz generation (Mentor Page)
-  router.post('/mentor-quiz', authenticateToken, async (req, res) => {
+  router.post('/mentor-quiz', authenticateToken, gate, async (req, res) => {
     try {
       const { bookContext, userLevel } = req.body;
       if (!bookContext?.title) {
@@ -66,7 +69,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // Extract topics from page context for smart reading queue (Phase 3.1)
-  router.post('/extract-topics', authenticateToken, async (req, res) => {
+  router.post('/extract-topics', authenticateToken, gate, async (req, res) => {
     try {
       const { url, title, description, tags, site_name } = req.body;
       if (!title && !url) {
@@ -81,7 +84,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // AI auto-tag task from web selection (Phase 3.3)
-  router.post('/auto-tag-task', authenticateToken, async (req, res) => {
+  router.post('/auto-tag-task', authenticateToken, gate, async (req, res) => {
     try {
       const { text, source_url, source_title } = req.body;
       if (!text || text.length < 5) {
@@ -96,7 +99,7 @@ export function aiRouter(authenticateToken) {
   });
 
   // AI book recommendations based on user's library
-  router.post('/book-recommendations', authenticateToken, async (req, res) => {
+  router.post('/book-recommendations', authenticateToken, gate, async (req, res) => {
     try {
       const { books, limit, refresh, exclude } = req.body;
       if (!Array.isArray(books) || books.length === 0) {
@@ -114,7 +117,7 @@ export function aiRouter(authenticateToken) {
     }
   });
 
-  // AI service health check
+  // AI service health check (no gate — not an AI consumption endpoint)
   router.get('/status', authenticateToken, async (req, res) => {
     try {
       const status = aiService.getStatus();
