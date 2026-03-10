@@ -346,7 +346,7 @@ export const useResponsiveNavigation = () => {
       const width = window.innerWidth;
       if (width < 600) {
         setVariant('bar');
-      } else if (width < 1024) {
+      } else if (width < 1081) {
         setVariant('drawer');
       } else {
         setVariant('rail');

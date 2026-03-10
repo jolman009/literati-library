@@ -25,7 +25,7 @@
 }
 
 /* Ensure grid fills available space on all screen sizes */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .virtualized-book-grid {
     min-height: 280px;
   }
@@ -388,7 +388,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .book-menu-button {
     /* Smaller button on mobile with strict constraints */
     width: 28px !important;

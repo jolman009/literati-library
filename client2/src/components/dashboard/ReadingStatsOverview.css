@@ -237,7 +237,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .reading-stats-overview {
     margin: 0 -8px;
     border-radius: var(--md3-shape-corner-medium);

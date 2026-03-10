@@ -292,19 +292,19 @@
   }
 }
 
-/* Tablet (600px - 1024px) */
-@media (min-width: 600px) and (max-width: 1024px) {
+/* Tablet (600px - 1080px) */
+@media (min-width: 600px) and (max-width: 1080px) {
   .library-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
-  
+
   .app-main {
     padding: var(--md-sys-spacing-5, 20px);
   }
 }
 
-/* Desktop (> 1024px) */
-@media (min-width: 1025px) {
+/* Desktop (> 1080px) */
+@media (min-width: 1081px) {
   .app-main {
     padding: var(--md-sys-spacing-6, 24px);
   }

@@ -1009,7 +1009,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .literary-mentor-ui {
     padding: var(--md-sys-spacing-4);
   }

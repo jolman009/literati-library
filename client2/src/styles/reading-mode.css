@@ -61,7 +61,7 @@
 }
 
 /* Mobile adjustments for FAB */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .reading-mode-fab {
     width: 48px;
     height: 48px;

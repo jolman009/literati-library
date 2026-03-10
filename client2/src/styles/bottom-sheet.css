@@ -148,7 +148,7 @@
 }
 
 /* Tablet & Desktop */
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .bottom-sheet {
     max-width: 600px;
     margin: 0 auto;

@@ -355,16 +355,8 @@
   right: 1rem;
 }
 
-/* Tablet and smaller - reduce padding as widgets may collapse */
-@media (max-width: 1024px) {
-  .epub-reader-content {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
+/* Tablet and mobile adjustments */
+@media (max-width: 1080px) {
   .epub-reader-content {
     padding-left: 10px;
     padding-right: 10px;

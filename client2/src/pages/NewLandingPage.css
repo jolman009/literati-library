@@ -123,7 +123,7 @@
   gap: 2rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .nav-links {
     display: flex;
   }
@@ -295,7 +295,7 @@
   padding: 0 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .hero-video-section {
     margin-top: 4rem;
     max-width: 750px;
@@ -471,7 +471,7 @@
   max-width: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .hero-visual {
     min-height: 400px;
     max-width: 800px;
@@ -708,7 +708,7 @@
   gap: 2rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .stats-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -748,7 +748,7 @@
   margin-bottom: 3rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .features-header {
     max-width: 65%;
   }
@@ -784,7 +784,7 @@
   grid-auto-rows: minmax(200px, auto);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .bento-grid {
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: 200px;
@@ -809,7 +809,7 @@
 }
 
 /* Bento Card Sizes */
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .bento-large {
     grid-column: span 2;
     grid-row: span 2;
@@ -976,7 +976,7 @@
 }
 
 /* Hide upload visual on mobile to prevent text overlap */
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   .upload-visual {
     display: none;
   }
@@ -1131,7 +1131,7 @@
   height: 100%;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .bento-content-row {
     flex-direction: row;
     align-items: center;
@@ -1402,7 +1402,7 @@
   gap: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .testimonials-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1523,7 +1523,7 @@
   border: 1px solid var(--carolina-blue-glow);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .cta-card {
     padding: 4rem 3rem;
   }
@@ -1709,7 +1709,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .footer-grid {
     grid-template-columns: 2fr 1fr 1fr 1fr;
   }
@@ -1725,7 +1725,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .footer-brand {
     grid-column: span 1;
   }

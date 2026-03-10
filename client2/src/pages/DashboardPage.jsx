@@ -1479,7 +1479,7 @@ const DashboardPage = () => {
   // Pull-to-refresh hook (only active on mobile)
   const pullToRefresh = usePullToRefresh(handleRefresh, {
     threshold: 80,
-    enabled: window.innerWidth <= 768, // Only on mobile
+    enabled: window.innerWidth <= 1080, // Only on mobile
   });
 
   // Load books data for statistics

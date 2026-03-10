@@ -163,21 +163,8 @@
   cursor: inherit;
 }
 
-/* Tablet and smaller - reduce padding as widgets may collapse */
-@media (max-width: 1024px) {
-  .pdf-content-area {
-    padding-top: calc(56px + env(safe-area-inset-top, 0px));
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .pdf-zoom-controls {
-    padding-left: 12px;
-  }
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
+/* Tablet and mobile adjustments */
+@media (max-width: 1080px) {
   .pdf-content-area {
     padding-top: calc(52px + env(safe-area-inset-top, 0px));
     padding-left: 10px;

@@ -290,7 +290,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .points-history-list {
     max-height: 300px;
   }

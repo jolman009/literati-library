@@ -394,7 +394,7 @@
 }
 
 /* Swipe indicator for mobile */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .journey-path::before {
     content: '↕';
     position: sticky;
@@ -828,7 +828,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .progress-page {
     padding: 16px;
     padding-bottom: 100px;

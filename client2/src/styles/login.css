@@ -94,7 +94,7 @@
 }
 
 /* Desktop and larger - keep it compact */
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .login-content-wrapper {
     max-width: 24rem !important;
   }
@@ -645,7 +645,7 @@
 }
 
 /* Small tablets */
-@media (min-width: 641px) and (max-width: 768px) {
+@media (min-width: 641px) and (max-width: 1080px) {
   .login-container {
     padding: 2rem 1.5rem;
   }

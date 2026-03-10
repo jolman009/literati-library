@@ -275,7 +275,7 @@ button {
    MOBILE BREAKPOINTS
    ================================================ */
 
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   /* Force single column layouts on mobile */
   [class*="col-"],
   [class*="Col-"],
@@ -503,7 +503,7 @@ button {
    LANDSCAPE ORIENTATION (Mobile)
    ================================================ */
 
-@media (max-width: 767px) and (orientation: landscape) {
+@media (max-width: 1079px) and (orientation: landscape) {
   /* Adjust for landscape mode on mobile */
   .container,
   .Container {
@@ -535,7 +535,7 @@ button {
    ================================================ */
 
 /* Ensure touch targets are big enough */
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   a,
   button,
   input[type="button"],

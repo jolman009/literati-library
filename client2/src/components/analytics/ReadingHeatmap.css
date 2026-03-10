@@ -249,7 +249,7 @@
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .reading-heatmap {
     padding: 16px;
   }
@@ -300,12 +300,7 @@
   }
 }
 
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .heatmap-stats {
-    gap: 24px;
-  }
-}
+/* Tablet — heatmap stats spacing handled by mobile breakpoint above */
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
