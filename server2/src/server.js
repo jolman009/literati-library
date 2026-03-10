@@ -117,50 +117,10 @@ app.use(cookieParser());
 // ----- Sentry Request Handling (must be early) -----
 setupSentryMiddleware(app);
 
-// ----- Security Headers (must be first) -----
-app.use(securitySuite.headers);
-
-// ----- Body Parser (must be before sanitization) -----
-// ✅ MEMORY FIX: Reduced from 10mb to 2mb to prevent memory spikes
-// Notes, sessions, and most API data are typically <100kb
-// File uploads use multipart/form-data (handled separately by multer)
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true, limit: '2mb' }));
-
-// ----- Request Logging -----
-app.use(securitySuite.logging);
-
-// ----- Security Utilities -----
-app.use(securitySuite.utils.addRequestId);
-app.use(securitySuite.utils.sanitizeHeaders);
-
-// ----- Advanced Security Middleware -----
-app.use(advancedSecuritySuite.sanitization.deep);
-app.use(advancedSecuritySuite.sanitization.sqlInjection);
-app.use(advancedSecuritySuite.sanitization.noSQLInjection);
-app.use(advancedSecuritySuite.monitoring.suspicious);
-
-// ----- Additional Security -----
-app.use(mongoSanitize()); // Remove any keys that start with '$' or contain '.'
-app.use((req, res, next) => {
-  // XSS protection for string fields
-  if (req.body) {
-    Object.keys(req.body).forEach(key => {
-      if (typeof req.body[key] === 'string') {
-        req.body[key] = xss(req.body[key]);
-      }
-    });
-  }
-  next();
-});
-
-// ----- Rate Limiting & Slow Down (Production-Ready) -----
-// General rate limiting for all endpoints
-app.use(rateLimitSuite.general);
-// General slow down to prevent abuse
-app.use(slowDownSuite.general);
-
-// ----- CORS (must be before routes) -----
+// ----- CORS (must be FIRST — before all other middleware) -----
+// If CORS runs after rate-limiting/sanitization, error responses from those
+// middlewares won't include CORS headers, causing the browser to report
+// the real error (400/429) as a misleading "CORS blocked" message.
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, etc.)
@@ -216,6 +176,49 @@ app.use(cors({
     'X-Client-Type'  // Distinguish extension vs web client
   ]
 }));
+
+// ----- Security Headers -----
+app.use(securitySuite.headers);
+
+// ----- Body Parser (must be before sanitization) -----
+// ✅ MEMORY FIX: Reduced from 10mb to 2mb to prevent memory spikes
+// Notes, sessions, and most API data are typically <100kb
+// File uploads use multipart/form-data (handled separately by multer)
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// ----- Request Logging -----
+app.use(securitySuite.logging);
+
+// ----- Security Utilities -----
+app.use(securitySuite.utils.addRequestId);
+app.use(securitySuite.utils.sanitizeHeaders);
+
+// ----- Advanced Security Middleware -----
+app.use(advancedSecuritySuite.sanitization.deep);
+app.use(advancedSecuritySuite.sanitization.sqlInjection);
+app.use(advancedSecuritySuite.sanitization.noSQLInjection);
+app.use(advancedSecuritySuite.monitoring.suspicious);
+
+// ----- Additional Security -----
+app.use(mongoSanitize()); // Remove any keys that start with '$' or contain '.'
+app.use((req, res, next) => {
+  // XSS protection for string fields
+  if (req.body) {
+    Object.keys(req.body).forEach(key => {
+      if (typeof req.body[key] === 'string') {
+        req.body[key] = xss(req.body[key]);
+      }
+    });
+  }
+  next();
+});
+
+// ----- Rate Limiting & Slow Down (Production-Ready) -----
+// General rate limiting for all endpoints
+app.use(rateLimitSuite.general);
+// General slow down to prevent abuse
+app.use(slowDownSuite.general);
 
 // ----- Protected Routes with specific rate limiting -----
 // Authentication endpoints with strict rate limiting + slow down

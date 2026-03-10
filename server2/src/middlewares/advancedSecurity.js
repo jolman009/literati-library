@@ -62,6 +62,14 @@ export const deepSanitize = (req, res, next) => {
  * SQL Injection protection
  */
 export const sqlInjectionProtection = (req, res, next) => {
+  // Skip SQL injection checks on routes that carry user-generated text content
+  // (book titles, AI prompts, notes). All DB access uses parameterized queries
+  // via Supabase, so SQL injection is not a risk on these routes.
+  const exemptPrefixes = ['/ai/', '/notes', '/api/clippings'];
+  if (exemptPrefixes.some(p => req.path.startsWith(p))) {
+    return next();
+  }
+
   const sqlPatterns = [
     /(\b(ALTER|CREATE|DELETE|DROP|EXEC(UTE)?|INSERT( +INTO)?|MERGE|SELECT|UPDATE|UNION( +ALL)?)\b)/i,
     /((\b(AND|OR)\b.{1,6}?(=|>|<|\bIN\b|\bLIKE\b))|(\bLIKE\b.{1,10}?%)|(\bIN\b.{1,10}?\()|(\b(AND|OR)\b.{1,6}?\b(true|false)\b))/i,
