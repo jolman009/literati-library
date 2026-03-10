@@ -10,7 +10,8 @@
   grid-template-columns: var(--app-nav-width, 280px) minmax(0, 1fr);
   min-height: 100vh;
   width: 100%;
-  max-width: 100vw;
+  max-width: 1680px;
+  margin: 0 auto;
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-background);
   transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);

@@ -1605,13 +1605,9 @@
   line-height: var(--md-sys-typescale-body-large-line-height, 1.5);
   letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.5px);
   /* Layout + interaction polish */
-  box-sizing: border-box !important;
-  scroll-behavior: smooth;
-  word-break: break-word !important;
-  hyphens: auto !important;
-  max-width: 100vw !important;
-  overflow-wrap: break-word !important;
-  height: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: break-word;
   margin-bottom: 0;
 }
 
@@ -2346,17 +2342,18 @@
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-bottom: 24px;
+  align-items: start;
 }
 
 .dashboard-content-left,
 .dashboard-content-right {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 /* Welcome Section as a Card */
 .dashboard-content-left .welcome-section-compact {
-  height: 100%;
   margin-bottom: 0;
 }
 
