@@ -386,7 +386,7 @@
 }
 
 /* Enhanced responsive behavior */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .gamification-page {
     padding: 16px;
   }

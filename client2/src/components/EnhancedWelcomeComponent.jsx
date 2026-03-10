@@ -471,7 +471,7 @@ const EnhancedWelcomeComponent = ({
             transform: scale(1.05);
           }
           
-          @media (max-width: 768px) {
+          @media (max-width: 1080px) {
             .enhanced-welcome-component .stats-row {
               flex-direction: column;
               align-items: center;

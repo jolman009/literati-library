@@ -97,7 +97,7 @@
 
 .md3-dialog--sm { max-width: 560px !important; }
 
-.md3-dialog--md { max-width: 768px !important; }
+.md3-dialog--md { max-width: 1080px !important; }
 
 .md3-dialog--lg { max-width: 1024px !important; }
 
@@ -147,7 +147,7 @@
   border: 1px solid var(--md-sys-color-outline-variant) !important;
   box-shadow: var(--md-sys-elevation-level2) !important;
   width: auto !important;
-  max-width: 768px !important; /* standard md dialog */
+  max-width: 1080px !important; /* standard md dialog */
 }
 
 .md3-dialog.contact-dialog .md3-dialog__content {

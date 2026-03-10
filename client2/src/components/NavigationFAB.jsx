@@ -19,7 +19,7 @@ const NavigationFAB = ({ quickStats = {} }) => {
   // Detect mobile viewport
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1080);
     };
 
     checkMobile();

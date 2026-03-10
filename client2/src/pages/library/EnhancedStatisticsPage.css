@@ -674,7 +674,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .enhanced-statistics-page {
     padding: 16px;
   }
@@ -936,7 +936,7 @@
 }
 
 /* Enhanced Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
   .near-completion-grid {
     grid-template-columns: 1fr;
   }

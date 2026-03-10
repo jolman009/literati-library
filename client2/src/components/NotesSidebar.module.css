@@ -685,7 +685,7 @@
 }
 
 /* ===== TABLET RESPONSIVE ===== */
-@media (min-width: 641px) and (max-width: 1024px) {
+@media (min-width: 641px) and (max-width: 1080px) {
   .sidebar {
     width: 420px;
   }

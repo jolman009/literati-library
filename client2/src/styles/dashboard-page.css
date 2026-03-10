@@ -27,7 +27,7 @@
 }
 
 /* Mobile: iOS safe area and padding adjustments */
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   .dashboard-container {
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -1314,7 +1314,7 @@
 }
 
 /* Hide detailed sections on mobile */
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   /* Hide stat cards scroll on mobile - use compact badge instead */
   .simple-scroll-container.mobile-hide {
     display: none;
@@ -1350,7 +1350,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .dashboard-content {
     padding: 16px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -1424,7 +1424,7 @@
 }
 
 /* Show mobile-specific elements only on mobile */
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .dashboard-mobile-only {
     display: none !important;
   }
@@ -1444,7 +1444,7 @@
 }
 
 /* Hide desktop elements on mobile */
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   .mobile-hide {
     display: none !important;
   }
@@ -2142,7 +2142,7 @@
 }
 
 /* Responsive Design for Dashboard Grid */
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
   .dashboard-main-grid {
     grid-template-columns: 1fr;
   }
@@ -2152,7 +2152,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .quick-actions-grid {
     grid-template-columns: 1fr;
   }
@@ -2369,12 +2369,7 @@
   width: 100%;
 }
 
-/* Responsive adjustments for new layout */
-@media (max-width: 900px) {
-  .dashboard-main-content-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* dashboard-main-content-grid stacks at 1080px (mobile breakpoint) — see line ~2168 */
 
 /* Hide scrollbar for webkit browsers (Chrome, Safari) */
 .simple-scroll-container::-webkit-scrollbar {
@@ -2455,7 +2450,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .point-categories-grid {
     grid-template-columns: 1fr;
   }
@@ -2961,7 +2956,7 @@
   color: var(--md-sys-color-primary);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1079px) {
   .getting-started-card {
     padding: 24px 16px;
     margin-bottom: 24px;

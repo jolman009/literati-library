@@ -46,7 +46,7 @@ const ReadBook = () => {
   // ===== MOBILE DETECTION =====
   useEffect(() => {
     const updateMobileState = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1080);
     };
 
     updateMobileState();

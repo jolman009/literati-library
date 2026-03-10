@@ -160,10 +160,10 @@ const WelcomeWidget = ({
             scrollBehavior: 'smooth',
             paddingBottom: '16px',
             // Break out of parent container - THIS IS KEY for touch scrolling
-            marginLeft: window.innerWidth < 1024 ? '-24px' : '0',
-            marginRight: window.innerWidth < 1024 ? '-24px' : '0',
-            paddingLeft: window.innerWidth < 1024 ? '24px' : '0',
-            paddingRight: window.innerWidth < 1024 ? '24px' : '0',
+            marginLeft: window.innerWidth < 1081 ? '-24px' : '0',
+            marginRight: window.innerWidth < 1081 ? '-24px' : '0',
+            paddingLeft: window.innerWidth < 1081 ? '24px' : '0',
+            paddingRight: window.innerWidth < 1081 ? '24px' : '0',
             WebkitOverflowScrolling: 'touch',
             touchAction: 'pan-x',
             scrollbarWidth: 'thin',
@@ -177,13 +177,13 @@ const WelcomeWidget = ({
               onClick={() => handleNavigationClick(item.id)}
               style={{
                 display: 'flex',
-                flexDirection: window.innerWidth >= 768 ? 'column' : 'row',
+                flexDirection: window.innerWidth >= 1081 ? 'column' : 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minWidth: window.innerWidth >= 768 ? '75px' : '85px',
-                maxWidth: window.innerWidth >= 768 ? '90px' : '95px',
-                height: window.innerWidth >= 768 ? '56px' : '44px',
-                padding: window.innerWidth >= 768 ? '6px 4px' : '6px 8px',
+                minWidth: window.innerWidth >= 1081 ? '75px' : '85px',
+                maxWidth: window.innerWidth >= 1081 ? '90px' : '95px',
+                height: window.innerWidth >= 1081 ? '56px' : '44px',
+                padding: window.innerWidth >= 1081 ? '6px 4px' : '6px 8px',
                 border: `1px solid rgba(255, 255, 255, 0.3)`,
                 background: activeNavItem === item.id
                   ? 'rgba(255, 255, 255, 0.)'
@@ -209,22 +209,22 @@ const WelcomeWidget = ({
               }}
             >
               <div style={{
-                fontSize: window.innerWidth >= 768 ? '18px' : '16px',
-                marginBottom: window.innerWidth >= 768 ? '3px' : '0',
-                marginRight: window.innerWidth >= 768 ? '0' : '5px',
+                fontSize: window.innerWidth >= 1081 ? '18px' : '16px',
+                marginBottom: window.innerWidth >= 1081 ? '3px' : '0',
+                marginRight: window.innerWidth >= 1081 ? '0' : '5px',
                 flexShrink: 0,
                 lineHeight: 1
               }}>
                 {item.icon}
               </div>
               <div style={{
-                fontSize: window.innerWidth >= 768 ? '10px' : '11px',
+                fontSize: window.innerWidth >= 1081 ? '10px' : '11px',
                 fontWeight: '500',
                 textAlign: 'center',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                maxWidth: window.innerWidth >= 768 ? '65px' : '55px',
+                maxWidth: window.innerWidth >= 1081 ? '65px' : '55px',
                 lineHeight: 1.2
               }}>
                 {item.label}

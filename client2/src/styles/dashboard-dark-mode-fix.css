@@ -183,7 +183,7 @@
    MOBILE RESPONSIVE DARK MODE ADJUSTMENTS
    ============================================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   [data-actual-theme="dark"] .currently-reading-section,
   .dark .currently-reading-section,
   .premium-app-layout.dark .currently-reading-section {

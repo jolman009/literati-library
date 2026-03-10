@@ -490,7 +490,7 @@ div.md3-text-field.md3-notes-search {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .md3-notes-container {
     padding: 16px;
   }

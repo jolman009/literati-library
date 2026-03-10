@@ -14,7 +14,7 @@
   padding: 16px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .cookie-consent-overlay {
     align-items: center;
     padding: 24px;
@@ -27,7 +27,7 @@
   animation: slideUp 0.3s ease-out;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .cookie-consent-container {
     animation: fadeInScale 0.3s ease-out;
   }

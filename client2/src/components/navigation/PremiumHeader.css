@@ -408,14 +408,14 @@
 }
 
 /* Desktop: hide header logo (nav panel already shows ShelfQuest branding) */
-@media (min-width: 769px) {
+@media (min-width: 1081px) {
   .premium-header-logo-btn {
     display: none;
   }
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .premium-header-search {
     display: none;
   }

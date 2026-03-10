@@ -54,7 +54,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .swipe-indicator {
     padding: 12px 16px;
   }

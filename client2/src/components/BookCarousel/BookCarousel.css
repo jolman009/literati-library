@@ -232,7 +232,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .book-grid-scrollable {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;

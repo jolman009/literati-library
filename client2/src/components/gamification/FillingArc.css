@@ -474,7 +474,7 @@
    ======================================================================== */
 
 /* Reduce animation intensity on mobile for performance */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .arc-glow,
   .arc-glow-intense,
   .arc-glow-cosmic {

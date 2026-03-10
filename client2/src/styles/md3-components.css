@@ -616,7 +616,7 @@
    RESPONSIVE DESIGN
    ============================================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .dashboard-content {
     padding: 16px;
     gap: 16px;

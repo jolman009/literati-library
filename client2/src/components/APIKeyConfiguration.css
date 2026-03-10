@@ -122,7 +122,7 @@
   margin-bottom: 24px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .provider-configuration {
     grid-template-columns: 1fr;
   }

@@ -184,7 +184,7 @@
 }
 
 /* Responsive Design */
-@media (min-width: 768px) {
+@media (min-width: 1080px) {
   .md3-footer-bottom-content {
     flex-direction: row;
     justify-content: space-between;
@@ -193,7 +193,7 @@
 }
 
 /* Tablet: 2 columns */
-@media (min-width: 481px) and (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 1080px) {
   .md3-footer-container {
     padding: 24px 20px 16px;
     gap: 20px;

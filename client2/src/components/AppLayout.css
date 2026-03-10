@@ -124,8 +124,8 @@
   display: none;
 }
 
-/* Desktop (≥769px): Explicitly hide mobile elements */
-@media (min-width: 769px) {
+/* Desktop (≥1081px): Explicitly hide mobile elements */
+@media (min-width: 1081px) {
   .mobile-only {
     display: none;
   }
@@ -175,8 +175,8 @@
   margin-bottom: 12px;
 }
 
-/* Mobile styles - ONLY apply on screens 768px and smaller */
-@media (max-width: 768px) {
+/* Mobile styles - ONLY apply on screens 1080px and smaller */
+@media (max-width: 1080px) {
   .premium-app-layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -328,7 +328,7 @@
    MOBILE RESPONSIVE - Hide desktop navigation and header
    ============================================================================ */
 
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   /* Hide desktop sidebar navigation on mobile */
   .premium-app-layout .navigation-pane {
     display: none !important;

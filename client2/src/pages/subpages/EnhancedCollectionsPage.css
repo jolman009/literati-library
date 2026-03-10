@@ -536,7 +536,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .collections-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
