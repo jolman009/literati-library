@@ -152,6 +152,25 @@
   box-shadow: var(--md-sys-elevation-level1);
 }
 
+/* Book cover card sizing — mobile-first (small), desktop override below */
+.cr-cover {
+  position: relative;
+  border-radius: 8px;
+  height: 80px;
+  min-width: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+@media (min-width: 1081px) {
+  .cr-cover {
+    border-radius: 12px;
+    aspect-ratio: 2 / 3;
+    height: 220px;
+    min-width: 146px;
+  }
+}
+
 /* Compact tweaks for existing Currently Reading markup (fallback) */
 #dashboard-currently-reading .books-grid { gap: 10px 12px; }
 #dashboard-currently-reading .book-card { border-radius: 12px; overflow: hidden; position: relative; }
@@ -1314,7 +1333,7 @@
 }
 
 /* Hide detailed sections on mobile */
-@media (max-width: 1079px) {
+@media (max-width: 1080px) {
   /* Hide stat cards scroll on mobile - use compact badge instead */
   .simple-scroll-container.mobile-hide {
     display: none;
@@ -1344,9 +1363,10 @@
   }
 
   #dashboard-currently-reading .book-card {
-    height: 180px;
-    min-width: unset;
+    height: 80px;
+    min-width: 0;
   }
+
 }
 
 /* Responsive Design */
@@ -1423,8 +1443,8 @@
   }
 }
 
-/* Show mobile-specific elements only on mobile */
-@media (min-width: 1080px) {
+/* Show mobile-specific elements only on desktop */
+@media (min-width: 1081px) {
   .dashboard-mobile-only {
     display: none !important;
   }
@@ -1444,13 +1464,52 @@
 }
 
 /* Hide desktop elements on mobile */
-@media (max-width: 1079px) {
+@media (max-width: 1080px) {
   .mobile-hide {
     display: none !important;
   }
 
   .desktop-only {
     display: none !important;
+  }
+
+  /* Currently Reading + Daily Challenges side-by-side on mobile */
+  .mobile-twin-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .mobile-twin-row > .section-card,
+  .mobile-twin-row > #dashboard-currently-reading {
+    margin: 0 !important;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  /* Horizontal row of compact covers in twin row */
+  .mobile-twin-row #dashboard-currently-reading .simple-scroll-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
+    overflow-x: hidden;
+  }
+
+}
+
+/* On very narrow screens (<480px) keep the twin row but tighten gap */
+@media (max-width: 480px) {
+  .mobile-twin-row {
+    gap: 8px;
+  }
+
+  .mobile-twin-row .section-card {
+    padding: 8px !important;
+  }
+
+  .mobile-twin-row .section-title {
+    font-size: 0.85rem;
   }
 }
 
@@ -2336,13 +2395,27 @@
 
 .stat-metric-percentage.neutral { color: var(--md-sys-color-on-surface-variant); }
 
-/* Main Content Grid - Two Columns (Welcome + Reading Sessions) */
+/* Twin row wrapper - passthrough on desktop, grid on mobile (see @media max-width: 1079px) */
+@media (min-width: 1080px) {
+  .mobile-twin-row {
+    display: contents;
+  }
+}
+
+/* Main Content Grid - Two Columns on desktop, single column on mobile */
 .dashboard-main-content-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 16px;
   margin-bottom: 24px;
-  align-items: start;
+}
+
+@media (min-width: 1081px) {
+  .dashboard-main-content-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
 }
 
 .dashboard-content-left,
@@ -2970,3 +3043,4 @@
     padding: 14px 16px;
   }
 }
+

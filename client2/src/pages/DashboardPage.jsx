@@ -978,16 +978,9 @@ const CurrentlyReading = () => {
               } catch {}
               navigate(`/read/${book.id}`);
             }}
-            className="book-card cr-card"
+            className="book-card cr-card cr-cover"
             style={{
-              position: 'relative',
               backgroundImage: (book.cover_url || book.coverUrl || book.cover) ? `url(${book.cover_url || book.coverUrl || book.cover})` : undefined,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              borderRadius: '12px',
-              aspectRatio: '2 / 3',
-              height: '220px',
-              minWidth: '146px'
             }}
           >
             {/* Minimal status dot (icon-only) to avoid overlap with menus */}
@@ -1517,6 +1510,11 @@ const DashboardPage = () => {
         {/* Mobile-Only: Quick Actions */}
         <MobileQuickActions navigate={navigate} />
 
+        {/* Mobile-Only: Mentor Preview Card (desktop version is inside WelcomeSection) */}
+        <div className="dashboard-mobile-only">
+          <MentorPreviewCard />
+        </div>
+
         <ContinueReadingCard activeSession={activeSession} getSessionHistory={getSessionHistory} navigate={navigate} />
         {/* Global Resume banner (desktop only - mobile uses hero card) */}
         {activeSession?.book?.id && (activeSession?.isPaused) && (
@@ -1600,23 +1598,25 @@ const DashboardPage = () => {
 
           {/* Right Column - Currently Reading Sessions */}
           <div className="dashboard-content-right">
-            <CurrentlyReading />
+            <div className="mobile-twin-row">
+              <CurrentlyReading />
 
-            {/* Daily Challenges Widget - Compact view for dashboard */}
-            <div className="section-card" style={{ margin: "12px 0", padding: "12px" }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <h3 className="section-title" style={{ margin: 0 }}>
-                  🎯 Daily Challenges
-                </h3>
-                <button
-                  onClick={() => navigate('/gamification')}
-                  className="view-all-link"
-                  style={{ fontSize: '13px' }}
-                >
-                  View all →
-                </button>
+              {/* Daily Challenges Widget - Compact view for dashboard */}
+              <div className="section-card" style={{ margin: "12px 0", padding: "12px" }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <h3 className="section-title" style={{ margin: 0 }}>
+                    🎯 Daily Challenges
+                  </h3>
+                  <button
+                    onClick={() => navigate('/gamification')}
+                    className="view-all-link"
+                    style={{ fontSize: '13px' }}
+                  >
+                    View all →
+                  </button>
+                </div>
+                <Challenges compact={true} showOnlyDaily={true} maxChallenges={3} />
               </div>
-              <Challenges compact={true} showOnlyDaily={true} maxChallenges={3} />
             </div>
 
             {/* Points History - Show recent point-earning actions (hidden on mobile) */}

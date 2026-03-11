@@ -242,6 +242,11 @@
   min-height: 200px; /* Prevent layout shift when book data loads */
 }
 
+/* Allow compact covers in mobile twin-row */
+.mobile-twin-row .book-card {
+  min-height: 0;
+}
+
 .user-avatar {
   width: 40px;
   height: 40px; /* Prevent shift when avatar loads */
