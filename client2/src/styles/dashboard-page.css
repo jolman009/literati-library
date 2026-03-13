@@ -167,7 +167,9 @@
     aspect-ratio: 2 / 3;
     height: 220px;
     min-width: 146px;
-    background-size: cover;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 }
 
@@ -2721,7 +2723,7 @@
 [data-theme='dark'] .cr-card { --cr-card-bg: rgba(255,255,255,0.06); }
 
 #dashboard-currently-reading .covers-scroll { gap: 12px; }
-#dashboard-currently-reading .covers-scroll .book-card { flex: 0 0 auto; box-shadow: 0 6px 14px rgba(0,0,0,.12); transition: transform .15s ease, box-shadow .15s ease; }
+#dashboard-currently-reading .covers-scroll .book-card { flex: 0 0 auto; box-shadow: 0 6px 14px rgba(0,0,0,.12); transition: transform .15s ease, box-shadow .15s ease; background-size: contain; background-position: center; background-repeat: no-repeat; }
 #dashboard-currently-reading .covers-scroll .book-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.18); }
 #dashboard-currently-reading .covers-scroll .book-card { border-radius: 12px; overflow: hidden; }
 
