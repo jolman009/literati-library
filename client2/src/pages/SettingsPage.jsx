@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useEntitlements } from '../contexts/EntitlementsContext';
 import GoPremiumCTA from '../components/premium/GoPremiumCTA';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import '../styles/settings-page.css';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -64,37 +65,39 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="md-headline-medium mb-2">Settings</h1>
-      <p className="text-on-surface-variant mb-6">Manage your account, privacy, and data controls.</p>
+    <div className="settings-page">
+      <div className="settings-header-panel">
+        <h1 className="settings-page-title">Settings</h1>
+        <p className="settings-page-subtitle">Manage your account, privacy, and data controls.</p>
+      </div>
 
       {!isPremium && (
-        <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
-          <h2 className="md-title-large mb-2">ShelfQuest Premium</h2>
-          <p className="md-body-medium mb-3">Upgrade to unlock AI summaries, advanced analytics, and cross-device sync.</p>
-          <ul className="md-body-medium list-disc pl-5 mb-4 space-y-1">
+        <section className="settings-section">
+          <h2 className="settings-section-title">ShelfQuest Premium</h2>
+          <p className="settings-section-desc">Upgrade to unlock AI summaries, advanced analytics, and cross-device sync.</p>
+          <ul className="settings-feature-list">
             <li>AI-powered summaries and contextual insights</li>
             <li>Advanced reading stats, goals, and streaks</li>
             <li>Secure backup and sync across devices</li>
             <li>Full note search and export</li>
           </ul>
-          <div className="flex items-center gap-3">
+          <div className="settings-actions">
             <GoPremiumCTA />
             <button className="md3-button md3-button--outlined" onClick={openPremiumModal}>Learn More</button>
           </div>
         </section>
       )}
 
-      <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-2">Appearance & Themes</h2>
-        <p className="md-body-medium mb-4">Customize your reading experience with unlockable themes. Earn points to unlock new color palettes!</p>
+      <section className="settings-section">
+        <h2 className="settings-section-title">Appearance & Themes</h2>
+        <p className="settings-section-desc">Customize your reading experience with unlockable themes. Earn points to unlock new color palettes!</p>
         <ThemeSwitcher />
       </section>
 
-      <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-2">Help & Support</h2>
-        <p className="md-body-medium mb-4">Get answers to common questions or send us feedback.</p>
-        <div className="flex items-center gap-3 flex-wrap">
+      <section className="settings-section">
+        <h2 className="settings-section-title">Help & Support</h2>
+        <p className="settings-section-desc">Get answers to common questions or send us feedback.</p>
+        <div className="settings-actions">
           <button className="md3-button md3-button--outlined" onClick={() => navigate('/help')}>
             <span className="material-symbols-outlined mr-2">help</span>
             Help & FAQ
@@ -106,26 +109,26 @@ const SettingsPage = () => {
         </div>
       </section>
 
-      <section className="mb-6 bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-2">Privacy</h2>
-        <p className="md-body-medium mb-4">Control how your data is handled and request deletions.</p>
+      <section className="settings-section">
+        <h2 className="settings-section-title">Privacy</h2>
+        <p className="settings-section-desc">Control how your data is handled and request deletions.</p>
 
-        <div className="mb-4">
-          <h3 className="md-title-medium mb-2">Request data deletion (keep account)</h3>
-          <form onSubmit={onRequestDataDeletion} className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.library} onChange={() => toggleCategory('library')} /> Library (uploaded books + metadata)</label>
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.readingHistory} onChange={() => toggleCategory('readingHistory')} /> Reading history (progress, bookmarks, sessions)</label>
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.notes} onChange={() => toggleCategory('notes')} /> Notes</label>
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.highlights} onChange={() => toggleCategory('highlights')} /> Highlights/annotations</label>
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.gamification} onChange={() => toggleCategory('gamification')} /> Gamification data</label>
-              <label className="flex items-center gap-2"><input type="checkbox" checked={categories.allExceptAccount} onChange={() => toggleCategory('allExceptAccount')} /> Delete all data (keep account)</label>
+        <div className="settings-subsection">
+          <h3 className="settings-subsection-title">Request data deletion (keep account)</h3>
+          <form onSubmit={onRequestDataDeletion} className="settings-form">
+            <div className="settings-checkbox-grid">
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.library} onChange={() => toggleCategory('library')} /> Library (uploaded books + metadata)</label>
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.readingHistory} onChange={() => toggleCategory('readingHistory')} /> Reading history (progress, bookmarks, sessions)</label>
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.notes} onChange={() => toggleCategory('notes')} /> Notes</label>
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.highlights} onChange={() => toggleCategory('highlights')} /> Highlights/annotations</label>
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.gamification} onChange={() => toggleCategory('gamification')} /> Gamification data</label>
+              <label className="settings-checkbox-label"><input type="checkbox" checked={categories.allExceptAccount} onChange={() => toggleCategory('allExceptAccount')} /> Delete all data (keep account)</label>
             </div>
 
             <div>
-              <label className="md-label-large block mb-1">Additional details (optional)</label>
+              <label className="settings-field-label">Additional details (optional)</label>
               <textarea
-                className="w-full border border-outline-variant rounded-medium p-2 bg-surface text-on-surface"
+                className="settings-textarea"
                 rows={4}
                 value={additionalInfo}
                 onChange={(e) => setAdditionalInfo(e.target.value)}
@@ -133,7 +136,7 @@ const SettingsPage = () => {
               />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="settings-actions">
               <button type="submit" disabled={requesting} className="md3-button md3-button--filled">
                 <span className="material-symbols-outlined mr-2">how_to_reg</span>
                 Send Request Email
@@ -150,22 +153,22 @@ const SettingsPage = () => {
           </form>
         </div>
 
-        <div className="border-t border-outline-variant my-4" />
+        <hr className="settings-divider" />
 
         <div>
-          <h3 className="md-title-medium mb-2 text-error">Delete account</h3>
-          <p className="md-body-medium mb-3">Permanently delete your account and all associated data.</p>
-          <button onClick={onDeleteAccount} className="md3-button md3-button--tonal text-error">
+          <h3 className="settings-subsection-title settings-section-title--error">Delete account</h3>
+          <p className="settings-section-desc">Permanently delete your account and all associated data.</p>
+          <button onClick={onDeleteAccount} className="md3-button md3-button--tonal settings-section-title--error">
             <span className="material-symbols-outlined mr-2">delete_forever</span>
             Delete Account
           </button>
         </div>
       </section>
 
-      <section className="bg-surface-container rounded-medium border border-outline-variant p-4">
-        <h2 className="md-title-large mb-2">Data Management</h2>
-        <p className="md-body-medium mb-4">Export or manage your local data.</p>
-        <div className="flex items-center gap-3">
+      <section className="settings-section">
+        <h2 className="settings-section-title">Data Management</h2>
+        <p className="settings-section-desc">Export or manage your local data.</p>
+        <div className="settings-actions">
           <a className="md3-button md3-button--outlined" href="/settings/data-export">
             <span className="material-symbols-outlined mr-2">download</span>
             Export My Data
