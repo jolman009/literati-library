@@ -197,7 +197,7 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
         {/* Inline Premium CTA for non-premium users */}
         {!isPremium && (
           <div className="premium-header-actions">
-            <GoPremiumCTA to="/premium" variant="tonal" className="premium-cta" />
+            <GoPremiumCTA to="/pricing" variant="tonal" className="premium-cta" />
           </div>
         )}
 
@@ -319,12 +319,12 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
                     className="dropdown-item"
                     role="menuitem"
                     onClick={() => {
-                      navigate('/premium');
+                      navigate('/pricing');
                       setUserMenuOpen(false);
                     }}
                   >
                     <span className="material-symbols-outlined">workspace_premium</span>
-                    Premium
+                    Pricing
                   </button>
                   <button
                     className="dropdown-item"

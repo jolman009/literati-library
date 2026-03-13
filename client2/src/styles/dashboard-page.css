@@ -155,11 +155,10 @@
 /* Book cover card sizing — mobile-first (small), desktop override below */
 .cr-cover {
   position: relative;
-  border-radius: 8px;
-  height: 80px;
-  min-width: 0;
+  border-radius: 12px;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
 @media (min-width: 1081px) {
@@ -168,6 +167,7 @@
     aspect-ratio: 2 / 3;
     height: 220px;
     min-width: 146px;
+    background-size: cover;
   }
 }
 
@@ -1355,7 +1355,7 @@
     display: none;
   }
 
-  /* Stack currently reading vertically */
+  /* Stack currently reading covers in 2-col grid on mobile */
   #dashboard-currently-reading .simple-scroll-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1363,8 +1363,23 @@
   }
 
   #dashboard-currently-reading .book-card {
-    height: 80px;
+    height: 180px;
     min-width: 0;
+  }
+
+  /* Twin-row: compact thumbnail covers showing full book image */
+  .mobile-twin-row #dashboard-currently-reading .simple-scroll-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .mobile-twin-row #dashboard-currently-reading .book-card {
+    height: 100px;
+    min-width: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    flex: 1 1 auto;
   }
 
 }
@@ -1488,13 +1503,7 @@
     overflow: visible;
   }
 
-  /* Horizontal row of compact covers in twin row */
-  .mobile-twin-row #dashboard-currently-reading .simple-scroll-container {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 8px;
-    overflow-x: hidden;
-  }
+  /* Twin-row scroll container handled in earlier @media block (line ~1371) */
 
 }
 

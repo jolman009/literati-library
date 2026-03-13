@@ -1,0 +1,228 @@
+/* SettingsPage — uses MD3 theme tokens */
+
+.settings-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Header panel — mirrors Dashboard welcome-section-compact */
+.settings-header-panel {
+  position: relative;
+  padding: 24px 32px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary) 38%, transparent) 50%,
+    color-mix(in srgb, var(--md-sys-color-primary) 22%, transparent) 100%);
+  border: 2px solid color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+  box-shadow: var(--md-sys-elevation-level3);
+  overflow: hidden;
+}
+
+.settings-header-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg,
+    transparent 0%,
+    color-mix(in srgb, var(--md-sys-color-on-primary) 8%, transparent) 40%,
+    transparent 80%);
+  pointer-events: none;
+}
+
+/* Light mode override — use solid primary-container like Dashboard */
+:root:not([data-theme="dark"]) .settings-header-panel {
+  background: var(--md-sys-color-primary-container);
+  border: 1px solid color-mix(in srgb, var(--md-sys-color-primary) 35%, transparent);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+/* Dark mode explicit */
+[data-theme="dark"] .settings-header-panel,
+.dark .settings-header-panel {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--md-sys-color-primary) 18%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-secondary) 34%, transparent) 50%,
+    color-mix(in srgb, var(--md-sys-color-primary) 20%, transparent) 100%);
+  border-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+[data-theme="dark"] .settings-header-panel::before,
+.dark .settings-header-panel::before {
+  background: linear-gradient(120deg,
+    transparent 0%,
+    color-mix(in srgb, var(--md-sys-color-on-primary) 6%, transparent) 40%,
+    transparent 80%);
+}
+
+.settings-page-title {
+  position: relative;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-primary-container);
+  margin: 0 0 4px;
+}
+
+.settings-page-subtitle {
+  position: relative;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-primary-container);
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Dark mode title colors */
+[data-theme="dark"] .settings-page-title,
+.dark .settings-page-title {
+  color: var(--md-sys-color-on-surface);
+}
+
+[data-theme="dark"] .settings-page-subtitle,
+.dark .settings-page-subtitle {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+@media (max-width: 600px) {
+  .settings-header-panel {
+    padding: 20px;
+  }
+}
+
+/* Section cards */
+.settings-section {
+  background: var(--md-sys-color-surface-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.settings-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px;
+}
+
+.settings-section-title--error {
+  color: var(--md-sys-color-error);
+}
+
+.settings-section-desc {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0 0 16px;
+}
+
+/* Premium feature list */
+.settings-feature-list {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  list-style: disc;
+  padding-left: 20px;
+  margin: 0 0 16px;
+}
+
+.settings-feature-list li {
+  margin-bottom: 4px;
+}
+
+/* Button row */
+.settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Checkbox grid */
+.settings-checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 540px) {
+  .settings-checkbox-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.settings-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+}
+
+.settings-checkbox-label input[type="checkbox"] {
+  accent-color: var(--md-sys-color-primary);
+}
+
+/* Textarea */
+.settings-field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-textarea {
+  width: 100%;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.settings-textarea::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.6;
+}
+
+.settings-textarea:focus {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+/* Divider */
+.settings-divider {
+  border: none;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin: 16px 0;
+}
+
+/* Sub-section spacing */
+.settings-subsection {
+  margin-bottom: 16px;
+}
+
+.settings-subsection-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 8px;
+}
+
+/* Form spacing */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
