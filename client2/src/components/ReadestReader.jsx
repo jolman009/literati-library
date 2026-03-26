@@ -21,6 +21,10 @@ const ReadestReader = ({
   initialLocation,
   onPageChange,
   initialPage,
+  onTextSelected,
+  onTTSRequest,
+  ttsPlaying,
+  onPdfDocumentLoad,
 }) => {
   const format = (book?.format || "").toLowerCase();
 
@@ -54,6 +58,10 @@ const ReadestReader = ({
       onClose={onClose}
       onPageChange={onPageChange}
       initialPage={initialPage}
+      onTextSelected={onTextSelected}
+      onTTSRequest={onTTSRequest}
+      ttsPlaying={ttsPlaying}
+      onPdfDocumentLoad={onPdfDocumentLoad}
     />
   );
 };

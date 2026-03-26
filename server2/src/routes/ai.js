@@ -98,6 +98,28 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // Summarize book content (page or chapter text)
+  router.post('/summarize-content', authenticateToken, gate, async (req, res) => {
+    try {
+      const { text, bookTitle, chapterTitle, pageRange, mode } = req.body || {};
+
+      if (!text || typeof text !== 'string' || text.trim().length < 50) {
+        return res.status(400).json({ error: 'Text content is required (minimum 50 characters)' });
+      }
+
+      const result = await aiService.summarizeContent(text, {
+        bookTitle,
+        chapterTitle,
+        pageRange,
+        mode: mode || 'brief'
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('Content summarization error:', error);
+      res.status(500).json({ error: 'Content summarization failed' });
+    }
+  });
+
   // AI book recommendations based on user's library
   router.post('/book-recommendations', authenticateToken, gate, async (req, res) => {
     try {

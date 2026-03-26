@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import MDEditor from '@uiw/react-md-editor';
 import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
 import { useNotesEditor } from "../hooks/useNotesEditor";
+import SummaryPanel from "./SummaryPanel";
 import styles from "./NotesSidebar.module.css";
 
 /**
@@ -25,7 +26,8 @@ const NotesSidebar = ({
   book = null,
   initialContent = "",
   currentPage = null,
-  currentLocator = null
+  currentLocator = null,
+  extractText = null,
 }) => {
   // ===== CONTEXTS =====
   const { actualTheme } = useMaterial3Theme();
@@ -57,6 +59,7 @@ const NotesSidebar = ({
 
   // ===== LOCAL STATE =====
   const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'summary'
   const textareaRef = useRef(null);
 
   // ===== RESPONSIVE DETECTION =====
@@ -137,6 +140,42 @@ const NotesSidebar = ({
           </button>
         </header>
 
+        {/* Tab bar */}
+        <div className={styles.tabBar}>
+          <button
+            className={`${styles.tab} ${activeTab === 'notes' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('notes')}
+            type="button"
+          >
+            Notes
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === 'summary' ? styles.tabActive : ''}`}
+            onClick={() => setActiveTab('summary')}
+            type="button"
+          >
+            AI Summary
+          </button>
+        </div>
+
+        {/* Summary tab */}
+        {activeTab === 'summary' && (
+          <SummaryPanel
+            book={book}
+            currentPage={currentPage}
+            currentLocator={currentLocator}
+            extractText={extractText}
+            onSaveAsNote={(content, tags) => {
+              setContent(content);
+              setTagInput(tags.join(', '));
+              setActiveTab('notes');
+            }}
+          />
+        )}
+
+        {/* Notes tab - Toolbar */}
+        {activeTab === 'notes' && (
+          <>
         {/* Toolbar */}
         <div className={styles.toolbar}>
           {/* Text Mode Toggle */}
@@ -244,6 +283,8 @@ const NotesSidebar = ({
             </button>
           </div>
         </footer>
+          </>
+        )}
       </aside>
     </>
   );

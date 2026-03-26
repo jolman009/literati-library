@@ -811,6 +811,49 @@
   color: rgba(255, 255, 255, 0.38);
 }
 
+/* ===== TAB BAR ===== */
+.tabBar {
+  display: flex;
+  gap: 0;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #C3C7CF);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface-variant, #888);
+  font-family: var(--md-sys-typescale-label-large-font-family, "Google Sans", "Inter", system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+  text-align: center;
+}
+
+.tab:hover {
+  color: var(--md-sys-color-on-surface, #e0e0e0);
+}
+
+.tabActive {
+  color: var(--md-sys-color-primary, #6750a4);
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--md-sys-color-primary, #6750a4);
+}
+
 /* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion: reduce) {
   .sheet,

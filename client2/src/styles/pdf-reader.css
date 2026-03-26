@@ -103,6 +103,17 @@
   min-width: auto !important;
 }
 
+/* TTS controls */
+.pdf-tts-controls {
+  padding-left: 16px;
+  border-left: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.pdf-tts-active {
+  background: var(--md-sys-color-primary) !important;
+  color: var(--md-sys-color-on-primary) !important;
+}
+
 /* Zoom controls separator */
 .pdf-zoom-controls {
   padding-left: 16px;
@@ -152,10 +163,33 @@
 }
 
 .pdf-click-layer {
-  cursor: pointer;
+  cursor: default;
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+/* Text layer: selectable text overlay on top of canvas */
+.react-pdf__Page {
+  position: relative;
+}
+
+.react-pdf__Page__textContent {
+  z-index: 2;
+  user-select: text;
+  cursor: text;
+}
+
+.react-pdf__Page__textContent ::selection {
+  background: var(--md-sys-color-primary-container, rgba(103, 80, 164, 0.3));
+  color: var(--md-sys-color-on-primary-container, inherit);
+}
+
+/* TTS active sentence highlight */
+.tts-active-sentence {
+  background: var(--md-sys-color-tertiary-container, rgba(125, 82, 96, 0.3)) !important;
+  border-radius: 2px;
+  transition: background 0.15s;
 }
 
 /* Disable click-to-navigate cursor when zoomed */

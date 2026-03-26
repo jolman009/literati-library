@@ -857,6 +857,100 @@ Return JSON:
     };
   }
 
+  // ===== CONTENT SUMMARIZATION (Chapter / Page) =====
+
+  async summarizeContent(text, options = {}) {
+    const { bookTitle, chapterTitle, pageRange, mode = 'brief' } = options;
+
+    if (!text || text.trim().length < 50) {
+      return { summary: '', keyPoints: [], themes: [], questions: [], fallback: true };
+    }
+
+    const cacheKey = `content_sum_${this.hashText(text.substring(0, 500))}_${mode}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      const fb = this.summarizeContentFallback(text, options);
+      this.requestCache.set(cacheKey, fb);
+      return fb;
+    }
+
+    try {
+      // Truncate to ~16000 chars (~4000 tokens) for the model
+      const truncated = text.substring(0, 16000);
+
+      const contextParts = [];
+      if (bookTitle) contextParts.push(`Book: "${bookTitle}"`);
+      if (chapterTitle) contextParts.push(`Chapter: "${chapterTitle}"`);
+      if (pageRange) contextParts.push(`Pages: ${pageRange}`);
+      const contextStr = contextParts.length > 0 ? contextParts.join(', ') + '\n\n' : '';
+
+      const detailLevel = mode === 'detailed'
+        ? 'Provide a thorough summary (3-5 paragraphs), 5-8 key points, and 3-5 discussion questions.'
+        : 'Provide a concise summary (1-2 paragraphs), 3-5 key points, and 2-3 discussion questions.';
+
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `You summarize book content for readers. Return strict JSON with this structure: { "summary": "...", "keyPoints": ["..."], "themes": ["..."], "questions": ["..."] }. ${detailLevel}`
+          },
+          {
+            role: 'user',
+            content: `${contextStr}Summarize the following text:\n\n${truncated}`
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: mode === 'detailed' ? 1200 : 600,
+        response_format: { type: 'json_object' }
+      });
+
+      const parsed = JSON.parse(completion.choices[0].message.content);
+      const result = {
+        summary: parsed.summary || '',
+        keyPoints: Array.isArray(parsed.keyPoints) ? parsed.keyPoints : [],
+        themes: Array.isArray(parsed.themes) ? parsed.themes : [],
+        questions: Array.isArray(parsed.questions) ? parsed.questions : [],
+        fallback: false
+      };
+
+      this.requestCache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Content summarization error:', error);
+      serverCrashReporting.captureException?.(error, {
+        service: 'ai_service',
+        operation: 'summarize_content'
+      });
+      const fb = this.summarizeContentFallback(text, options);
+      this.requestCache.set(cacheKey, fb);
+      return fb;
+    }
+  }
+
+  summarizeContentFallback(text, options = {}) {
+    // Extractive summary: first and last sentences of each paragraph
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim().length > 20);
+    const sentences = [];
+
+    for (const p of paragraphs.slice(0, 10)) {
+      const sents = p.split(/(?<=[.!?])\s+/).filter(s => s.length > 10);
+      if (sents.length > 0) sentences.push(sents[0]);
+      if (sents.length > 2) sentences.push(sents[sents.length - 1]);
+    }
+
+    return {
+      summary: sentences.slice(0, 6).join(' '),
+      keyPoints: sentences.slice(0, 4),
+      themes: [],
+      questions: [],
+      fallback: true
+    };
+  }
+
   // ===== UTILITIES =====
 
   hashText(text) {
