@@ -4,6 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import MDEditor from '@uiw/react-md-editor';
 import { useMaterial3Theme } from "../contexts/Material3ThemeContext";
 import { useNotesEditor } from "../hooks/useNotesEditor";
+import SummaryPanel from "./SummaryPanel";
 import styles from "./BottomSheetNotes.module.css";
 
 // ===== SNAP POINTS (in vh units) =====
@@ -30,13 +31,16 @@ const BottomSheetNotes = ({
   title,
   book = null,
   initialContent = "",
-  currentPage = null
+  currentPage = null,
+  currentLocator = null,
+  extractText = null,
 }) => {
   // ===== CONTEXTS =====
   const { actualTheme } = useMaterial3Theme();
 
   // ===== SHEET STATE =====
   const [sheetState, setSheetState] = useState('closed'); // 'closed', 'peek', 'half', 'full'
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes' | 'summary'
   const controls = useAnimation();
   const sheetRef = useRef(null);
 
@@ -267,6 +271,42 @@ const BottomSheetNotes = ({
               </button>
             </div>
 
+            {/* Tab bar */}
+            <div className={styles.tabBar}>
+              <button
+                className={`${styles.tab} ${activeTab === 'notes' ? styles.tabActive : ''}`}
+                onClick={() => setActiveTab('notes')}
+                type="button"
+              >
+                Notes
+              </button>
+              <button
+                className={`${styles.tab} ${activeTab === 'summary' ? styles.tabActive : ''}`}
+                onClick={() => setActiveTab('summary')}
+                type="button"
+              >
+                AI Summary
+              </button>
+            </div>
+
+            {/* Summary tab */}
+            {activeTab === 'summary' && (
+              <SummaryPanel
+                book={book}
+                currentPage={currentPage}
+                currentLocator={currentLocator}
+                extractText={extractText}
+                onSaveAsNote={(content, tags) => {
+                  setContent(content);
+                  setTagInput(tags.join(', '));
+                  setActiveTab('notes');
+                }}
+              />
+            )}
+
+            {/* Notes tab - Toolbar */}
+            {activeTab === 'notes' && (
+              <>
             {/* Toolbar */}
             <div className={styles.toolbar}>
               <button
@@ -370,6 +410,8 @@ const BottomSheetNotes = ({
                 </button>
               </div>
             </div>
+              </>
+            )}
           </>
         )}
       </motion.div>

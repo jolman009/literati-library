@@ -2,6 +2,11 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import { Volume2, VolumeX } from 'lucide-react';
+import TextSelectionPopup from './TextSelectionPopup';
+import { extractPdfPageText } from '../utils/textExtractor';
 import '../styles/pdf-reader.css';
 
 // Set up PDF.js worker for Vite compatibility
@@ -12,7 +17,7 @@ const MIN_ZOOM = 0.5;   // 50%
 const MAX_ZOOM = 3.0;   // 300%
 const ZOOM_STEP = 0.25; // 25% increments
 
-export default function PdfReader({ file, book, token, onClose, onPageChange, initialPage }) {
+export default function PdfReader({ file, book, token, onClose, onPageChange, initialPage, onTextSelected, onTTSRequest, ttsPlaying, onPdfDocumentLoad }) {
   // Support both 'file' prop (legacy) and 'book' prop (new) - memoized to prevent unnecessary reloads
   const pdfFile = useMemo(() => {
     // Supabase public storage URLs don't need credentials — they use
@@ -40,6 +45,9 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
   const [pageHeight, setPageHeight] = useState(undefined);
   const [, setPageWidth] = useState(undefined);
   const touchStartX = useRef(null);
+
+  // PDF document reference (for text extraction)
+  const [pdfDocument, setPdfDocument] = useState(null);
 
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState(1.0); // 1.0 = 100% (fit to viewport)
@@ -81,12 +89,14 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     return () => ro.disconnect();
   }, []);
 
-  const onLoadSuccess = useCallback(({ numPages }) => {
-    setNumPages(numPages);
+  const onLoadSuccess = useCallback((pdf) => {
+    setNumPages(pdf.numPages);
+    setPdfDocument(pdf);
+    // Expose PDF document to parent for text extraction
+    if (onPdfDocumentLoad) onPdfDocumentLoad(pdf);
     // Guard: if current page > numPages (e.g., new doc), clamp to last
-    setPageNumber(p => Math.max(1, Math.min(p, numPages)));
-    // Debug (optional): console.warn('PDF pages:', numPages);
-  }, []);
+    setPageNumber(p => Math.max(1, Math.min(p, pdf.numPages)));
+  }, [onPdfDocumentLoad]);
 
   const nextPage = useCallback(() => {
     setPageNumber(p => (numPages ? Math.min(p + 1, numPages) : p));
@@ -219,10 +229,15 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     touchStartX.current = null;
   }, [isZoomed, nextPage, prevPage]);
 
-  // Click-to-advance: left half = prev, right half = next (disabled when zoomed to allow panning)
+  // Click-to-advance: left half = prev, right half = next (disabled when zoomed or selecting text)
   const onCanvasClick = useCallback((e) => {
     // Don't navigate pages when zoomed - user needs to pan/scroll
     if (isZoomed) return;
+    // Don't navigate if user just selected text
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) return;
+    // Don't navigate if click was on the text layer (let user interact with text)
+    if (e.target.closest('.react-pdf__Page__textContent')) return;
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -246,6 +261,17 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNumber]);
+
+  // TTS: extract current page text and send up
+  const handleTTSToggle = useCallback(async () => {
+    if (!onTTSRequest || !pdfDocument) return;
+    if (ttsPlaying) {
+      onTTSRequest(null); // Signal to stop
+      return;
+    }
+    const text = await extractPdfPageText(pdfDocument, pageNumber);
+    if (text) onTTSRequest({ text, pageNumber, pdfDocument, numPages });
+  }, [onTTSRequest, pdfDocument, pageNumber, ttsPlaying, numPages]);
 
   // Check if we have a valid PDF file (after all hooks)
   if (!pdfFile) {
@@ -304,6 +330,19 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
           ▶
         </button>
       </div>
+
+      {/* TTS button */}
+      {onTTSRequest && (
+        <div className="pdf-controls-group pdf-tts-controls">
+          <button
+            onClick={handleTTSToggle}
+            title={ttsPlaying ? 'Stop reading aloud' : 'Read page aloud'}
+            className={ttsPlaying ? 'pdf-tts-active' : ''}
+          >
+            {ttsPlaying ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          </button>
+        </div>
+      )}
 
       {/* Zoom controls */}
       <div className="pdf-controls-group pdf-zoom-controls">
@@ -381,9 +420,8 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
           >
             <Page
               pageNumber={pageNumber}
-              // Make sure layers don't block clicks:
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
+              renderTextLayer={true}
+              renderAnnotationLayer={true}
               // Fit to viewport - height scales with zoom level
               height={scaledHeight}
               renderMode="canvas"
@@ -391,6 +429,20 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
           </div>
         </Document>
       </div>
+
+        <TextSelectionPopup
+          containerRef={containerRef}
+          onAddToNotes={onTextSelected}
+          onReadAloud={(text) => {
+            if (onTTSRequest) {
+              onTTSRequest({ text, pageNumber, pdfDocument, numPages });
+            } else if (window.speechSynthesis) {
+              const utterance = new SpeechSynthesisUtterance(text);
+              window.speechSynthesis.cancel();
+              window.speechSynthesis.speak(utterance);
+            }
+          }}
+        />
       </div>
     </div>
   );

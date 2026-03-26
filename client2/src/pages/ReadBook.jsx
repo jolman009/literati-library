@@ -8,7 +8,10 @@ import ReadestReader from "../components/ReadestReader";
 import ThemeToggle from "../components/ThemeToggle";
 import NotesSidebar from "../components/NotesSidebar";
 import BottomSheetNotes from "../components/BottomSheetNotes";
+import TTSControls from "../components/TTSControls";
 import MD3Fab from "../components/Material3/MD3Fab";
+import useTTS from "../hooks/useTTS";
+import { extractPdfPageText } from "../utils/textExtractor";
 import API from "../config/api";
 
 const ReadBook = () => {
@@ -40,6 +43,9 @@ const ReadBook = () => {
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Notes sidebar state
   const [isMobile, setIsMobile] = useState(false); // Mobile detection for bottom sheet
+  const [prefillContent, setPrefillContent] = useState(''); // Pre-fill notes from text selection
+  const [pdfDocRef, setPdfDocRef] = useState(null); // PDF.js document for text extraction
+  const [ttsContext, setTtsContext] = useState(null); // { pdfDocument, numPages } for TTS auto-advance
 
   console.warn('📊 ReadBook state:', { bookId, loading, error, hasBook: !!book });
 
@@ -180,6 +186,56 @@ const ReadBook = () => {
   const handlePageChange = useCallback((p) => {
     setCurrentPage(p);
   }, []);
+
+  // When user selects text and clicks "Add to Notes", open sidebar with pre-filled content
+  const handleTextSelected = useCallback((text) => {
+    const quoted = `> ${text.replace(/\n/g, '\n> ')}\n\n`;
+    setPrefillContent(quoted);
+    setIsSidebarOpen(true);
+  }, []);
+
+  // === TTS ===
+  const handleTTSPageFinished = useCallback(async () => {
+    // Auto-advance: extract next page text and continue speaking
+    if (!ttsContext?.pdfDocument) return;
+    const nextPageNum = (currentPage || 1) + 1;
+    if (nextPageNum > (ttsContext.numPages || Infinity)) {
+      return; // End of document
+    }
+    // Advance the page
+    setCurrentPage(nextPageNum);
+    if (onPageChange) onPageChange(nextPageNum);
+    // Extract and speak next page
+    const text = await extractPdfPageText(ttsContext.pdfDocument, nextPageNum);
+    if (text) {
+      // Small delay for page render
+      setTimeout(() => tts.speak(text), 300);
+    }
+  }, [ttsContext, currentPage]);
+
+  const tts = useTTS({
+    onPageFinished: handleTTSPageFinished,
+  });
+
+  // Extract text function for AI summaries (passed to notes sidebar)
+  const extractTextForSummary = useCallback(async () => {
+    const doc = pdfDocRef || ttsContext?.pdfDocument;
+    if (!doc) return '';
+    return await extractPdfPageText(doc, currentPage || 1);
+  }, [pdfDocRef, ttsContext, currentPage]);
+
+  const handleTTSRequest = useCallback((request) => {
+    if (!request) {
+      tts.stop();
+      return;
+    }
+    // Store context for auto-advance and text extraction
+    if (request.pdfDocument) {
+      setTtsContext({ pdfDocument: request.pdfDocument, numPages: request.numPages });
+      setPdfDocRef(request.pdfDocument);
+    }
+    tts.speak(request.text);
+  }, [tts]);
 
   const handleClose = async () => {
     if (hasActiveSession) {
@@ -379,6 +435,10 @@ const ReadBook = () => {
             onLocationChange={handleLocationChange}  // EPUB - memoized to prevent re-init
             initialLocation={initialLocation}
             onPageChange={handlePageChange}          // PDF - memoized to prevent re-init
+            onTextSelected={handleTextSelected}
+            onTTSRequest={handleTTSRequest}
+            ttsPlaying={tts.isPlaying}
+            onPdfDocumentLoad={setPdfDocRef}
           />
 
           {/* Notes: BottomSheet on mobile, Sidebar on desktop */}
@@ -390,6 +450,8 @@ const ReadBook = () => {
               book={book}
               currentPage={currentPage}
               currentLocator={currentLocator}
+              initialContent={prefillContent}
+              extractText={extractTextForSummary}
             />
           ) : (
             <NotesSidebar
@@ -399,6 +461,8 @@ const ReadBook = () => {
               book={book}
               currentPage={currentPage}
               currentLocator={currentLocator}
+              initialContent={prefillContent}
+              extractText={extractTextForSummary}
             />
           )}
 
@@ -410,7 +474,24 @@ const ReadBook = () => {
             variant="primary"
           />
 
-          {/* ✅ Timer now handled globally by ReadingSessionTimer in App.jsx */}
+          {/* TTS floating controls */}
+          <TTSControls
+            isPlaying={tts.isPlaying}
+            isPaused={tts.isPaused}
+            rate={tts.rate}
+            voice={tts.voice}
+            voices={tts.voices}
+            autoAdvance={tts.autoAdvance}
+            onPlay={() => {}} // Play is handled via reader TTS button
+            onPause={tts.pause}
+            onResume={tts.resume}
+            onStop={tts.stop}
+            onSetRate={tts.setRate}
+            onSetVoice={tts.setVoice}
+            onSetAutoAdvance={tts.setAutoAdvance}
+          />
+
+          {/* Timer handled globally by ReadingSessionTimer in App.jsx */}
         </>
       )}
     </>

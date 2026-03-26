@@ -86,6 +86,13 @@ export const useNotesEditor = ({
   const [showTemplates, setShowTemplates] = useState(false);
   const [isRichTextMode, setIsRichTextMode] = useState(false);
 
+  // When initialContent changes (e.g., text selection → Add to Notes), update the editor
+  useEffect(() => {
+    if (initialContent) {
+      setContent(prev => prev ? prev + '\n\n' + initialContent : initialContent);
+    }
+  }, [initialContent]);
+
   // Get book_id from either the passed book prop or activeSession
   const bookId = book?.id || activeSession?.book?.id || null;
 
