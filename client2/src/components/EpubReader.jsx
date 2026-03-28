@@ -1,7 +1,9 @@
 // src/components/EpubReader.jsx
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { X, Download, ChevronLeft, ChevronRight, List, Minus, Plus } from "lucide-react";
+import { X, Download, ChevronLeft, ChevronRight, List, Minus, Plus, Volume2, VolumeX } from "lucide-react";
 import ePub from "epubjs";
+import TextSelectionPopup from "./TextSelectionPopup";
+import { extractEpubChapterText } from "../utils/textExtractor";
 import "../styles/epub-reader.css";
 
 /**
@@ -16,7 +18,7 @@ import "../styles/epub-reader.css";
  * - onLocationChange: ({ cfi: string, percent?: number }) => void
  * - initialLocation: string | null  // epubcfi(...) from query or a saved note
  */
-const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initialLocation }) => {
+const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initialLocation, onTextSelected, onTTSRequest, ttsPlaying }) => {
   // Use proxy endpoint for EPUB files to ensure proper authentication and CORS
   // Use environment config for consistent API URL across environments
   // Memoize epubUrl to prevent recalculation on every render
@@ -34,9 +36,13 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
   });
 
   const viewerRef = useRef(null);
+  const contentAreaRef = useRef(null);
   const renditionRef = useRef(null);
   const bookRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
+
+  // EPUB iframe selection state
+  const [epubSelection, setEpubSelection] = useState(null); // { text, rect }
 
   // Use ref for callback to prevent re-initialization when callback identity changes
   const onLocationChangeRef = useRef(onLocationChange);
@@ -243,6 +249,81 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [epubUrl, initialLocation]);
 
+  // Hook into EPUB iframe selection events for TextSelectionPopup
+  useEffect(() => {
+    const rendition = renditionRef.current;
+    if (!rendition) return;
+
+    const handleSelection = (cfiRange, contents) => {
+      if (!contents) return;
+      const iframeDoc = contents.document;
+      const selection = iframeDoc.getSelection();
+      if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+        setEpubSelection(null);
+        return;
+      }
+
+      const text = selection.toString().trim();
+      if (!text) return;
+
+      try {
+        const range = selection.getRangeAt(0);
+        const iframeRect = range.getBoundingClientRect();
+
+        // Translate iframe coords to main window coords
+        const iframe = contents.content;
+        const iframeWinRect = iframe?.getBoundingClientRect?.() || { top: 0, left: 0 };
+
+        setEpubSelection({
+          text,
+          rect: {
+            top: iframeRect.top + iframeWinRect.top,
+            left: iframeRect.left + iframeWinRect.left,
+            width: iframeRect.width,
+            height: iframeRect.height,
+            bottom: iframeRect.bottom + iframeWinRect.top,
+            right: iframeRect.right + iframeWinRect.left,
+          }
+        });
+      } catch {
+        // Selection range may be invalid
+      }
+    };
+
+    rendition.on('selected', handleSelection);
+
+    // Clear selection when clicking elsewhere
+    const clearSelection = () => {
+      setTimeout(() => {
+        const contents = rendition.getContents();
+        if (contents?.[0]) {
+          const sel = contents[0].document.getSelection();
+          if (!sel || sel.isCollapsed) {
+            setEpubSelection(null);
+          }
+        }
+      }, 200);
+    };
+
+    document.addEventListener('mousedown', clearSelection);
+
+    return () => {
+      rendition.off('selected', handleSelection);
+      document.removeEventListener('mousedown', clearSelection);
+    };
+  }, [isLoading]); // Re-run when loading completes
+
+  // TTS handler for EPUB
+  const handleEpubTTS = useCallback(() => {
+    if (!onTTSRequest || !renditionRef.current) return;
+    if (ttsPlaying) {
+      onTTSRequest(null);
+      return;
+    }
+    const text = extractEpubChapterText(renditionRef.current);
+    if (text) onTTSRequest({ text });
+  }, [onTTSRequest, ttsPlaying]);
+
   // UNIFIED NAVIGATION - both buttons and keyboard use epub.js next()/prev()
   const handleNext = useCallback(() => {
     if (renditionRef.current) {
@@ -357,6 +438,17 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
               <Plus className="w-4 h-4" />
             </button>
           </div>
+          {/* TTS button */}
+          {onTTSRequest && (
+            <button
+              onClick={handleEpubTTS}
+              className={`epub-reader-btn epub-reader-btn-secondary ${ttsPlaying ? 'epub-btn-active' : ''}`}
+              title={ttsPlaying ? 'Stop reading aloud' : 'Read chapter aloud'}
+              aria-label={ttsPlaying ? 'Stop reading aloud' : 'Read chapter aloud'}
+            >
+              {ttsPlaying ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+          )}
           <a
             href={book?.file_url}
             download
@@ -415,7 +507,7 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
       )}
 
       {/* Reader Content Area */}
-      <div className="epub-reader-content">
+      <div className="epub-reader-content" ref={contentAreaRef}>
         {/* Loading State */}
         {isLoading && (
           <div className="epub-reader-loading">
@@ -471,6 +563,59 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
               </div>
             )}
           </>
+        )}
+
+        {/* EPUB Text Selection Popup */}
+        {epubSelection && (
+          <div
+            className="epub-selection-popup"
+            style={{
+              position: 'fixed',
+              top: `${Math.max(8, epubSelection.rect.top - 52)}px`,
+              left: `${Math.max(8, Math.min(epubSelection.rect.left + epubSelection.rect.width / 2 - 80, window.innerWidth - 168))}px`,
+              zIndex: 10000,
+            }}
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <button
+              className="epub-sel-btn"
+              onClick={() => {
+                navigator.clipboard?.writeText(epubSelection.text);
+                setEpubSelection(null);
+              }}
+              title="Copy"
+            >
+              Copy
+            </button>
+            <div className="epub-sel-divider" />
+            <button
+              className="epub-sel-btn"
+              onClick={() => {
+                if (onTextSelected) onTextSelected(epubSelection.text);
+                setEpubSelection(null);
+              }}
+              title="Add to Notes"
+            >
+              Note
+            </button>
+            <div className="epub-sel-divider" />
+            <button
+              className="epub-sel-btn"
+              onClick={() => {
+                if (onTTSRequest) {
+                  onTTSRequest({ text: epubSelection.text });
+                } else if (window.speechSynthesis) {
+                  const utt = new SpeechSynthesisUtterance(epubSelection.text);
+                  window.speechSynthesis.cancel();
+                  window.speechSynthesis.speak(utt);
+                }
+                setEpubSelection(null);
+              }}
+              title="Read Aloud"
+            >
+              Read
+            </button>
+          </div>
         )}
       </div>
     </div>

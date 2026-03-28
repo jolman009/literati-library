@@ -487,6 +487,9 @@ export const GamificationProvider = ({ children }) => {
       daily_checkin: 10, // Handle daily check-in locally
       library_visited: 5,
       mentor_interaction: 5, // AI mentor interaction for activity streak
+      tts_session: 10, // Listened to TTS for 1+ minute
+      ai_summary_generated: 5, // Generated an AI chapter summary
+      summary_saved_as_note: 10, // Saved an AI summary as a note
       achievement_unlocked: 0 // Points come from the achievement itself
     };
 

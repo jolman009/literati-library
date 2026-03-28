@@ -13,6 +13,10 @@ export default function useTTS({ onPageFinished } = {}) {
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(-1);
   const [autoAdvance, setAutoAdvance] = useState(true);
 
+  // Track cumulative listening time for gamification
+  const [listeningSeconds, setListeningSeconds] = useState(0);
+  const listeningTrackedRef = useRef(false); // Only fire gamification once per session
+
   const sentencesRef = useRef([]);
   const utteranceRef = useRef(null);
   const currentIndexRef = useRef(0);
@@ -142,6 +146,9 @@ export default function useTTS({ onPageFinished } = {}) {
     setCurrentSentenceIndex(-1);
     currentIndexRef.current = 0;
     sentencesRef.current = [];
+    // Reset listening tracker for next session
+    setListeningSeconds(0);
+    listeningTrackedRef.current = false;
   }, []);
 
   // Cleanup on unmount
@@ -150,6 +157,17 @@ export default function useTTS({ onPageFinished } = {}) {
       window.speechSynthesis?.cancel();
     };
   }, []);
+
+  // Track cumulative listening time
+  useEffect(() => {
+    if (!isPlaying || isPaused) return;
+
+    const timer = setInterval(() => {
+      setListeningSeconds(s => s + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isPlaying, isPaused]);
 
   // Chrome workaround: speech synthesis pauses after ~15s of continuous speech.
   // Periodically resume to keep it going.
@@ -176,6 +194,8 @@ export default function useTTS({ onPageFinished } = {}) {
     voices,
     currentSentenceIndex,
     autoAdvance,
+    listeningSeconds,
+    listeningTrackedRef,
     isSupported: typeof window !== 'undefined' && 'speechSynthesis' in window,
 
     // Actions
