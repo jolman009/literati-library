@@ -4,6 +4,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useReadingSession } from "../contexts/ReadingSessionContext";
 import { useSnackbar } from "../components/Material3";
+import { useGamification } from "../contexts/GamificationContext";
 import ReadestReader from "../components/ReadestReader";
 import ThemeToggle from "../components/ThemeToggle";
 import NotesSidebar from "../components/NotesSidebar";
@@ -25,6 +26,7 @@ const ReadBook = () => {
   const { user, loading: authLoading, isAuthenticated, token } = useAuth();
   const { activeSession, hasActiveSession, stopReadingSession, startReadingSession } = useReadingSession();
   const { showSnackbar } = useSnackbar();
+  const { trackAction } = useGamification();
   const [stopping, setStopping] = useState(false);
   const [elapsedSec, setElapsedSec] = useState(0);
 
@@ -216,6 +218,18 @@ const ReadBook = () => {
   const tts = useTTS({
     onPageFinished: handleTTSPageFinished,
   });
+
+  // Gamification: track TTS session after 60 seconds of listening
+  useEffect(() => {
+    if (tts.listeningSeconds >= 60 && !tts.listeningTrackedRef.current) {
+      tts.listeningTrackedRef.current = true;
+      trackAction('tts_session', {
+        bookId: book?.id,
+        listeningSeconds: tts.listeningSeconds,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [tts.listeningSeconds, tts.listeningTrackedRef, trackAction, book?.id]);
 
   // Extract text function for AI summaries (passed to notes sidebar)
   const extractTextForSummary = useCallback(async () => {

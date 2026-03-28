@@ -45,6 +45,9 @@ const ReadestReader = ({
         onClose={onClose}
         onLocationChange={onLocationChange}
         initialLocation={initialLocation}
+        onTextSelected={onTextSelected}
+        onTTSRequest={onTTSRequest}
+        ttsPlaying={ttsPlaying}
       />
     );
   }

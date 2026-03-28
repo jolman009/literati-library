@@ -1,8 +1,9 @@
 // src/components/SummaryPanel.jsx
 // AI-powered content summary panel (renders inside NotesSidebar or BottomSheetNotes)
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Sparkles, BookOpen, Save, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { fetchSummary } from '../api/summaryApi';
+import { useGamification } from '../contexts/GamificationContext';
 import '../styles/summary-panel.css';
 
 export default function SummaryPanel({
@@ -12,15 +13,28 @@ export default function SummaryPanel({
   onSaveAsNote,
   extractText,
 }) {
+  const { trackAction } = useGamification();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [mode, setMode] = useState('brief'); // 'brief' | 'detailed'
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [expandedSections, setExpandedSections] = useState({
     keyPoints: true,
     themes: false,
     questions: false,
   });
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -54,6 +68,16 @@ export default function SummaryPanel({
       });
 
       setSummary(result);
+
+      // Track gamification (only for fresh generations, not cached)
+      if (!result.cached) {
+        trackAction('ai_summary_generated', {
+          bookId: book?.id,
+          mode,
+          page: currentPage,
+          timestamp: new Date().toISOString(),
+        });
+      }
     } catch (err) {
       console.error('Summary generation failed:', err);
       if (err?.response?.status === 403) {
@@ -87,7 +111,13 @@ export default function SummaryPanel({
     if (currentPage) tags.push(`page:${currentPage}`);
 
     onSaveAsNote(content, tags);
-  }, [summary, onSaveAsNote, currentPage]);
+
+    trackAction('summary_saved_as_note', {
+      bookId: book?.id,
+      page: currentPage,
+      timestamp: new Date().toISOString(),
+    });
+  }, [summary, onSaveAsNote, currentPage, trackAction, book?.id]);
 
   return (
     <div className="summary-panel">
@@ -111,12 +141,18 @@ export default function SummaryPanel({
         <button
           className="summary-generate-btn"
           onClick={() => handleGenerate(false)}
-          disabled={loading || !extractText}
+          disabled={loading || !extractText || !isOnline}
+          title={!isOnline ? 'Requires internet connection' : undefined}
         >
           {loading ? (
             <>
               <RefreshCw size={16} className="summary-spin" />
               Generating...
+            </>
+          ) : !isOnline ? (
+            <>
+              <Sparkles size={16} />
+              Offline
             </>
           ) : (
             <>
@@ -241,10 +277,21 @@ export default function SummaryPanel({
       {!summary && !loading && !error && (
         <div className="summary-empty">
           <Sparkles size={24} />
-          <p>Generate an AI-powered summary of the current page or chapter.</p>
-          <p className="summary-empty-hint">
-            Summaries include key points, themes, and discussion questions.
-          </p>
+          {isOnline ? (
+            <>
+              <p>Generate an AI-powered summary of the current page or chapter.</p>
+              <p className="summary-empty-hint">
+                Summaries include key points, themes, and discussion questions.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>You are currently offline.</p>
+              <p className="summary-empty-hint">
+                Connect to the internet to generate AI summaries. Previously cached summaries will appear automatically.
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
