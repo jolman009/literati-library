@@ -1,21 +1,22 @@
 # ShelfQuest — Production Readiness Baseline
 
 > **Last audited:** 2026-02-01 (evening update)
+> **Re-verified:** 2026-03-27
 > **Audited by:** Code audit against actual files (not self-reported)
 > **Method:** Every claim verified by reading source files, configs, and CI workflows
 
 ---
 
-## Overall Readiness: ~65%
+## Overall Readiness: ~80%
 
 | Category | Score | Prev | Change | Notes |
 |---|---|---|---|---|
-| Security | 75% | 75% | — | P0 gaps unchanged; keystore credentials secured |
-| Testing | 60% | 40% | ▲ +20% | All 230 server tests passing; 0 failures |
-| Compliance & Legal | 85% | 85% | — | Cookie Policy + account deletion still missing |
-| Production Infrastructure | 70% | 70% | — | No Redis; monitoring unverified |
-| UI/UX | 90% | 90% | — | Material Design 3, dark mode, responsive, PWA |
-| Core Functionality | 80% | 80% | — | Auth, books, reading, gamification, AI notes all working |
+| Security | 90% | 75% | ▲ +15% | Rate limiting stubs fixed; security store persisted to Supabase; account deletion added |
+| Testing | 60% | 60% | — | Server tests passing; client tests unverified |
+| Compliance & Legal | 95% | 85% | ▲ +10% | Cookie Policy page exists; account deletion endpoint added |
+| Production Infrastructure | 70% | 70% | — | Monitoring unverified |
+| UI/UX | 95% | 90% | ▲ +5% | PDF text selection, TTS, AI summaries, EPUB selection added |
+| Core Functionality | 90% | 80% | ▲ +10% | Reading enhancements (Phases 1-4), gamification for new features |
 
 ### Changes since initial audit (same day)
 
@@ -49,19 +50,16 @@
 
 ### Known gaps (P0)
 
-| # | Gap | Location | Impact | Fix complexity |
+| # | Gap | Location | Status | Notes |
 |---|---|---|---|---|
-| P0-1a | Account lockout uses **in-memory Map** | `secureAuth.js` L26 | HIGH — resets on deploy/restart | Medium — move to Supabase `security_audit_log` or Redis |
-| P0-1b | Token blacklist uses **in-memory Set** | `enhancedAuth.js` L6 | CRITICAL — blacklist lost on restart; no distributed support | Medium — same solution |
-| P0-2a | `adaptiveRateLimit` is **stubbed** — just calls `next()` | `advancedSecurity.js` L152-155 | CRITICAL — no adaptive protection on `/login` | Low — re-enable when IPv6 issue resolved |
-| P0-2b | `sensitiveOperationRateLimit` is **stubbed** — just calls `next()` | `advancedSecurity.js` L160-163 | CRITICAL — no rate limiting on register, password change/reset | Low — same fix |
-| P0-2c | `express-rate-limit` import is **commented out** | `advancedSecurity.js` L2 | HIGH — disabled due to IPv6 issue | Low — import from rateLimitConfig instead |
-| P0-3a | `accessToken` returned in register response body | `secureAuth.js` L157 | HIGH — token in logs/cache | Trivial — remove field |
-| P0-3b | `accessToken` returned in login response body | `secureAuth.js` L255 | HIGH — same | Trivial — remove field |
-| P0-3c | `accessToken` returned in refresh response body | `enhancedAuth.js` L462 | HIGH — same | Trivial — remove field |
-| — | CSRF tokens are **deterministic** (IP + User-Agent hash) | `advancedSecurity.js` | Medium — predictable on shared networks | Low — switch to random tokens |
-| — | **No 2FA/MFA** | — | Medium — not required for app stores | High — needs TOTP library + UI flow |
-| — | **No Redis** for session/rate-limit persistence | `.env.example` references it but nothing connects | HIGH — all stateful security is in-memory | Medium — Redis config is scaffolded |
+| ~~P0-1a~~ | ~~Account lockout in-memory~~ | `securityStore.js` | ✅ **FIXED** | Write-through cache to Supabase `security_audit_log`; hydrated on startup |
+| ~~P0-1b~~ | ~~Token blacklist in-memory~~ | `securityStore.js` | ✅ **FIXED** | Write-through cache to Supabase `token_blacklist` table; hydrated on startup |
+| ~~P0-2a~~ | ~~`adaptiveRateLimit` stubbed~~ | `advancedSecurity.js` L175 | ✅ **FIXED** | Fully implemented; mounted on `/login`, `/google` |
+| ~~P0-2b~~ | ~~`sensitiveOperationRateLimit` stubbed~~ | `advancedSecurity.js` L196 | ✅ **FIXED** | Fully implemented; mounted on `/register`, `/change-password`, `/reset-password` |
+| ~~P0-2c~~ | ~~`express-rate-limit` import commented out~~ | `advancedSecurity.js` L3 | ✅ **FIXED** | Import is active; used by both rate limiters |
+| P0-3a/b/c | `accessToken` returned in response body | `secureAuth.js`, `enhancedAuth.js` | **KNOWN TRADE-OFF** | Client uses as fallback when cookies blocked; removing would break auth for some users |
+| — | CSRF tokens are **deterministic** (IP + User-Agent hash) | `advancedSecurity.js` | Open | Medium — predictable on shared networks |
+| — | **No 2FA/MFA** | — | Open | Not required for app stores; high effort |
 
 ---
 
@@ -132,12 +130,12 @@
 
 ### Known gaps
 
-| # | Gap | Impact | Fix complexity |
+| # | Gap | Status | Notes |
 |---|---|---|---|
-| P1-4 | **No account deletion endpoint** — Privacy Policy describes it, no `/api/account/delete` exists | HIGH — GDPR Article 17 right to erasure | Medium — needs cascade delete across all tables |
-| P1-5 | **No Cookie Policy page** — referenced in Privacy Policy but doesn't exist; only banner exists | Medium — regulatory expectation | Low — single page component |
-| P1-6 | **No automated accessibility testing** — `eslint-plugin-jsx-a11y` provides static linting only | Medium — no runtime a11y tests | Low — add `jest-axe` |
-| — | **App store assets are guides only** — 4 markdown planning docs, no actual icons/screenshots | Blocking for new store submissions | High — needs design work |
+| ~~P1-4~~ | ~~No account deletion endpoint~~ | ✅ **FIXED 2026-03-27** | `DELETE /api/account` with password confirmation; cascade deletes 27 tables |
+| ~~P1-5~~ | ~~No Cookie Policy page~~ | ✅ **FIXED** | `CookiePolicyPage.jsx` exists at `/legal/cookie-policy` with full content |
+| ~~P1-6~~ | ~~No automated accessibility testing~~ | ✅ **FIXED 2026-03-01** | vitest-axe with 9 automated a11y tests; ESLint jsx-a11y full ruleset |
+| — | **App store assets are guides only** — no actual icons/screenshots | Open | Blocking for new store submissions; needs design work |
 
 ---
 
@@ -212,15 +210,15 @@
 
 ### P0 — Security (before any public release)
 
-1. ~~**Persist account lockout and token blacklist**~~ → Still in-memory (`secureAuth.js` L26, `enhancedAuth.js` L6)
-2. **Fix rate limiting stubs** — `adaptiveRateLimit` (L152-155) and `sensitiveOperationRateLimit` (L160-163) both just call `next()`. The `express-rate-limit` import is commented out (L2). Wire up actual limiters from `rateLimitConfig.js`.
-3. **Remove JWT tokens from response body** — `accessToken` is in register (L157), login (L255), and refresh (L462) JSON responses. Remove these fields; clients should use httpOnly cookies.
+1. ~~**Persist account lockout and token blacklist**~~ ✅ **DONE** — `securityStore.js` uses write-through Supabase persistence
+2. ~~**Fix rate limiting stubs**~~ ✅ **DONE** — `adaptiveRateLimit` and `sensitiveOperationRateLimit` fully implemented and mounted
+3. **JWT tokens in response body** — KNOWN TRADE-OFF: client uses as fallback for browsers blocking third-party cookies. Removing would break auth.
 
 ### P1 — Compliance (before app store submission)
 
-4. **Build account deletion endpoint** — `/api/account/delete` with cascade delete; Privacy Policy already describes the behavior
-5. **Create Cookie Policy page** — referenced in Privacy Policy but doesn't exist; use `LegalPageLayout.jsx` pattern
-6. **Add `jest-axe` accessibility tests** — only static `jsx-a11y` linting currently
+4. ~~**Build account deletion endpoint**~~ ✅ **DONE 2026-03-27** — `DELETE /api/account` with password confirmation + cascade delete
+5. ~~**Create Cookie Policy page**~~ ✅ **DONE** — `CookiePolicyPage.jsx` at `/legal/cookie-policy`
+6. ~~**Add automated accessibility tests**~~ ✅ **DONE 2026-03-01** — vitest-axe + ESLint jsx-a11y
 
 ### P2 — Testing & CI (before scaling)
 
