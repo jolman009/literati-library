@@ -76,6 +76,7 @@ import { integrityRouter } from './routes/integrity.js';
 import { performanceRouter } from './routes/performance.js';
 import { monitoringRouter } from './routes/monitoring.js';
 import dataExportRouter from './routes/dataExport.js';
+import accountDeletionRouter from './routes/accountDeletion.js';
 import { notificationsRouter } from './routes/notifications.js';
 import { clippingsRouter } from './routes/clippings.js';
 import { subscriptionRouter } from './routes/subscription.js';
@@ -309,6 +310,7 @@ app.use('/covers', coversRouter(authenticateTokenEnhanced));
 app.use('/ai', rateLimitSuite.ai, aiRouter(authenticateTokenEnhanced));
 app.use('/api/subscription', rateLimitSuite.api, subscriptionRouter(authenticateTokenEnhanced));
 app.use('/api/data-export', dataExportRouter(authenticateTokenEnhanced));
+app.use('/api/account', accountDeletionRouter(authenticateTokenEnhanced));
 
 // ----- Auth (kept minimal here; admin client bypasses RLS as intended) -----
 app.post('/auth/register', async (req, res) => {
