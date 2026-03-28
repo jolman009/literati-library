@@ -83,6 +83,7 @@ import { subscriptionRouter } from './routes/subscription.js';
 import { sendNotification } from './services/notificationService.js';
 import { globalErrorHandler, asyncHandler } from './services/error-handler.js';
 import { monitor } from './services/monitoring.js';
+import metricsRouter from './routes/metrics.js';
 
 // ----- ESM __dirname shim -----
 const __filename = fileURLToPath(import.meta.url);
@@ -279,9 +280,10 @@ const handleHealthCheck = (req, res) => {
 };
 
 app.get('/', handleHealthCheck);
-app.get('/health', handleHealthCheck);
 app.head('/', (_req, res) => res.sendStatus(200));
-app.head('/health', (_req, res) => res.sendStatus(200));
+
+// ----- Metrics & Health (Prometheus scraping + liveness/readiness probes) -----
+app.use(metricsRouter);
 
 // CORS Debug endpoint - helps verify allowed origins
 app.get('/cors-test', (req, res) => {
