@@ -1,126 +1,116 @@
-# ShelfQuest Multi-Repository Architecture
+# ShelfQuest Repository Architecture
 
 ## Overview
 
-The ShelfQuest digital library application uses a **microservices architecture** with separate repositories for each service. This approach enables independent deployment, development, and scaling of each component.
+ShelfQuest is a **monorepo** managed with **pnpm workspaces**. All services live in a single `literati-library/` repository, enabling coordinated changes, shared tooling, and unified CI/CD.
 
-## 📁 Repository Structure
-
-### 1. Frontend Repository
-- **GitHub**: `https://github.com/jolman009/client2`
-- **Directory**: `my-library-app-2/client2/`
-- **Technology**: React 19, Vite, Tailwind CSS, Material Design 3
-- **Deployment**: Vercel (automatic from main branch)
-- **URL**: `https://client2-o2l1nijre-joel-guzmans-projects-f8aa100e.vercel.app`
-
-### 2. Backend Repository
-- **GitHub**: `https://github.com/jolman009/server2`
-- **Directory**: `my-library-app-2/server2/`
-- **Technology**: Express.js, Supabase, JWT Authentication
-- **Deployment**: Render (automatic from main branch)
-- **Features**: REST API, Database management, File storage
-
-### 3. AI Service Repository
-- **GitHub**: `https://github.com/jolman009/shelfquest-ai`
-- **Directory**: `my-library-app-2/ai-service/`
-- **Technology**: FastAPI, Google Gemini API
-- **Purpose**: Note summarization and AI-powered features
-- **Remote**: `ai-repo` in parent directory
-
-### 4. Android App Repository
-- **GitHub**: `https://github.com/jolman009/android-lit`
-- **Directory**: `my-library-app-2/android/`
-- **Technology**: Android TWA (Trusted Web Activity)
-- **Target**: Google Play Store
-- **PWA Integration**: Converts React PWA to Android app
-
-## 🚀 Deployment Architecture
+## Directory Structure
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │    Backend      │    │   AI Service    │
-│   (React PWA)   │    │   (Express.js)  │    │   (FastAPI)     │
-│                 │    │                 │    │                 │
-│ client2 repo    │◄──►│ server2 repo    │◄──►│ shelfquest-ai     │
-│ ↓ Vercel        │    │ ↓ Render        │    │ ↓ Independent   │
-│ Web App         │    │ API Server      │    │ AI Processing   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Android App    │
-│  (TWA)          │
-│                 │
-│ android-lit     │
-│ ↓ Play Store    │
-│ Native Android  │
-└─────────────────┘
+literati-library/
+├── client2/          # React 19 web app (PWA)
+├── server2/          # Express.js API backend
+├── extension/        # Chrome browser extension (Manifest v3)
+├── android/          # Native Android app (TWA + Capacitor)
+├── database/         # Database schemas and migrations
+├── docs/             # Documentation (organized by topic)
+├── monitoring/       # Prometheus, Grafana, alerting configs
+├── scripts/          # Utility and migration scripts
+├── config/           # Shared configuration
+├── security-audit/   # Security scanning and audit reports
+├── app-store-assets/ # Store listing screenshots and metadata
+├── legal/            # Legal documents
+├── package.json      # Root monorepo config (pnpm workspaces)
+├── pnpm-workspace.yaml
+├── docker-compose.yml
+├── docker-compose.production.yml
+└── render.yaml       # Render deployment config
 ```
 
-## 🔄 Development Workflow
+## Services
 
-### Local Development
-1. **Frontend**: `cd client2 && npm run dev` (localhost:3000)
-2. **Backend**: `cd server2 && npm run dev` (localhost:5000)
-3. **AI Service**: `cd ai-service && uvicorn main:app --reload` (localhost:8000)
-4. **Android**: Uses production PWA URL for testing
+### Client (`client2/`)
+- **Stack**: React 19, React Router v7, Vite 7, Tailwind CSS, Material Design 3
+- **Features**: EPUB/PDF reader with text selection, TTS, AI summaries, offline PWA, gamification
+- **Deploy**: Vercel (auto-deploy from main)
+- **Dev**: `pnpm run dev` (port 5173)
 
-### Deployment Flow
-1. **Frontend**: Push to `client2` → Auto-deploy to Vercel
-2. **Backend**: Push to `server2` → Auto-deploy to Render
-3. **AI Service**: Manual deployment to preferred cloud provider
-4. **Android**: Build AAB from `android-lit` → Manual upload to Play Store
+### Server (`server2/`)
+- **Stack**: Express.js, Supabase (PostgreSQL), JWT auth, OpenAI (gpt-4o-mini)
+- **Features**: REST API, book storage, notes, reading sessions, AI service, push notifications
+- **Deploy**: Render / Railway (Docker)
+- **Dev**: `pnpm run dev` (port 5000)
 
-## 🛠️ Why This Architecture?
+### Browser Extension (`extension/`)
+- **Stack**: React 19, Vite, CRXJS plugin, Manifest v3
+- **Features**: Save web content to library, markdown conversion (Turndown)
+- **Deploy**: Chrome Web Store
 
-### ✅ Advantages
-- **Independent Deployment**: Each service can be updated without affecting others
-- **Technology Flexibility**: Different tech stacks for different needs
-- **Team Scalability**: Different teams can work on different repositories
-- **Platform Integration**: Direct integration with deployment platforms
-- **Security**: Isolated repositories with different access controls
+### Android App (`android/`)
+- **Stack**: Android (Java/Kotlin), Material Design, Gradle, Capacitor
+- **Features**: TWA wrapping the PWA, native Android integration
+- **Deploy**: Google Play Store
 
-### 🔧 Trade-offs
-- **Coordination**: Changes across services require coordination
-- **Version Management**: Need to manage compatibility between services
-- **Repository Management**: More repositories to maintain
-- **Documentation**: Need to keep architecture docs updated
+### Database (`database/`)
+- **Tables**: users, books, notes, reading_sessions, achievements, goals
+- **Provider**: Supabase (hosted PostgreSQL with Row Level Security)
+- **Migrations**: SQL files in `database/consolidated/`
 
-## 📋 Repository Guidelines
+## Architecture Diagram
 
-### Commit Messages
-- Use conventional commits: `feat:`, `fix:`, `docs:`, etc.
-- Include deployment context when relevant
-- Reference related repositories when making cross-service changes
+```
+┌──────────────────────────────────────────────────────┐
+│                    literati-library (monorepo)        │
+│                                                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │  client2     │  │  server2    │  │  extension   │  │
+│  │  React PWA   │──│  Express API│  │  Chrome Ext  │  │
+│  │  → Vercel    │  │  → Render   │  │  → Web Store │  │
+│  └─────────────┘  └──────┬──────┘  └─────────────┘  │
+│         │                │                           │
+│  ┌──────┴──────┐  ┌──────┴──────┐                    │
+│  │  android     │  │  Supabase   │                    │
+│  │  TWA App     │  │  PostgreSQL │                    │
+│  │  → Play Store│  │  + Storage  │                    │
+│  └─────────────┘  └──────┬──────┘                    │
+│                          │                           │
+│                   ┌──────┴──────┐                    │
+│                   │  OpenAI     │                    │
+│                   │  gpt-4o-mini│                    │
+│                   └─────────────┘                    │
+└──────────────────────────────────────────────────────┘
+```
 
-### Branching Strategy
-- **main/master**: Production-ready code (auto-deploys)
-- **develop**: Integration branch for features
-- **feature/***: Individual features
-- **hotfix/***: Production bug fixes
+## Development
 
-### Cross-Repository Dependencies
-- Frontend depends on Backend API contracts
-- Android depends on Frontend PWA functionality
-- AI Service is independent but called by Backend
-- Document API changes that affect multiple services
+### Prerequisites
+- Node.js 20.16.0+
+- pnpm 8.15.6+ (enforced — npm/yarn will not work)
 
-## 🔍 Monitoring & Maintenance
+### Commands (from repo root)
+```bash
+pnpm install              # Install all workspace dependencies
+pnpm run dev              # Start client + server concurrently
+pnpm run build            # Build client + server for production
+pnpm run test:all         # Run all tests across services
+pnpm run lint             # Lint all workspaces
+```
 
-### Health Checks
-- **Frontend**: Vercel deployment status, Lighthouse scores
-- **Backend**: Render deployment status, API response times
-- **AI Service**: Service availability, processing times
-- **Android**: Play Store reviews, crash reports
+### Deployment
+| Service    | Platform     | Trigger            |
+|------------|-------------|-------------------|
+| Client     | Vercel       | Push to main       |
+| Server     | Render       | Push to main       |
+| Extension  | Chrome Store | Manual upload      |
+| Android    | Play Store   | Manual AAB upload  |
 
-### Update Schedule
-- **Frontend**: Weekly feature updates
-- **Backend**: Bi-weekly with database migrations
-- **AI Service**: Monthly or as needed for AI improvements
-- **Android**: Follow Play Store target SDK requirements (annual)
+## Key Design Decisions
+
+- **Monorepo over multi-repo**: Coordinated changes across client/server, shared linting, single PR for cross-cutting features
+- **pnpm workspaces**: Fast installs, strict dependency isolation, disk-efficient
+- **Supabase**: Managed PostgreSQL with built-in auth, storage, and RLS — no separate DB infra to maintain
+- **OpenAI on server**: AI calls are server-side only (gated behind auth + subscription), not exposed to client
 
 ---
 
-**Last Updated**: September 2024
-**Architecture Type**: Microservices with Multi-Repository Setup
-**Deployment Strategy**: Platform-specific auto-deployment
+*Last updated: March 2026*
