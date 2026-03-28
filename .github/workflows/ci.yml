@@ -58,7 +58,6 @@ jobs:
 
       - name: Run Tests
         run: pnpm run test:coverage
-        continue-on-error: true
         env:
           CI: true
 
@@ -88,7 +87,6 @@ jobs:
   server-ci:
     name: Server Tests & Build
     runs-on: ubuntu-latest
-    continue-on-error: true  # Tests have pre-existing failures - don't block CI
     defaults:
       run:
         working-directory: ./server2
@@ -138,7 +136,6 @@ jobs:
 
       - name: Run Tests
         run: pnpm run test:coverage
-        continue-on-error: true
         env:
           CI: true
           NODE_ENV: test
@@ -161,7 +158,6 @@ jobs:
   ai-service-ci:
     name: AI Service Tests
     runs-on: ubuntu-latest
-    continue-on-error: true  # Tests have pre-existing failures - don't block CI
     defaults:
       run:
         working-directory: ./ai-service
