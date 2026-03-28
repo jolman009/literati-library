@@ -290,23 +290,41 @@ export const suspiciousActivityMonitor = (req, res, next) => {
 };
 
 /**
- * CSRF Protection
+ * CSRF Protection — Double-submit cookie pattern with cryptographically random tokens.
+ *
+ * Flow:
+ * 1. GET /auth/secure/csrf-token → generates random token, sets it in a cookie, returns it in JSON
+ * 2. Client stores the token and sends it back in the `x-csrf-token` header on state-changing requests
+ * 3. This middleware compares the header value against the cookie value
+ *
+ * Because the cookie is SameSite and the attacker cannot read it (cross-origin),
+ * only legitimate pages can produce a matching header + cookie pair.
  */
+const CSRF_COOKIE_NAME = '_csrf';
+const CSRF_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  path: '/',
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+};
+
 export const csrfProtection = (req, res, next) => {
-  // Skip CSRF for GET, HEAD, OPTIONS
+  // Skip CSRF for GET, HEAD, OPTIONS (safe methods)
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
     return next();
   }
 
-  // Skip for API endpoints using Bearer tokens
+  // Skip for API endpoints using Bearer tokens (token itself proves authenticity)
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     return next();
   }
 
   // Check for CSRF token in header or body
   const csrfToken = req.headers['x-csrf-token'] || req.body.csrfToken;
+  const cookieToken = req.cookies?.[CSRF_COOKIE_NAME];
 
-  if (!csrfToken) {
+  if (!csrfToken || !cookieToken) {
     return res.status(403).json({
       error: 'CSRF token required',
       code: 'CSRF_TOKEN_REQUIRED',
@@ -314,13 +332,8 @@ export const csrfProtection = (req, res, next) => {
     });
   }
 
-  // Verify CSRF token (simplified - in production use a proper CSRF library)
-  const expectedToken = crypto
-    .createHmac('sha256', process.env.JWT_SECRET || 'fallback-secret')
-    .update(`${req.ip}:${req.headers['user-agent']}`)
-    .digest('hex');
-
-  if (csrfToken !== expectedToken) {
+  // Constant-time comparison to prevent timing attacks
+  if (!crypto.timingSafeEqual(Buffer.from(csrfToken), Buffer.from(cookieToken))) {
     console.warn(`CSRF token mismatch from IP: ${req.ip}, Path: ${req.path}`);
     return res.status(403).json({
       error: 'Invalid CSRF token',
@@ -333,14 +346,12 @@ export const csrfProtection = (req, res, next) => {
 };
 
 /**
- * Generate CSRF token endpoint
+ * Generate CSRF token endpoint — returns a cryptographically random token
+ * and sets it as a cookie for double-submit verification.
  */
 export const generateCSRFToken = (req, res) => {
-  const token = crypto
-    .createHmac('sha256', process.env.JWT_SECRET || 'fallback-secret')
-    .update(`${req.ip}:${req.headers['user-agent']}`)
-    .digest('hex');
-
+  const token = crypto.randomBytes(32).toString('hex');
+  res.cookie(CSRF_COOKIE_NAME, token, CSRF_COOKIE_OPTIONS);
   res.json({ csrfToken: token });
 };
 

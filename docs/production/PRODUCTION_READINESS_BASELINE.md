@@ -58,7 +58,7 @@
 | ~~P0-2b~~ | ~~`sensitiveOperationRateLimit` stubbed~~ | `advancedSecurity.js` L196 | ✅ **FIXED** | Fully implemented; mounted on `/register`, `/change-password`, `/reset-password` |
 | ~~P0-2c~~ | ~~`express-rate-limit` import commented out~~ | `advancedSecurity.js` L3 | ✅ **FIXED** | Import is active; used by both rate limiters |
 | P0-3a/b/c | `accessToken` returned in response body | `secureAuth.js`, `enhancedAuth.js` | **KNOWN TRADE-OFF** | Client uses as fallback when cookies blocked; removing would break auth for some users |
-| — | CSRF tokens are **deterministic** (IP + User-Agent hash) | `advancedSecurity.js` | Open | Medium — predictable on shared networks |
+| ~~—~~ | ~~CSRF tokens deterministic (IP + UA hash)~~ | `advancedSecurity.js` | ✅ **FIXED 2026-03-27** | Replaced with crypto.randomBytes + double-submit cookie pattern |
 | — | **No 2FA/MFA** | — | Open | Not required for app stores; high effort |
 
 ---
