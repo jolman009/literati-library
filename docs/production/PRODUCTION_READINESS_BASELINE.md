@@ -7,12 +7,12 @@
 
 ---
 
-## Overall Readiness: ~80%
+## Overall Readiness: ~85%
 
 | Category | Score | Prev | Change | Notes |
 |---|---|---|---|---|
 | Security | 90% | 75% | ▲ +15% | Rate limiting stubs fixed; security store persisted to Supabase; account deletion added |
-| Testing | 60% | 60% | — | Server tests passing; client tests unverified |
+| Testing | 70% | 60% | ▲ +10% | Server + client tests passing; `continue-on-error` removed from test jobs |
 | Compliance & Legal | 95% | 85% | ▲ +10% | Cookie Policy page exists; account deletion endpoint added |
 | Production Infrastructure | 70% | 70% | — | Monitoring unverified |
 | UI/UX | 95% | 90% | ▲ +5% | PDF text selection, TTS, AI summaries, EPUB selection added |
@@ -95,21 +95,21 @@
 
 | Workflow | Purpose | Status |
 |---|---|---|
-| `ci.yml` | Primary — client/server/AI tests, Docker build, security scan | **Active** — but `continue-on-error: true` on 5 steps |
-| `test.yml` | Secondary — comprehensive test + E2E + Lighthouse | **Active** — but `continue-on-error: true` on 5 jobs |
+| `ci.yml` | Primary — client/server/AI tests, Docker build, security scan | **Active** — `continue-on-error` removed from test jobs; kept on security scans |
+| `test.yml` | Secondary — comprehensive test + E2E + Lighthouse | **Active** — `continue-on-error` removed from test jobs; kept on security scans |
 | `cd-production.yml` | Production deploy with approval gate, Trivy, SSH, smoke tests | **Configured** — triggers on `v*.*.*` tags |
 | `cd-staging.yml` | Staging auto-deploy on `develop` push | **Configured** |
-| `ci-cd.yml` | Legacy pipeline | **Broken** — references `test:unit` script that doesn't exist |
 | Others (9) | Security scan, Docker, Jekyll, dependency updates, etc. | Various |
 
 ### Known gaps
 
 | # | Gap | Impact |
 |---|---|---|
-| P2-7 | **`continue-on-error: true`** on 10 steps/jobs across `ci.yml` and `test.yml` | Tests can fail without blocking merges |
-| P2-8 | **`ci-cd.yml` is broken** — calls `pnpm run test:unit` which doesn't exist | Silent failure; tests never run in this workflow |
+| ~~P2-7~~ | ~~`continue-on-error: true` on test jobs~~ | ✅ **FIXED 2026-03-28** — Removed from 8 test jobs/steps; kept on security scans (informational) |
+| ~~P2-8~~ | ~~`ci-cd.yml` is broken~~ | ✅ **FIXED 2026-03-27** — Deleted (redundant with `ci.yml`) |
 | ~~P2-9~~ | ~~Run and fix all server tests~~ | ✅ **DONE** — 230 passing, 0 failures |
-| P2-10 | **Coverage is still limited** — 25 test files across a large codebase | Many untested paths in middleware and components |
+| ~~P2-10a~~ | ~~Verify client tests pass~~ | ✅ **DONE 2026-03-28** — 10 suites, 98 passing, 22 skipped, 0 failures |
+| P2-10b | **Coverage is still limited** — 25 test files across a large codebase | Many untested paths in middleware and components |
 | — | **E2E tests unverified** — Playwright configured but never run against live services | Could block CI if enforced |
 | — | **No load/performance baseline** — Artillery configured in CD but no baseline recorded | Can't detect performance regressions |
 
@@ -222,11 +222,11 @@
 
 ### P2 — Testing & CI (before scaling)
 
-7. **Remove `continue-on-error: true`** from 10 locations across `ci.yml` (5) and `test.yml` (5) — tests should block merges
-8. **Delete or fix `ci-cd.yml`** — references nonexistent `test:unit` script; silent failure
+7. ~~**Remove `continue-on-error: true`**~~ ✅ **DONE 2026-03-28** — Removed from 8 test jobs/steps; kept on security scans
+8. ~~**Delete `ci-cd.yml`**~~ ✅ **DONE 2026-03-27** — Deleted (redundant with `ci.yml`)
 9. ~~**Run and fix all server tests**~~ ✅ **DONE** — 230 passing, 0 failures
 10. **Increase coverage** — focus on auth routes, middleware, and book upload flow
-11. **Verify client tests pass** — 10 Vitest test files not verified this session
+11. ~~**Verify client tests pass**~~ ✅ **DONE 2026-03-28** — 10 suites, 98 passing, 22 skipped, 0 failures
 
 ### P3 — Infrastructure (before production traffic)
 
