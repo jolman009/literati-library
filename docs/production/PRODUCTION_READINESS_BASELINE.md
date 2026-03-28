@@ -12,7 +12,7 @@
 | Category | Score | Prev | Change | Notes |
 |---|---|---|---|---|
 | Security | 90% | 75% | ▲ +15% | Rate limiting stubs fixed; security store persisted to Supabase; account deletion added |
-| Testing | 70% | 60% | ▲ +10% | Server + client tests passing; `continue-on-error` removed from test jobs |
+| Testing | 75% | 60% | ▲ +15% | 17 server suites (315 tests); 10 client suites (98 tests); GDPR + AI + middleware covered |
 | Compliance & Legal | 95% | 85% | ▲ +10% | Cookie Policy page exists; account deletion endpoint added |
 | Production Infrastructure | 70% | 70% | — | Monitoring unverified |
 | UI/UX | 95% | 90% | ▲ +5% | PDF text selection, TTS, AI summaries, EPUB selection added |
@@ -84,7 +84,10 @@
 | Server API tests | 5 | auth, books, gamification, reading-sessions, security | ✅ All passing |
 | Server unit tests | 2 | secureAuth (29 tests), simple | ✅ All passing |
 | Server integration | 3 | auth (14), reading-session-backend (15), reading-session-verification (14) | ✅ All passing |
-| **Server total** | **10 suites** | **230 tests passing, 15 skipped, 0 failures** | ✅ |
+| Server GDPR tests | 2 | account-deletion (8), data-export (4) | ✅ All passing |
+| Server AI tests | 1 | ai-routes (19 tests) | ✅ All passing |
+| Server middleware tests | 1 | subscription-gate (8 tests) | ✅ All passing |
+| **Server total** | **14 suites** | **315 tests passing, 15 skipped, 0 failures** | ✅ |
 | Client unit tests | 6 | App, DashboardPage, LibraryPage, MD3Button, environment, simple | ⚠️ Unverified this session |
 | Client context tests | 2 | AuthContext (two locations) | ⚠️ Unverified |
 | Client utility tests | 1 | bookStatus | ⚠️ Unverified |
@@ -109,7 +112,8 @@
 | ~~P2-8~~ | ~~`ci-cd.yml` is broken~~ | ✅ **FIXED 2026-03-27** — Deleted (redundant with `ci.yml`) |
 | ~~P2-9~~ | ~~Run and fix all server tests~~ | ✅ **DONE** — 230 passing, 0 failures |
 | ~~P2-10a~~ | ~~Verify client tests pass~~ | ✅ **DONE 2026-03-28** — 10 suites, 98 passing, 22 skipped, 0 failures |
-| P2-10b | **Coverage is still limited** — 25 test files across a large codebase | Many untested paths in middleware and components |
+| ~~P2-10b~~ | ~~Add GDPR, AI, and middleware tests~~ | ✅ **DONE 2026-03-28** — 4 new suites: account-deletion (8), data-export (4), ai-routes (19), subscription-gate (8) |
+| P2-10c | **Further coverage expansion** — notes, leaderboard, challenges routes untested | Remaining untested route and component paths |
 | — | **E2E tests unverified** — Playwright configured but never run against live services | Could block CI if enforced |
 | — | **No load/performance baseline** — Artillery configured in CD but no baseline recorded | Can't detect performance regressions |
 
