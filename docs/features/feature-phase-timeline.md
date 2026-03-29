@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Updated: 2026-03-07 | Status: Phase 2 Complete, Phase 1.2 Complete, Phase 3 Pre-Phase Done
+> Generated: 2026-02-15 | Updated: 2026-03-28 | Status: Phase 2 Complete, Phase 1.2 Complete, Phase 3.0 + 3.3 Done
 
 ---
 
@@ -14,7 +14,7 @@
 | Dark Mode                            | DONE             | Full light/dark/system + 6 unlockable gamified themes  |
 | User Feedback Mechanism              | DONE             | ContactDialog, ContactPage, in-app feedback forms      |
 | Help Center / FAQ                    | DONE             | HelpFAQPage with categorized FAQ + HelpViewer          |
-| Performance Monitoring               | PARTIAL          | Sentry + Prometheus metrics; no user-facing perf dash  |
+| Performance Monitoring               | PARTIAL          | Sentry + Prometheus metrics + /metrics route wired; stack unverified |
 | Accessibility (WCAG)                 | DONE             | Contrast audit, Lighthouse audit, theme migration, a11y tests |
 | Play Store Screenshots               | NOT STARTED      | Marketing task, not code                               |
 | Additional Social Logins             | NOT STARTED      | Only Google; no Facebook/Apple/Twitter                  |
@@ -147,7 +147,7 @@
 ## Phase 3 — Smart Reading & AI Features (Weeks 9-14)
 
 **Goal**: Leverage AI to differentiate the extension and deepen engagement.
-**Status**: 🟡 In Progress — Pre-phase infrastructure + Task Capture complete. Smart Queue in progress.
+**Status**: 🟡 In Progress — Pre-phase infrastructure + Task Capture complete. Smart Queue & Translator not started.
 
 ### 3.0 Pre-Phase Infrastructure ✅
 - **Scope**: Server rate limiting + Extension sidebar scaffold + messaging
@@ -305,7 +305,7 @@ Phase 2.1 ✅ ──► 2.2 ✅ ──► 2.3 ✅ ──► 2.4 ✅ (Chrome Web 
   |
 Phase 3.0 ✅ (AI rate limiter + sidebar scaffold)
   |
-Phase 3.3 ✅, 3.1 🟡, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
+Phase 3.3 ✅, 3.1, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
   |
 Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
   |
