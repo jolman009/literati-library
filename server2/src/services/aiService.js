@@ -951,6 +951,136 @@ Return JSON:
     };
   }
 
+  // ===== PASSAGE TRANSLATION =====
+
+  async translatePassage(text, targetLanguage, options = {}) {
+    const { bookTitle, pageRange } = options;
+
+    if (!text || text.trim().length < 10) {
+      return { translatedText: text, sourceLanguage: 'unknown', targetLanguage, fallback: true };
+    }
+
+    const cacheKey = `translate_${this.hashText(text.substring(0, 500))}_${targetLanguage}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      return { translatedText: text, sourceLanguage: 'unknown', targetLanguage, fallback: true };
+    }
+
+    try {
+      const truncated = text.substring(0, 8000);
+
+      const contextParts = [];
+      if (bookTitle) contextParts.push(`From book: "${bookTitle}"`);
+      if (pageRange) contextParts.push(`Pages: ${pageRange}`);
+      const contextStr = contextParts.length > 0 ? contextParts.join(', ') + '\n\n' : '';
+
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a professional translator. Translate the following passage into ${targetLanguage}. Preserve paragraph structure, tone, and meaning. Return strict JSON: { "translatedText": "...", "sourceLanguage": "auto-detected language name" }`
+          },
+          {
+            role: 'user',
+            content: `${contextStr}Translate this passage:\n\n${truncated}`
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 1500,
+        response_format: { type: 'json_object' }
+      });
+
+      const parsed = JSON.parse(completion.choices[0].message.content);
+      const result = {
+        translatedText: parsed.translatedText || text,
+        sourceLanguage: parsed.sourceLanguage || 'unknown',
+        targetLanguage,
+        fallback: false
+      };
+
+      this.requestCache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Translation error:', error);
+      serverCrashReporting.captureException?.(error, {
+        service: 'ai_service',
+        operation: 'translate_passage'
+      });
+      return { translatedText: text, sourceLanguage: 'unknown', targetLanguage, fallback: true };
+    }
+  }
+
+  // ===== PASSAGE SIMPLIFICATION =====
+
+  async simplifyPassage(text, level = 'easy', options = {}) {
+    const { bookTitle, pageRange } = options;
+
+    if (!text || text.trim().length < 10) {
+      return { simplifiedText: text, level, keyTerms: [], fallback: true };
+    }
+
+    const cacheKey = `simplify_${this.hashText(text.substring(0, 500))}_${level}`;
+    if (this.requestCache.has(cacheKey)) {
+      return this.requestCache.get(cacheKey);
+    }
+
+    if (this.fallbackMode || !this.isInitialized) {
+      return { simplifiedText: text, level, keyTerms: [], fallback: true };
+    }
+
+    try {
+      const truncated = text.substring(0, 8000);
+
+      const levelDesc = level === 'easy' ? 'a 5th-grade reading level'
+        : level === 'medium' ? 'an 8th-grade reading level'
+        : 'plain English for a general audience';
+
+      const contextParts = [];
+      if (bookTitle) contextParts.push(`From book: "${bookTitle}"`);
+      if (pageRange) contextParts.push(`Pages: ${pageRange}`);
+      const contextStr = contextParts.length > 0 ? contextParts.join(', ') + '\n\n' : '';
+
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a reading comprehension assistant. Simplify the following passage to ${levelDesc}. Preserve key ideas but use simpler vocabulary and shorter sentences. Also list difficult terms with their simpler alternatives. Return strict JSON: { "simplifiedText": "...", "keyTerms": [{"original": "...", "simplified": "..."}] }`
+          },
+          {
+            role: 'user',
+            content: `${contextStr}Simplify this passage:\n\n${truncated}`
+          }
+        ],
+        temperature: 0.4,
+        max_tokens: 1000,
+        response_format: { type: 'json_object' }
+      });
+
+      const parsed = JSON.parse(completion.choices[0].message.content);
+      const result = {
+        simplifiedText: parsed.simplifiedText || text,
+        level,
+        keyTerms: Array.isArray(parsed.keyTerms) ? parsed.keyTerms : [],
+        fallback: false
+      };
+
+      this.requestCache.set(cacheKey, result);
+      return result;
+    } catch (error) {
+      console.error('Simplification error:', error);
+      serverCrashReporting.captureException?.(error, {
+        service: 'ai_service',
+        operation: 'simplify_passage'
+      });
+      return { simplifiedText: text, level, keyTerms: [], fallback: true };
+    }
+  }
+
   // ===== UTILITIES =====
 
   hashText(text) {
