@@ -1,7 +1,7 @@
 # ShelfQuest Feature Integration Phase Timeline
 
 > Sources: `org.shelfquest.app_feedback.pdf` (Testers Community Report) + `edge-extension-ideas.md`
-> Generated: 2026-02-15 | Updated: 2026-03-28 | Status: Phase 2 Complete, Phase 1.2 Complete, Phase 3.0 + 3.3 Done
+> Generated: 2026-02-15 | Updated: 2026-03-29 | Status: Phase 2 Complete, Phase 1.2 Complete, Phase 3.0 + 3.2 + 3.3 Done
 
 ---
 
@@ -171,16 +171,21 @@
 - **Effort**: ~8 days
 - **Dependencies**: 3.0, ai-service
 
-### 3.2 AI-Powered Ebook Translator / Explainer
+### 3.2 AI-Powered Ebook Translator / Explainer ✅
 - **Source**: edge-extension-ideas.md, AI & Reading Helpers
-- **Scope**: Extension content script + ai-service
+- **Scope**: In-app reader (PDF + EPUB) + server AI routes
+- **Completed**: 2026-03-29 | Commit: `821d42e`
 - **Tasks**:
-  - Detect in-browser PDF/ePub viewing
-  - Floating action button for translate/simplify selection
-  - LLM passage translation and simplification
-  - Sync annotated notes back to ShelfQuest
-  - Language selection UI in popup
-- **Effort**: ~10 days
+  - [x] Translate + Simplify buttons in TextSelectionPopup (PDF) and EpubReader inline popup
+  - [x] Language picker (15 languages) with localStorage persistence
+  - [x] Simplify level toggle (Easy / Medium / Plain) with localStorage persistence
+  - [x] `POST /ai/translate-passage` and `POST /ai/simplify-passage` with subscription gate
+  - [x] `translatePassage()` and `simplifyPassage()` in aiService.js (gpt-4o-mini, JSON, caching)
+  - [x] `translatorApi.js` client with 7-day localStorage cache
+  - [x] Result panel with Copy and Save to Notes (formatted quote + translation/simplification)
+  - [x] 6 new tests for translate/simplify endpoints
+  - [ ] Extension integration (deferred — right-click translate on web pages)
+- **Effort**: ~10 days (estimated) → ~0.5 day (actual)
 - **Dependencies**: 2.1, ai-service, existing reader infrastructure
 
 ### 3.3 Task-from-Page Quick Capture ✅
@@ -305,7 +310,7 @@ Phase 2.1 ✅ ──► 2.2 ✅ ──► 2.3 ✅ ──► 2.4 ✅ (Chrome Web 
   |
 Phase 3.0 ✅ (AI rate limiter + sidebar scaffold)
   |
-Phase 3.3 ✅, 3.1, 3.2 (depend on 3.0 + ai-service) ◄── NEXT
+Phase 3.2 ✅, 3.3 ✅, 3.1 (depends on 3.0 + ai-service) ◄── NEXT
   |
 Phase 4.1, 4.2 ──► Phase 4.3 (integrates all sidebar work)
   |
