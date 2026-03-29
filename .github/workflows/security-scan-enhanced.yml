@@ -116,7 +116,7 @@ jobs:
       - name: 🔍 Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: javascript, python
+          languages: javascript
           queries: security-extended,security-and-quality
 
       - name: 🔍 Autobuild CodeQL
@@ -205,7 +205,7 @@ jobs:
 
       # Trivy Container Scanning
       - name: 🔍 Trivy Client Image Scan
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: literati-client:scan
           format: 'sarif'
@@ -213,7 +213,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: 🔍 Trivy Server Image Scan
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: literati-server:scan
           format: 'sarif'
