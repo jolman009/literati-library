@@ -1,7 +1,7 @@
 # ShelfQuest — Production Readiness Baseline
 
 > **Last audited:** 2026-02-01 (evening update)
-> **Re-verified:** 2026-03-27
+> **Re-verified:** 2026-03-28
 > **Audited by:** Code audit against actual files (not self-reported)
 > **Method:** Every claim verified by reading source files, configs, and CI workflows
 
@@ -29,7 +29,7 @@
 
 ---
 
-## 1. Security — 75%
+## 1. Security — 90%
 
 ### What's implemented and mounted in `server.js`
 
@@ -39,7 +39,7 @@
 | Deep input sanitization (XSS, SQL injection, NoSQL injection) | `server2/src/middlewares/advancedSecurity.js` (653 lines) | **Working** — mounted at app level |
 | Rate limiting (express-rate-limit) | `server2/src/middlewares/rateLimitConfig.js` (220 lines) | **Working** — general, auth, upload, API, gamification |
 | Slow-down middleware (progressive delays) | `rateLimitConfig.js` | **Working** |
-| CSRF protection (token-based) | `advancedSecurity.js` L247-298 | **Working** — but tokens are deterministic (IP+UA hash) |
+| CSRF protection (double-submit cookie) | `advancedSecurity.js` L247-298 | **Working** — crypto.randomBytes + timingSafeEqual |
 | Account lockout (5 attempts / 15 min) | `server2/src/routes/secureAuth.js` L25-64 | **Working** — in-memory Map, resets on server restart |
 | Password strength + breach check (HIBP) | `advancedSecurity.js` | **Working** |
 | Security headers (Helmet, CSP, HSTS) | `server2/src/middlewares/securityMiddleware.js` | **Working** |
@@ -63,7 +63,7 @@
 
 ---
 
-## 2. Testing — 60%
+## 2. Testing — 75%
 
 ### Infrastructure (exists and is configured)
 
@@ -77,7 +77,7 @@
 | Codecov | `.github/workflows/ci.yml` | Integrated for client, server, and AI service with flags |
 | Lighthouse CI | `client2/.lighthouserc.json` | Performance 0.6, a11y 0.7, best-practices 0.7, SEO 0.7 |
 
-### Test suites: 25 files
+### Test suites: 29 files
 
 | Location | Count | Files | Status |
 |---|---|---|---|
@@ -88,10 +88,11 @@
 | Server AI tests | 1 | ai-routes (19 tests) | ✅ All passing |
 | Server middleware tests | 1 | subscription-gate (8 tests) | ✅ All passing |
 | **Server total** | **14 suites** | **315 tests passing, 15 skipped, 0 failures** | ✅ |
-| Client unit tests | 6 | App, DashboardPage, LibraryPage, MD3Button, environment, simple | ⚠️ Unverified this session |
-| Client context tests | 2 | AuthContext (two locations) | ⚠️ Unverified |
-| Client utility tests | 1 | bookStatus | ⚠️ Unverified |
-| Client integration | 1 | reading-session | ⚠️ Unverified |
+| Client unit tests | 6 | App, DashboardPage, LibraryPage, MD3Button, environment, simple | ✅ All passing (verified 2026-03-28) |
+| Client context tests | 2 | AuthContext (two locations) | ✅ Passing (22 skipped — mock-only) |
+| Client utility tests | 1 | bookStatus | ✅ All passing |
+| Client integration | 1 | reading-session | ✅ All passing |
+| **Client total** | **10 suites** | **98 tests passing, 22 skipped, 0 failures** | ✅ |
 | E2E specs (Playwright) | 5 | auth, gamification, library, reading-session, security | ⚠️ Unverified against live services |
 
 ### CI/CD Pipelines: 14 GitHub Actions workflows
@@ -119,7 +120,7 @@
 
 ---
 
-## 3. Compliance & Legal — 85%
+## 3. Compliance & Legal — 95%
 
 ### What exists
 
@@ -258,9 +259,8 @@
 | `client2/vitest.config.js` | — | Client test configuration |
 | `server2/jest.config.js` | — | Server test configuration |
 | `client2/playwright.config.js` | — | E2E test configuration (7 browsers) |
-| `.github/workflows/ci.yml` | — | Primary CI pipeline (5x continue-on-error) |
-| `.github/workflows/test.yml` | — | Secondary test pipeline (5x continue-on-error) |
-| `.github/workflows/ci-cd.yml` | — | Legacy pipeline (broken — nonexistent test:unit) |
+| `.github/workflows/ci.yml` | — | Primary CI pipeline (continue-on-error removed from tests) |
+| `.github/workflows/test.yml` | — | Secondary test pipeline (continue-on-error removed from tests) |
 | `.github/workflows/cd-production.yml` | — | Production deployment pipeline |
 | `docker-compose.yml` | — | Container orchestration |
 | `render.yaml` | — | Render.com deployment config |
