@@ -433,6 +433,7 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
         <TextSelectionPopup
           containerRef={containerRef}
           onAddToNotes={onTextSelected}
+          bookContext={book ? { id: book.id, title: book.title, author: book.author } : null}
           onReadAloud={(text) => {
             if (onTTSRequest) {
               onTTSRequest({ text, pageNumber, pdfDocument, numPages });

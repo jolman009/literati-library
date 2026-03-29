@@ -120,6 +120,43 @@ export function aiRouter(authenticateToken) {
     }
   });
 
+  // Translate a passage to a target language
+  router.post('/translate-passage', authenticateToken, gate, async (req, res) => {
+    try {
+      const { text, targetLanguage, bookTitle, pageRange } = req.body || {};
+
+      if (!text || typeof text !== 'string' || text.trim().length < 10) {
+        return res.status(400).json({ error: 'Text content is required (minimum 10 characters)' });
+      }
+      if (!targetLanguage || typeof targetLanguage !== 'string') {
+        return res.status(400).json({ error: 'Target language is required' });
+      }
+
+      const result = await aiService.translatePassage(text, targetLanguage, { bookTitle, pageRange });
+      res.json(result);
+    } catch (error) {
+      console.error('Translation error:', error);
+      res.status(500).json({ error: 'Translation failed' });
+    }
+  });
+
+  // Simplify a passage to a target reading level
+  router.post('/simplify-passage', authenticateToken, gate, async (req, res) => {
+    try {
+      const { text, level, bookTitle, pageRange } = req.body || {};
+
+      if (!text || typeof text !== 'string' || text.trim().length < 10) {
+        return res.status(400).json({ error: 'Text content is required (minimum 10 characters)' });
+      }
+
+      const result = await aiService.simplifyPassage(text, level || 'easy', { bookTitle, pageRange });
+      res.json(result);
+    } catch (error) {
+      console.error('Simplification error:', error);
+      res.status(500).json({ error: 'Simplification failed' });
+    }
+  });
+
   // AI book recommendations based on user's library
   router.post('/book-recommendations', authenticateToken, gate, async (req, res) => {
     try {

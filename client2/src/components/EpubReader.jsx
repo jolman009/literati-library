@@ -1,9 +1,10 @@
 // src/components/EpubReader.jsx
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { X, Download, ChevronLeft, ChevronRight, List, Minus, Plus, Volume2, VolumeX } from "lucide-react";
+import { X, Download, ChevronLeft, ChevronRight, List, Minus, Plus, Volume2, VolumeX, Languages, Sparkles, Loader2 } from "lucide-react";
 import ePub from "epubjs";
 import TextSelectionPopup from "./TextSelectionPopup";
 import { extractEpubChapterText } from "../utils/textExtractor";
+import { translatePassage, simplifyPassage } from "../api/translatorApi";
 import "../styles/epub-reader.css";
 
 /**
@@ -43,6 +44,7 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
 
   // EPUB iframe selection state
   const [epubSelection, setEpubSelection] = useState(null); // { text, rect }
+  const [epubAi, setEpubAi] = useState(null); // { mode: 'translate'|'simplify', loading, error, result }
 
   // Use ref for callback to prevent re-initialization when callback identity changes
   const onLocationChangeRef = useRef(onLocationChange);
@@ -568,7 +570,7 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
         {/* EPUB Text Selection Popup */}
         {epubSelection && (
           <div
-            className="epub-selection-popup"
+            className={`epub-selection-popup ${epubAi ? 'epub-selection-expanded' : ''}`}
             style={{
               position: 'fixed',
               top: `${Math.max(8, epubSelection.rect.top - 52)}px`,
@@ -577,44 +579,70 @@ const EpubReader = React.memo(({ book, token, onClose, onLocationChange, initial
             }}
             onMouseDown={(e) => e.preventDefault()}
           >
-            <button
-              className="epub-sel-btn"
-              onClick={() => {
-                navigator.clipboard?.writeText(epubSelection.text);
-                setEpubSelection(null);
-              }}
-              title="Copy"
-            >
-              Copy
-            </button>
-            <div className="epub-sel-divider" />
-            <button
-              className="epub-sel-btn"
-              onClick={() => {
-                if (onTextSelected) onTextSelected(epubSelection.text);
-                setEpubSelection(null);
-              }}
-              title="Add to Notes"
-            >
-              Note
-            </button>
-            <div className="epub-sel-divider" />
-            <button
-              className="epub-sel-btn"
-              onClick={() => {
-                if (onTTSRequest) {
-                  onTTSRequest({ text: epubSelection.text });
-                } else if (window.speechSynthesis) {
-                  const utt = new SpeechSynthesisUtterance(epubSelection.text);
-                  window.speechSynthesis.cancel();
-                  window.speechSynthesis.speak(utt);
-                }
-                setEpubSelection(null);
-              }}
-              title="Read Aloud"
-            >
-              Read
-            </button>
+            <div className="epub-sel-toolbar">
+              <button className="epub-sel-btn" onClick={() => { navigator.clipboard?.writeText(epubSelection.text); setEpubSelection(null); setEpubAi(null); }} title="Copy">Copy</button>
+              <div className="epub-sel-divider" />
+              <button className="epub-sel-btn" onClick={() => { if (onTextSelected) onTextSelected(epubSelection.text); setEpubSelection(null); setEpubAi(null); }} title="Add to Notes">Note</button>
+              <div className="epub-sel-divider" />
+              <button className="epub-sel-btn" onClick={() => {
+                if (onTTSRequest) { onTTSRequest({ text: epubSelection.text }); }
+                else if (window.speechSynthesis) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(epubSelection.text)); }
+                setEpubSelection(null); setEpubAi(null);
+              }} title="Read Aloud">Read</button>
+              <div className="epub-sel-divider" />
+              <button
+                className={`epub-sel-btn ${epubAi?.mode === 'translate' ? 'epub-sel-btn-active' : ''}`}
+                onClick={async () => {
+                  if (epubAi?.mode === 'translate') { setEpubAi(null); return; }
+                  const lang = localStorage.getItem('shelfquest_translate_lang') || 'Spanish';
+                  setEpubAi({ mode: 'translate', loading: true, error: null, result: null });
+                  try {
+                    const result = await translatePassage({ text: epubSelection.text, targetLanguage: lang, bookTitle: book?.title, bookId: book?.id });
+                    setEpubAi({ mode: 'translate', loading: false, error: null, result });
+                  } catch (err) {
+                    setEpubAi({ mode: 'translate', loading: false, error: err?.response?.data?.error || 'Translation failed', result: null });
+                  }
+                }}
+                title="Translate"
+              ><Languages size={14} /></button>
+              <div className="epub-sel-divider" />
+              <button
+                className={`epub-sel-btn ${epubAi?.mode === 'simplify' ? 'epub-sel-btn-active' : ''}`}
+                onClick={async () => {
+                  if (epubAi?.mode === 'simplify') { setEpubAi(null); return; }
+                  const level = localStorage.getItem('shelfquest_simplify_level') || 'easy';
+                  setEpubAi({ mode: 'simplify', loading: true, error: null, result: null });
+                  try {
+                    const result = await simplifyPassage({ text: epubSelection.text, level, bookTitle: book?.title, bookId: book?.id });
+                    setEpubAi({ mode: 'simplify', loading: false, error: null, result });
+                  } catch (err) {
+                    setEpubAi({ mode: 'simplify', loading: false, error: err?.response?.data?.error || 'Simplification failed', result: null });
+                  }
+                }}
+                title="Simplify"
+              ><Sparkles size={14} /></button>
+            </div>
+            {epubAi && (
+              <div className="epub-sel-ai-panel">
+                {epubAi.loading && <div className="epub-sel-ai-loading"><Loader2 size={16} className="text-selection-spinner" /> {epubAi.mode === 'translate' ? 'Translating…' : 'Simplifying…'}</div>}
+                {epubAi.error && <div className="epub-sel-ai-error">{epubAi.error}</div>}
+                {!epubAi.loading && !epubAi.error && epubAi.result && (
+                  <>
+                    <div className="epub-sel-ai-text">{epubAi.result.translatedText || epubAi.result.simplifiedText}</div>
+                    <div className="epub-sel-ai-actions">
+                      <button className="epub-sel-btn" onClick={() => navigator.clipboard?.writeText(epubAi.result.translatedText || epubAi.result.simplifiedText)}>Copy</button>
+                      <button className="epub-sel-btn epub-sel-btn-active" onClick={() => {
+                        const original = `> ${epubSelection.text.replace(/\n/g, '\n> ')}`;
+                        const label = epubAi.mode === 'translate' ? `Translation (${localStorage.getItem('shelfquest_translate_lang') || 'Spanish'})` : `Simplified (${localStorage.getItem('shelfquest_simplify_level') || 'easy'})`;
+                        const formatted = `${original}\n\n**${label}:**\n${epubAi.result.translatedText || epubAi.result.simplifiedText}`;
+                        if (onTextSelected) onTextSelected(formatted);
+                        setEpubSelection(null); setEpubAi(null);
+                      }}>Save Note</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -10,6 +10,8 @@ const mockAiService = {
   extractPageTopics: jest.fn(),
   autoTagTask: jest.fn(),
   summarizeContent: jest.fn(),
+  translatePassage: jest.fn(),
+  simplifyPassage: jest.fn(),
   generateBookRecommendations: jest.fn(),
   getStatus: jest.fn(),
 };
@@ -215,6 +217,89 @@ describe('AI Routes API', () => {
       expect(res.status).toBe(200);
       expect(res.body.summary).toBe('Summary here');
       expect(res.body.keyPoints).toHaveLength(1);
+    });
+  });
+
+  describe('POST /ai/translate-passage', () => {
+    it('should return 400 for text too short', async () => {
+      const res = await request(app)
+        .post('/ai/translate-passage')
+        .send({ text: 'Hi', targetLanguage: 'Spanish' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 without target language', async () => {
+      const res = await request(app)
+        .post('/ai/translate-passage')
+        .send({ text: 'This is a test passage for translation.' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toContain('Target language');
+    });
+
+    it('should translate passage', async () => {
+      mockAiService.translatePassage.mockResolvedValueOnce({
+        translatedText: 'Este es un pasaje de prueba.',
+        sourceLanguage: 'English',
+        targetLanguage: 'Spanish',
+        fallback: false,
+      });
+
+      const res = await request(app)
+        .post('/ai/translate-passage')
+        .send({ text: 'This is a test passage for translation.', targetLanguage: 'Spanish' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.translatedText).toBe('Este es un pasaje de prueba.');
+      expect(res.body.targetLanguage).toBe('Spanish');
+    });
+  });
+
+  describe('POST /ai/simplify-passage', () => {
+    it('should return 400 for text too short', async () => {
+      const res = await request(app)
+        .post('/ai/simplify-passage')
+        .send({ text: 'Short' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should simplify passage', async () => {
+      mockAiService.simplifyPassage.mockResolvedValueOnce({
+        simplifiedText: 'This is a simple version.',
+        level: 'easy',
+        keyTerms: [{ original: 'passage', simplified: 'text' }],
+        fallback: false,
+      });
+
+      const res = await request(app)
+        .post('/ai/simplify-passage')
+        .send({ text: 'This is a complicated passage requiring simplification.', level: 'easy' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.simplifiedText).toBe('This is a simple version.');
+      expect(res.body.keyTerms).toHaveLength(1);
+    });
+
+    it('should default to easy level', async () => {
+      mockAiService.simplifyPassage.mockResolvedValueOnce({
+        simplifiedText: 'Simple text.',
+        level: 'easy',
+        keyTerms: [],
+        fallback: false,
+      });
+
+      const res = await request(app)
+        .post('/ai/simplify-passage')
+        .send({ text: 'This passage needs simplification for reading.' });
+
+      expect(res.status).toBe(200);
+      expect(mockAiService.simplifyPassage).toHaveBeenCalledWith(
+        expect.any(String),
+        'easy',
+        expect.any(Object)
+      );
     });
   });
 
