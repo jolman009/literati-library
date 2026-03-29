@@ -206,7 +206,7 @@ const ReadBook = () => {
     }
     // Advance the page
     setCurrentPage(nextPageNum);
-    if (onPageChange) onPageChange(nextPageNum);
+    if (handlePageChange) handlePageChange(nextPageNum);
     // Extract and speak next page
     const text = await extractPdfPageText(ttsContext.pdfDocument, nextPageNum);
     if (text) {

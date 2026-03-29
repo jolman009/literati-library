@@ -102,23 +102,6 @@ jobs:
             }
           "
 
-      # AI Service Security Audit
-      - name: 🐍 Setup Python for AI Service
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: 🔒 AI Service Security Check
-        working-directory: ./ai-service
-        run: |
-          pip install safety bandit
-
-          echo "🔍 Running Python dependency security check..."
-          safety check -r requirements.txt || echo "⚠️ Python security issues found"
-
-          echo "🔍 Running Python code security analysis..."
-          bandit -r . -f json -o bandit-report.json || echo "⚠️ Python code security issues found"
-
   code-security-scan:
     name: 🛡️ Code Security Analysis
     runs-on: ubuntu-latest
@@ -222,7 +205,7 @@ jobs:
 
       # Trivy Container Scanning
       - name: 🔍 Trivy Client Image Scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           image-ref: literati-client:scan
           format: 'sarif'
@@ -230,7 +213,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: 🔍 Trivy Server Image Scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.29.0
         with:
           image-ref: literati-server:scan
           format: 'sarif'
