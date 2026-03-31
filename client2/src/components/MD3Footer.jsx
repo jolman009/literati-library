@@ -13,7 +13,7 @@ const MD3Footer = () => {
         <div className="md3-footer-brand">
           <div className="md3-footer-logo-container">
             <img
-              src="/ShelfQuest_logo_favicon.png"
+              src="/ShelfQuest_logo_v3.png"
               alt="ShelfQuest"
               className="md3-footer-logo-image"
               width="32"

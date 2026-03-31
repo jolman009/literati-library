@@ -62,7 +62,7 @@ const SignUpV2 = () => {
         <div className="signup-header">
           <div className="signup-logo-container">
             <div className="signup-logo-wrapper">
-              <img src="/ShelfQuest_logo_v2.png" alt="ShelfQuest Logo" className="signup-logo-img" />
+              <img src="/ShelfQuest_logo_v3.png" alt="ShelfQuest Logo" className="signup-logo-img" />
             </div>
           </div>
           <h1>Create Account</h1>

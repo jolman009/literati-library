@@ -39,7 +39,7 @@ const LoginV2 = () => {
         <div className="login-header">
           <div className="login-logo-container">
             <div className="login-logo-wrapper">
-              <img src="/ShelfQuest_logo_v2.png" alt="ShelfQuest Logo" className="login-logo-img" />
+              <img src="/ShelfQuest_logo_v3.png" alt="ShelfQuest Logo" className="login-logo-img" />
             </div>
           </div>
           <h1>Welcome Back</h1>

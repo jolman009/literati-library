@@ -228,7 +228,7 @@ const NewLandingPage = () => {
         <div className="nav-container">
           <a href="#" className="nav-logo">
             <img
-              src="/ShelfQuest_logo_favicon.png"
+              src="/ShelfQuest_logo_v3.png"
               alt="ShelfQuest"
               className="nav-logo-image"
             />
@@ -637,7 +637,7 @@ const NewLandingPage = () => {
             <div className="footer-brand">
               <a href="#" className="footer-logo">
                 <img
-                  src="/ShelfQuest_logo_favicon.png"
+                  src="/ShelfQuest_logo_v3.png"
                   alt="ShelfQuest"
                   className="footer-logo-image"
                 />
