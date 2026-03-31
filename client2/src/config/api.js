@@ -71,20 +71,81 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling ONLY
-// NOTE: Token refresh is handled exclusively by AuthContext to prevent race conditions
+// Token refresh state — mutex prevents concurrent refresh attempts
+let refreshPromise = null;
+
+async function refreshAccessToken() {
+  // If a refresh is already in progress, piggyback on it
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const refreshToken = localStorage.getItem('shelfquest_refresh_token');
+      const body = refreshToken ? JSON.stringify({ refreshToken }) : undefined;
+
+      const response = await fetch(`${apiUrl}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Persist new tokens to localStorage (Bearer fallback)
+        if (data.token) localStorage.setItem(tokenStorageKey, data.token);
+        if (data.refreshToken) localStorage.setItem('shelfquest_refresh_token', data.refreshToken);
+        if (data.user) localStorage.setItem('shelfquest_user', JSON.stringify(data.user));
+        console.warn('✅ [API] Token refresh successful');
+        return true;
+      }
+      console.warn('❌ [API] Token refresh failed:', response.status);
+      return false;
+    } catch (err) {
+      console.warn('❌ [API] Token refresh error:', err.message);
+      return false;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+// Response interceptor — auto-refresh on 401 for ALL API calls
 API.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
     const status = error.response?.status;
     const originalRequest = error.config || {};
 
-    // Log authentication errors for debugging
-    if (status === 401) {
-      console.warn('⚠️ [API] 401 Unauthorized:', originalRequest.url);
-      console.warn('    ↳ Token refresh will be handled by AuthContext');
+    // Auto-refresh on 401, but only once per request (_retry flag prevents loops)
+    if (status === 401 && !originalRequest._retry) {
+      // Skip refresh for the refresh endpoint itself
+      if (originalRequest.url?.includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+      console.warn('⚠️ [API] 401 Unauthorized:', originalRequest.url, '→ attempting token refresh');
+
+      const refreshed = await refreshAccessToken();
+      if (refreshed) {
+        // Update the Authorization header with the new token
+        const newToken = localStorage.getItem(tokenStorageKey);
+        if (newToken) {
+          originalRequest.headers = originalRequest.headers || {};
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        }
+        // Retry the original request
+        return API(originalRequest);
+      }
+
+      // Refresh failed — clear auth state so UI can react
+      console.warn('❌ [API] Refresh failed → session expired');
+      localStorage.removeItem(tokenStorageKey);
+      localStorage.removeItem('shelfquest_refresh_token');
+      localStorage.removeItem('shelfquest_user');
     } else if (status === 403) {
       console.warn('⚠️ [API] 403 Forbidden:', originalRequest.url);
     }
@@ -92,11 +153,8 @@ API.interceptors.response.use(
     // Suppress 404 errors for optional gamification endpoints
     if (status === 404 && originalRequest?.url?.includes('/gamification/')) {
       console.warn(`ℹ️ [API] Gamification endpoint not available: ${originalRequest.url} - using local storage fallback`);
-      return Promise.reject(error);
     }
 
-    // Let AuthContext handle 401/403 via makeAuthenticatedApiCall
-    // NO automatic refresh here to avoid race conditions with AuthContext refresh logic
     return Promise.reject(error);
   }
 );
