@@ -287,7 +287,7 @@ export const authenticateTokenEnhanced = async (req, res, next) => {
   } catch (error) {
     console.error('Enhanced authentication error:', error);
 
-    return res.status(403).json({
+    return res.status(401).json({
       error: 'Invalid or expired token',
       code: 'INVALID_TOKEN',
       requestId: req.requestId

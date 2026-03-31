@@ -119,15 +119,16 @@ API.interceptors.response.use(
     const status = error.response?.status;
     const originalRequest = error.config || {};
 
-    // Auto-refresh on 401, but only once per request (_retry flag prevents loops)
-    if (status === 401 && !originalRequest._retry) {
+    // Auto-refresh on 401 or 403 (server returns 403 for expired tokens),
+    // but only once per request (_retry flag prevents loops)
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
       // Skip refresh for the refresh endpoint itself
       if (originalRequest.url?.includes('/auth/refresh')) {
         return Promise.reject(error);
       }
 
       originalRequest._retry = true;
-      console.warn('⚠️ [API] 401 Unauthorized:', originalRequest.url, '→ attempting token refresh');
+      console.warn(`⚠️ [API] ${status} auth error:`, originalRequest.url, '→ attempting token refresh');
 
       const refreshed = await refreshAccessToken();
       if (refreshed) {
@@ -146,8 +147,6 @@ API.interceptors.response.use(
       localStorage.removeItem(tokenStorageKey);
       localStorage.removeItem('shelfquest_refresh_token');
       localStorage.removeItem('shelfquest_user');
-    } else if (status === 403) {
-      console.warn('⚠️ [API] 403 Forbidden:', originalRequest.url);
     }
 
     // Suppress 404 errors for optional gamification endpoints
