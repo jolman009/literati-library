@@ -148,7 +148,7 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
           aria-label="Home"
         >
           <img
-            src="/ShelfQuest_logo_v2.png"
+            src="/ShelfQuest_logo_v3.png"
             alt="ShelfQuest"
             className="header-logo-image"
             width="48"
