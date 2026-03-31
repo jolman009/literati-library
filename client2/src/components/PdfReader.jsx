@@ -159,26 +159,16 @@ export default function PdfReader({ file, book, token, onClose, onPageChange, in
     return () => window.removeEventListener('keydown', onKey);
   }, [nextPage, prevPage, zoomIn, zoomOut, resetZoom]);
 
-  // Wheel handling: Ctrl+Scroll for zoom, regular scroll for page navigation (when not zoomed)
+  // Wheel handling: Ctrl+Scroll for zoom only; regular scroll does NOT turn pages
+  // (page navigation via arrow keys, header buttons, or swipe gestures)
   const onWheel = useCallback((e) => {
     // Ctrl/Cmd + Scroll = Zoom
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
       if (e.deltaY < 0) zoomIn();
       else if (e.deltaY > 0) zoomOut();
-      return;
     }
-
-    // When zoomed in, allow natural scrolling instead of page navigation
-    if (isZoomed) return;
-
-    // Regular scroll = page navigation (only when not zoomed)
-    if (!numPages) return;
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      if (e.deltaY > 0) nextPage();
-      else prevPage();
-    }
-  }, [numPages, nextPage, prevPage, zoomIn, zoomOut, isZoomed]);
+  }, [zoomIn, zoomOut]);
 
   // Helper to calculate distance between two touch points
   const getTouchDistance = (touches) => {
