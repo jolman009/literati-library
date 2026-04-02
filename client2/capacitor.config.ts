@@ -20,10 +20,19 @@ const config: CapacitorConfig = {
     backgroundColor: '#FFFBFE',
   },
 
+  // Android-specific configuration
+  android: {
+    // Use https scheme so cookies/CORS behave like production
+    webContentsDebuggingEnabled: true, // Remove for production release
+  },
+
   // Server configuration
   server: {
+    // Use https scheme so service workers and secure contexts work
+    androidScheme: 'https',
+
     // For development: uncomment to use live reload from dev server
-    // url: 'http://localhost:5173',
+    // url: 'http://10.0.2.2:5173',
     // cleartext: true,
 
     // Allow navigation to your API server
@@ -32,6 +41,8 @@ const config: CapacitorConfig = {
       '*.shelfquest.org',
       'library-server-m6gr.onrender.com',
       '*.supabase.co',
+      'checkout.stripe.com',
+      '*.stripe.com',
     ],
   },
 
