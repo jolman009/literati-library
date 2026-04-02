@@ -183,6 +183,9 @@ app.use(cors({
 // ----- Security Headers -----
 app.use(securitySuite.headers);
 
+// ----- Stripe Webhook (raw body required BEFORE json parser) -----
+app.use('/api/subscription/webhook', express.raw({ type: 'application/json' }));
+
 // ----- Body Parser (must be before sanitization) -----
 // ✅ MEMORY FIX: Reduced from 10mb to 2mb to prevent memory spikes
 // Notes, sessions, and most API data are typically <100kb

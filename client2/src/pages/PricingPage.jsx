@@ -1,6 +1,8 @@
-// src/pages/PricingPage.jsx — Subscription pricing with feature comparison
-import React from 'react';
+// src/pages/PricingPage.jsx — Subscription pricing with Stripe Checkout
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useEntitlements } from '../contexts/EntitlementsContext';
+import API from '../config/api';
 import { Crown, Check, Zap, BookOpen, Brain, Sparkles, MessageSquare, StickyNote, Target } from 'lucide-react';
 import './PricingPage.css';
 
@@ -24,11 +26,57 @@ const FEATURES = [
 ];
 
 export default function PricingPage() {
-  const { isPremium, tier } = useEntitlements();
+  const { isPremium, refreshSubscription } = useEntitlements();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [checkoutLoading, setCheckoutLoading] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const verifiedRef = useRef(false);
+
+  // Handle return from Stripe Checkout (runs once)
+  useEffect(() => {
+    if (verifiedRef.current) return;
+
+    const sessionId = searchParams.get('session_id');
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+
+    if (success && sessionId) {
+      verifiedRef.current = true;
+      // Clean URL params immediately
+      setSearchParams({}, { replace: true });
+
+      (async () => {
+        try {
+          await API.post('/api/subscription/verify-session', { sessionId });
+          setSuccessMessage('Welcome to ShelfQuest Pro! Your subscription is now active.');
+        } catch {
+          setSuccessMessage('Payment received! Your Pro features are activating...');
+        }
+        try { await refreshSubscription(); } catch {}
+      })();
+    } else if (canceled) {
+      verifiedRef.current = true;
+      setErrorMessage('Checkout was canceled. No charges were made.');
+      setSearchParams({}, { replace: true });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectPlan = async (planId) => {
-    // TODO: Integrate with Stripe Checkout
-    alert(`Payment integration coming soon! Selected plan: ${planId}`);
+    setCheckoutLoading(planId);
+    setErrorMessage('');
+    try {
+      const { data } = await API.post('/api/subscription/create-checkout', { plan: planId });
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        setErrorMessage(data.error || data.message || 'Unable to start checkout.');
+      }
+    } catch (err) {
+      setErrorMessage(err.response?.data?.error || 'Failed to start checkout. Please try again.');
+    } finally {
+      setCheckoutLoading(null);
+    }
   };
 
   return (
@@ -41,7 +89,20 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {isPremium && (
+      {successMessage && (
+        <div className="pricing-page__active">
+          <Check size={16} />
+          {successMessage}
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="pricing-page__error">
+          {errorMessage}
+        </div>
+      )}
+
+      {isPremium && !successMessage && (
         <div className="pricing-page__active">
           <Check size={16} />
           You're on the Pro plan
@@ -62,9 +123,13 @@ export default function PricingPage() {
             <button
               className="pricing-card__cta"
               onClick={() => handleSelectPlan(plan.id)}
-              disabled={isPremium}
+              disabled={isPremium || checkoutLoading !== null}
             >
-              {isPremium ? 'Current Plan' : 'Get Pro'}
+              {isPremium
+                ? 'Current Plan'
+                : checkoutLoading === plan.id
+                  ? 'Redirecting...'
+                  : 'Get Pro'}
             </button>
           </div>
         ))}
