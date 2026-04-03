@@ -129,8 +129,8 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
 
-    // Allow all localhost ports for development
-    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+    // Allow all localhost ports for development + Capacitor (https://localhost)
+    if (origin.startsWith('http://localhost') || origin.startsWith('https://localhost') || origin.startsWith('http://127.0.0.1')) {
       return callback(null, true);
     }
 
