@@ -190,6 +190,10 @@
   margin: 0;
   font-weight: 500;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .mentor-preview-card.dark .insight-message {
@@ -204,6 +208,9 @@
   gap: 10px;
   flex-wrap: wrap;
   padding: 14px 16px;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary-container) 24%, var(--md-sys-color-surface-container-high)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 18%, var(--md-sys-color-surface-container)) 100%
@@ -250,9 +257,12 @@
 
 .book-title {
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
   font-weight: 500;
-  color: #000000;
+  color: var(--md-sys-color-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .book-title strong {

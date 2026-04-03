@@ -262,13 +262,14 @@ const MobileNavigation = () => {
     bottom: 0,
     left: 0,
     right: 0,
-    height: '80px',
+    minHeight: '80px',
     backgroundColor: isDark ? '#2b2b2b' : '#f5f5f5',
     borderTop: isDark ? '1px solid #444' : '1px solid #ddd',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: '0 8px',
+    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
     zIndex: 1200,
     boxShadow: isDark
       ? '0 -2px 8px rgba(0, 0, 0, 0.5)'
