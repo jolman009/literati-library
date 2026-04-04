@@ -190,6 +190,10 @@
   margin: 0;
   font-weight: 500;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .mentor-preview-card.dark .insight-message {
@@ -204,13 +208,16 @@
   gap: 10px;
   flex-wrap: wrap;
   padding: 14px 16px;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--md-sys-color-primary-container) 24%, var(--md-sys-color-surface-container-high)) 0%,
     color-mix(in srgb, var(--md-sys-color-secondary-container, var(--md-sys-color-primary-container)) 18%, var(--md-sys-color-surface-container)) 100%
   );
   border-radius: 16px;
   font-size: 0.925rem;
-  color: #000000;
+  color: var(--md-sys-color-on-surface);
   box-shadow: var(--md-sys-elevation-level4);
   transition: box-shadow 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1)),
               background 0.25s var(--md-sys-motion-easing-standard, cubic-bezier(0.2, 0, 0, 1));
@@ -248,20 +255,22 @@
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
-.book-title {
+.current-book-info .book-title {
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
   font-weight: 500;
-  color: #000000;
+  color: var(--md-sys-color-on-surface) !important;
+  -webkit-text-fill-color: var(--md-sys-color-on-surface) !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  position: static;
 }
 
-.book-title strong {
-  color: var(--md-sys-color-primary);
+.current-book-info .book-title strong {
+  color: var(--md-sys-color-primary) !important;
+  -webkit-text-fill-color: var(--md-sys-color-primary) !important;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .book-progress {
@@ -485,8 +494,14 @@
     padding: 12px 14px;
   }
 
-  .book-title {
-    min-width: auto;
+  .current-book-info .book-title {
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .mentor-preview-actions {
