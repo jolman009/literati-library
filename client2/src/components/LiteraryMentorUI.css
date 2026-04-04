@@ -242,6 +242,9 @@
   padding: var(--md-sys-spacing-4);
   background: color-mix(in srgb, var(--md-sys-color-surface) 60%, transparent);
   border-radius: var(--md-sys-shape-corner-large);
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .reading-stats h4 {
@@ -265,6 +268,8 @@
   padding: var(--md-sys-spacing-3);
   background: color-mix(in srgb, var(--md-sys-color-primary) 5%, transparent);
   border-radius: var(--md-sys-shape-corner-medium);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stat-item svg {
@@ -1011,7 +1016,10 @@
 /* Responsive Design */
 @media (max-width: 1080px) {
   .literary-mentor-ui {
-    padding: var(--md-sys-spacing-4);
+    padding: 12px 8px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 
   .stats-grid {

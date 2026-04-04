@@ -191,8 +191,8 @@
   }
 
   .page-content {
-    padding: 16px;
-    padding-top: 16px;
+    padding: 4px;
+    padding-top: 4px;
     padding-bottom: 16px;
     min-height: calc(100vh - 64px - 80px);
   }

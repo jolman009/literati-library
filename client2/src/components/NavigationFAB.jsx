@@ -64,7 +64,7 @@ const NavigationFAB = ({ quickStats = {} }) => {
   // Inline styles
   const containerStyle = {
     position: 'fixed',
-    bottom: '100px', // Above bottom navigation
+    bottom: 'calc(100px + env(safe-area-inset-bottom, 0px))', // Above bottom navigation + safe area
     right: '16px',
     zIndex: 1001,
     display: 'block',
