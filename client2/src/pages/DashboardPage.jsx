@@ -1498,7 +1498,7 @@ const DashboardPage = () => {
       <PullToRefreshIndicator {...pullToRefresh} />
 
       <div className="dashboard-content">
-        {/* Mobile-Only: Greeting + Username */}
+        {/* Mobile-Only: Greeting + Username + Browse CTA */}
         <div className="dashboard-mobile-only dashboard-mobile-greeting">
           <h1 className="mobile-greeting-text">
             {(() => {
@@ -1507,23 +1507,59 @@ const DashboardPage = () => {
             })()}, {user?.name || 'Reader'}!
           </h1>
           <p className="mobile-greeting-subtitle">Track reading, earn rewards, and grow your library.</p>
+          {!activeSession?.book && (
+            <button
+              className="mobile-greeting-cta"
+              onClick={() => navigate('/library')}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">library_books</span>
+              Browse Library
+            </button>
+          )}
+          {activeSession?.book && (
+            <button
+              className="mobile-greeting-cta"
+              onClick={() => navigate(`/read/${activeSession.book.id}`)}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+              Continue Reading
+            </button>
+          )}
         </div>
 
         {/* Getting Started CTA — shown when library is empty */}
         {!hasBooks && <GettingStartedCard navigate={navigate} />}
 
-        {/* Mobile-Only: Hero Reading Card */}
-        <MobileHeroReadingCard activeSession={activeSession} navigate={navigate} />
+        {/* Mobile-Only: View Detailed Stats (right below greeting) */}
+        <div className="dashboard-mobile-only">
+          <MobileExpandableStats>
+            <QuickStatsOverview
+              totalBooks={Array.isArray(books) ? books.length : 0}
+              completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
+              inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
+            />
+          </MobileExpandableStats>
+        </div>
 
-        {/* Mobile-Only: Compact Stats Badge */}
-        <MobileCompactStatsBadge stats={stats} />
+        {/* Mobile-Only: Currently Reading (above Mentor AI) */}
+        <div className="dashboard-mobile-only">
+          <CurrentlyReading />
+        </div>
 
-        {/* Mobile-Only: Quick Actions */}
-        <MobileQuickActions navigate={navigate} />
-
-        {/* Mobile-Only: Mentor Preview Card (desktop version is inside WelcomeSection) */}
+        {/* Mobile-Only: Mentor Preview Card */}
         <div className="dashboard-mobile-only">
           <MentorPreviewCard />
+        </div>
+
+        {/* Mobile-Only: Daily Challenges (below Mentor AI) */}
+        <div className="dashboard-mobile-only">
+          <div className="section-card" style={{ margin: "8px 0", padding: "12px" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h3 className="section-title" style={{ margin: 0 }}>🎯 Daily Challenges</h3>
+              <button onClick={() => navigate('/gamification')} className="view-all-link" style={{ fontSize: '13px' }}>View all →</button>
+            </div>
+            <Challenges compact={true} showOnlyDaily={true} maxChallenges={3} />
+          </div>
         </div>
 
         <ContinueReadingCard activeSession={activeSession} getSessionHistory={getSessionHistory} navigate={navigate} />
@@ -1556,15 +1592,6 @@ const DashboardPage = () => {
             </button>
           </div>
         )}
-        {/* Mobile: Expandable Stats - wraps the stat cards */}
-        <MobileExpandableStats>
-          <QuickStatsOverview
-            totalBooks={Array.isArray(books) ? books.length : 0}
-            completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
-            inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
-          />
-        </MobileExpandableStats>
-
         {/* Desktop: Metric Cards - Horizontal Scroll (hidden on mobile) */}
         <QuickStatsOverview
           className="mobile-hide"
@@ -1607,8 +1634,8 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Currently Reading Sessions */}
-          <div className="dashboard-content-right">
+          {/* Right Column - Currently Reading Sessions (desktop only — mobile has its own above) */}
+          <div className="dashboard-content-right mobile-hide">
             <div className="mobile-twin-row">
               <CurrentlyReading />
 

@@ -1359,9 +1359,20 @@
 
   /* Stack currently reading covers in 2-col grid on mobile */
   #dashboard-currently-reading .simple-scroll-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #dashboard-currently-reading .simple-scroll-container .book-card {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 150px;
+    min-width: 100px;
+    background-size: cover;
+    background-position: center;
   }
 
   #dashboard-currently-reading .book-card {
@@ -1484,6 +1495,25 @@
   margin: 0;
   color: var(--md-sys-color-on-primary-container);
   opacity: 0.8;
+}
+
+.mobile-greeting-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mobile-greeting-cta .material-symbols-outlined {
+  font-size: 18px;
 }
 
 /* Show mobile-specific elements only on desktop */
