@@ -1498,6 +1498,17 @@ const DashboardPage = () => {
       <PullToRefreshIndicator {...pullToRefresh} />
 
       <div className="dashboard-content">
+        {/* Mobile-Only: Greeting + Username */}
+        <div className="dashboard-mobile-only dashboard-mobile-greeting">
+          <h1 className="mobile-greeting-text">
+            {(() => {
+              const h = new Date().getHours();
+              return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+            })()}, {user?.name || 'Reader'}!
+          </h1>
+          <p className="mobile-greeting-subtitle">Track reading, earn rewards, and grow your library.</p>
+        </div>
+
         {/* Getting Started CTA — shown when library is empty */}
         {!hasBooks && <GettingStartedCard navigate={navigate} />}
 
