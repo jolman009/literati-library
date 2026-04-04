@@ -174,7 +174,10 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
             cursor: insightsLoading ? 'not-allowed' : 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            justifyContent: 'center',
+            gap: '4px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           {insightsLoading ? '⟳ Loading...' : '↻ Refresh'}
@@ -758,7 +761,7 @@ const LiteraryMentorUI = ({ currentBook, _onQuizStart, _onDiscussionStart }) => 
     <div className={`literary-mentor-ui theme-${actualTheme}`}>
       <div className="mentor-header">
         <div className="mentor-greeting">
-          <h2>Welcome, Reader!</h2>
+          <h2>Welcome, {user?.name || 'Reader'}!</h2>
           <p className="mentor-subtitle">Your Personal Literary Mentor</p>
         </div>
         
