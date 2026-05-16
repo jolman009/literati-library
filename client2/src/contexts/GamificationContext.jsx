@@ -685,29 +685,72 @@ export const GamificationProvider = ({ children }) => {
   const createGoal = useCallback(async (goalData) => {
     if (!user) return { success: false, error: 'User not authenticated' };
 
-    const newGoal = {
-      id: Date.now().toString(),
+    // Optimistic local goal; swapped for the server's record (with its real
+    // UUID + created_at, which the server uses to window progress) on success.
+    const tempId = `temp_${Date.now()}`;
+    const optimisticGoal = {
+      id: tempId,
       ...goalData,
       createdAt: new Date().toISOString(),
       current: 0
     };
 
-    setGoals(prev => [...prev, newGoal]);
+    setGoals(prev => [...prev, optimisticGoal]);
 
-    // Try to sync with API
     if (!offlineMode && user) {
       try {
-        await makeSafeApiCall('/api/gamification/goals', {
+        const saved = await makeSafeApiCall('/api/gamification/goals', {
           method: 'POST',
-          body: JSON.stringify(newGoal)
+          body: JSON.stringify({
+            title: goalData.title,
+            description: goalData.description,
+            type: goalData.type,
+            goal_type: goalData.type,
+            target: goalData.targetValue ?? goalData.target,
+            reward: goalData.reward
+          })
         });
+
+        if (saved && saved.id) {
+          setGoals(prev => prev.map(g => (g.id === tempId ? saved : g)));
+          return { success: true, goal: saved };
+        }
       } catch (error) {
         console.warn('Failed to sync goal with server:', error);
       }
     }
 
-    return { success: true, goal: newGoal };
+    return { success: true, goal: optimisticGoal };
   }, [user, offlineMode, makeSafeApiCall]);
+
+  // Mark a goal complete: award its reward, then persist completion.
+  // Auto-generated goals have non-UUID ids and are skipped server-side.
+  const completeGoal = useCallback(async (goal) => {
+    if (!goal) return { success: false };
+
+    try {
+      await trackAction('goal_completed', {
+        goalId: goal.id,
+        reward: goal.reward ?? goal.points ?? 0
+      });
+    } catch (error) {
+      console.warn('Failed to track goal completion:', error);
+    }
+
+    if (!offlineMode && user) {
+      try {
+        await makeSafeApiCall(`/api/gamification/goals/${goal.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ is_completed: true })
+        });
+      } catch (error) {
+        console.warn('Failed to mark goal complete on server:', error);
+      }
+    }
+
+    setGoals(prev => prev.map(g => (g.id === goal.id ? { ...g, is_completed: true } : g)));
+    return { success: true };
+  }, [user, offlineMode, makeSafeApiCall, trackAction]);
 
   // Update goal progress
   const updateGoalProgress = useCallback(async (goalId, progress) => {
@@ -843,6 +886,7 @@ export const GamificationProvider = ({ children }) => {
     // Actions
     trackAction,
     createGoal,
+    completeGoal,
     updateGoalProgress,
     syncWithServer,
     refreshStats,

@@ -49,7 +49,7 @@ const GoalsPage = () => {
     goals = [],
     ACHIEVEMENTS = {},
     createGoal,
-    trackAction,
+    completeGoal,
   } = useGamification();
 
   // AchievementSystem expects a flat array of unlocked achievement IDs.
@@ -109,7 +109,7 @@ const GoalsPage = () => {
         </h2>
         <GoalSystem
           goals={adaptedGoals}
-          onComplete={(goal) => trackAction?.('goal_completed', { goalId: goal.id, reward: goal.reward })}
+          onComplete={(goal) => completeGoal?.(goal)}
           onCreateGoal={(goal) => createGoal?.(goal)}
         />
       </section>
