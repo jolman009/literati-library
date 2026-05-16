@@ -129,6 +129,9 @@ const LibraryPage = () => {
         b.id === book.id ? { ...b, is_reading: true } : b
       ));
       setOpenMenuId(null);
+      // Open the reader in the same action so the timer and the book
+      // appear together — no separate "Open Book" click needed.
+      navigate(`/read/${book.id}`);
     } catch (err) {
       console.error('Failed to start session:', err);
     }
