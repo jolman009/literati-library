@@ -106,23 +106,23 @@ export const testLazyLoading = async () => {
   
   const tests = [];
   
-  // Test Statistics Page lazy loading
+  // Test Library Page lazy loading
   try {
     const startTime = performance.now();
-    const StatisticsPage = await import('../pages/library/StatisticsPage');
-    const loadTime = measureCustomMetric('StatisticsPage Lazy Load', startTime);
-    
+    const LibraryPage = await import('../pages/LibraryPage');
+    const loadTime = measureCustomMetric('LibraryPage Lazy Load', startTime);
+
     tests.push({
-      component: 'StatisticsPage',
+      component: 'LibraryPage',
       loadTime: loadTime.duration,
       success: true
     });
-    
-    console.warn('✅ StatisticsPage lazy load:', Math.round(loadTime.duration), 'ms');
+
+    console.warn('✅ LibraryPage lazy load:', Math.round(loadTime.duration), 'ms');
   } catch (error) {
-    console.error('❌ StatisticsPage lazy load failed:', error);
+    console.error('❌ LibraryPage lazy load failed:', error);
     tests.push({
-      component: 'StatisticsPage',
+      component: 'LibraryPage',
       error: error.message,
       success: false
     });
