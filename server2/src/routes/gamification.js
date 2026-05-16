@@ -355,6 +355,48 @@ const getTimeAgo = (date) => {
   return date.toLocaleDateString();
 };
 
+// Normalize any goal type/goal_type label to a canonical progress category
+const normalizeGoalType = (goal) => {
+  const raw = String(goal?.type || goal?.goal_type || '').toLowerCase();
+  if (raw.includes('page')) return 'pages';
+  if (raw.includes('time')) return 'time';
+  if (raw.includes('streak')) return 'streak';
+  if (raw.includes('book')) return 'books';
+  return 'pages';
+};
+
+// Compute a goal's current value from real reading activity since `sinceISO`.
+// Omitting `sinceISO` measures lifetime activity (used for streak goals).
+const computeGoalCurrent = async (userId, category, sinceISO) => {
+  if (category === 'streak') {
+    return await calculateReadingStreak(userId);
+  }
+
+  if (category === 'books') {
+    let query = supabase
+      .from('books')
+      .select('completed_date')
+      .eq('user_id', userId)
+      .eq('completed', true);
+    if (sinceISO) query = query.gte('completed_date', sinceISO);
+    const { data } = await query;
+    return (data || []).length;
+  }
+
+  // pages / time → derive from reading_sessions
+  let query = supabase
+    .from('reading_sessions')
+    .select('pages_read, duration, created_at')
+    .eq('user_id', userId);
+  if (sinceISO) query = query.gte('created_at', sinceISO);
+  const { data } = await query;
+  const sessions = data || [];
+  if (category === 'time') {
+    return sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+  }
+  return sessions.reduce((sum, s) => sum + (s.pages_read || 0), 0);
+};
+
 export const gamificationRouter = (authenticateToken) => {
   const router = Router();
   router.use(authenticateToken);
@@ -477,7 +519,7 @@ export const gamificationRouter = (authenticateToken) => {
     try {
       const userId = req.user.id;
 
-      // Try to get user goals from database, fallback to auto-generated goals
+      // Custom goals saved by the user take priority over auto-generated ones
       let userGoals = [];
       try {
         const { data, error } = await supabase
@@ -493,63 +535,164 @@ export const gamificationRouter = (authenticateToken) => {
         console.warn('Goals table not available, generating default goals:', dbErr.message);
       }
 
-      // If no custom goals, generate smart defaults based on user stats
-      if (userGoals.length === 0) {
-        const [{ data: books }, { data: sessions }] = await Promise.all([
-          supabase.from('books').select('*').eq('user_id', userId),
-          supabase.from('reading_sessions').select('*').eq('user_id', userId),
-        ]);
+      // Attach real, computed progress to a goal definition
+      const withProgress = (goal, current) => {
+        const target = goal.target_value || goal.target || 1;
+        const capped = Math.min(current, target);
+        return {
+          ...goal,
+          type: normalizeGoalType(goal),
+          target,
+          current: capped,
+          current_value: capped,
+          reward: goal.reward ?? goal.points ?? 0,
+          progress: target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0,
+        };
+      };
 
-        const currentBooksRead = books?.length || 0;
-        const totalReadingTime = (sessions || []).reduce((sum, s) => sum + (s.duration || 0), 0);
-        const averageSessionTime = sessions?.length > 0 ? totalReadingTime / sessions.length : 30;
-
-        // Generate adaptive goals based on current progress
-        const today = new Date();
-        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        const daysLeftInMonth = Math.ceil((endOfMonth - today) / (1000 * 60 * 60 * 24));
-
-        userGoals = [
-          {
-            id: 'monthly_books',
-            title: 'Monthly Reading Goal',
-            description: `Read ${Math.max(2, Math.ceil(currentBooksRead / 4))} books this month`,
-            type: 'books_completed',
-            target: Math.max(2, Math.ceil(currentBooksRead / 4)),
-            current: 0, // Would need to calculate current month's completed books
-            deadline: endOfMonth.toISOString(),
-            points: 200,
-            period: 'monthly'
-          },
-          {
-            id: 'weekly_reading_time',
-            title: 'Weekly Reading Time',
-            description: 'Read for 5 hours this week',
-            type: 'reading_time',
-            target: 300, // 5 hours in minutes
-            current: 0, // Would need to calculate current week's reading time
-            deadline: new Date(today.getTime() + (7 - today.getDay()) * 24 * 60 * 60 * 1000).toISOString(),
-            points: 100,
-            period: 'weekly'
-          },
-          {
-            id: 'daily_streak',
-            title: 'Reading Streak',
-            description: 'Maintain a 7-day reading streak',
-            type: 'reading_streak',
-            target: 7,
-            current: await calculateReadingStreak(userId),
-            deadline: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            points: 150,
-            period: 'ongoing'
-          }
-        ];
+      if (userGoals.length > 0) {
+        // Custom goals: progress is reading activity since each goal's created_at
+        const goals = await Promise.all(userGoals.map(async (goal) => {
+          const category = normalizeGoalType(goal);
+          const current = await computeGoalCurrent(userId, category, goal.created_at);
+          return withProgress(goal, current);
+        }));
+        return res.json(goals);
       }
 
-      res.json(userGoals);
+      // No custom goals — generate adaptive defaults with REAL progress.
+      // Monthly/weekly goals are windowed by calendar period to match their names.
+      const today = new Date();
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      const { data: books } = await supabase
+        .from('books')
+        .select('id')
+        .eq('user_id', userId);
+      const currentBooksRead = books?.length || 0;
+      const monthlyBooksTarget = Math.max(2, Math.ceil(currentBooksRead / 4));
+
+      const [monthlyBooks, weeklyTime, streak] = await Promise.all([
+        computeGoalCurrent(userId, 'books', startOfMonth),
+        computeGoalCurrent(userId, 'time', startOfWeek.toISOString()),
+        computeGoalCurrent(userId, 'streak'),
+      ]);
+
+      const defaultGoals = [
+        withProgress({
+          id: 'monthly_books',
+          title: 'Monthly Reading Goal',
+          description: `Read ${monthlyBooksTarget} books this month`,
+          type: 'books',
+          target: monthlyBooksTarget,
+          deadline: endOfMonth.toISOString(),
+          points: 200,
+          period: 'monthly',
+        }, monthlyBooks),
+        withProgress({
+          id: 'weekly_reading_time',
+          title: 'Weekly Reading Time',
+          description: 'Read for 5 hours this week',
+          type: 'time',
+          target: 300,
+          deadline: new Date(today.getTime() + (7 - today.getDay()) * 24 * 60 * 60 * 1000).toISOString(),
+          points: 100,
+          period: 'weekly',
+        }, weeklyTime),
+        withProgress({
+          id: 'daily_streak',
+          title: 'Reading Streak',
+          description: 'Maintain a 7-day reading streak',
+          type: 'streak',
+          target: 7,
+          deadline: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          points: 150,
+          period: 'ongoing',
+        }, streak),
+      ];
+
+      res.json(defaultGoals);
     } catch (e) {
       console.error('Error fetching goals:', e);
       res.status(500).json({ error: 'Failed to fetch goals' });
+    }
+  });
+
+  // POST /api/gamification/goals - Create a custom user goal
+  router.post('/goals', async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { title, description, type, goal_type, target, targetValue, reward } = req.body;
+
+      if (!title) return res.status(400).json({ error: 'Title is required' });
+
+      const resolvedTarget = parseInt(target ?? targetValue ?? 1, 10) || 1;
+      const resolvedType = type || goal_type || 'pages';
+
+      const goalData = {
+        user_id: userId,
+        title,
+        description: description || '',
+        type: resolvedType,
+        goal_type: resolvedType,
+        target: resolvedTarget,
+        target_value: resolvedTarget,
+        current: 0,
+        current_value: 0,
+        points: reward || Math.max(50, Math.floor(resolvedTarget / 10)),
+        period: 'custom',
+        is_active: true,
+        is_completed: false,
+      };
+
+      const { data, error } = await supabase
+        .from('user_goals')
+        .insert([goalData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      res.status(201).json(data);
+    } catch (e) {
+      console.error('Error creating goal:', e);
+      res.status(500).json({ error: 'Failed to create goal' });
+    }
+  });
+
+  // PATCH /api/gamification/goals/:id - Update a custom goal (e.g. mark complete)
+  router.patch('/goals/:id', async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { id } = req.params;
+
+      const updates = { updated_at: new Date().toISOString() };
+      if (req.body.is_completed !== undefined) {
+        updates.is_completed = !!req.body.is_completed;
+        updates.completed_at = req.body.is_completed ? new Date().toISOString() : null;
+      }
+      if (req.body.is_active !== undefined) {
+        updates.is_active = !!req.body.is_active;
+      }
+
+      const { data, error } = await supabase
+        .from('user_goals')
+        .update(updates)
+        .eq('id', id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      res.json(data);
+    } catch (e) {
+      console.error('Error updating goal:', e);
+      res.status(500).json({ error: 'Failed to update goal' });
     }
   });
 
