@@ -73,6 +73,7 @@ import ResetPassword from './components/ResetPassword';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const GoalsPage = lazy(() => import('./pages/GoalsPage'));
 const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
@@ -224,6 +225,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="achievements" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your achievements..." />}>
               <AchievementsPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/goals" element={
+          <ErrorBoundary fallbackComponent="goals" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your goals..." />}>
+              <GoalsPage />
             </Suspense>
           </ErrorBoundary>
         } />

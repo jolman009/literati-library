@@ -67,7 +67,7 @@ const PremiumNavigation = ({
   // Auto-expand section if user navigates to a page within it
   useEffect(() => {
     const aiPaths = ['/recommendations', '/mentor'];
-    const progressPaths = ['/progress', '/achievements', '/leaderboard', '/gamification'];
+    const progressPaths = ['/progress', '/achievements', '/goals', '/leaderboard', '/gamification'];
     const systemPaths = ['/settings', '/help', '/feedback'];
 
     setSectionOpen(prev => {
@@ -117,6 +117,7 @@ const PremiumNavigation = ({
       icon: 'trending_up',
       items: [
         { to: '/progress', label: 'Progress & Journey', icon: 'trending_up' },
+        { to: '/goals', label: 'Goals & Achievements', icon: 'flag' },
         { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
       ],
     },
