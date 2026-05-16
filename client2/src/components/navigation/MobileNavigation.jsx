@@ -22,6 +22,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout, 
     // Progress
     { isSectionLabel: true, label: 'Progress' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
+    { icon: 'flag', label: 'Goals & Achievements', path: '/goals' },
     { icon: 'leaderboard', label: 'Leaderboard', path: '/leaderboard' },
     // System
     { isSectionLabel: true, label: 'System' },
