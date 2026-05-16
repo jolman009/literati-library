@@ -76,16 +76,20 @@ const AchievementCard = ({ achievement, isUnlocked, onCardClick }) => {
  * Main Achievements Page
  */
 const AchievementsPage = () => {
-  const { state: gamificationState } = useGamification();
+  const { achievements: unlockedAchievementsData = [] } = useGamification();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
   const [selectedAchievement, setSelectedAchievement] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  // Get user's unlocked achievements
+  // Get user's unlocked achievement IDs. useGamification() returns the
+  // context value directly (there is no `state` key); achievements are
+  // stored as objects ({ id, ... }) — tolerate string IDs too for safety.
   const unlockedAchievements = useMemo(() => {
-    return gamificationState?.achievements || [];
-  }, [gamificationState?.achievements]);
+    return unlockedAchievementsData
+      .map(a => (typeof a === 'string' ? a : a?.id))
+      .filter(Boolean);
+  }, [unlockedAchievementsData]);
 
   // Filter achievements
   const filteredAchievements = useMemo(() => {
