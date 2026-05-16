@@ -989,6 +989,7 @@ export const gamificationRouter = (authenticateToken) => {
         case 'daily_login': points = 10; break;
         case 'daily_checkin': points = 10; break;
         case 'mentor_interaction': points = 5; break;
+        case 'goal_completed': points = (data?.reward || 0); break;
         default: points = 1;
       }
 
