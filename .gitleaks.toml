@@ -1,0 +1,90 @@
+# GitLeaks configuration for ShelfQuest / Literati-Library
+#
+# The default GitLeaks rules are aggressive on entropy/regex and produce many
+# false positives against documentation, examples, and test fixtures. This
+# config inherits the upstream defaults and layers project-specific allowlists
+# on top.
+#
+# Real secrets (Google API key, Vercel token) discovered by TruffleHog have been
+# rotated and revoked — those historical values are now dead, so allowlisting
+# their paths in git history poses no risk. New live secrets in unallowlisted
+# locations will still trip the scanner.
+#
+# Docs: https://github.com/gitleaks/gitleaks#configuration
+
+[extend]
+# Inherit the upstream default rules so we don't regress detection coverage.
+useDefault = true
+
+[allowlist]
+description = "Project-wide allowlist for known false positives"
+
+# Path-based allowlist: anything matching these globs is exempt from all rules.
+# Limited to files that exist precisely to hold placeholder/example/test values
+# or that document API usage with sample curl commands.
+paths = [
+    # Example/template env files (intentionally contain `your_*_key` placeholders
+    # and truncated example tokens like `eyJhbGciOiJIUzI1NiIs...`)
+    '''(.*/)?\.env\.example$''',
+    '''(.*/)?\.env\.test$''',
+    '''(.*/)?\.env\.production\.example$''',
+    '''(.*/)?\.env\.development\.example$''',
+
+    # Documentation that includes sample curl/env snippets
+    '''docs/.*\.md$''',
+    '''legal/.*\.md$''',
+    '''security-audit/.*\.md$''',
+    '''server2/SECURITY_DOCUMENTATION\.md$''',
+    '''GAMIFICATION_INTEGRATION_GUIDE\.md$''',
+    '''GAMIFICATION_INTEGRATION_STATUS\.md$''',
+    '''DEPLOYMENT_AUTOMATION_SETUP\.md$''',
+
+    # Test fixtures with intentionally-fake tokens (e.g. expired-JWT simulation)
+    '''client2/tests/.*''',
+    '''server2/tests/.*''',
+    '''test-supabase-connection\.js$''',
+    '''run_readiness\.ps1$''',
+]
+
+# Specific historical fingerprints (commit:file:rule:line) that have been
+# reviewed and confirmed to contain dead values (post-rotation) or false
+# positives in workflow files. Pinning these prevents the dead Google key and
+# stale workflow strings from re-triggering the scan after rotation.
+#
+# Generated from the 2026-05-20 scan output.
+stopwords = []
+
+[[allowlist.commits]]
+# These commits are pre-rotation history. The credentials they contained have
+# been revoked at the provider. Allowlisting them prevents historic noise
+# without weakening protection on new commits.
+commits = [
+    "a85cabc3d97defa5d4c2f2826c6593cd1ba7a5ad",  # added Google API key to .env.production (revoked)
+    "4cf251d5ce7223b59ffb51dd0cf7dc0f7f8c05a2",  # added Google API key to .env.development (revoked)
+    "9ba41f1dab71b66b0ab56638328b148d640d82a4",  # Supabase anon key in .env.production (public anon, RLS-protected)
+    "b8b9bd8e91d1d22fe5d5a41de6e6d615f393492f",  # init commit with .env.production
+    "610b2a7e0ac30a94cc8669c011065022d7f5ab9d",  # Supabase anon key in .env.development
+    "0bf1eb5a465ac0bc255a5c008218fecd962afb40",  # Supabase anon key in extension/.env.development
+    "de37423d54d2078e9159d0bdc01a94b15f7f885c",  # workflow curl-auth-header examples
+    "924b54a12e095dff1dcf5e5c1b2c37d0147a719b",  # init CI/CD pipeline with workflow secret refs
+    "f836c3b26161a49e4e3e1acea8a5389e3fa1ac95",  # .env.example placeholders added
+    "646e52341453e8406d5401e77f87d70925499f78",  # server .env.example/.env.test placeholders
+    "5d4dcc473537dd9ab885b7932ec42b4f57c4b16e",  # fake JWT in security.spec.js test
+    "33a058149db9e71a617ddcdd5b184e63019257b2",  # gamification docs curl examples
+    "2e91451db24bdccb6bce24b1e732cd1f5cf644e1",  # legal/data-export-implementation.md curl examples
+    "d5fbc45e4d2ef86a61c56cc36e8763e6c962c9a0",  # server2/SECURITY_DOCUMENTATION.md curl example
+    "869fd4bef4ee554c8fdfc0466b319442e5e35117",  # docs/API.md + docs/DEPLOYMENT.md examples
+    "a5173073e2fe873ce9277a569d2a2f05c9f366e4",  # docs/DOCKER.md placeholder env snippet
+    "f1f6584247fa64a53f92aa50788ac230ce8e029b",  # run_readiness.ps1 example token
+]
+
+[[allowlist.regexes]]
+description = "Placeholder strings that look secret-shaped but are documentation literals"
+regexes = [
+    '''your[-_](?:secret|api[-_]?key|password|token)''',
+    '''your[-_]super[-_]secure[-_]secret''',
+    '''placeholder[-_](?:key|secret|token|password)''',
+    '''(?:invalid|valid|fake|test|mock|example|sample|dummy)[-_]token''',
+    '''regular[-_]user[-_]token''',
+    '''xxxxx''',  # docs commonly redact with x's
+]
