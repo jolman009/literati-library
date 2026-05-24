@@ -185,6 +185,8 @@ workbox-*.js.map
 
 # Lighthouse CI
 .lighthouseci/
+lighthouse-*.json
+lighthouse-*.html
 
 # Bundle analyzer
 stats.html
