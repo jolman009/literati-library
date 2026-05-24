@@ -37,9 +37,11 @@ async function setupTestEnvironment(page) {
     sessionStorage.clear()
   })
 
-  // Create test user if needed
+  // Create test user if needed.
+  // Server mounts auth routes at /auth/secure (see server2/src/server.js).
+  // Returns 201 on create, 400 with code:'USER_EXISTS' if the user already exists.
   try {
-    const response = await page.request.post('http://localhost:5000/auth/register', {
+    const response = await page.request.post('http://localhost:5000/auth/secure/register', {
       data: {
         email: 'e2e.test@example.com',
         password: 'TestPassword123!',
@@ -49,10 +51,16 @@ async function setupTestEnvironment(page) {
 
     if (response.status() === 201) {
       console.log('✅ Test user created successfully')
-    } else if (response.status() === 409) {
-      console.log('ℹ️ Test user already exists')
+    } else if (response.status() === 400) {
+      const body = await response.json().catch(() => ({}))
+      if (body.code === 'USER_EXISTS') {
+        console.log('ℹ️ Test user already exists')
+      } else {
+        console.warn('⚠️ Unexpected 400 creating test user:', body)
+      }
     } else {
-      console.warn('⚠️ Unexpected response creating test user:', response.status())
+      const body = await response.text().catch(() => '')
+      console.warn(`⚠️ Unexpected response creating test user: ${response.status()} ${body}`)
     }
   } catch (error) {
     console.warn('⚠️ Could not create test user:', error.message)

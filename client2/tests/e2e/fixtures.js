@@ -48,6 +48,11 @@ export const test = base.extend({
     // Login before each test that uses this fixture
     await page.goto('/login')
 
+    // Dismiss the app-loading splash and cookie-consent banner before
+    // interacting with the form — the splash can intercept the submit click
+    // and the consent banner can cover the form on first load.
+    await handleOverlays(page)
+
     await page.fill('[data-testid="email-input"]', TEST_USER.email)
     await page.fill('[data-testid="password-input"]', TEST_USER.password)
     await page.click('[data-testid="login-button"]')
@@ -186,7 +191,8 @@ export const test = base.extend({
       baseURL: 'http://localhost:5000',
 
       async login(email = TEST_USER.email, password = TEST_USER.password) {
-        const response = await request.post(`${this.baseURL}/auth/login`, {
+        // Server mounts auth routes at /auth/secure (see server2/src/server.js).
+        const response = await request.post(`${this.baseURL}/auth/secure/login`, {
           data: { email, password }
         })
         const { token, user } = await response.json()
