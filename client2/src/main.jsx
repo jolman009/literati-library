@@ -107,4 +107,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </Sentry.ErrorBoundary>
 );
+
+// Signal "app is ready" after React has painted its first frame.
+// The existing CSS rule `.app-ready .app-loading { display: none }` in
+// index.html relies on this class being set — without it, the overlay
+// only dismisses via a 5-second setTimeout fallback. That fallback was
+// invisible to users (page renders in <500ms; they don't notice the
+// extra 4.5s of overlay), but it caused Playwright actionability checks
+// to fail because the full-viewport z-index:9999 overlay intercepts
+// clicks for the first 5 seconds of every page load. Also a real UX
+// improvement for users on slow connections — no more 5s white screen
+// after the app is actually ready.
+requestAnimationFrame(() => {
+  document.body.classList.add('app-ready');
+});
 /* CI/CD Pipeline Test - Wed, Sep 24, 2025 10:38:07 PM */
