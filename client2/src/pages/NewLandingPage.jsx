@@ -245,12 +245,14 @@ const NewLandingPage = () => {
             <button
               className="nav-btn nav-btn-text"
               onClick={() => navigate('/login')}
+              data-testid="login-link"
             >
               Sign In
             </button>
             <button
               className="nav-btn nav-btn-filled"
               onClick={() => navigate('/signup')}
+              data-testid="register-link"
             >
               Get Started
               <span className="material-symbols-outlined">arrow_forward</span>
@@ -260,7 +262,10 @@ const NewLandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <header className={`hero-section ${isVisible ? 'visible' : ''}`}>
+      <header
+        className={`hero-section ${isVisible ? 'visible' : ''}`}
+        data-testid="landing-hero"
+      >
         <div className="hero-grid">
           <div className="hero-content">
             <div className="hero-badge">
@@ -588,7 +593,11 @@ const NewLandingPage = () => {
               placeholder="Enter your email"
               className="cta-input"
             />
-            <button type="submit" className="cta-submit">
+            <button
+              type="submit"
+              className="cta-submit"
+              data-testid="get-started-button"
+            >
               Get Started
             </button>
           </form>
