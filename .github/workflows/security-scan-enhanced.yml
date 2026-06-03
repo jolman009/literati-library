@@ -190,6 +190,7 @@ jobs:
           file: ./client2/Dockerfile
           tags: literati-client:scan
           push: false
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -200,6 +201,7 @@ jobs:
           file: ./server2/Dockerfile
           tags: literati-server:scan
           push: false
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
