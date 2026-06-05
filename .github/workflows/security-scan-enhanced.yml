@@ -190,6 +190,7 @@ jobs:
           file: ./client2/Dockerfile
           tags: literati-client:scan
           push: false
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -200,6 +201,7 @@ jobs:
           file: ./server2/Dockerfile
           tags: literati-server:scan
           push: false
+          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -220,12 +222,21 @@ jobs:
           output: 'server-trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
-      # Upload scan results
-      - name: 📤 Upload Trivy Results
+      # Upload scan results — one upload per category; the CodeQL Action
+      # rejects combining multiple SARIF runs that share a category.
+      - name: 📤 Upload Client Trivy Results
         uses: github/codeql-action/upload-sarif@v3
         if: success()
         with:
-          sarif_file: '.'
+          sarif_file: 'client-trivy-results.sarif'
+          category: 'trivy-client'
+
+      - name: 📤 Upload Server Trivy Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: success()
+        with:
+          sarif_file: 'server-trivy-results.sarif'
+          category: 'trivy-server'
 
   infrastructure-security:
     name: 🏗️ Infrastructure Security
