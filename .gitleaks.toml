@@ -18,6 +18,19 @@
 # Inherit the upstream default rules so we don't regress detection coverage.
 useDefault = true
 
+# Defense-in-depth rule tied to the 2026-06-06 incident: a live Google AI Studio
+# (Gemini) key leaked via ai-service/.env *inside* a committed ai-service.zip.
+# IMPORTANT: gitleaks scans git text content, NOT the contents of binary archives,
+# so this rule would NOT have caught the zipped key — the primary guard is the
+# `*.zip` ignore in .gitignore. This named rule is here so that any future
+# plaintext occurrence of an AIza-prefixed key is flagged with a clear, on-purpose
+# rule id (the upstream gcp-api-key rule also matches; a named hit aids triage).
+[[rules]]
+id = "google-ai-studio-key"
+description = "Google API key (AIza-prefixed: AI Studio / Gemini / GCP)"
+regex = '''AIza[0-9A-Za-z_\-]{35}'''
+keywords = ["AIza"]
+
 [allowlist]
 description = "Project-wide allowlist for known false positives"
 
