@@ -192,8 +192,10 @@ sw.js.map
 workbox-*.js
 workbox-*.js.map
 
-# Lighthouse CI
+# Lighthouse CI + ad-hoc report artifacts (can be 1MB+ JSON; not source)
 .lighthouseci/
+lighthouse-*.json
+**/lighthouse-*.json
 
 # Bundle analyzer
 stats.html
