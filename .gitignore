@@ -33,6 +33,15 @@ ai-service/.env.*
 **/api-keys.json
 **/service-account.json
 
+# Archives - NEVER COMMIT THESE (bundle secrets/venvs past .env + gitleaks scans;
+# this is how ai-service.zip smuggled a live Gemini key into history). Build/release
+# archives belong in artifact storage, not git.
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
 # Build outputs
 client2/dist/
 client2/build/
