@@ -324,14 +324,36 @@ jobs:
                           '${{ needs.extension-ci.result }}' === 'success' &&
                           '${{ needs.docker-build.result }}' === 'success' ? '✅' : '❌';
 
-            github.rest.issues.createComment({
+            // Stable, invisible marker so we update one comment instead of
+            // posting a new one every run. Match on the marker, not the visible
+            // text (which changes each run).
+            const marker = '<!-- ci-pipeline-status -->';
+            const body = `${marker}\n${status} **CI Pipeline Status**\n\n` +
+                  `- Client Build: ${{ needs.client-ci.result }}\n` +
+                  `- Server Build: ${{ needs.server-ci.result }}\n` +
+                  `- Extension Build: ${{ needs.extension-ci.result }}\n` +
+                  `- Docker Build: ${{ needs.docker-build.result }}\n` +
+                  `- Security Scan: ${{ needs.security-scan.result }}`;
+
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `${status} **CI Pipeline Status**\n\n` +
-                    `- Client Build: ${{ needs.client-ci.result }}\n` +
-                    `- Server Build: ${{ needs.server-ci.result }}\n` +
-                    `- Extension Build: ${{ needs.extension-ci.result }}\n` +
-                    `- Docker Build: ${{ needs.docker-build.result }}\n` +
-                    `- Security Scan: ${{ needs.security-scan.result }}`
             });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
