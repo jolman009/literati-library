@@ -5,8 +5,11 @@ services:
   # Client (React SPA)
   client:
     build:
-      context: ./client2
-      dockerfile: Dockerfile
+      # Context must be the repo root: client2/Dockerfile is a pnpm-workspace
+      # build that COPYs root files (pnpm-workspace.yaml, pnpm-lock.yaml,
+      # package.json, .npmrc) plus ./client2. Mirrors the security-scan build.
+      context: .
+      dockerfile: ./client2/Dockerfile
     image: literati-client:latest
     container_name: literati-client
     restart: unless-stopped
