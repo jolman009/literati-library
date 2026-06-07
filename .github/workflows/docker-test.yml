@@ -38,11 +38,11 @@ jobs:
 
       - name: 🏗️ Build Docker images
         run: |
-          docker-compose -f docker-compose.yml build client
+          docker compose -f docker-compose.yml build client
           
       - name: 🚀 Start services
         run: |
-          docker-compose -f docker-compose.yml up -d client
+          docker compose -f docker-compose.yml up -d client
           
       - name: ⏳ Wait for services to be ready
         run: |
@@ -57,15 +57,15 @@ jobs:
           
       - name: 📊 Show service status
         run: |
-          docker-compose -f docker-compose.yml ps
+          docker compose -f docker-compose.yml ps
           
       - name: 📝 Show service logs
         if: failure()
         run: |
           echo "=== Client Logs ==="
-          docker-compose -f docker-compose.yml logs client
+          docker compose -f docker-compose.yml logs client
           
       - name: 🛑 Stop services
         if: always()
         run: |
-          docker-compose -f docker-compose.yml down -v
+          docker compose -f docker-compose.yml down -v
