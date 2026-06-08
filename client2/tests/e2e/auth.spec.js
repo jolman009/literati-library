@@ -220,17 +220,11 @@ test.describe('Authentication Accessibility', () => {
     await expect(page.locator('[data-testid="login-button"]')).toHaveAttribute('aria-label')
   })
 
-  test('should work with screen readers', async ({ page }) => {
-    await page.goto('/login')
-
-    // Check for screen reader support
-    await expect(page.locator('[data-testid="login-form"]')).toHaveAttribute('role')
-   test('should work with screen readers', async ({ page }) => {
+test('should work with screen readers', async ({ page }) => {
   await page.goto('/login')
 
   // Check for screen reader support
   await expect(page.locator('[data-testid="login-form"]')).toHaveAttribute('role')
-  await expect(page.locator('[data-testid="login-heading"]')).toBeVisible() // More specific heading
+  await expect(page.locator('[data-testid="login-heading"]')).toBeVisible()
 })
-  })
 })
