@@ -44,7 +44,21 @@
       "Bash(sleep 120 && cd \"C:/Users/Jolma/Documents/Vibe-Code/my-shelfquest/literati-library\" && gh run list --limit 8 --commit 6090f86 2>&1)",
       "Bash(tail:*)",
       "Bash(grep FAIL:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git checkout *)",
+      "Bash(gh run *)",
+      "Bash(git check-ignore *)",
+      "Bash(grep -nE \"lighthouse|\\\\.report\\\\.|\\\\.html$\" .gitignore)",
+      "Bash(gitleaks version *)",
+      "Bash(python -m json.tool)",
+      "Bash(python -c ' *)",
+      "Bash(gh pr *)",
+      "Bash(git pull *)",
+      "Bash(git bundle *)",
+      "Bash(git stash *)",
+      "Bash(unzip -l client2/src/components/Material3.zip)",
+      "PowerShell(pnpm *)",
+      "Bash(gh issue create --title 'E2E test infra: unblock the auth suite \\(mock .not\\(\\), overlay fixtures, test DB\\)' --body ' *)"
     ],
     "deny": [],
     "ask": []
