@@ -152,7 +152,13 @@ export const AuthProvider = ({ children }) => {
         const message =
           (data && (data.error || data.message)) ||
           `Request failed (${res.status})`;
-        throw new Error(message);
+        // Preserve the HTTP status and server error code on the Error so callers
+        // (e.g. the login page) can distinguish a 429 rate-limit / lockout from a
+        // 401 bad-credentials without string-matching the message.
+        const error = new Error(message);
+        error.status = res.status;
+        if (data && data.code) error.code = data.code;
+        throw error;
       }
 
       return data;
@@ -506,7 +512,9 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: data.user };
       } catch (err) {
         setError(err.message);
-        return { success: false, error: err.message };
+        // Surface status/code so the UI can tell rate-limit/lockout (429) apart
+        // from invalid credentials (401).
+        return { success: false, error: err.message, status: err.status, code: err.code };
       } finally {
         setLoading(false);
       }

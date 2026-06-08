@@ -59,7 +59,7 @@ const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
       <div className="welcome-content">
         {/* Greeting & Actions */}
         <div className="welcome-info">
-          <h1 className="welcome-title-compact">
+          <h1 className="welcome-title-compact" data-testid="welcome-message">
             {getMotivationalMessage()}
           </h1>
           <p className="welcome-purpose">Track reading, earn rewards, and grow your library.</p>

@@ -24,6 +24,9 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('[data-testid="register-form"]')).toBeVisible()
   })
 
+  // NOTE: Requires a live backend + writable test database to create the user.
+  // In CI without a seeded DB (fake Supabase key) this cannot pass — see
+  // tests/e2e/README.md. The E2E job is non-blocking for exactly this reason.
   test('should register new user successfully', async ({ page }) => {
     await page.goto('/register')
 
@@ -32,6 +35,9 @@ test.describe('Authentication Flow', () => {
     await page.fill('[data-testid="email-input"]', `test.${Date.now()}@example.com`)
     await page.fill('[data-testid="password-input"]', 'SecurePassword123!')
     await page.fill('[data-testid="confirm-password-input"]', 'SecurePassword123!')
+
+    // Terms acceptance is a hard requirement of the signup form.
+    await page.check('[data-testid="tos-checkbox"]')
 
     // Submit form
     await page.click('[data-testid="register-button"]')
@@ -53,6 +59,7 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('[data-testid="password-error"]')).toBeVisible()
   })
 
+  // DB-dependent: needs the seeded e2e.test@example.com user to exist.
   test('should login with valid credentials', async ({ page }) => {
     await page.goto('/login')
 
@@ -79,6 +86,7 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('[data-testid="login-error"]')).toContainText(/invalid|incorrect/i)
   })
 
+  // DB-dependent: the authenticatedPage fixture logs in against the live backend.
   test('should logout successfully', async ({ authenticatedPage }) => {
     // User is already logged in via fixture
 
@@ -104,6 +112,7 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('[data-testid="reset-success"]')).toContainText(/reset link sent/i)
   })
 
+  // DB-dependent: the authenticatedPage fixture logs in against the live backend.
   test('should persist authentication across browser refresh', async ({ authenticatedPage }) => {
     // User is already logged in
     await expect(authenticatedPage).toHaveURL('/dashboard')
@@ -125,6 +134,7 @@ test.describe('Authentication Flow', () => {
     await expect(page.locator('[data-testid="login-form"]')).toBeVisible()
   })
 
+  // DB-dependent: the authenticatedPage fixture logs in against the live backend.
   test('should handle session expiration gracefully', async ({ authenticatedPage }) => {
     // Simulate expired token by clearing localStorage
     await authenticatedPage.evaluate(() => {

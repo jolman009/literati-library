@@ -68,6 +68,7 @@ import NewLandingPage from './pages/NewLandingPage';
 import LoginV2 from './pages/LoginV2';
 import SignUpV2 from './pages/SignUpV2';
 import ResetPassword from './components/ResetPassword';
+import RequestPasswordReset from './pages/RequestPasswordReset';
 
 // Lazy load all other pages for better performance
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -204,6 +205,9 @@ const AppRoutes = () => {
       <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpV2 />} />
       {/* 🔄 Updated: Route now points to LoginV2 */}
       <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginV2 />} />
+      {/* Request a reset link (collects email) */}
+      <Route path="/forgot-password" element={<RequestPasswordReset />} />
+      {/* Set a new password using the token from the emailed link */}
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/update-password" element={<ResetPassword />} />
       <Route element={<ProtectedAppLayout />}>

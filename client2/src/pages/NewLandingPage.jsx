@@ -251,7 +251,7 @@ const NewLandingPage = () => {
             </button>
             <button
               className="nav-btn nav-btn-filled"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/register')}
               data-testid="register-link"
             >
               Get Started
