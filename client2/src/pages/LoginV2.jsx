@@ -12,8 +12,9 @@ const LoginV2 = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [rateLimited, setRateLimited] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { isDark } = useMaterial3();
@@ -21,15 +22,34 @@ const LoginV2 = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    try {
-      setError('');
-      setLoading(true);
-      await login(email, password);
+    setError('');
+    setRateLimited(false);
+    setLoading(true);
+
+    // login() resolves to { success, error, status, code } — it does NOT throw,
+    // so we must branch on the result rather than relying on a catch block.
+    const result = await login(email, password);
+    setLoading(false);
+
+    if (result?.success) {
       navigate('/dashboard');
-    } catch (err) {
-      setError('Failed to sign in. Please check your credentials.');
-    } finally {
-      setLoading(false);
+      return;
+    }
+
+    const isRateLimited =
+      result?.status === 429 ||
+      result?.code === 'ACCOUNT_LOCKED' ||
+      /too many|locked|rate limit|try again later/i.test(result?.error || '');
+
+    if (isRateLimited) {
+      setRateLimited(true);
+    } else {
+      // Ensure the message clearly signals bad credentials.
+      setError(
+        result?.error && /invalid|incorrect/i.test(result.error)
+          ? result.error
+          : 'Invalid email or password. Please check your credentials and try again.'
+      );
     }
   };
 
@@ -70,7 +90,14 @@ const LoginV2 = () => {
           <span>or</span>
         </div>
 
-        <form onSubmit={handleLogin} className="login-form" data-testid="login-form">
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- explicit role required by E2E a11y contract */}
+        <form
+          onSubmit={handleLogin}
+          className="login-form"
+          data-testid="login-form"
+          role="form"
+          aria-label="Sign in to ShelfQuest"
+        >
           <MD3TextField
             label="Email Address"
             type="email"
@@ -79,6 +106,7 @@ const LoginV2 = () => {
             required
             fullWidth
             data-testid="email-input"
+            aria-label="Email Address"
           />
 
           <MD3TextField
@@ -89,6 +117,7 @@ const LoginV2 = () => {
             required
             fullWidth
             data-testid="password-input"
+            aria-label="Password"
             trailingIcon={
               <span
                 className="material-symbols-outlined password-toggle"
@@ -100,7 +129,8 @@ const LoginV2 = () => {
           />
 
           {error && (
-            <div 
+            <div
+              role="alert"
               style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }}
               data-testid="login-error"
             >
@@ -108,11 +138,22 @@ const LoginV2 = () => {
             </div>
           )}
 
-          <MD3Button 
-            type="submit" 
-            variant="primary" 
+          {rateLimited && (
+            <div
+              role="alert"
+              style={{ color: 'var(--md-sys-color-error)', fontSize: '0.8rem', textAlign: 'center' }}
+              data-testid="rate-limit-error"
+            >
+              Too many login attempts. Please wait a few minutes before trying again.
+            </div>
+          )}
+
+          <MD3Button
+            type="submit"
+            variant="primary"
             disabled={loading}
             data-testid="login-button"
+            aria-label="Sign in"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </MD3Button>

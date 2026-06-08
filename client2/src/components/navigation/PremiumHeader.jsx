@@ -239,6 +239,7 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
           <div className="premium-header-user-menu">
             <button
               id="user-menu-button"
+              data-testid="user-menu"
               className="premium-header-user-btn"
               ref={userMenuButtonRef}
               onClick={toggleUserMenu}
@@ -369,6 +370,7 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
                   <div className="dropdown-divider"></div>
                   <button
                     className="dropdown-item logout-item"
+                    data-testid="logout-button"
                     role="menuitem"
                     onClick={handleLogout}
                   >
