@@ -10,6 +10,16 @@
 # their containing commits poses no risk. New live secrets in unallowlisted
 # locations will still trip the scanner.
 #
+# ⚠️  HISTORY-REWRITE GOTCHA (learned 2026-06-08):
+# The scheduled (cron) gitleaks run scans the FULL history; push runs scan only
+# the diff. Allowlisting by *commit SHA* is fragile: a `git filter-repo` /
+# rebase rewrites every downstream SHA, so the `commits = [...]` list below
+# silently becomes dead pointers and the scanner re-flags everything it was
+# suppressing. The 2026-06-06 zip-key purge did exactly this. Prefer DURABLE
+# allowlists (paths / value-regexes) for known dead-or-public values; reserve
+# commit-SHA entries for things that can't be matched any other way, and expect
+# to re-map them after any history rewrite.
+#
 # Schema docs: https://github.com/gitleaks/gitleaks#configuration
 # All allowlist members (paths, commits, regexes, stopwords) must be flat
 # arrays of strings directly under [allowlist].
@@ -45,6 +55,29 @@ paths = [
     '''(.*/)?\.env\.production\.example$''',
     '''(.*/)?\.env\.development\.example$''',
 
+    # Real env files (client2/.env.production, client2/.env.development,
+    # extension/.env.development). These are gitignored, so they cannot be
+    # committed going forward — only historical commits (from before they were
+    # gitignored) contain them, and they hold browser-public values:
+    #   - Supabase ANON keys (public by design, RLS-protected)
+    #   - VITE_GOOGLE_API_KEY (a VITE_ browser key already shipped in the client
+    #     bundle; secured by Google Cloud Console referrer/API restrictions, NOT
+    #     secrecy — so its presence in history is not an added exposure).
+    # Path-allowlisting is DURABLE across history rewrites (unlike commit SHAs,
+    # which rot — see the note on the `commits` list below).
+    '''(.*/)?\.env\.production$''',
+    '''(.*/)?\.env\.development$''',
+
+    # Dead BYOK relic. restore-anthropic-key.html stored an Anthropic key as
+    # base64 (the "encryption" in utils/crypto.js was Caesar-shift + base64, i.e.
+    # no secret at all). The underlying key was liveness-tested 2026-06-09 ->
+    # HTTP 401 "invalid x-api-key" (revoked/dead), and the file was deleted from
+    # the tree. A sweep found no sibling restore-*-key.html files for other
+    # providers. Allowlisted so a future gitleaks-action scanner bump (its current
+    # binary lacks the anthropic-api-key rule, so CI doesn't flag this yet) won't
+    # start failing on the inert blob.
+    '''(.*/)?restore-anthropic-key\.html$''',
+
     # Documentation that includes sample curl/env snippets
     '''docs/.*\.md$''',
     '''legal/.*\.md$''',
@@ -65,6 +98,13 @@ paths = [
 # since been rotated/revoked at the provider (dead values) or documented
 # placeholder snippets. Allowlisting the *commit*, not the file path, means
 # new leaks in the same files would still be detected on future commits.
+#
+# ⚠️  STALE AFTER 2026-06-06: every SHA below predates the filter-repo rewrite
+# and no longer resolves (`git cat-file -t <sha>` → "could not get object
+# info"). They are harmless (gitleaks ignores unknown commits) but no longer do
+# anything. The env-file findings they used to cover are now handled durably by
+# the `paths` allowlist above; the CI JWT placeholder by the `regexes` above.
+# Kept as an audit trail of what was reviewed. Re-map or delete on next cleanup.
 commits = [
     "a85cabc3d97defa5d4c2f2826c6593cd1ba7a5ad",  # Google API key in .env.production (revoked)
     "4cf251d5ce7223b59ffb51dd0cf7dc0f7f8c05a2",  # Google API key in .env.development (revoked)
@@ -93,5 +133,6 @@ regexes = [
     '''placeholder[-_](?:key|secret|token|password)''',
     '''(?:invalid|valid|fake|test|mock|example|sample|dummy)[-_]token''',
     '''regular[-_]user[-_]token''',
+    '''test_jwt_secret[-_a-z0-9]*''',  # CI workflow placeholder (e.g. test_jwt_secret_32_characters_long in ci.yml / ci-cd-integrated.yml)
     '''xxxxx''',  # docs commonly redact with x's
 ]
