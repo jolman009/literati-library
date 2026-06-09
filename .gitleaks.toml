@@ -68,6 +68,16 @@ paths = [
     '''(.*/)?\.env\.production$''',
     '''(.*/)?\.env\.development$''',
 
+    # Dead BYOK relic. restore-anthropic-key.html stored an Anthropic key as
+    # base64 (the "encryption" in utils/crypto.js was Caesar-shift + base64, i.e.
+    # no secret at all). The underlying key was liveness-tested 2026-06-09 ->
+    # HTTP 401 "invalid x-api-key" (revoked/dead), and the file was deleted from
+    # the tree. A sweep found no sibling restore-*-key.html files for other
+    # providers. Allowlisted so a future gitleaks-action scanner bump (its current
+    # binary lacks the anthropic-api-key rule, so CI doesn't flag this yet) won't
+    # start failing on the inert blob.
+    '''(.*/)?restore-anthropic-key\.html$''',
+
     # Documentation that includes sample curl/env snippets
     '''docs/.*\.md$''',
     '''legal/.*\.md$''',
