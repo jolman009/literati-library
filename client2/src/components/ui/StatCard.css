@@ -1,0 +1,56 @@
+/* StatCard — shared metric card (Core App design handoff). Token-driven. */
+
+.sq-statcard {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-width: 0;
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: var(--md-sys-elevation-level1);
+  font-family: var(--sq-font-sans);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.sq-statcard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--md-sys-elevation-level3);
+  border-color: var(--md-sys-color-primary);
+}
+
+.sq-statcard__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--sq-gradient-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.sq-statcard:hover .sq-statcard__bar { transform: scaleX(1); }
+
+.sq-statcard__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sq-statcard__medallion {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 20px;
+  line-height: 1;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}
+.sq-statcard__delta { font-size: 12px; font-weight: 700; color: var(--sq-success); white-space: nowrap; }
+
+.sq-statcard__value { font-size: 28px; font-weight: 800; margin-top: 12px; line-height: 1.1; color: var(--md-sys-color-on-surface); }
+.sq-statcard__label { font-size: 13px; font-weight: 600; margin-top: 3px; color: var(--md-sys-color-on-surface-variant); }
+.sq-statcard__subtitle { font-size: 12px; margin-top: 6px; color: var(--md-sys-color-on-surface-variant); opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-statcard { transition: none; }
+  .sq-statcard:hover { transform: none; }
+  .sq-statcard__bar { transition: none; }
+}

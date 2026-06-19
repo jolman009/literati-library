@@ -12,7 +12,9 @@ import { Challenges } from '../components/gamification';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
+import '../styles/dashboard-redesign.css';
 import { Skeleton } from '../components/ui/StateKit';
+import StatCard from '../components/ui/StatCard';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 import { useFeatureTooltip } from '../hooks/useFeatureTooltip';
@@ -54,7 +56,7 @@ const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
   };
 
   return (
-    <div className="welcome-section-compact">
+    <div className="welcome-section-compact sq-dash-hero">
       <div className="welcome-content">
         {/* Greeting & Actions */}
         <div className="welcome-info">
@@ -133,7 +135,17 @@ const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
   );
 };
 // Quick Stats Overview Component - Top 6 Stats Cards with Swiper (includes Notes Points & Reading Sessions)
-const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '' }) => {
+// Accent per stat card (used in the redesigned desktop stat row).
+const STAT_ACCENTS = [
+  'var(--md-sys-color-secondary)', // Minutes / Week
+  'var(--md-sys-color-primary)',   // Books / Month
+  'var(--md-sys-color-error)',     // Activity Streak
+  'var(--md-sys-color-tertiary)',  // Sessions this week
+  'var(--md-sys-color-primary)',   // Library
+  'var(--md-sys-color-secondary)', // Time Read
+];
+
+const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgressBooks = null, className = '', redesigned = false }) => {
   const { stats } = useGamification();
   const [loading, setLoading] = useState(!stats);
   const [refreshing] = useState(false);
@@ -587,6 +599,26 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
           <div key={i} className="stat-metric-card">
             <Skeleton h={100} r={12} />
           </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Redesigned desktop stat row (opt-in) — uses the shared StatCard. The
+  // mobile instance keeps the legacy markup below, so mobile is untouched.
+  if (redesigned) {
+    return (
+      <div className={`stat-grid sq-stat-redesign ${className}`} style={{ opacity: refreshing ? 0.7 : 1, transition: 'opacity 0.3s ease' }}>
+        {statCards.map((stat, index) => (
+          <StatCard
+            key={index}
+            icon={stat.icon}
+            value={stat.value}
+            label={stat.label}
+            delta={stat.growth}
+            subtitle={stat.subtitle}
+            accent={STAT_ACCENTS[index % STAT_ACCENTS.length]}
+          />
         ))}
       </div>
     );
@@ -1505,9 +1537,10 @@ const DashboardPage = () => {
             </button>
           </div>
         )}
-        {/* Desktop: Metric Cards - Horizontal Scroll (hidden on mobile) */}
+        {/* Desktop: Metric Cards — redesigned StatCard grid (hidden on mobile) */}
         <QuickStatsOverview
           className="mobile-hide"
+          redesigned
           totalBooks={Array.isArray(books) ? books.length : 0}
           completedBooks={(Array.isArray(books) ? books : []).filter(b => b.status === 'completed' || b.completed === true).length}
           inProgressBooks={(Array.isArray(books) ? books : []).filter(b => getBookStatus(b) === 'reading').length}
