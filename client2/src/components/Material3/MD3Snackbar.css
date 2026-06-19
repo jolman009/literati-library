@@ -7,21 +7,27 @@
 }
 
 .md3-snackbar {
-  --_container-color: var(--md-sys-color-inverse-surface);
-  --_container-elevation: var(--md-sys-elevation-level3);
-  --_container-shape: var(--md-sys-shape-corner-extra-small);
-  --_supporting-text-color: var(--md-sys-color-inverse-on-surface);
-  --_action-label-text-color: var(--md-sys-color-inverse-primary);
-  
+  /* Tone tokens (overridden per-variant). Anatomy: surface card + left accent
+     + icon medallion, per the engagement-surfaces Toast design. */
+  --_accent: var(--md-sys-color-primary);
+  --_med-bg: var(--md-sys-color-surface-container-highest);
+  --_med-fg: var(--md-sys-color-on-surface);
+  --_detail-color: var(--md-sys-color-on-surface-variant);
+  /* kept for the progress-snackbar styles further down */
+  --_supporting-text-color: var(--md-sys-color-on-surface);
+  --_action-label-text-color: var(--_accent);
+
   position: relative;
   display: flex;
   align-items: center;
   min-width: 344px;
   max-width: 672px;
   min-height: 48px;
-  background-color: var(--_container-color);
-  border-radius: var(--_container-shape);
-  box-shadow: var(--_container-elevation);
+  background-color: var(--md-sys-color-surface-container-high);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-left: 3px solid var(--_accent);
+  border-radius: 15px;
+  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, .45);
   pointer-events: auto;
   overflow: hidden;
 }
@@ -35,13 +41,42 @@
   min-width: 0;
 }
 
-.md3-snackbar__message {
-  font: var(--md-sys-typescale-body-medium-font);
-  color: var(--_supporting-text-color);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
+.md3-snackbar__medallion {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  flex-shrink: 0;
+  background: var(--_med-bg);
+  color: var(--_med-fg);
+}
+
+.md3-snackbar__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   flex: 1;
   min-width: 0;
+}
+
+.md3-snackbar__message {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--md-sys-color-on-surface);
+  line-height: 1.3;
   overflow-wrap: break-word;
+}
+
+.md3-snackbar__detail {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--_detail-color);
+  line-height: 1.3;
+}
+
+.md3-snackbar--xp .md3-snackbar__detail {
+  font-weight: 800;
 }
 
 .md3-snackbar__action {
@@ -60,8 +95,8 @@
   font: var(--md-sys-typescale-label-large-font);
   line-height: var(--md-sys-typescale-label-large-line-height);
   cursor: pointer;
-  background-color: var(--md-sys-color-inverse-primary);
-  color: var(--md-sys-color-inverse-on-surface);
+  background-color: var(--_accent);
+  color: #fff;
   transition: transform 120ms ease, filter 120ms ease, background-color 120ms ease;
 }
 
@@ -79,8 +114,8 @@
 }
 
 .md3-snackbar__action .md3-button {
-  --md-sys-color-primary: var(--md-sys-color-inverse-primary);
-  --md-sys-color-on-primary: var(--md-sys-color-inverse-on-surface);
+  --md-sys-color-primary: var(--_accent);
+  --md-sys-color-on-primary: #fff;
   min-width: auto;
   padding: 8px 12px;
   font-size: 0.875rem;
@@ -102,11 +137,11 @@
 }
 
 .md3-snackbar__close-button:hover {
-  background-color: color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 8%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
 }
 
 .md3-snackbar__close-button:active {
-  background-color: color-mix(in srgb, var(--md-sys-color-inverse-on-surface) 12%, transparent);
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
 }
 
 .md3-snackbar__close-icon {
@@ -115,29 +150,43 @@
   fill: currentColor;
 }
 
-/* Snackbar Variants */
+/* Snackbar Variants — set the tone accent + medallion colors */
 .md3-snackbar--success {
-  --_container-color: var(--md-sys-color-tertiary-container);
-  --_supporting-text-color: var(--md-sys-color-on-tertiary-container);
-  --_action-label-text-color: var(--md-sys-color-tertiary);
+  --_accent: var(--sq-success);
+  --_med-bg: color-mix(in srgb, var(--sq-success) 18%, transparent);
+  --_med-fg: var(--sq-success);
 }
 
 .md3-snackbar--error {
-  --_container-color: var(--md-sys-color-error-container);
-  --_supporting-text-color: var(--md-sys-color-on-error-container);
-  --_action-label-text-color: var(--md-sys-color-error);
+  --_accent: var(--md-sys-color-error);
+  --_med-bg: var(--md-sys-color-error-container);
+  --_med-fg: var(--md-sys-color-on-error-container);
 }
 
 .md3-snackbar--warning {
-  --_container-color: var(--md-sys-color-secondary-container);
-  --_supporting-text-color: var(--md-sys-color-on-secondary-container);
-  --_action-label-text-color: var(--md-sys-color-secondary);
+  --_accent: var(--sq-warning);
+  --_med-bg: color-mix(in srgb, var(--sq-warning) 18%, transparent);
+  --_med-fg: var(--sq-warning);
 }
 
 .md3-snackbar--info {
-  --_container-color: var(--md-sys-color-primary-container);
-  --_supporting-text-color: var(--md-sys-color-on-primary-container);
-  --_action-label-text-color: var(--md-sys-color-primary);
+  --_accent: var(--sq-pacific-cyan);
+  --_med-bg: color-mix(in srgb, var(--sq-pacific-cyan) 18%, transparent);
+  --_med-fg: var(--sq-pacific-cyan);
+}
+
+/* Gamification tones from the engagement-surfaces design */
+.md3-snackbar--streak {
+  --_accent: var(--md-sys-color-error);
+  --_med-bg: color-mix(in srgb, var(--md-sys-color-error) 16%, transparent);
+  --_med-fg: var(--md-sys-color-error);
+}
+
+.md3-snackbar--xp {
+  --_accent: var(--sq-violet);
+  --_med-bg: var(--sq-gradient-quest);
+  --_med-fg: #fff;
+  --_detail-color: var(--sq-violet);
 }
 
 /* Position Variants */
@@ -441,25 +490,7 @@
   }
 }
 
-/* Dark Theme Adjustments */
-@media (prefers-color-scheme: dark) {
-  .md3-snackbar--success {
-    --_container-color: var(--md-sys-color-tertiary);
-    --_supporting-text-color: var(--md-sys-color-on-tertiary);
-  }
-  
-  .md3-snackbar--error {
-    --_container-color: var(--md-sys-color-error);
-    --_supporting-text-color: var(--md-sys-color-on-error);
-  }
-  
-  .md3-snackbar--warning {
-    --_container-color: var(--md-sys-color-secondary);
-    --_supporting-text-color: var(--md-sys-color-on-secondary);
-  }
-  
-  .md3-snackbar--info {
-    --_container-color: var(--md-sys-color-primary);
-    --_supporting-text-color: var(--md-sys-color-on-primary);
-  }
-}
+/* Dark theme: the toast now uses theme-aware surface + accent tokens
+   (--md-sys-color-* and --sq-*), so no per-variant dark overrides are needed.
+   The old colored-container scheme was replaced by the surface + left-accent
+   + medallion anatomy. */

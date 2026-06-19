@@ -21,6 +21,7 @@ const MoreMenu = ({ isOpen, onClose, navigate, isDark, onToggleTheme, onLogout, 
     ...(!isPremium ? [{ icon: 'workspace_premium', label: 'Upgrade to Pro', path: '/pricing', accent: true }] : []),
     // Progress
     { isSectionLabel: true, label: 'Progress' },
+    { icon: 'local_fire_department', label: 'Streak', path: '/streak' },
     { icon: 'trending_up', label: 'Progress & Journey', path: '/progress' },
     { icon: 'flag', label: 'Goals & Achievements', path: '/goals' },
     { icon: 'leaderboard', label: 'Leaderboard', path: '/leaderboard' },

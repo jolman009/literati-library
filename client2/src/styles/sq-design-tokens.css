@@ -1,0 +1,104 @@
+/* ============================================================
+   ShelfQuest — --sq-* design-token bridge
+   ------------------------------------------------------------
+   The engagement-surface design package (Onboarding, Streak &
+   Goals, States, Toasts) is authored against a set of `--sq-*`
+   tokens that did NOT previously exist in this app. This file
+   defines them, mapped onto the app's existing MD3 token system
+   (md3-unified-colors.css) so the new surfaces theme in lockstep
+   with everything else.
+
+   Source of truth for the raw values: the design package's
+   tokens/colors.css. Nothing here overrides an existing token —
+   it is purely additive (`--sq-*` is a new namespace).
+
+   Dark-mode selectors MIRROR md3-unified-colors.css + themes.css:
+     - default theme:  @media (prefers-color-scheme: dark) :root,
+                       [data-theme="dark"], .dark
+     - unlockable themes (themes.css): [data-actual-theme="dark"]
+   Custom properties inherit, so defining them on the themed
+   element cascades to every descendant.
+   ============================================================ */
+
+/* ---- Theme-independent constants (same in light & dark) ---- */
+:root {
+  /* Raw brand ramp (exact palette) */
+  --sq-federal-blue:  #03045e;  /* deepest, anchors dark surfaces */
+  --sq-marian-blue:   #023e8a;  /* primary brand */
+  --sq-honolulu-blue: #0077b6;  /* secondary */
+  --sq-pacific-cyan:  #00b4d8;  /* tertiary / bright accent */
+  --sq-sky:           #90e0ef;
+
+  /* Typeface — maps to the app's Inter stack */
+  --sq-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Semantic accent aliases. These reference the per-mode accent
+     vars below, so they resolve to the correct light/dark value
+     automatically without being redeclared in each block. */
+  --sq-success: var(--sq-green);   /* streaks / heatmap / success */
+  --sq-warning: var(--sq-gold);    /* points / streak target */
+  --sq-quest:   var(--sq-violet);  /* gamification only: XP, level, mentor, celebration */
+
+  /* Gradients that are identical across modes */
+  --sq-gradient-brand:   linear-gradient(135deg, #023e8a 0%, #0077b6 50%, #00b4d8 100%);
+  --sq-gradient-accent:  linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-secondary));
+  --sq-gradient-welcome: var(--sq-gradient-hero); /* follows the per-mode hero */
+}
+
+/* ---- LIGHT (default + any explicitly-light context) ---- */
+:root,
+[data-theme="light"],
+.light,
+[data-actual-theme="light"] {
+  /* Gamification accents */
+  --sq-gold:   #eab308;
+  --sq-teal:   #14b8a6;
+  --sq-violet: #7c5cff;
+  --sq-green:  #1f8a5b;
+
+  /* Per-mode gradients */
+  --sq-gradient-hero:  linear-gradient(140deg, #023e8a 0%, #0066ac 52%, #0090c6 100%);
+  --sq-gradient-quest: linear-gradient(135deg, #7c5cff 0%, #5b3fc4 100%);
+
+  /* Full-page aurora wash — blue-led; violet is only a faint glow. */
+  --sq-aurora:
+    radial-gradient(1000px 560px at 82% -8%, rgba(0,119,182,.10), transparent 58%),
+    radial-gradient(900px 600px at 6% -2%, rgba(0,180,216,.08), transparent 55%);
+}
+
+/* ---- DARK via OS preference (when not explicitly themed) ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sq-gold:   #facc15;
+    --sq-teal:   #2dd4bf;
+    --sq-violet: #9a82ff;
+    --sq-green:  #4ade80;
+
+    --sq-gradient-hero:  linear-gradient(140deg, #06143a 0%, #0a3a6b 52%, #0f6493 100%);
+    --sq-gradient-quest: linear-gradient(135deg, #9a82ff 0%, #5b3fc4 100%);
+
+    --sq-aurora:
+      radial-gradient(1050px 600px at 82% -8%, rgba(0,119,182,.22), transparent 58%),
+      radial-gradient(950px 640px at 6% -2%, rgba(0,180,216,.13), transparent 55%),
+      radial-gradient(760px 520px at 50% 110%, rgba(124,92,255,.10), transparent 62%);
+  }
+}
+
+/* ---- DARK explicit (default theme .dark/[data-theme] + every
+        unlockable theme via [data-actual-theme="dark"]) ---- */
+[data-theme="dark"],
+.dark,
+[data-actual-theme="dark"] {
+  --sq-gold:   #facc15;
+  --sq-teal:   #2dd4bf;
+  --sq-violet: #9a82ff;
+  --sq-green:  #4ade80;
+
+  --sq-gradient-hero:  linear-gradient(140deg, #06143a 0%, #0a3a6b 52%, #0f6493 100%);
+  --sq-gradient-quest: linear-gradient(135deg, #9a82ff 0%, #5b3fc4 100%);
+
+  --sq-aurora:
+    radial-gradient(1050px 600px at 82% -8%, rgba(0,119,182,.22), transparent 58%),
+    radial-gradient(950px 640px at 6% -2%, rgba(0,180,216,.13), transparent 55%),
+    radial-gradient(760px 520px at 50% 110%, rgba(124,92,255,.10), transparent 62%);
+}

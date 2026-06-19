@@ -1,0 +1,32 @@
+/* StateKit.css — companion styles for the loading/empty/error primitives.
+   Only the skeleton shimmer needs real CSS (keyframes can't be inline);
+   EmptyState / ErrorState are token-driven inline styles in StateKit.jsx. */
+
+@keyframes sq-skeleton-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.sq-skeleton {
+  display: block;
+  flex: 0 0 auto;
+  /* moving gradient between two surface-container tints */
+  background: linear-gradient(
+    90deg,
+    var(--md-sys-color-surface-container) 25%,
+    var(--md-sys-color-surface-container-highest) 37%,
+    var(--md-sys-color-surface-container) 63%
+  );
+  background-size: 400% 100%;
+  animation: sq-skeleton-shimmer 1.4s ease infinite;
+}
+
+/* Respect users who ask for less motion — freeze the shimmer to a flat tint.
+   (animations.css also has a global reduced-motion reset; this keeps the kit
+   self-contained if it's ever used without that stylesheet.) */
+@media (prefers-reduced-motion: reduce) {
+  .sq-skeleton {
+    animation: none;
+    background-position: 0 0;
+  }
+}

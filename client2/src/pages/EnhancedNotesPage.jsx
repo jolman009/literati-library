@@ -16,9 +16,12 @@ import {
   MD3MenuDivider,
   useSnackbar
 } from '../components/Material3';
+import { SkeletonGrid, EmptyState } from '../components/ui/StateKit';
 import ReadingAssistant from '../services/ReadingAssistant';
 import {
   PlusCircle,
+  SearchX,
+  NotebookPen,
   Search,
   Edit,
   Trash2,
@@ -1410,10 +1413,7 @@ const EnhancedNotesPage = () => {
         
         {/* Main Content Area */}
         {loading && !isModalOpen ? (
-          <MD3Card variant="outlined" className="md3-notes-loading">
-            <div className="md3-notes-spinner" />
-            <p>Loading notes...</p>
-          </MD3Card>
+          <SkeletonGrid of="note" count={4} />
         ) : (
           <>
             {/* MD3 Delete Confirmation Dialog */}
@@ -1494,27 +1494,21 @@ const EnhancedNotesPage = () => {
                   </div>
                 </>
               ) : (
-                <MD3Card variant="outlined" className="md3-notes-empty-state">
-                  <FileText className="md3-notes-empty-icon" />
-                  <h3 className="md3-notes-empty-title">
-                    {searchTerm || selectedTags.size > 0 ? 'No notes found' : 'No notes yet'}
-                  </h3>
-                  <p className="md3-notes-empty-text">
-                    {searchTerm || selectedTags.size > 0
-                      ? "Try adjusting your filters." 
-                      : "Create your first note to get started!"
-                    }
-                  </p>
-                  {!searchTerm && selectedTags.size === 0 && (
-                    <MD3Button
-                      variant="filled"
-                      onClick={() => handleOpenModal()}
-                      icon={<PlusCircle className="md3-icon" />}
-                    >
-                      Create Your First Note
-                    </MD3Button>
-                  )}
-                </MD3Card>
+                <EmptyState
+                  tone={searchTerm || selectedTags.size > 0 ? 'neutral' : 'brand'}
+                  icon={searchTerm || selectedTags.size > 0 ? <SearchX /> : <NotebookPen />}
+                  title={searchTerm || selectedTags.size > 0 ? 'No notes found' : 'No notes yet'}
+                  body={
+                    searchTerm || selectedTags.size > 0
+                      ? 'Try adjusting your search or tag filters.'
+                      : 'Highlight a passage while reading, or jot a thought — your notes collect here, searchable by tag.'
+                  }
+                  primary={
+                    !searchTerm && selectedTags.size === 0
+                      ? { label: 'Create your first note', icon: <PlusCircle size={18} />, onClick: () => handleOpenModal() }
+                      : undefined
+                  }
+                />
               )
             )}
             

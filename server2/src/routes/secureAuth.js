@@ -488,6 +488,83 @@ router.get('/profile', authenticateTokenEnhanced, async (req, res) => {
 });
 
 /**
+ * Update profile (name + onboarding interests) — used by the first-run SetupWizard.
+ * `interests` requires the JSONB column from migration 016_user_interests.sql;
+ * if the column is absent the update fails and the client treats it as best-effort.
+ */
+router.put('/profile', authenticateTokenEnhanced, async (req, res) => {
+  try {
+    const updates = {};
+
+    if (req.body.name !== undefined) {
+      const name = String(req.body.name).trim();
+      if (!name || name.length > 255) {
+        return res.status(400).json({
+          error: 'Invalid name', code: 'INVALID_NAME', requestId: req.requestId
+        });
+      }
+      updates.name = name;
+    }
+
+    if (req.body.interests !== undefined) {
+      if (!Array.isArray(req.body.interests)) {
+        return res.status(400).json({
+          error: 'interests must be an array', code: 'INVALID_INTERESTS', requestId: req.requestId
+        });
+      }
+      // Normalize: trimmed non-empty strings, deduped, capped.
+      updates.interests = [...new Set(
+        req.body.interests
+          .filter((x) => typeof x === 'string')
+          .map((x) => x.trim())
+          .filter(Boolean)
+      )].slice(0, 30);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        error: 'No updatable fields provided', code: 'NO_UPDATES', requestId: req.requestId
+      });
+    }
+
+    updates.updated_at = new Date().toISOString();
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', req.user.id)
+      .select('id, email, name, avatar, interests, created_at, last_login, is_active, auth_provider')
+      .single();
+
+    if (error) {
+      console.error('Profile update error:', error);
+      return res.status(500).json({
+        error: 'Failed to update profile', code: 'UPDATE_FAILED', requestId: req.requestId
+      });
+    }
+
+    // Top-level fields (AuthContext.updateProfile merges this into the user object).
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar,
+      interests: user.interests || [],
+      createdAt: user.created_at,
+      lastLogin: user.last_login,
+      isActive: user.is_active,
+      authProvider: user.auth_provider
+    });
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      error: 'Internal server error', code: 'INTERNAL_ERROR', requestId: req.requestId
+    });
+  }
+});
+
+/**
  * Change password with enhanced security
  */
 router.post('/change-password',

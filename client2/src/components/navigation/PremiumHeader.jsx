@@ -342,23 +342,6 @@ export default function PremiumHeader({ title, breadcrumbs = [], onSearch }) {
                     className="dropdown-item"
                     role="menuitem"
                     onClick={() => {
-                      try {
-                        localStorage.setItem('sq_tour_seen_v1', '0');
-                      } catch {
-                        // Silently ignore localStorage errors
-                      }
-                      // Ask dashboard to restart guided tour
-                      window.dispatchEvent(new CustomEvent('restartGuidedTour'));
-                      setUserMenuOpen(false);
-                    }}
-                  >
-                    <span className="material-symbols-outlined">flag</span>
-                    Restart Guided Tour
-                  </button>
-                  <button
-                    className="dropdown-item"
-                    role="menuitem"
-                    onClick={() => {
                       // Dispatch custom event to show tutorial
                       window.dispatchEvent(new CustomEvent('showTutorial'));
                       setUserMenuOpen(false);

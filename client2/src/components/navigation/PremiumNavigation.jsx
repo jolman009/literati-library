@@ -116,6 +116,7 @@ const PremiumNavigation = ({
       label: 'Progress',
       icon: 'trending_up',
       items: [
+        { to: '/streak', label: 'Streak', icon: 'local_fire_department' },
         { to: '/progress', label: 'Progress & Journey', icon: 'trending_up' },
         { to: '/goals', label: 'Goals & Achievements', icon: 'flag' },
         { to: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },

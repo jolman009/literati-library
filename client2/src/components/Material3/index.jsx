@@ -94,7 +94,16 @@ export const MD3SnackbarProvider = ({ children }) => {
     setSnackbars(prev => prev.filter(s => s.id !== id));
   }, []);
 
-  const value = { showSnackbar, hideSnackbar };
+  // Convenience helpers — match the engagement-surfaces toast API.
+  // Each delegates to showSnackbar; the MD3Snackbar component supplies a
+  // default medallion icon per variant, so callers can omit `icon`.
+  const success = useCallback((message, opts = {}) => showSnackbar({ message, variant: 'success', ...opts }), [showSnackbar]);
+  const error = useCallback((message, opts = {}) => showSnackbar({ message, variant: 'error', duration: 5000, ...opts }), [showSnackbar]);
+  const info = useCallback((message, opts = {}) => showSnackbar({ message, variant: 'info', ...opts }), [showSnackbar]);
+  const streak = useCallback((message, opts = {}) => showSnackbar({ message, variant: 'streak', ...opts }), [showSnackbar]);
+  const xp = useCallback((amount, message, opts = {}) => showSnackbar({ message: message || 'Reward earned', detail: `+${amount} XP`, variant: 'xp', ...opts }), [showSnackbar]);
+
+  const value = { showSnackbar, hideSnackbar, success, error, info, streak, xp };
 
   return (
     <MD3SnackbarContext.Provider value={value}>
