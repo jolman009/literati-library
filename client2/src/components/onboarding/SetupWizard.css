@@ -1,0 +1,14 @@
+/* SetupWizard.css — first-run setup flow animations.
+   Steps slide in transform-only (no opacity fade) so a paused animation clock
+   can never leave content invisible — see the design handoff note. */
+
+@keyframes sqSetupStepR { from { transform: translateX(26px); } to { transform: translateX(0); } }
+@keyframes sqSetupStepL { from { transform: translateX(-26px); } to { transform: translateX(0); } }
+@keyframes sqSetupSpark { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-setup-step,
+  .sq-setup-spark {
+    animation: none !important;
+  }
+}

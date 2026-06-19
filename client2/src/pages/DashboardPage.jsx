@@ -14,6 +14,7 @@ import { Challenges } from '../components/gamification';
 import MentorPreviewCard from '../components/MentorPreviewCard';
 import API from '../config/api';
 import '../styles/dashboard-page.css';
+import { Skeleton } from '../components/ui/StateKit';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
 import { useFeatureTooltip } from '../hooks/useFeatureTooltip';
@@ -586,7 +587,7 @@ const QuickStatsOverview = ({ totalBooks = null, completedBooks = null, inProgre
       <div className={`simple-scroll-container ${className}`}>
         {[...Array(5)].map((_, i) => (
           <div key={i} className="stat-metric-card">
-            <div className="loading-shimmer" style={{ width: '100%', height: '100px', borderRadius: '12px' }}></div>
+            <Skeleton h={100} r={12} />
           </div>
         ))}
       </div>
@@ -958,7 +959,7 @@ const CurrentlyReading = () => {
     };
   }, []);
   
-  if (loading) return <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}><h3>Loading currently reading...</h3></div>;
+  if (loading) return <div className="section-card" style={{ margin: "6px 0", padding: "10px 12px" }}><Skeleton w="60%" h={20} /></div>;
 
   // Debug: Always show the component with information
   console.warn('📖 CurrentlyReading render - books count:', currentlyReading.length);
@@ -1086,7 +1087,7 @@ const RecentlyAdded = () => {
     };
   }, [fetchRecentBooks]);
   
-  if (loading) return <div className="section-card-compact"><h3>Loading recent books...</h3></div>;
+  if (loading) return <div className="section-card-compact"><Skeleton w="60%" h={20} /></div>;
 
   // Debug: Always show the component with information
   console.warn('📚 RecentlyAdded render - books count:', recentBooks.length);

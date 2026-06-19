@@ -7,6 +7,8 @@ import { useGamification } from '../contexts/GamificationContext';
 import API from '../config/api';
 import { bookshopUrl, amazonUrl } from '../utils/affiliateLinks';
 import './LibraryPage.css';
+import { SkeletonGrid, EmptyState, ErrorState } from '../components/ui/StateKit';
+import { LibraryBig, Plus, SearchX, X } from 'lucide-react';
 
 /**
  * LibraryPage - Full-featured library with pagination
@@ -378,7 +380,10 @@ const LibraryPage = () => {
   if (loading) {
     return (
       <div className={`library-page ${actualTheme}`}>
-        <div className="library-empty-state">Loading your library...</div>
+        <header className="library-header">
+          <h1>My Library</h1>
+        </header>
+        <SkeletonGrid of="book" count={12} />
       </div>
     );
   }
@@ -386,7 +391,11 @@ const LibraryPage = () => {
   if (error) {
     return (
       <div className={`library-page ${actualTheme}`}>
-        <div className="library-empty-state" style={{ color: '#dc2626' }}>{error}</div>
+        <ErrorState
+          title="Couldn't load your library"
+          body={error}
+          onRetry={fetchBooks}
+        />
       </div>
     );
   }
@@ -730,11 +739,27 @@ const LibraryPage = () => {
       )}
 
       {paginatedBooks.length === 0 && (
-        <div className="library-empty-state">
-          {statusFilter !== 'all' || hasMetadataFilters
-            ? 'No books match the selected filters.'
-            : 'No books in your library yet.'}
-        </div>
+        statusFilter !== 'all' || hasMetadataFilters ? (
+          <EmptyState
+            tone="neutral"
+            icon={<SearchX />}
+            title="No books match"
+            body="Nothing on this shelf matches your current filters. Try another shelf or clear them."
+            primary={{
+              label: 'Clear filters',
+              icon: <X size={18} />,
+              onClick: () => { setStatusFilter('all'); setSelectedLanguages([]); setSelectedFileTypes([]); },
+            }}
+          />
+        ) : (
+          <EmptyState
+            tone="brand"
+            icon={<LibraryBig />}
+            title="Your shelf is waiting"
+            body="Add your first book to start tracking progress, taking notes, and earning badges."
+            primary={{ label: 'Add a book', icon: <Plus size={18} />, onClick: () => navigate('/upload') }}
+          />
+        )
       )}
     </div>
   );

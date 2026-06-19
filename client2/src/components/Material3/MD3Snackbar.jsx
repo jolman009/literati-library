@@ -1,19 +1,35 @@
 // src/components/Material3/MD3Snackbar.jsx
 import React, { memo, useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { Bell, CheckCircle2, AlertTriangle, Info, Flame, Sparkles, Snowflake, BookCheck, BookOpen, RefreshCw } from 'lucide-react';
 import './MD3Snackbar.css';
+
+// Resolve a tone's medallion icon: explicit React node > explicit name > per-variant default.
+const TOAST_ICONS = {
+  'bell': Bell, 'check-circle-2': CheckCircle2, 'alert-triangle': AlertTriangle,
+  'info': Info, 'flame': Flame, 'sparkles': Sparkles, 'snowflake': Snowflake,
+  'book-check': BookCheck, 'book-open': BookOpen, 'refresh-cw': RefreshCw,
+};
+const DEFAULT_TONE_ICON = {
+  default: 'bell', success: 'check-circle-2', error: 'alert-triangle',
+  warning: 'alert-triangle', info: 'info', streak: 'flame', xp: 'sparkles',
+};
 
 const MD3Snackbar = memo(({
   open = false,
   message,
+  detail,
+  icon,
   action,
   onClose,
-  autoHideDuration = 4000,
+  autoHideDuration,
+  duration,
   variant = 'default',
   position = 'bottom-center',
   className = '',
   ...props
 }) => {
+  const resolvedDuration = duration ?? autoHideDuration ?? 4000;
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -28,11 +44,11 @@ const MD3Snackbar = memo(({
 
   // Auto-hide functionality
   useEffect(() => {
-    if (open && autoHideDuration > 0) {
-      const timer = setTimeout(handleClose, autoHideDuration);
+    if (open && resolvedDuration > 0) {
+      const timer = setTimeout(handleClose, resolvedDuration);
       return () => clearTimeout(timer);
     }
-  }, [open, autoHideDuration, handleClose]);
+  }, [open, resolvedDuration, handleClose]);
 
   // Handle open/close animations
   useEffect(() => {
@@ -55,8 +71,16 @@ const MD3Snackbar = memo(({
     className
   ].filter(Boolean).join(' ');
 
+  const iconNode = (() => {
+    if (icon === false || icon === null) return null;
+    if (React.isValidElement(icon)) return icon;
+    const name = typeof icon === 'string' ? icon : (DEFAULT_TONE_ICON[variant] || 'bell');
+    const Cmp = TOAST_ICONS[name] || Bell;
+    return <Cmp size={20} />;
+  })();
+
   const snackbarContent = (
-    <div 
+    <div
       className="md3-snackbar__container"
       role="presentation"
     >
@@ -67,10 +91,18 @@ const MD3Snackbar = memo(({
         {...props}
       >
         <div className="md3-snackbar__content">
-          <span className="md3-snackbar__message">
-            {message}
-          </span>
-          
+          {iconNode && (
+            <span className="md3-snackbar__medallion" aria-hidden="true">
+              {iconNode}
+            </span>
+          )}
+          <div className="md3-snackbar__text">
+            <span className="md3-snackbar__message">
+              {message}
+            </span>
+            {detail && <span className="md3-snackbar__detail">{detail}</span>}
+          </div>
+
           {action && (
             <div className="md3-snackbar__action">
               {action}

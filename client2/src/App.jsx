@@ -47,6 +47,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { EntitlementsProvider } from './contexts/EntitlementsContext';
 import './styles/dashboard-dark-mode-fix.css';
 import './styles/themes.css'; // Theme system with 6 unlockable themes
+import './styles/sq-design-tokens.css'; // --sq-* bridge for engagement surfaces (additive, theme-aware)
 import { loadThemePreference, applyTheme, getDefaultTheme } from './utils/themeUtils';
 
 // Material3 imports - Direct imports from Material3 barrel
@@ -54,7 +55,7 @@ import { Material3ThemeProvider, MD3SnackbarProvider } from './components/Materi
 
 import AppLayout from './components/AppLayout';
 import ReadingSessionTimer from './components/ReadingSessionTimer';
-import GamificationOnboardingWrapper from './components/gamification/GamificationOnboardingWrapper';
+import SetupWizardWrapper from './components/onboarding/SetupWizardWrapper';
 
 // Smart conditional provider loading
 import ConditionalProviders from './components/providers/ConditionalProviders';
@@ -75,6 +76,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 const GoalsPage = lazy(() => import('./pages/GoalsPage'));
+const StreakPage = lazy(() => import('./pages/StreakPage'));
 const JolmanPressPage = lazy(() => import('./pages/JolmanPressPage'));
 const GamificationRulesPage = lazy(() => import('./pages/GamificationRulesPage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
@@ -236,6 +238,13 @@ const AppRoutes = () => {
           <ErrorBoundary fallbackComponent="goals" variant="full">
             <Suspense fallback={<AppLoadingSpinner message="Loading your goals..." />}>
               <GoalsPage />
+            </Suspense>
+          </ErrorBoundary>
+        } />
+        <Route path="/streak" element={
+          <ErrorBoundary fallbackComponent="streak" variant="full">
+            <Suspense fallback={<AppLoadingSpinner message="Loading your streak..." />}>
+              <StreakPage />
             </Suspense>
           </ErrorBoundary>
         } />
@@ -451,7 +460,7 @@ const App = () => {
                 {/* Temporarily disabled dev monitors */}
                 {/* <PerformanceMonitor /> */}
                 {/* <CacheMonitor /> */}
-                <GamificationOnboardingWrapper />
+                <SetupWizardWrapper />
                 <CookieConsent />
                 <PremiumModal />
 
