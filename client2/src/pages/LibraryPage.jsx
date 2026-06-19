@@ -8,11 +8,15 @@ import API from '../config/api';
 import { bookshopUrl, amazonUrl } from '../utils/affiliateLinks';
 import './LibraryPage.css';
 import { SkeletonGrid, EmptyState, ErrorState } from '../components/ui/StateKit';
-import { LibraryBig, Plus, SearchX, X } from 'lucide-react';
+import BookCard from '../components/ui/BookCard';
+import { LibraryBig, Plus, SearchX, X, Search, LayoutGrid, List, MoreVertical } from 'lucide-react';
 
 /**
- * LibraryPage - Full-featured library with pagination
- * Matches LibraryPageV2 functionality + adds pagination
+ * LibraryPage — card/list library, restyled from the "Core App" design handoff.
+ * Visual layer recreated (welcome banner + stat tiles + filter chips + book
+ * grid/list) while preserving all existing wiring: status + language + file-type
+ * filters, 7-key sort, pagination, reading-session controls, per-book actions,
+ * and loading/empty/error states. Search is a new client-side title/author filter.
  */
 const BOOKS_PER_PAGE = 20;
 
@@ -62,19 +66,23 @@ const LibraryPage = () => {
     stopReadingSession
   } = useReadingSession();
 
-  const { trackAction } = useGamification();
+  const { trackAction, stats } = useGamification();
 
+  const [view, setView] = useState('grid');
+  const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('date_added');
   const [sortOrder, setSortOrder] = useState('desc');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedFileTypes, setSelectedFileTypes] = useState([]);
+  const [showMetaFilters, setShowMetaFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   const [books, setBooks] = useState([]);
   const [notesCount, setNotesCount] = useState({});
+  const [notesTotal, setNotesTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -119,6 +127,7 @@ const LibraryPage = () => {
         counts[bookId] = (counts[bookId] || 0) + 1;
       });
       setNotesCount(counts);
+      setNotesTotal(Array.isArray(notes) ? notes.length : 0);
     } catch (err) {
       console.error('Failed to fetch notes:', err);
     }
@@ -289,16 +298,18 @@ const LibraryPage = () => {
   }, [books, statusFilter]);
 
   const filteredBooks = useMemo(() => {
+    const q = search.trim().toLowerCase();
     return statusFilteredBooks.filter(book => {
       const language = getNormalizedLanguage(book);
       const fileType = getNormalizedFileType(book);
 
       const languageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(language.key);
       const fileTypeMatch = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType.key);
+      const searchMatch = !q || `${book.title || ''} ${book.author || ''}`.toLowerCase().includes(q);
 
-      return languageMatch && fileTypeMatch;
+      return languageMatch && fileTypeMatch && searchMatch;
     });
-  }, [statusFilteredBooks, selectedLanguages, selectedFileTypes]);
+  }, [statusFilteredBooks, selectedLanguages, selectedFileTypes, search]);
 
   const sortedBooks = useMemo(() => {
     return [...filteredBooks].sort((a, b) => {
@@ -354,7 +365,7 @@ const LibraryPage = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, selectedLanguages, selectedFileTypes, sortBy, sortOrder]);
+  }, [statusFilter, selectedLanguages, selectedFileTypes, sortBy, sortOrder, search]);
 
   const handleSort = (column) => {
     if (sortBy === column) {
@@ -365,10 +376,7 @@ const LibraryPage = () => {
     }
   };
 
-  const SortIndicator = ({ column }) => {
-    if (sortBy !== column) return <span className="sort-indicator inactive">↕</span>;
-    return <span className="sort-indicator active">{sortOrder === 'asc' ? '↑' : '↓'}</span>;
-  };
+  const sortArrow = (column) => (sortBy === column ? (sortOrder === 'asc' ? ' ↑' : ' ↓') : '');
 
   const statusCounts = useMemo(() => ({
     all: books.length,
@@ -377,12 +385,80 @@ const LibraryPage = () => {
     'to-read': books.filter(b => !b.is_reading && !b.completed).length,
   }), [books]);
 
+  // Open the per-book actions menu, anchored to the clicked trigger.
+  const openActionsMenu = (book, e) => {
+    e.stopPropagation();
+    if (openMenuId === book.id) {
+      setOpenMenuId(null);
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMenuPosition({ top: rect.bottom + 4, left: rect.right - 220 });
+    setOpenMenuId(book.id);
+  };
+
+  const renderActionsMenu = () => {
+    if (!openMenuId) return null;
+    const book = paginatedBooks.find(b => b.id === openMenuId);
+    if (!book) return null;
+    return (
+      <div
+        className="actions-menu"
+        style={{ position: 'fixed', top: menuPosition.top, left: Math.max(8, menuPosition.left) }}
+      >
+        <button className="menu-item" onClick={() => { setOpenMenuId(null); navigate(`/read/${book.id}`); }}>
+          Open Book
+        </button>
+        <div className="menu-divider" />
+
+        {isActiveSessionBook(book.id) && (
+          <>
+            {isPaused ? (
+              <button className="menu-item" onClick={handleResumeSession}>Resume Timer</button>
+            ) : (
+              <button className="menu-item" onClick={handlePauseSession}>Pause Timer</button>
+            )}
+            <button className="menu-item" onClick={handleEndSession}>Stop Timer</button>
+            <div className="menu-divider" />
+          </>
+        )}
+
+        {!activeSession && (
+          <button className="menu-item primary" onClick={() => handleStartSession(book)}>
+            Start Reading Session
+          </button>
+        )}
+
+        {book.is_reading && !book.completed && (
+          <>
+            <button className="menu-item" onClick={() => handleMarkToRead(book)}>End Session (Stop Reading)</button>
+            <button className="menu-item success" onClick={() => handleMarkCompleted(book)}>Mark as Completed</button>
+          </>
+        )}
+
+        {book.completed && (
+          <button className="menu-item" onClick={() => handleMarkToRead(book)}>Mark as To Read</button>
+        )}
+
+        {!book.is_reading && !book.completed && (
+          <button className="menu-item success" onClick={() => handleMarkCompleted(book)}>Mark as Completed</button>
+        )}
+
+        <div className="menu-divider" />
+        <a href={bookshopUrl(book.title, book.author)} target="_blank" rel="noopener noreferrer" className="menu-item" onClick={() => setOpenMenuId(null)}>
+          Buy on Bookshop.org
+        </a>
+        <a href={amazonUrl(book.title, book.author)} target="_blank" rel="noopener noreferrer" className="menu-item" onClick={() => setOpenMenuId(null)}>
+          Buy on Amazon
+        </a>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
-      <div className={`library-page ${actualTheme}`}>
-        <header className="library-header">
-          <h1>My Library</h1>
-        </header>
+      <div className={`library-page ${actualTheme}`} data-testid="library-page">
+        <header className="library-header"><h1>My Library</h1></header>
         <SkeletonGrid of="book" count={12} />
       </div>
     );
@@ -390,21 +466,63 @@ const LibraryPage = () => {
 
   if (error) {
     return (
-      <div className={`library-page ${actualTheme}`}>
-        <ErrorState
-          title="Couldn't load your library"
-          body={error}
-          onRetry={fetchBooks}
-        />
+      <div className={`library-page ${actualTheme}`} data-testid="library-page">
+        <ErrorState title="Couldn't load your library" body={error} onRetry={fetchBooks} />
       </div>
     );
   }
 
+  const SORT_KEYS = [
+    { key: 'date_added', label: 'Date Added' },
+    { key: 'title', label: 'Title' },
+    { key: 'author', label: 'Author' },
+    { key: 'date_read', label: 'Date Read' },
+    { key: 'notes', label: 'Notes' },
+    { key: 'language', label: 'Language' },
+    { key: 'file_type', label: 'File Type' },
+  ];
+
+  const STAT_TILES = [
+    { value: books.length, label: 'Books' },
+    { value: statusCounts.reading, label: 'Reading' },
+    { value: notesTotal, label: 'Notes' },
+    { value: stats?.readingStreak ?? 0, label: 'Day streak' },
+  ];
+
   return (
-    <div className={`library-page ${actualTheme}`}>
-      <header className="library-header">
-        <h1>My Library</h1>
-      </header>
+    <div className={`library-page ${actualTheme}`} data-testid="library-page">
+      {/* Welcome banner */}
+      <div className="library-banner">
+        <div className="library-banner__top">
+          <div className="library-banner__greeting">
+            Welcome back, {user?.name?.split(' ')[0] || 'reader'}! <span aria-hidden="true">📚</span>
+          </div>
+          <div className="library-view-toggle" role="group" aria-label="View mode">
+            <button
+              className={`view-toggle-btn ${view === 'grid' ? 'active' : ''}`}
+              onClick={() => setView('grid')}
+              aria-pressed={view === 'grid'}
+            >
+              <LayoutGrid size={16} /> Grid
+            </button>
+            <button
+              className={`view-toggle-btn ${view === 'list' ? 'active' : ''}`}
+              onClick={() => setView('list')}
+              aria-pressed={view === 'list'}
+            >
+              <List size={16} /> List
+            </button>
+          </div>
+        </div>
+        <div className="library-banner__stats">
+          {STAT_TILES.map(s => (
+            <div key={s.label} className="library-stat-tile">
+              <div className="library-stat-tile__value">{s.value}</div>
+              <div className="library-stat-tile__label">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {activeSession && (
         <div className="active-session-banner">
@@ -415,331 +533,113 @@ const LibraryPage = () => {
           </span>
           <div className="session-actions">
             {isPaused ? (
-              <button className="session-btn resume" onClick={handleResumeSession}>
-                Resume
-              </button>
+              <button className="session-btn resume" onClick={handleResumeSession}>Resume</button>
             ) : (
-              <button className="session-btn pause" onClick={handlePauseSession}>
-                Pause
-              </button>
+              <button className="session-btn pause" onClick={handlePauseSession}>Pause</button>
             )}
-            <button className="session-btn end" onClick={handleEndSession}>
-              End Session
-            </button>
+            <button className="session-btn end" onClick={handleEndSession}>End Session</button>
           </div>
         </div>
       )}
 
-      <div className="library-filter-bar">
-        <div className="filter-tabs">
+      {/* Filter chips + search */}
+      <div className="library-controls">
+        <div className="filter-chips">
           {[
-            { key: 'all', label: 'All' },
+            { key: 'all', label: 'All Books' },
             { key: 'reading', label: 'Reading' },
             { key: 'completed', label: 'Completed' },
-            { key: 'to-read', label: 'To Read' }
+            { key: 'to-read', label: 'Unread' }
           ].map(tab => (
             <button
               key={tab.key}
-              className={`filter-tab ${statusFilter === tab.key ? 'active' : ''}`}
+              className={`filter-chip ${statusFilter === tab.key ? 'active' : ''}`}
               onClick={() => setStatusFilter(tab.key)}
             >
-              {tab.label} ({statusCounts[tab.key]})
+              {tab.label} <span className="chip-count">{statusCounts[tab.key]}</span>
             </button>
           ))}
         </div>
 
-        <div className="sort-controls">
-          <span className="sort-label">Sort:</span>
-          <button
-            className={`sort-btn ${sortBy === 'title' ? 'active' : ''}`}
-            onClick={() => handleSort('title')}
-          >
-            Title {sortBy === 'title' && (sortOrder === 'asc' ? '↑' : '↓')}
-          </button>
-          <button
-            className={`sort-btn ${sortBy === 'author' ? 'active' : ''}`}
-            onClick={() => handleSort('author')}
-          >
-            Author {sortBy === 'author' && (sortOrder === 'asc' ? '↑' : '↓')}
-          </button>
-          <button
-            className={`sort-btn ${sortBy === 'language' ? 'active' : ''}`}
-            onClick={() => handleSort('language')}
-          >
-            Language {sortBy === 'language' && (sortOrder === 'asc' ? '↑' : '↓')}
-          </button>
-          <button
-            className={`sort-btn ${sortBy === 'file_type' ? 'active' : ''}`}
-            onClick={() => handleSort('file_type')}
-          >
-            File Type {sortBy === 'file_type' && (sortOrder === 'asc' ? '↑' : '↓')}
-          </button>
+        <div className="library-search">
+          <Search size={16} className="library-search__icon" />
+          <input
+            type="search"
+            placeholder="Search your library…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            data-testid="search-input"
+            aria-label="Search your library"
+          />
         </div>
       </div>
 
-      <div className="metadata-filter-panel">
-        <div className="metadata-filter-group">
-          <span className="metadata-filter-label">Language:</span>
-          <div className="metadata-filter-chips">
-            {availableLanguages.map(language => (
-              <button
-                key={language.key}
-                className={`metadata-filter-chip ${selectedLanguages.includes(language.key) ? 'active' : ''}`}
-                onClick={() => toggleLanguageFilter(language.key)}
-              >
-                {language.label} ({language.count})
-              </button>
-            ))}
+      {/* Sort + metadata filter toggle */}
+      <div className="library-sortbar">
+        <span className="sortbar-label">Sort:</span>
+        {SORT_KEYS.map(s => (
+          <button
+            key={s.key}
+            className={`sort-chip ${sortBy === s.key ? 'active' : ''}`}
+            onClick={() => handleSort(s.key)}
+          >
+            {s.label}{sortArrow(s.key)}
+          </button>
+        ))}
+        <button
+          className={`sort-chip meta-toggle ${showMetaFilters || hasMetadataFilters ? 'active' : ''}`}
+          onClick={() => setShowMetaFilters(v => !v)}
+        >
+          Filters{hasMetadataFilters ? ` (${selectedLanguages.length + selectedFileTypes.length})` : ''}
+        </button>
+      </div>
+
+      {showMetaFilters && (
+        <div className="metadata-filter-panel">
+          <div className="metadata-filter-group">
+            <span className="metadata-filter-label">Language</span>
+            <div className="metadata-filter-chips">
+              {availableLanguages.map(language => (
+                <button
+                  key={language.key}
+                  className={`metadata-filter-chip ${selectedLanguages.includes(language.key) ? 'active' : ''}`}
+                  onClick={() => toggleLanguageFilter(language.key)}
+                >
+                  {language.label} ({language.count})
+                </button>
+              ))}
+            </div>
           </div>
-          {selectedLanguages.length > 0 && (
-            <button className="metadata-clear-btn" onClick={() => setSelectedLanguages([])}>
-              Clear languages
-            </button>
-          )}
-        </div>
 
-        <div className="metadata-filter-group">
-          <span className="metadata-filter-label">File Type:</span>
-          <div className="metadata-filter-chips">
-            {availableFileTypes.map(fileType => (
-              <button
-                key={fileType.key}
-                className={`metadata-filter-chip ${selectedFileTypes.includes(fileType.key) ? 'active' : ''}`}
-                onClick={() => toggleFileTypeFilter(fileType.key)}
-              >
-                {fileType.label} ({fileType.count})
-              </button>
-            ))}
+          <div className="metadata-filter-group">
+            <span className="metadata-filter-label">File Type</span>
+            <div className="metadata-filter-chips">
+              {availableFileTypes.map(fileType => (
+                <button
+                  key={fileType.key}
+                  className={`metadata-filter-chip ${selectedFileTypes.includes(fileType.key) ? 'active' : ''}`}
+                  onClick={() => toggleFileTypeFilter(fileType.key)}
+                >
+                  {fileType.label} ({fileType.count})
+                </button>
+              ))}
+            </div>
           </div>
-          {selectedFileTypes.length > 0 && (
-            <button className="metadata-clear-btn" onClick={() => setSelectedFileTypes([])}>
-              Clear file types
-            </button>
+
+          {hasMetadataFilters && (
+            <button className="metadata-clear-all-btn" onClick={clearAllMetadataFilters}>Clear all filters</button>
           )}
-        </div>
-
-        {hasMetadataFilters && (
-          <button className="metadata-clear-all-btn" onClick={clearAllMetadataFilters}>
-            Clear all filters
-          </button>
-        )}
-      </div>
-
-      <div className="showing-count-row">
-        Showing {showingStart}-{showingEnd} of {sortedBooks.length} books
-        {(statusFilter !== 'all' || hasMetadataFilters) && ` (filtered from ${books.length})`}
-      </div>
-
-      <div className="library-table-container">
-        <table className="library-books-table">
-          <thead>
-            <tr>
-              <th className="col-cover">Cover</th>
-              <th className="col-title sortable" onClick={() => handleSort('title')}>
-                Title <SortIndicator column="title" />
-              </th>
-              <th className="col-author sortable" onClick={() => handleSort('author')}>
-                Author <SortIndicator column="author" />
-              </th>
-              <th className="col-status">Status</th>
-              <th className="col-date sortable" onClick={() => handleSort('date_read')}>
-                Date Read <SortIndicator column="date_read" />
-              </th>
-              <th className="col-date sortable" onClick={() => handleSort('date_added')}>
-                Date Added <SortIndicator column="date_added" />
-              </th>
-              <th className="col-notes sortable" onClick={() => handleSort('notes')}>
-                Notes <SortIndicator column="notes" />
-              </th>
-              <th className="col-actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedBooks.map(book => {
-              const status = getBookStatus(book);
-              const bookNotesCount = notesCount[book.id] || 0;
-              return (
-                <tr key={book.id} className={isActiveSessionBook(book.id) ? 'active-session-row' : ''}>
-                  <td className="col-cover" onClick={() => navigate(`/read/${book.id}`)}>
-                    <div className="book-cover-thumb">
-                      {book.cover_url ? (
-                        <img src={book.cover_url} alt={book.title} loading="lazy" />
-                      ) : (
-                        <div className="cover-placeholder">
-                          <span className="material-symbols-outlined">menu_book</span>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="col-title" onClick={() => navigate(`/read/${book.id}`)}>
-                    {book.title}
-                  </td>
-                  <td className="col-author">{book.author || '—'}</td>
-                  <td className="col-status">
-                    <span className={`status-badge ${status}`}>
-                      {status.replace('-', ' ')}
-                    </span>
-                  </td>
-                  <td className="col-date">{book.completed ? formatDate(book.completed_at) : '—'}</td>
-                  <td className="col-date">{formatDate(book.created_at)}</td>
-                  <td className="col-notes">
-                    {bookNotesCount > 0 ? <span className="notes-badge">{bookNotesCount}</span> : '—'}
-                  </td>
-                  <td className="col-actions">
-                    <div className="actions-dropdown">
-                      <button
-                        className="actions-trigger"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (openMenuId === book.id) {
-                            setOpenMenuId(null);
-                          } else {
-                            const rect = e.currentTarget.getBoundingClientRect();
-                            setMenuPosition({
-                              top: rect.bottom + 4,
-                              left: rect.right - 200
-                            });
-                            setOpenMenuId(book.id);
-                          }
-                        }}
-                      >
-                        ...
-                      </button>
-
-                      {openMenuId === book.id && (
-                        <div
-                          className="actions-menu"
-                          style={{ top: menuPosition.top, left: Math.max(8, menuPosition.left) }}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <button
-                            className="menu-item"
-                            onClick={() => {
-                              setOpenMenuId(null);
-                              navigate(`/read/${book.id}`);
-                            }}
-                          >
-                            Open Book
-                          </button>
-
-                          <div className="menu-divider" />
-
-                          {isActiveSessionBook(book.id) && (
-                            <>
-                              {isPaused ? (
-                                <button className="menu-item" onClick={handleResumeSession}>
-                                  Resume Timer
-                                </button>
-                              ) : (
-                                <button className="menu-item" onClick={handlePauseSession}>
-                                  Pause Timer
-                                </button>
-                              )}
-                              <button className="menu-item" onClick={handleEndSession}>
-                                Stop Timer
-                              </button>
-                              <div className="menu-divider" />
-                            </>
-                          )}
-
-                          {!activeSession && (
-                            <button
-                              className="menu-item primary"
-                              onClick={() => handleStartSession(book)}
-                            >
-                              Start Reading Session
-                            </button>
-                          )}
-
-                          {book.is_reading && !book.completed && (
-                            <>
-                              <button
-                                className="menu-item"
-                                onClick={() => handleMarkToRead(book)}
-                              >
-                                End Session (Stop Reading)
-                              </button>
-                              <button
-                                className="menu-item success"
-                                onClick={() => handleMarkCompleted(book)}
-                              >
-                                Mark as Completed
-                              </button>
-                            </>
-                          )}
-
-                          {book.completed && (
-                            <button
-                              className="menu-item"
-                              onClick={() => handleMarkToRead(book)}
-                            >
-                              Mark as To Read
-                            </button>
-                          )}
-
-                          {!book.is_reading && !book.completed && (
-                            <button
-                              className="menu-item success"
-                              onClick={() => handleMarkCompleted(book)}
-                            >
-                              Mark as Completed
-                            </button>
-                          )}
-
-                          <div className="menu-divider" />
-                          <a
-                            href={bookshopUrl(book.title, book.author)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="menu-item"
-                            onClick={() => setOpenMenuId(null)}
-                          >
-                            Buy on Bookshop.org
-                          </a>
-                          <a
-                            href={amazonUrl(book.title, book.author)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="menu-item"
-                            onClick={() => setOpenMenuId(null)}
-                          >
-                            Buy on Amazon
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {totalPages > 1 && (
-        <div className="pagination-controls">
-          <button
-            className="pagination-btn"
-            onClick={() => setCurrentPage(prev => prev - 1)}
-            disabled={currentPage === 1}
-          >
-            Back
-          </button>
-          <span className="pagination-info">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="pagination-btn"
-            onClick={() => setCurrentPage(prev => prev + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
         </div>
       )}
 
-      {paginatedBooks.length === 0 && (
-        statusFilter !== 'all' || hasMetadataFilters ? (
+      <div className="showing-count-row">
+        Showing {showingStart}-{showingEnd} of {sortedBooks.length} books
+        {(statusFilter !== 'all' || hasMetadataFilters || search.trim()) && ` (filtered from ${books.length})`}
+      </div>
+
+      {/* Body: grid or list */}
+      {paginatedBooks.length === 0 ? (
+        (statusFilter !== 'all' || hasMetadataFilters || search.trim()) ? (
           <EmptyState
             tone="neutral"
             icon={<SearchX />}
@@ -748,7 +648,7 @@ const LibraryPage = () => {
             primary={{
               label: 'Clear filters',
               icon: <X size={18} />,
-              onClick: () => { setStatusFilter('all'); setSelectedLanguages([]); setSelectedFileTypes([]); },
+              onClick: () => { setStatusFilter('all'); setSelectedLanguages([]); setSelectedFileTypes([]); setSearch(''); },
             }}
           />
         ) : (
@@ -760,6 +660,85 @@ const LibraryPage = () => {
             primary={{ label: 'Add a book', icon: <Plus size={18} />, onClick: () => navigate('/upload') }}
           />
         )
+      ) : view === 'grid' ? (
+        <div className="library-grid">
+          {paginatedBooks.map(book => (
+            <BookCard
+              key={book.id}
+              book={book}
+              status={getBookStatus(book)}
+              notesCount={notesCount[book.id] || 0}
+              active={isActiveSessionBook(book.id)}
+              onOpen={() => navigate(`/read/${book.id}`)}
+              onMenu={(e) => openActionsMenu(book, e)}
+              testId={`book-${book.id}`}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="library-list">
+          {paginatedBooks.map(book => {
+            const status = getBookStatus(book);
+            const bookNotesCount = notesCount[book.id] || 0;
+            return (
+              <div
+                key={book.id}
+                className={`library-row ${isActiveSessionBook(book.id) ? 'is-active' : ''}`}
+                data-testid={`book-${book.id}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/read/${book.id}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/read/${book.id}`); } }}
+              >
+                <div className="library-row__cover">
+                  {book.cover_url ? (
+                    <img src={book.cover_url} alt="" loading="lazy" />
+                  ) : (
+                    <span className="library-row__placeholder"><LibraryBig size={18} /></span>
+                  )}
+                </div>
+                <div className="library-row__main">
+                  <div className="library-row__title" data-testid={`book-title-${book.id}`}>{book.title}</div>
+                  <div className="library-row__author" data-testid={`book-author-${book.id}`}>{book.author || '—'}</div>
+                </div>
+                <span className={`status-badge ${status}`}>{status.replace('-', ' ')}</span>
+                <span className="library-row__meta">{bookNotesCount > 0 ? `${bookNotesCount} notes` : '—'}</span>
+                <span className="library-row__meta library-row__date">{formatDate(book.created_at)}</span>
+                <button
+                  className="library-row__actions"
+                  aria-label="Book actions"
+                  onClick={(e) => openActionsMenu(book, e)}
+                >
+                  <MoreVertical size={18} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {renderActionsMenu()}
+
+      {totalPages > 1 && (
+        <div className="pagination-controls" data-testid="pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            disabled={currentPage === 1}
+            data-testid="prev-page"
+          >
+            Back
+          </button>
+          <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            disabled={currentPage === totalPages}
+            data-testid="next-page"
+          >
+            Next
+          </button>
+        </div>
       )}
     </div>
   );
