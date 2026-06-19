@@ -1411,22 +1411,10 @@ const DashboardPage = () => {
     d.drive();
   }, [navigate]);
 
-  // First-run auto-start of the tour (once per user/device)
-  useEffect(() => {
-    try {
-      const KEY = 'sq_tour_seen_v1';
-      const seen = localStorage.getItem(KEY) === '1';
-      if (!seen) {
-        setTimeout(() => {
-          // Double-check we are still on dashboard
-          if (window.location.pathname.includes('/dashboard')) {
-            startDashboardTour();
-            localStorage.setItem(KEY, '1');
-          }
-        }, 600);
-      }
-    } catch {}
-  }, [startDashboardTour]);
+  // First-run guided-tour auto-start removed — the SetupWizard is now the
+  // single first-run onboarding (two overlays were colliding). The tour is
+  // still available on demand via the header's "Restart Guided Tour" item
+  // (which dispatches the `restartGuidedTour` event handled below).
 
   // Listen for manual restart requests from header/user menu
   useEffect(() => {
