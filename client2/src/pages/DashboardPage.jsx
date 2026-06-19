@@ -1,7 +1,5 @@
 // src/pages/DashboardPage.jsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useGamification } from '../contexts/GamificationContext';
@@ -1347,81 +1345,7 @@ const DashboardPage = () => {
     },
   ], { delay: 2000, enabled: hasBooks });
 
-  // Driver.js tour for onboarding key actions
-  const startDashboardTour = useCallback(() => {
-    // Ensure nav links are in DOM (they live in AppLayout)
-    const d = driver({
-      showProgress: true,
-      allowClose: true,
-      stagePadding: 6,
-      overlayColor: 'rgba(0,0,0,0.5)',
-      steps: [
-        {
-          // Upload Book CTA: highlight inline button if present, otherwise the nav link
-          element: '#tour-upload, nav .md3-rail-destinations a[href="/upload"]',
-          popover: {
-            title: 'Upload Book',
-            description: 'This is your upload book feature. Click here to go to the Upload Page.',
-            side: 'bottom',
-            align: 'start',
-            buttons: [
-              {
-                text: 'Open Upload',
-                handler: () => { d.moveNext(); navigate('/upload'); }
-              }
-            ]
-          },
-        },
-        {
-          // Start Reading guidance: point to Library entry or inline CTA
-          element: '#tour-start-reading, nav .md3-rail-destinations a[href="/library"]',
-          popover: {
-            title: 'Start Reading',
-            description:
-              'Start a reading session by starting a floatable reading timer and then click on your book to open it.',
-            side: 'right',
-            align: 'center',
-            buttons: [
-              {
-                text: 'Open Library',
-                handler: () => { d.moveNext(); navigate('/library'); }
-              }
-            ]
-          },
-        },
-        {
-          // Notes access: highlight Notes entry
-          element: '#tour-notes, nav .md3-rail-destinations a[href="/notes"]',
-          popover: {
-            title: 'Notes Widget',
-            description:
-              "Navigate through your book and annotate on the notes widget. Save and head to the Notes page.",
-            side: 'right',
-            align: 'center',
-            buttons: [
-              {
-                text: 'Open Notes',
-                handler: () => { d.moveNext(); navigate('/notes'); }
-              }
-            ]
-          },
-        },
-      ],
-    });
-    d.drive();
-  }, [navigate]);
-
-  // First-run guided-tour auto-start removed — the SetupWizard is now the
-  // single first-run onboarding (two overlays were colliding). The tour is
-  // still available on demand via the header's "Restart Guided Tour" item
-  // (which dispatches the `restartGuidedTour` event handled below).
-
-  // Listen for manual restart requests from header/user menu
-  useEffect(() => {
-    const handler = () => startDashboardTour();
-    window.addEventListener('restartGuidedTour', handler);
-    return () => window.removeEventListener('restartGuidedTour', handler);
-  }, [startDashboardTour]);
+  // Guided tour removed — the SetupWizard is the single first-run onboarding.
 
   useEffect(() => {
     if (!rewardFeedback) return;
@@ -1593,7 +1517,7 @@ const DashboardPage = () => {
 
           {/* Left Column - Welcome Section (hidden on mobile) */}
           <div className="dashboard-content-left mobile-hide">
-            <WelcomeSection user={user} onStartTour={startDashboardTour} activeSession={activeSession} />
+            <WelcomeSection user={user} activeSession={activeSession} />
             {/* Inline CTAs for the tour (stable anchors) */}
             <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
               <button

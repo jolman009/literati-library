@@ -54,7 +54,14 @@ function SetupWizardInner() {
   // All writes are best-effort: a failed save must never trap the user in a
   // wizard they can't finish. UX completion is decoupled from persistence.
   const persist = useCallback(async (data) => {
-    try { if (data.name && data.name !== user?.name) await updateProfile({ name: data.name }); } catch { /* ignore */ }
+    // name + interests -> profile via PUT /auth/profile (best-effort; interests
+    // needs migration 016_user_interests.sql to actually persist).
+    try {
+      const payload = { interests: data.genres || [] };
+      const name = (data.name || '').trim();
+      if (name) payload.name = name;
+      await updateProfile(payload);
+    } catch { /* ignore */ }
     try {
       setGoalPreference({
         type: 'time',
@@ -71,10 +78,10 @@ function SetupWizardInner() {
         reward: 100,
       });
     } catch { /* ignore */ }
-    // No server field for interests / first-book pick yet -> persist locally.
+    // Local cache (offline + immediate read-back); first-book has no server field.
     try { localStorage.setItem('onboarding_interests', JSON.stringify(data.genres || [])); } catch { /* ignore */ }
     try { if (data.firstBook) localStorage.setItem('onboarding_first_book', data.firstBook); } catch { /* ignore */ }
-  }, [user, updateProfile, createGoal, setGoalPreference]);
+  }, [updateProfile, createGoal, setGoalPreference]);
 
   const handleComplete = useCallback(async (data) => {
     setIsOpen(false);

@@ -176,7 +176,8 @@ app.use(cors({
     'X-Environment',  // Custom header for environment tracking
     'X-Client-Version',  // Additional custom header support
     'X-App-Version',  // Application version tracking
-    'X-Client-Type'  // Distinguish extension vs web client
+    'X-Client-Type',  // Distinguish extension vs web client
+    'X-Child-Mode'  // Child-mode flag read by /analytics/events
   ]
 }));
 
