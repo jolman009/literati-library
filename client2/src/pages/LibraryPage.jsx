@@ -672,6 +672,8 @@ const LibraryPage = () => {
               onOpen={() => navigate(`/read/${book.id}`)}
               onMenu={(e) => openActionsMenu(book, e)}
               testId={`book-${book.id}`}
+              titleTestId={`book-title-${book.id}`}
+              authorTestId={`book-author-${book.id}`}
             />
           ))}
         </div>

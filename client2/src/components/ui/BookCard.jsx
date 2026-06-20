@@ -19,7 +19,7 @@ const STATUS = {
   'to-read': { label: 'To Read', cls: 'unread' },
 };
 
-const BookCard = ({ book, status = 'to-read', notesCount = 0, active = false, onOpen, onMenu, testId }) => {
+const BookCard = ({ book, status = 'to-read', notesCount = 0, active = false, onOpen, onMenu, testId, titleTestId, authorTestId }) => {
   const st = STATUS[status] || STATUS['to-read'];
   const progress = typeof book.progress === 'number' ? Math.max(0, Math.min(100, book.progress)) : null;
 
@@ -52,8 +52,8 @@ const BookCard = ({ book, status = 'to-read', notesCount = 0, active = false, on
       </div>
 
       <div className="sq-bookcard__body">
-        <div className="sq-bookcard__title" data-testid={testId ? `${testId}-title` : undefined}>{book.title}</div>
-        <div className="sq-bookcard__author" data-testid={testId ? `${testId}-author` : undefined}>{book.author || '—'}</div>
+        <div className="sq-bookcard__title" data-testid={titleTestId || (testId ? `${testId}-title` : undefined)}>{book.title}</div>
+        <div className="sq-bookcard__author" data-testid={authorTestId || (testId ? `${testId}-author` : undefined)}>{book.author || '—'}</div>
         {progress != null && progress > 0 && (
           <div className="sq-bookcard__progress" aria-label={`${progress}% read`}>
             <div className="sq-bookcard__progress-fill" style={{ width: `${progress}%` }} />

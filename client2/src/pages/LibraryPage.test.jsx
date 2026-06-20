@@ -93,9 +93,17 @@ const defaultBooks = [
 ];
 
 const getShowingText = () => document.querySelector('.showing-count-row')?.textContent || '';
+// Titles render via BookCard (grid) / list rows, both carrying a stable
+// data-testid="book-title-{id}" hook (querySelectorAll preserves render order).
 const getVisibleTitles = () =>
-  Array.from(document.querySelectorAll('tbody tr .col-title')).map(node => node.textContent?.trim());
+  Array.from(document.querySelectorAll('[data-testid^="book-title-"]')).map(node => node.textContent?.trim());
 const getFirstVisibleTitle = () => getVisibleTitles()[0];
+
+// The language/file-type metadata filters are collapsed behind a "Filters"
+// toggle in the redesigned page; open it so their chips are queryable.
+const openMetadataFilters = () => {
+  fireEvent.click(screen.getByRole('button', { name: /^Filters/ }));
+};
 
 const setup = async (books = defaultBooks) => {
   const makeAuthenticatedApiCall = vi.fn(async (path) => {
@@ -110,8 +118,12 @@ const setup = async (books = defaultBooks) => {
   });
 
   render(<LibraryPage />);
-  await waitFor(() => expect(screen.getByText('My Library')).toBeInTheDocument());
+  // The loaded state renders the search field (the old "My Library" header is
+  // now a welcome banner shown only after books resolve).
+  await waitFor(() => expect(screen.getByTestId('search-input')).toBeInTheDocument());
   await waitFor(() => expect(makeAuthenticatedApiCall).toHaveBeenCalledWith('/books?limit=200&offset=0'));
+  // Reveal the metadata (language / file type) filter chips for the tests below.
+  openMetadataFilters();
 };
 
 describe('LibraryPage language/file type filters and sorting', () => {
