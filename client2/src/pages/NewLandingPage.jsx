@@ -1,683 +1,472 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  LibraryBig, Sparkles, Play, Flame, Zap, LayoutGrid, Palette, Lock,
+  Check, ArrowRight, Upload, BookOpen, Brain, NotebookPen, Trophy, ChartColumn,
+} from 'lucide-react';
+import { useIntersectionObserver } from '../components/performance/hooks';
 import './NewLandingPage.css';
+
+/*
+ * Public marketing landing page (rendered at "/" for logged-out visitors).
+ *
+ * Recreated from the ShelfQuest "Marketing Landing Page" design handoff. The
+ * mock's window.SQ / MK.* primitives are mapped to small local components here +
+ * lucide-react, driven by the already-bridged --sq-* tokens (sq-design-tokens.css)
+ * and the app's --md-sys-* system. The README's "use MUI" note is intentionally
+ * not followed (wrong for this repo).
+ *
+ * COPY POLICY: the design's content model (MKDATA) ships inflated marketing
+ * numbers and fictional testimonials. The app is LIVE, so we keep the *visual*
+ * design but use truthful copy — factual stats and our real testimonials. Do not
+ * reintroduce fabricated counts/ratings.
+ *
+ * CONTRACT: auth-testid-contract.test.js (BLOCKING) requires these literal
+ * fragments to stay in this file: data-testid="landing-hero",
+ * data-testid="get-started-button", data-testid="login-link",
+ * data-testid="register-link", and the call navigate('/register').
+ */
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- local marketing primitives (mock SQ / MK kit → MD3 tokens) ---------- */
+
+function Reveal({ children, delay = 0, className = '', style = {} }) {
+  const ref = useRef(null);
+  const { hasIntersected } = useIntersectionObserver(ref, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -8% 0px',
+  });
+  const show = hasIntersected || prefersReducedMotion();
+  return (
+    <div
+      ref={ref}
+      className={`mk-reveal ${show ? 'is-visible' : ''} ${className}`}
+      style={{ transitionDelay: `${delay}ms`, ...style }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Button({ variant = 'filled', size = 'medium', icon, children, className = '', type = 'button', ...rest }) {
+  return (
+    <button type={type} className={`mk-btn mk-btn--${variant} mk-btn--${size} ${className}`} {...rest}>
+      {icon && <span className="mk-btn__icon">{icon}</span>}
+      {children && <span>{children}</span>}
+    </button>
+  );
+}
+
+function Eyebrow({ icon, color, children }) {
+  return (
+    <span className="mk-eyebrow" style={color ? { color } : undefined}>
+      {icon && <span className="mk-eyebrow__icon">{icon}</span>}
+      <span>{children}</span>
+    </span>
+  );
+}
+
+// Gradient-clipped text. Defaults to the brand gradient when none is given.
+function Grad({ gradient, children }) {
+  return <span className="mk-grad" style={gradient ? { backgroundImage: gradient } : undefined}>{children}</span>;
+}
+
+function SectionHead({ eyebrow, eyebrowIcon, title, sub }) {
+  return (
+    <div className="mk-sectionhead">
+      {eyebrow && <Eyebrow icon={eyebrowIcon}>{eyebrow}</Eyebrow>}
+      <h2 className="mk-sectionhead__title">{title}</h2>
+      {sub && <p className="mk-sectionhead__sub">{sub}</p>}
+    </div>
+  );
+}
+
+// Browser-chrome screenshot frame.
+function Browser({ src, alt, glow = true }) {
+  return (
+    <div className={`mk-browser ${glow ? 'mk-browser--glow' : ''}`}>
+      <div className="mk-browser__bar">
+        <span className="mk-browser__dot" />
+        <span className="mk-browser__dot" />
+        <span className="mk-browser__dot" />
+      </div>
+      <img className="mk-browser__shot" src={src} alt={alt} loading="lazy" />
+    </div>
+  );
+}
+
+function FeatureCard({ icon, accent, title, body }) {
+  return (
+    <div className="mk-feature">
+      <span className="mk-feature__icon" style={{ color: accent }}>{icon}</span>
+      <h3 className="mk-feature__title">{title}</h3>
+      <p className="mk-feature__body">{body}</p>
+    </div>
+  );
+}
+
+/* ---------- content (truthful — real features, stats & testimonials) ---------- */
+
+const FEATURES = [
+  { icon: <Upload size={22} />, accent: 'var(--md-sys-color-primary)', title: 'Upload Your Books', body: 'Bring your whole library — EPUB and PDF — into one calm, searchable place. Your shelf, finally in your pocket.' },
+  { icon: <BookOpen size={22} />, accent: 'var(--md-sys-color-secondary)', title: 'Track Every Session', body: 'Pick up where you left off. ShelfQuest follows your progress, pages and reading time as you go.' },
+  { icon: <Brain size={22} />, accent: 'var(--sq-violet)', title: 'AI Reading Companion', body: 'A literary mentor that summarizes chapters, answers questions and nudges your next great read.' },
+  { icon: <NotebookPen size={22} />, accent: 'var(--sq-teal)', title: 'Notes, Summarized', body: 'Highlight a passage and let AI distill it. Every note lands back in your library, beautifully organized.' },
+  { icon: <Trophy size={22} />, accent: 'var(--sq-gold)', title: 'Quests & Rewards', body: 'Earn points, build streaks, unlock achievements and level up. Reading has never felt this rewarding.' },
+  { icon: <ChartColumn size={22} />, accent: 'var(--sq-green)', title: 'See Your Reading', body: 'Clear statistics on pace, streaks and time read — so you always know your momentum at a glance.' },
+];
+
+const SPOTLIGHTS = [
+  {
+    eyebrow: 'Mentor AI', icon: <Sparkles size={15} />, accent: 'var(--sq-violet)',
+    title: 'Your personal literary mentor',
+    body: "Ask anything about what you're reading. Get chapter recaps, themes and gentle recommendations for what to pick up next — a companion that knows your shelf and cheers you on.",
+    bullets: ['Chapter & book summaries on demand', 'Recommendations tuned to your taste', 'Answers grounded in your own library'],
+    shot: '/screenshot-mentor.png', cta: 'Meet Your Mentor', flip: false,
+  },
+  {
+    eyebrow: 'Gamified Reading', icon: <Trophy size={15} />, accent: 'var(--sq-gold)',
+    title: 'Turn reading into a quest',
+    body: 'Every page moves you forward. Collect points, keep your streak alive, complete goals and unlock new themes — small wins that keep you coming back to the page.',
+    bullets: ['Daily & reading streaks', 'Points, levels and achievements', 'Six unlockable themes to earn'],
+    shot: '/screenshot-statistics.png', cta: 'See the Rewards', flip: true,
+  },
+  {
+    eyebrow: 'Smart Notes', icon: <NotebookPen size={15} />, accent: 'var(--sq-teal)',
+    title: 'Notes that write themselves',
+    body: 'Capture a quote, jot a thought, or let the AI summarize an entire chapter. Your notes stay tied to the book and searchable across your whole library.',
+    bullets: ['AI-summarized highlights', 'Linked to book & page', 'Searchable across your shelf'],
+    shot: '/screenshot-notes.png', cta: 'Start Taking Notes', flip: false,
+  },
+];
+
+// Factual — no inflated counts. Mirrors the deliberate "just getting started" stance.
+const STATS = [
+  { value: 'PDF', label: '& EPUB Support' },
+  { value: '6', label: 'Unlockable Themes' },
+  { value: '∞', label: 'Reading Goals' },
+  { value: 'Free', label: 'To Get Started' },
+];
+
+const THEMES = [
+  { name: 'Classic', g: 'linear-gradient(135deg,#023e8a,#0077b6)' },
+  { name: 'Warm Sepia', g: 'linear-gradient(135deg,#9a6a3a,#d9a066)' },
+  { name: 'Ocean Blue', g: 'linear-gradient(135deg,#0077b6,#00b4d8)' },
+  { name: 'Forest Green', g: 'linear-gradient(135deg,#1f8a5b,#4ade80)' },
+  { name: 'Royal Purple', g: 'linear-gradient(135deg,#5b3fc4,#9a82ff)' },
+  { name: 'Legendary Gold', g: 'linear-gradient(135deg,#b8860b,#facc15)' },
+];
+
+// Real testimonials carried over from the previous landing page.
+const TESTIMONIALS = [
+  { name: 'Mrs. Sarah Chen', role: '5th Grade Teacher', accent: 'var(--sq-gold)', highlight: 'Classroom Integration',
+    quote: 'ShelfQuest transformed my classroom reading program. The gamification levels reward students individually — when they level up, they earn classroom privileges. My reluctant readers are now racing to finish books!' },
+  { name: 'Marcus T.', role: 'Student, Age 14', accent: 'var(--sq-violet)', highlight: 'Student Motivation',
+    quote: "I never thought I'd say this, but tracking my reading is actually fun. Watching my stats grow and collecting points feels like a game. I've read more books this semester than all of last year!" },
+  { name: 'Jennifer M.', role: 'Parent & Reader', accent: 'var(--sq-teal)', highlight: 'Family Reading',
+    quote: "I started using ShelfQuest for myself and loved it so much I set up my daughter's account. Now we compare reading streaks at dinner! It's become a bonding activity." },
+];
+
+/* --------------------------------- page --------------------------------- */
 
 const NewLandingPage = () => {
   const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-
-
-  const testimonials = [
-    {
-      icon: 'school',
-      name: 'Mrs. Sarah Chen',
-      role: '5th Grade Teacher',
-      quote: "ShelfQuest transformed my classroom reading program. The gamification levels reward students individually—when they level up, they earn classroom privileges. My reluctant readers are now racing to finish books!",
-      highlight: 'Classroom Integration'
-    },
-    {
-      icon: 'face',
-      name: 'Marcus T.',
-      role: 'Student, Age 14',
-      quote: "I never thought I'd say this, but tracking my reading is actually fun. Watching my stats grow and collecting points feels like a game. I've read more books this semester than all of last year!",
-      highlight: 'Student Motivation'
-    },
-    {
-      icon: 'family_restroom',
-      name: 'Jennifer M.',
-      role: 'Parent & Reader',
-      quote: "I started using ShelfQuest for myself and loved it so much I set up my daughter's account. Now we compare reading streaks at dinner! It's become a bonding activity.",
-      highlight: 'Family Reading'
-    }
-  ];
-
-  // Focus on features, not inflated numbers - we're just getting started!
-  const stats = [
-    { value: 'PDF', label: '& EPUB Support' },
-    { value: '6', label: 'Unlockable Themes' },
-    { value: '∞', label: 'Reading Goals' },
-    { value: 'Free', label: 'To Get Started' }
-  ];
-
-  // Feature cards for the bento grid (used by renderFeatureVisual)
-  const _features = [
-    {
-      id: 'upload',
-      icon: 'upload_file',
-      title: 'Upload Your Books',
-      description: 'Import PDF and EPUB files instantly. Your digital library, beautifully organized.',
-      size: 'large',
-      visual: 'upload'
-    },
-    {
-      id: 'analytics',
-      icon: 'bar_chart',
-      title: 'Reading Analytics',
-      description: 'Visualize your habits.',
-      size: 'tall',
-      dark: true,
-      visual: 'analytics'
-    },
-    {
-      id: 'collections',
-      icon: 'sell',
-      title: 'Smart Collections',
-      description: 'Auto-organize by genre, author, and mood.',
-      size: 'medium',
-      visual: 'tags'
-    },
-    {
-      id: 'gamification',
-      icon: 'emoji_events',
-      title: 'Gamification & Themes',
-      description: 'Earn points, unlock achievements, maintain streaks. Unlock 6 beautiful themes as rewards for reading!',
-      size: 'wide',
-      visual: 'gamification'
-    },
-    {
-      id: 'sessions',
-      icon: 'auto_stories',
-      title: 'Reading Sessions',
-      description: 'Track time spent reading and resume exactly where you left off.',
-      size: 'standard'
-    },
-    {
-      id: 'notes',
-      icon: 'mic',
-      title: 'Voice & Text Notes',
-      description: 'Record voice notes or type your thoughts. Highlight passages as you read.',
-      size: 'standard'
-    }
-  ];
-
-  // Render special visuals for certain feature cards
-  const renderFeatureVisual = (visual) => {
-    switch (visual) {
-      case 'upload':
-        return (
-          <div className="bento-visual upload-visual">
-            <div className="upload-mockup">
-              <div className="upload-files">
-                <div className="file-icon pdf">PDF</div>
-                <div className="file-icon epub">EPUB</div>
-              </div>
-              <div className="upload-details">
-                <div className="detail-line"></div>
-                <div className="detail-line short"></div>
-              </div>
-            </div>
-            <div className="upload-overlay">
-              <span className="material-symbols-outlined">cloud_upload</span>
-              <span>Drop files here</span>
-            </div>
-          </div>
-        );
-      case 'analytics':
-        return (
-          <div className="analytics-bars">
-            <div className="analytics-row">
-              <span className="analytics-label">Fiction</span>
-              <div className="analytics-bar-track">
-                <div className="analytics-bar-fill" style={{ width: '70%' }}></div>
-              </div>
-            </div>
-            <div className="analytics-row">
-              <span className="analytics-label">Sci-Fi</span>
-              <div className="analytics-bar-track">
-                <div className="analytics-bar-fill medium" style={{ width: '45%' }}></div>
-              </div>
-            </div>
-            <div className="analytics-row">
-              <span className="analytics-label">History</span>
-              <div className="analytics-bar-track">
-                <div className="analytics-bar-fill low" style={{ width: '30%' }}></div>
-              </div>
-            </div>
-          </div>
-        );
-      case 'tags':
-        return (
-          <div className="tags-preview">
-            <span className="tag">Must Read</span>
-            <span className="tag">Sci-Fi</span>
-            <span className="tag filled">Favorite</span>
-          </div>
-        );
-      case 'gamification':
-        return (
-          <div className="gamification-preview">
-            <div className="theme-unlock-card">
-              <div className="user-avatar-preview">
-                <span className="material-symbols-outlined">person</span>
-              </div>
-              <div className="unlock-info">
-                <span className="unlock-name">Ocean Blue Theme</span>
-                <span className="unlock-status carolina">Unlocked at 1,501 pts</span>
-              </div>
-              <span className="material-symbols-outlined unlock-icon">lock_open</span>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Render a bento card based on feature data (available for future use)
-  const _renderBentoCard = (feature) => {
-    const sizeClass = `bento-${feature.size}`;
-    const darkClass = feature.dark ? 'bento-dark' : '';
-    const isWide = feature.size === 'wide';
-
-    return (
-      <div key={feature.id} className={`bento-card ${sizeClass} ${darkClass}`}>
-        {isWide ? (
-          <div className="bento-content-row">
-            <div className="bento-text-block">
-              <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
-                <span className="material-symbols-outlined">{feature.icon}</span>
-              </div>
-              <h3 className="bento-title">{feature.title}</h3>
-              <p className="bento-description">{feature.description}</p>
-            </div>
-            {renderFeatureVisual(feature.visual)}
-          </div>
-        ) : (
-          <>
-            {feature.size === 'large' ? (
-              <div className="bento-content">
-                <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
-                  <span className="material-symbols-outlined">{feature.icon}</span>
-                </div>
-                <h3 className="bento-title">{feature.title}</h3>
-                <p className="bento-description">{feature.description}</p>
-              </div>
-            ) : (
-              <>
-                <div className={`bento-icon-wrap ${feature.dark ? 'dark' : ''}`}>
-                  <span className="material-symbols-outlined">{feature.icon}</span>
-                </div>
-                <h3 className="bento-title">{feature.title}</h3>
-                <p className="bento-description">{feature.description}</p>
-              </>
-            )}
-            {renderFeatureVisual(feature.visual)}
-          </>
-        )}
-      </div>
-    );
-  };
+  const scrollToFeatures = useCallback(() => {
+    const el = document.getElementById('features');
+    if (el) el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  }, []);
 
   return (
-    <div className="landing-page">
-      {/* Fixed Navigation */}
-      <nav className={`landing-nav ${scrolled ? 'scrolled' : ''}`}>
-        <div className="nav-container">
-          <a href="#" className="nav-logo">
-            <img
-              src="/ShelfQuest_logo_v3.png"
-              alt="ShelfQuest"
-              className="nav-logo-image"
-            />
-            <span className="nav-logo-text">shelfquest</span>
+    <div className="mk-page">
+      {/* ============ NAV ============ */}
+      <nav className={`mk-nav ${scrolled ? 'is-scrolled' : ''}`}>
+        <div className="mk-nav__inner">
+          <a href="#top" className="mk-nav__logo">
+            <img src="/ShelfQuest_logo_v3.png" alt="" className="mk-nav__logo-img" />
+            <span className="mk-nav__logo-text">ShelfQuest</span>
           </a>
-
-          <div className="nav-links">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#testimonials" className="nav-link">Stories</a>
-            <a href="#cta" className="nav-link">Get Started</a>
+          <div className="mk-nav__links">
+            <a href="#features" className="mk-nav__link">Features</a>
+            <a href="#testimonials" className="mk-nav__link">Stories</a>
+            <a href="#cta" className="mk-nav__link">Get Started</a>
           </div>
-
-          <div className="nav-actions">
-            <button
-              className="nav-btn nav-btn-text"
-              onClick={() => navigate('/login')}
-              data-testid="login-link"
-            >
+          <div className="mk-nav__actions">
+            <Button variant="text" size="small" onClick={() => navigate('/login')} data-testid="login-link">
               Sign In
-            </button>
-            <button
-              className="nav-btn nav-btn-filled"
+            </Button>
+            <Button
+              variant="filled"
+              size="small"
+              icon={<ArrowRight size={16} />}
+              className="mk-btn--icon-end"
               onClick={() => navigate('/register')}
               data-testid="register-link"
             >
               Get Started
-              <span className="material-symbols-outlined">arrow_forward</span>
-            </button>
+            </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header
-        className={`hero-section ${isVisible ? 'visible' : ''}`}
-        data-testid="landing-hero"
-      >
-        <div className="hero-grid">
-          <div className="hero-content">
-            <div className="hero-badge">
-              <span className="badge-dot"></span>
-              <span>Now with AI Reading Companion</span>
-            </div>
-
-            <h1 className="hero-title">
-              The operating system for your reading life.
-            </h1>
-
-            <p className="hero-subtitle">
-              ShelfQuest bridges the gap between your physical library and digital habits.
-              Catalog, track, and discover with zero friction.
-            </p>
-
-            <div className="hero-social-proof">
-              <div className="launch-badge">
-                <span className="material-symbols-outlined">rocket_launch</span>
+      <main id="top">
+        {/* ============ HERO ============ */}
+        <section className="mk-section mk-section--hero">
+          <header className="mk-hero" data-testid="landing-hero">
+            <div className="mk-hero__copy">
+              <Eyebrow icon={<LibraryBig size={15} />}>Your Digital Library</Eyebrow>
+              <h1 className="mk-hero__title">
+                Every book is a<br /><Grad gradient="var(--sq-gradient-quest)">quest</Grad> waiting to begin.
+              </h1>
+              <p className="mk-hero__lead">
+                Upload your books, track every reading session, take AI-summarized notes, and level up as you go.
+                ShelfQuest is the warm, gamified reading companion that keeps you turning pages.
+              </p>
+              <div className="mk-hero__ctas">
+                <Button
+                  variant="filled"
+                  size="large"
+                  icon={<Sparkles size={18} />}
+                  onClick={() => navigate('/signup')}
+                  data-testid="get-started-button"
+                >
+                  Start Your Quest
+                </Button>
+                <Button variant="outlined" size="large" icon={<Play size={17} />} onClick={scrollToFeatures}>
+                  See How It Works
+                </Button>
               </div>
-              <p>New app, big dreams — join us from the start!</p>
+              {/* Honest social proof — no fabricated counts (app is newly launched). */}
+              <div className="mk-hero__proof">
+                <span className="mk-hero__proof-badge"><Sparkles size={18} /></span>
+                <p>New app, big dreams — start your quest free. No card required.</p>
+              </div>
             </div>
-          </div>
 
-          {/* Hero Visual - Abstract UI Preview */}
-          <div className="hero-visual">
-            <div className="hero-card-stack">
-              <div className="hero-card hero-card-back"></div>
-              <div className="hero-card hero-card-middle"></div>
-              <div className="hero-card hero-card-front">
-                <div className="hero-card-header">
-                  <div className="window-dots">
-                    <span></span><span></span><span></span>
-                  </div>
-                  <div className="header-bar"></div>
+            <div className="mk-hero__visual">
+              <Browser src="/screenshot-dashboard.png" alt="ShelfQuest dashboard" />
+              <div className="mk-floatchip mk-floatchip--streak">
+                <span className="mk-floatchip__icon" style={{ color: 'var(--sq-gold)' }}><Flame size={20} /></span>
+                <div>
+                  <div className="mk-floatchip__value">14 days</div>
+                  <div className="mk-floatchip__label">Reading streak</div>
                 </div>
-                <div className="hero-card-body">
-                  <div className="preview-book-info">
-                    <div className="preview-cover">
-                      <span className="material-symbols-outlined">book</span>
-                    </div>
-                    <div className="preview-meta">
-                      <div className="meta-line meta-title"></div>
-                      <div className="meta-line meta-author"></div>
-                      <div className="meta-box">
-                        <div className="meta-line short"></div>
-                        <div className="meta-line short"></div>
-                      </div>
-                      <div className="preview-actions">
-                        <div className="action-btn-preview"></div>
-                        <div className="action-icon-preview"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="preview-stats-row">
-                    <div className="stat-card-preview">
-                      <span className="material-symbols-outlined">bar_chart</span>
-                      <div className="stat-bar"></div>
-                    </div>
-                    <div className="stat-card-preview">
-                      <span className="material-symbols-outlined">schedule</span>
-                      <div className="stat-bar"></div>
-                    </div>
-                    <div className="stat-card-preview">
-                      <span className="material-symbols-outlined">favorite</span>
-                      <div className="stat-bar"></div>
-                    </div>
-                  </div>
+              </div>
+              <div className="mk-floatchip mk-floatchip--level">
+                <span className="mk-floatchip__icon" style={{ color: 'var(--sq-violet)' }}><Zap size={20} /></span>
+                <div>
+                  <div className="mk-floatchip__value">Level 7</div>
+                  <div className="mk-floatchip__label">+120 XP today</div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      {/* Social Proof Stats */}
-      <section className="stats-section">
-        <div className="stats-container">
-          <p className="stats-label">What you get with ShelfQuest</p>
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-item">
-                <span className="stat-value">{stat.value}</span>
-                <span className="stat-name">{stat.label}</span>
+          {/* stats strip */}
+          <Reveal className="mk-statstrip">
+            {STATS.map((s) => (
+              <div key={s.label} className="mk-stat">
+                <div className="mk-stat__value"><Grad>{s.value}</Grad></div>
+                <div className="mk-stat__label">{s.label}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
+          </Reveal>
+        </section>
 
-      {/* Features Bento Grid */}
-      <section id="features" className="features-section">
-        <div className="features-header">
-          <h2 className="section-title">
-            Everything you need to<br />manage your collection.
-          </h2>
-          <p className="section-subtitle">
-            Whether you have one shelf or a private library, ShelfQuest scales with your curiosity.
-          </p>
-        </div>
-
-        <div className="bento-grid">
-          {/* Large Card - Upload Books */}
-          <div className="bento-card bento-large">
-            <div className="bento-content">
-              <div className="bento-icon-wrap">
-                <span className="material-symbols-outlined">upload_file</span>
-              </div>
-              <h3 className="bento-title">Upload Your Books</h3>
-              <p className="bento-description">Import PDF and EPUB files instantly. Your digital library, beautifully organized.</p>
-            </div>
-            <div className="bento-visual upload-visual">
-              <div className="upload-mockup">
-                <div className="upload-files">
-                  <div className="file-icon pdf">PDF</div>
-                  <div className="file-icon epub">EPUB</div>
-                </div>
-                <div className="upload-details">
-                  <div className="detail-line"></div>
-                  <div className="detail-line short"></div>
-                </div>
-              </div>
-              <div className="upload-overlay">
-                <span className="material-symbols-outlined">cloud_upload</span>
-                <span>Drop files here</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Tall Card - Analytics */}
-          <div className="bento-card bento-tall bento-dark">
-            <div className="bento-content">
-              <div className="bento-icon-wrap dark">
-                <span className="material-symbols-outlined">bar_chart</span>
-              </div>
-              <h3 className="bento-title">Reading Analytics</h3>
-              <p className="bento-description">Visualize your habits.</p>
-            </div>
-            <div className="analytics-bars">
-              <div className="analytics-row">
-                <span className="analytics-label">Fiction</span>
-                <div className="analytics-bar-track">
-                  <div className="analytics-bar-fill" style={{ width: '70%' }}></div>
-                </div>
-              </div>
-              <div className="analytics-row">
-                <span className="analytics-label">Sci-Fi</span>
-                <div className="analytics-bar-track">
-                  <div className="analytics-bar-fill medium" style={{ width: '45%' }}></div>
-                </div>
-              </div>
-              <div className="analytics-row">
-                <span className="analytics-label">History</span>
-                <div className="analytics-bar-track">
-                  <div className="analytics-bar-fill low" style={{ width: '30%' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Medium Card - Collections */}
-          <div className="bento-card bento-medium">
-            <div className="bento-icon-wrap">
-              <span className="material-symbols-outlined">sell</span>
-            </div>
-            <h3 className="bento-title">Smart Collections</h3>
-            <p className="bento-description">Auto-organize by genre, author, and mood.</p>
-            <div className="tags-preview">
-              <span className="tag">Must Read</span>
-              <span className="tag">Sci-Fi</span>
-              <span className="tag filled">Favorite</span>
-            </div>
-          </div>
-
-          {/* Wide Card - Gamification */}
-          <div className="bento-card bento-wide">
-            <div className="bento-content-row">
-              <div className="bento-text-block">
-                <div className="bento-icon-wrap">
-                  <span className="material-symbols-outlined">emoji_events</span>
-                </div>
-                <h3 className="bento-title">Gamification & Themes</h3>
-                <p className="bento-description">Earn points, unlock achievements, maintain streaks. Unlock 6 beautiful themes as rewards for reading!</p>
-              </div>
-              <div className="gamification-preview">
-                <div className="theme-unlock-card">
-                  <div className="user-avatar-preview">
-                    <span className="material-symbols-outlined">person</span>
-                  </div>
-                  <div className="unlock-info">
-                    <span className="unlock-name">Ocean Blue Theme</span>
-                    <span className="unlock-status carolina">Unlocked at 1,501 pts</span>
-                  </div>
-                  <span className="material-symbols-outlined unlock-icon">lock_open</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Standard Cards */}
-          <div className="bento-card bento-standard">
-            <div className="bento-icon-wrap">
-              <span className="material-symbols-outlined">auto_stories</span>
-            </div>
-            <h3 className="bento-title">Reading Sessions</h3>
-            <p className="bento-description">Track time spent reading and resume exactly where you left off.</p>
-          </div>
-
-          <div className="bento-card bento-standard">
-            <div className="bento-icon-wrap">
-              <span className="material-symbols-outlined">mic</span>
-            </div>
-            <h3 className="bento-title">Voice & Text Notes</h3>
-            <p className="bento-description">Record voice notes or type your thoughts. Highlight passages as you read.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Dark Feature Spotlight */}
-      <section className="spotlight-section">
-        <div className="spotlight-container">
-          <div className="spotlight-grid">
-            <div className="spotlight-visual">
-              <div className="spotlight-mockup">
-                <div className="mockup-header">
-                  <div className="mockup-search"></div>
-                  <div className="mockup-add-btn">
-                    <span className="material-symbols-outlined">add</span>
-                  </div>
-                </div>
-                <div className="mockup-list">
-                  <div className="mockup-book-item">
-                    <div className="mockup-book-cover"></div>
-                    <div className="mockup-book-info">
-                      <div className="info-line"></div>
-                      <div className="info-line short"></div>
-                    </div>
-                  </div>
-                  <div className="mockup-book-item faded">
-                    <div className="mockup-book-cover"></div>
-                    <div className="mockup-book-info">
-                      <div className="info-line"></div>
-                      <div className="info-line short"></div>
-                    </div>
-                  </div>
-                  <div className="mockup-book-item very-faded">
-                    <div className="mockup-book-cover"></div>
-                    <div className="mockup-book-info">
-                      <div className="info-line"></div>
-                      <div className="info-line short"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="spotlight-content">
-              <h2 className="spotlight-title">Unified Search.</h2>
-              <p className="spotlight-description">
-                Stop wondering if you already own a copy. ShelfQuest unifies your physical shelves,
-                eBooks, and audiobooks into a single, searchable database.
-              </p>
-              <ul className="spotlight-features">
-                <li>
-                  <span className="material-symbols-outlined">check_circle</span>
-                  <div>
-                    <h4>Cross-platform sync</h4>
-                    <p>Access your library from any device, anywhere.</p>
-                  </div>
-                </li>
-                <li>
-                  <span className="material-symbols-outlined">check_circle</span>
-                  <div>
-                    <h4>AI Reading Companion</h4>
-                    <p>Get summaries, insights, and personalized recommendations.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="testimonials-section">
-        <h2 className="section-title centered">What Readers Are Saying</h2>
-        <div className="testimonials-grid">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="testimonial-card"
-              style={{ animationDelay: `${index * 0.15}s` }}
-            >
-              <div className="testimonial-highlight">{testimonial.highlight}</div>
-              <div className="testimonial-quote">
-                <span className="quote-mark">"</span>
-                {testimonial.quote}
-              </div>
-              <div className="testimonial-author">
-                <div className="author-avatar">
-                  <span className="material-symbols-outlined">{testimonial.icon}</span>
-                </div>
-                <div className="author-info">
-                  <span className="author-name">{testimonial.name}</span>
-                  <span className="author-role">{testimonial.role}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section id="cta" className="cta-section">
-        <div className="cta-card">
-          <h2 className="cta-title">Ready to organize your reading life?</h2>
-          <p className="cta-description">
-            Join thousands of readers who have transformed their relationship with books.
-            Start for free, upgrade when you need more.
-          </p>
-
-          <form className="cta-form" onSubmit={(e) => { e.preventDefault(); navigate('/signup'); }}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="cta-input"
+        {/* ============ FEATURES ============ */}
+        <section id="features" className="mk-section mk-section--features">
+          <Reveal>
+            <SectionHead
+              eyebrow="Everything in one place"
+              eyebrowIcon={<LayoutGrid size={15} />}
+              title="Your whole reading life, beautifully organized"
+              sub="From the first upload to your hundredth finished book, ShelfQuest holds it all — and makes the journey feel like an adventure."
             />
-            <button
-              type="submit"
-              className="cta-submit"
-              data-testid="get-started-button"
-            >
-              Get Started
-            </button>
-          </form>
-          <p className="cta-note">Free forever. No credit card required.</p>
+          </Reveal>
+          <div className="mk-featgrid">
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.title} delay={(i % 3) * 80}><FeatureCard {...f} /></Reveal>
+            ))}
+          </div>
+        </section>
 
-          {/* Download Buttons */}
-          <div className="download-section">
-            <p className="download-label">Or download the app:</p>
-            <div className="download-buttons">
-              <a
-                href="https://apps.microsoft.com/detail/9P23Z6MBNGSH"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="store-button"
-                aria-label="Download from Microsoft Store"
-              >
-                <svg className="store-icon" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0 0h11v11H0z" fill="#F25022"/>
-                  <path d="M12 0h11v11H12z" fill="#7FBA00"/>
-                  <path d="M0 12h11v11H0z" fill="#00A4EF"/>
-                  <path d="M12 12h11v11H12z" fill="#FFB900"/>
-                </svg>
-                <div className="store-text">
-                  <span className="store-label">Download on the</span>
-                  <span className="store-name">Microsoft Store</span>
+        {/* ============ SPOTLIGHTS ============ */}
+        {SPOTLIGHTS.map((s) => (
+          <section key={s.title} className="mk-section mk-section--spotlight">
+            <div className={`mk-spot ${s.flip ? 'mk-spot--flip' : ''}`}>
+              <Reveal className="mk-spot__copy">
+                <Eyebrow icon={s.icon} color={s.accent}>{s.eyebrow}</Eyebrow>
+                <h2 className="mk-spot__title">{s.title}</h2>
+                <p className="mk-spot__body">{s.body}</p>
+                <ul className="mk-spot__list">
+                  {s.bullets.map((b) => (
+                    <li key={b}>
+                      <span className="mk-spot__check" style={{ color: s.accent, background: `color-mix(in srgb, ${s.accent} 16%, transparent)` }}>
+                        <Check size={15} strokeWidth={2.6} />
+                      </span>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mk-spot__cta">
+                  <Button variant="tonal" size="medium" icon={<ArrowRight size={16} />} className="mk-btn--icon-end" onClick={() => navigate('/signup')}>
+                    {s.cta}
+                  </Button>
                 </div>
-              </a>
-              <div className="store-button coming-soon">
-                <svg className="store-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="#3DDC84"/>
-                </svg>
-                <div className="store-text">
-                  <span className="store-label">Coming Soon</span>
-                  <span className="store-name">Google Play</span>
+              </Reveal>
+              <Reveal delay={120} className="mk-spot__visual">
+                <div className="mk-spot__glow" style={{ background: `radial-gradient(closest-side, color-mix(in srgb, ${s.accent} 22%, transparent), transparent 75%)` }} />
+                <Browser src={s.shot} alt={s.title} glow={false} />
+              </Reveal>
+            </div>
+          </section>
+        ))}
+
+        {/* ============ THEMES ============ */}
+        <section className="mk-section mk-section--themes">
+          <Reveal>
+            <SectionHead
+              eyebrow="Unlockable Rewards"
+              eyebrowIcon={<Palette size={15} />}
+              title="Read more. Unlock more."
+              sub="Earn points as you read and unlock six handcrafted themes — small rewards that make your library feel like yours."
+            />
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="mk-themegrid">
+              {THEMES.map((t, i) => (
+                <div key={t.name} className="mk-theme">
+                  <div className="mk-theme__swatch" style={{ background: t.g }}>
+                    {i >= 4 && <span className="mk-theme__lock"><Lock size={12} /></span>}
+                  </div>
+                  <div className="mk-theme__name">{t.name}</div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ============ TESTIMONIALS ============ */}
+        <section id="testimonials" className="mk-section mk-section--testimonials">
+          <Reveal>
+            <SectionHead eyebrow="Loved by readers" eyebrowIcon={<Sparkles size={15} />} title="Readers are on the quest" />
+          </Reveal>
+          <div className="mk-testgrid">
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal key={t.name} delay={(i % 3) * 80}>
+                <figure className="mk-testimonial">
+                  <span className="mk-testimonial__tag">{t.highlight}</span>
+                  <blockquote className="mk-testimonial__quote">“{t.quote}”</blockquote>
+                  <figcaption className="mk-testimonial__author">
+                    <span className="mk-testimonial__avatar" style={{ background: t.accent }}>{t.name[0]}</span>
+                    <span>
+                      <span className="mk-testimonial__name">{t.name}</span>
+                      <span className="mk-testimonial__role">{t.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* ============ CTA BAND ============ */}
+        <section id="cta" className="mk-section mk-section--cta">
+          <Reveal>
+            <div className="mk-ctaband">
+              <div className="mk-ctaband__glow" />
+              <div className="mk-ctaband__inner">
+                <img src="/ShelfQuest_logo_v3.png" alt="" className="mk-ctaband__mark" />
+                <h2 className="mk-ctaband__title">Ready to begin your quest?</h2>
+                <p className="mk-ctaband__lead">
+                  Turn your shelf into an adventure. Free to start — no card required.
+                </p>
+                <div className="mk-ctaband__ctas">
+                  <Button variant="glass" size="large" icon={<Sparkles size={18} />} onClick={() => navigate('/signup')}>
+                    Start Your Quest
+                  </Button>
+                  <Button variant="ghost" size="large" onClick={() => navigate('/contact')}>
+                    Talk to Us
+                  </Button>
+                </div>
+
+                {/* Real store links retained from the previous landing page. */}
+                <div className="mk-ctaband__stores">
+                  <a
+                    href="https://apps.microsoft.com/detail/9P23Z6MBNGSH"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mk-store"
+                    aria-label="Download from Microsoft Store"
+                  >
+                    <svg className="mk-store__icon" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M0 0h11v11H0z" fill="#F25022" />
+                      <path d="M12 0h11v11H12z" fill="#7FBA00" />
+                      <path d="M0 12h11v11H0z" fill="#00A4EF" />
+                      <path d="M12 12h11v11H12z" fill="#FFB900" />
+                    </svg>
+                    <span className="mk-store__text">
+                      <span className="mk-store__small">Download on the</span>
+                      <span className="mk-store__name">Microsoft Store</span>
+                    </span>
+                  </a>
+                  <a
+                    href="https://play.google.com/store/apps/details?id=org.shelfquest.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mk-store"
+                    aria-label="Get it on Google Play"
+                  >
+                    <svg className="mk-store__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" fill="#3DDC84" />
+                    </svg>
+                    <span className="mk-store__text">
+                      <span className="mk-store__small">Get it on</span>
+                      <span className="mk-store__name">Google Play</span>
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </Reveal>
+        </section>
+      </main>
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <div className="footer-container">
-          <div className="footer-grid">
-            <div className="footer-brand">
-              <a href="#" className="footer-logo">
-                <img
-                  src="/ShelfQuest_logo_v3.png"
-                  alt="ShelfQuest"
-                  className="footer-logo-image"
-                />
-                <span className="footer-logo-text">shelfquest</span>
+      {/* ============ FOOTER ============ */}
+      <footer className="mk-footer">
+        <div className="mk-footer__inner">
+          <div className="mk-footer__grid">
+            <div className="mk-footer__brand">
+              <a href="#top" className="mk-footer__logo">
+                <img src="/ShelfQuest_logo_v3.png" alt="" className="mk-footer__logo-img" />
+                <span className="mk-footer__logo-text">ShelfQuest</span>
               </a>
-              <p className="footer-tagline">
+              <p className="mk-footer__tagline">
                 Designed for the modern reader. Built to last as long as your books.
               </p>
-              <div className="footer-social">
-                <a href="#" aria-label="Twitter">
-                  <span className="material-symbols-outlined">public</span>
-                </a>
-                <a href="#" aria-label="Instagram">
-                  <span className="material-symbols-outlined">photo_camera</span>
-                </a>
-                <a href="https://github.com" aria-label="GitHub">
-                  <span className="material-symbols-outlined">code</span>
-                </a>
-              </div>
             </div>
 
-            <div className="footer-links-group">
+            <div className="mk-footer__group">
               <h4>Product</h4>
               <ul>
                 <li><a href="#features">Features</a></li>
                 <li><a href="/premium">Premium</a></li>
-                <li><a href="#">Changelog</a></li>
+                <li><a href="/pricing">Pricing</a></li>
               </ul>
             </div>
 
-            <div className="footer-links-group">
+            <div className="mk-footer__group">
               <h4>Resources</h4>
               <ul>
                 <li><a href="/help/viewer">Help Center</a></li>
@@ -686,7 +475,7 @@ const NewLandingPage = () => {
               </ul>
             </div>
 
-            <div className="footer-links-group">
+            <div className="mk-footer__group">
               <h4>Legal</h4>
               <ul>
                 <li><a href="/legal/privacy-policy">Privacy Policy</a></li>
@@ -695,8 +484,9 @@ const NewLandingPage = () => {
             </div>
           </div>
 
-          <div className="footer-bottom">
-            <p>© 2024 ShelfQuest by Jolman Press. All rights reserved.</p>
+          <div className="mk-footer__bottom">
+            <p>© 2026 ShelfQuest by Jolman Press. All rights reserved.</p>
+            <p className="mk-footer__meta">shelfquest.org · Your digital library companion</p>
           </div>
         </div>
       </footer>
