@@ -15,7 +15,6 @@ import '../styles/dashboard-page.css';
 import { Skeleton } from '../components/ui/StateKit';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 import PullToRefreshIndicator from '../components/PullToRefreshIndicator';
-import { useFeatureTooltip } from '../hooks/useFeatureTooltip';
 
 // Welcome Component with reduced padding
 const WelcomeSection = ({ user, _onStartTour, activeSession }) => {
@@ -1323,29 +1322,10 @@ const DashboardPage = () => {
   const [showRewardBurst, setShowRewardBurst] = useState(false);
   const hasBooks = books.length > 0;
 
-  // AI feature discovery tooltip — fires once after user has books
-  useFeatureTooltip('ai_features_discovery', [
-    {
-      element: 'nav a[href="/recommendations"]',
-      popover: {
-        title: 'AI Book Recommendations',
-        description: 'Get personalized book picks based on your library. Powered by AI!',
-        side: 'right',
-        align: 'center',
-      },
-    },
-    {
-      element: 'nav a[href="/mentor"]',
-      popover: {
-        title: 'Mentor AI',
-        description: 'Have Socratic discussions about your books and take comprehension quizzes.',
-        side: 'right',
-        align: 'center',
-      },
-    },
-  ], { delay: 2000, enabled: hasBooks });
-
-  // Guided tour removed — the SetupWizard is the single first-run onboarding.
+  // AI feature discovery tooltip removed: the driver.js popover re-fired on
+  // every render (inline steps array) and wouldn't dismiss, looping over the
+  // Mentor AI / Recommendations nav. Guided tour was already removed earlier —
+  // the SetupWizard is the single first-run onboarding.
 
   useEffect(() => {
     if (!rewardFeedback) return;
