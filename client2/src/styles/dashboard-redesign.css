@@ -1,0 +1,81 @@
+/* ============================================================
+   dashboard-redesign.css — focused, DESKTOP-SAFE restyle of the
+   dashboard from the "Core App" design handoff.
+
+   Every rule is scoped under a NEW class (.sq-dash-hero / .sq-stat-
+   redesign) that is only applied to desktop-only render paths, so this
+   cannot leak into the mobile (.dashboard-mobile-only) sections or the
+   live Play-Store layout, and never edits dashboard-page.css.
+   Token-driven so light & dark swap automatically.
+   ============================================================ */
+
+/* ------------------------- welcome hero (desktop) ------------------------ */
+/* .sq-dash-hero is added to .welcome-section-compact (desktop left column).
+   The gradient applies to the greeting block (.welcome-content); the
+   MentorPreviewCard sibling stays a separate surface card below. */
+.sq-dash-hero .welcome-content {
+  background: var(--sq-gradient-welcome);
+  color: #fff;
+  border-radius: 28px;
+  padding: 28px 30px;
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.sq-dash-hero .welcome-title-compact { color: #fff; }
+.sq-dash-hero .welcome-purpose,
+.sq-dash-hero .welcome-subtitle-compact { color: rgba(255, 255, 255, 0.85); }
+
+/* CTA buttons → glass treatment on the gradient */
+.sq-dash-hero .welcome-cta-row .md3-button {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.sq-dash-hero .welcome-cta-row .md3-button:hover { background: rgba(255, 255, 255, 0.24); }
+
+/* level-progress block → translucent card with quest-gradient fill */
+.sq-dash-hero .progress-block-elevated {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+.sq-dash-hero .level-progress-text,
+.sq-dash-hero .total-points-display,
+.sq-dash-hero .inline-meta-item { color: #fff; }
+.sq-dash-hero .level-progress-bar { background: rgba(255, 255, 255, 0.2); }
+.sq-dash-hero .level-progress-fill { background: var(--sq-gradient-quest); }
+
+/* badge carousel → translucent white chips */
+.sq-dash-hero .badge-chip {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.sq-dash-hero .badge-text,
+.sq-dash-hero .badge-icon { color: #fff; }
+.sq-dash-hero .badge-empty { color: rgba(255, 255, 255, 0.75); }
+
+/* ----------------------- AI companion (desktop) ------------------------- */
+/* Light polish on the Mentor card that sits inside the desktop hero block:
+   a quest-gradient medallion behind the Brain glyph, separated from the hero. */
+.sq-dash-hero .mentor-preview-card { margin-top: 16px; }
+.sq-dash-hero .mentor-preview-card .mentor-icon {
+  box-sizing: content-box;
+  padding: 7px;
+  border-radius: 11px;
+  background: var(--sq-gradient-quest);
+  color: #fff;
+}
+
+/* --------------------------- stat row (desktop) ------------------------- */
+/* sq-stat-redesign is added to the desktop (.mobile-hide) stat grid only.
+   Override the legacy horizontal-scroll layout with the mock's auto-fit grid
+   (the cells are <StatCard> = .sq-statcard, which self-sizes). */
+.dashboard-content .stat-grid.sq-stat-redesign {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  overflow: visible;
+}
