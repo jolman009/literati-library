@@ -1,4 +1,5 @@
 /* client2/src/pages/LoginV2.css */
+/* Split brand-panel layout lives in auth-shell.css (imported via AuthBrandPanel). */
 .login-v2-container {
   display: flex;
   align-items: center;

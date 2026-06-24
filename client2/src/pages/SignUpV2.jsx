@@ -6,6 +6,7 @@ import MD3TextField from '../components/Material3/MD3TextField';
 import MD3Button from '../components/Material3/MD3Button';
 import MD3Checkbox from '../components/Material3/MD3Checkbox';
 import GoogleSignInButton from '../components/GoogleSignInButton';
+import AuthBrandPanel from './AuthBrandPanel';
 import './SignUpV2.css';
 
 const SignUpV2 = () => {
@@ -18,7 +19,7 @@ const SignUpV2 = () => {
 
   const { register, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const { isDark } = useMaterial3();
+  const { isDark, theme, toggleTheme } = useMaterial3();
 
   // Unified validation engine
   const validation = {
@@ -87,8 +88,16 @@ const SignUpV2 = () => {
   };
 
   return (
-    <div className={`signup-v2-container ${isDark ? 'dark' : 'light'}`}>
-      <div className="signup-card">
+    <div className={`auth-v2-layout ${isDark ? 'dark' : 'light'}`}>
+      <AuthBrandPanel
+        theme={theme}
+        toggleTheme={toggleTheme}
+        headline="Start your reading quest."
+        subcopy="Create your shelf, set a goal, and let your AI mentor guide every chapter."
+      />
+
+      <div className="auth-form-pane signup-v2-container">
+        <div className="signup-card">
         <div className="signup-header">
           <div className="signup-logo-container">
             <div className="signup-logo-wrapper">
@@ -174,6 +183,7 @@ const SignUpV2 = () => {
           <p style={{ fontSize: '0.875rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
             Already have an account? <Link to="/login" className="signup-link">Sign In</Link>
           </p>
+        </div>
         </div>
       </div>
     </div>

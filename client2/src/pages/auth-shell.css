@@ -1,0 +1,138 @@
+/* ================================================
+   auth-shell.css — split brand-panel layout shared by
+   LoginV2 and SignUpV2. Imported via AuthBrandPanel so
+   the styles load wherever the panel renders.
+
+   Brand gradient panel + form pane. Collapses to a single
+   centered column (panel hidden) under 860px. Colors come
+   from the bridged --sq-* / --md-sys-color-* tokens
+   (sq-design-tokens.css) so light/dark swap automatically.
+   ================================================ */
+.auth-v2-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+  font-family: var(--sq-font-sans);
+}
+
+/* The form column reuses .login-v2-container / .signup-v2-container for
+   centering; the grid cell already provides full height, so drop the
+   inner 100vh to avoid overflow from padding. */
+.auth-v2-layout .login-v2-container,
+.auth-v2-layout .signup-v2-container {
+  min-height: 100%;
+}
+
+/* ---- Brand panel ---- */
+.auth-brand-panel {
+  background: var(--sq-gradient-welcome);
+  color: #fff;
+  padding: 56px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-brand-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-brand-mark {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.auth-brand-wordmark {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.auth-brand-headline {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1.1;
+  max-width: 460px;
+  margin: 0;
+}
+
+.auth-brand-subcopy {
+  font-size: 17px;
+  opacity: 0.85;
+  margin: 18px 0 0;
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.auth-brand-features {
+  display: flex;
+  gap: 26px;
+  margin-top: 34px;
+}
+
+.auth-brand-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.92;
+}
+
+.auth-brand-feature-medallion {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.auth-brand-feature-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.auth-brand-footer {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* ---- Theme toggle (pinned to layout top-right, over the form pane) ---- */
+.auth-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.auth-theme-toggle:hover {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-primary);
+}
+
+/* ---- Responsive: single column, hide brand panel ---- */
+@media (max-width: 860px) {
+  .auth-v2-layout {
+    grid-template-columns: 1fr;
+  }
+  .auth-brand-panel {
+    display: none;
+  }
+}

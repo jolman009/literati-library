@@ -5,6 +5,7 @@ import { useMaterial3 } from '../hooks/useMaterial3';
 import MD3TextField from '../components/Material3/MD3TextField';
 import MD3Button from '../components/Material3/MD3Button';
 import GoogleSignInButton from '../components/GoogleSignInButton';
+import AuthBrandPanel from './AuthBrandPanel';
 import './LoginV2.css';
 
 const LoginV2 = () => {
@@ -17,7 +18,7 @@ const LoginV2 = () => {
 
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const { isDark } = useMaterial3();
+  const { isDark, theme, toggleTheme } = useMaterial3();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -54,8 +55,11 @@ const LoginV2 = () => {
   };
 
   return (
-    <div className={`login-v2-container ${isDark ? 'dark' : 'light'}`}>
-      <div className="login-card">
+    <div className={`auth-v2-layout ${isDark ? 'dark' : 'light'}`}>
+      <AuthBrandPanel theme={theme} toggleTheme={toggleTheme} />
+
+      <div className="auth-form-pane login-v2-container">
+        <div className="login-card">
         <div className="login-header">
           <div className="login-logo-container">
             <div className="login-logo-wrapper">
@@ -171,6 +175,7 @@ const LoginV2 = () => {
           <p style={{ fontSize: '0.875rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
             New here? <Link to="/signup" className="login-link">Create an account</Link>
           </p>
+        </div>
         </div>
       </div>
     </div>
