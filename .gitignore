@@ -232,3 +232,9 @@ android/app/*.jks
 *.dex
 .externalNativeBuild
 .cxx
+
+# Local QA / Playwright-MCP artifacts (session-only, never committed)
+/.playwright-mcp/
+/qa-*.png
+/qa-*.jpeg
+/*-verify.png
